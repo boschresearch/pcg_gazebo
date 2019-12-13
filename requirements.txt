@@ -1,0 +1,15 @@
+lxml
+numpy
+psutil
+yasha
+xmltodict
+Jinja2
+Shapely
+bokeh
+matplotlib
+descartes
+PyYAML
+trimesh
+networkx
+pycollada==0.6
+rospkg
