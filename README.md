@@ -1,10 +1,10 @@
-# `pcg_gazebo`
+# `pcg_gazebo`: A Python package for rapid-prototyping and scripting of simulations for Gazebo
 
 [![GitHub issues](https://img.shields.io/github/issues/boschresearch/pcg_gazebo_pkgs.svg)](https://github.com/boschresearch/pcg_gazebo/issues)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE)
 
-The Procedural Generation for Gazebo Python package is an Open Source
-Project extending the simulation capabilities of the robotics simulator Gazebo
+The `pcg_gazebo` Python package is an Open Source
+Project extending the simulation capabilities of the robotics simulator [Gazebo](http://gazebosim.org/)
 for automation and scripting of Gazebo simulations.
 
 Visit the [documentation page](https://boschresearch.github.io/pcg_gazebo_pkgs/) for more information.
