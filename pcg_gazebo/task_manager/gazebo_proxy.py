@@ -14,24 +14,45 @@
 # limitations under the License.
 
 from __future__ import print_function
-import rospy
 import os
 import collections
 from time import time, sleep
 from ..log import PCG_ROOT_LOGGER
 from ..simulation.properties import Pose as PosePCG
 from .ros_config import ROSConfig
-from std_srvs.srv import Empty
-from geometry_msgs.msg import Pose, Point, Wrench
-from rosgraph_msgs.msg import Clock
-from gazebo_msgs.msg import ModelState
-from gazebo_msgs.srv import GetWorldProperties, SpawnModel, DeleteModel, \
-    GetModelProperties, SetModelState, GetLinkProperties, \
-    GetPhysicsProperties, GetLinkState, GetModelState, ApplyBodyWrench
 
+try:
+    import rospy
+    from std_srvs.srv import Empty
+    from geometry_msgs.msg import Pose, Point, Wrench
+    from rosgraph_msgs.msg import Clock
+    from gazebo_msgs.msg import ModelState
+    from gazebo_msgs.srv import GetWorldProperties, SpawnModel, DeleteModel, \
+        GetModelProperties, SetModelState, GetLinkProperties, \
+        GetPhysicsProperties, GetLinkState, GetModelState, ApplyBodyWrench
+    ROS_AVAILABLE = True
+except ImportError:
+    ROS_AVAILABLE = False
 
 class GazeboProxy(object):
-    _GAZEBO_SERVICES = dict(
+    
+    def __init__(self, ros_host='localhost', ros_port=11311,
+                 gazebo_host='localhost', gazebo_port=11345, timeout=30,
+                 ignore_services=None):
+        assert ROS_AVAILABLE, 'ROS components could not be imported'
+        assert timeout >= 0, 'Timeout should be equal or greater than zero'
+        assert isinstance(ros_host, str), 'ROS host name must be a string'
+        assert isinstance(ros_port, int), 'ROS port must be an integer'
+        assert ros_port > 0, 'ROS port must be a positive integer'
+        assert isinstance(gazebo_host, str), 'Gazebo host name must be a' \
+            ' string'
+        assert isinstance(gazebo_port, int), 'Gazebo port must be an integer'
+        assert gazebo_port > 0, 'Gazebo port must be a positive integer'
+        if ignore_services is not None:
+            assert isinstance(ignore_services, list), 'Filter for ignored ' \
+                'services should be a list'
+
+        self._GAZEBO_SERVICES = dict(
             get_world_properties=GetWorldProperties,
             spawn_sdf_model=SpawnModel,
             pause_physics=Empty,
@@ -45,21 +66,6 @@ class GazeboProxy(object):
             get_model_state=GetModelState,
             apply_body_wrench=ApplyBodyWrench
         )
-
-    def __init__(self, ros_host='localhost', ros_port=11311,
-                 gazebo_host='localhost', gazebo_port=11345, timeout=30,
-                 ignore_services=None):
-        assert timeout >= 0, 'Timeout should be equal or greater than zero'
-        assert isinstance(ros_host, str), 'ROS host name must be a string'
-        assert isinstance(ros_port, int), 'ROS port must be an integer'
-        assert ros_port > 0, 'ROS port must be a positive integer'
-        assert isinstance(gazebo_host, str), 'Gazebo host name must be a' \
-            ' string'
-        assert isinstance(gazebo_port, int), 'Gazebo port must be an integer'
-        assert gazebo_port > 0, 'Gazebo port must be a positive integer'
-        if ignore_services is not None:
-            assert isinstance(ignore_services, list), 'Filter for ignored ' \
-                'services should be a list'
 
         self._logger = PCG_ROOT_LOGGER
         

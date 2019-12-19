@@ -15,14 +15,18 @@
 
 from time import time, sleep
 from threading import Thread
-from rosgraph_msgs.msg import Clock
-import rospy
 from ..log import create_logger
-
+try:
+    import rospy
+    from rosgraph_msgs.msg import Clock
+    ROS_AVAILABLE = True
+except ImportError:
+    ROS_AVAILABLE = False
 
 class SimulationTimer(Thread):
     def __init__(self, simulation_timeout=0, start_gazebo_timeout=60, ros_config=None,
                  output_log_dir=None, callback=None):
+        assert ROS_AVAILABLE, 'ROS components could not be loaded'
         Thread.__init__(self)
         assert ros_config is not None, 'ROS network configuration cannot' \
             ' be null'
