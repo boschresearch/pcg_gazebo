@@ -37,6 +37,8 @@ from .world import World
 
 GAZEBO_MODELS = dict()
 
+CUSTOM_GAZEBO_RESOURCE_PATHS = list()
+
 
 def create_object(tag, **kwargs):
     """Factory method for `Link` subclasses.
@@ -57,6 +59,20 @@ def create_object(tag, **kwargs):
                     return obj(**kwargs)
     PCG_ROOT_LOGGER.error('Object {} does not exist'.format(tag))
     return None
+
+
+def add_custom_gazebo_resource_path(dir_path):
+    import os
+    if not os.path.isdir(dir_path):
+        PCG_ROOT_LOGGER.error('Invalid custom Gazebo resources path')
+        return False
+    global CUSTOM_GAZEBO_RESOURCE_PATHS
+    if dir_path in CUSTOM_GAZEBO_RESOURCE_PATHS:
+        PCG_ROOT_LOGGER.warning('Custom Gazebo resources path <{}> already exists'.join(
+            dir_path))        
+    else:
+        CUSTOM_GAZEBO_RESOURCE_PATHS.append(dir_path)
+    return True
 
 
 def get_gazebo_model_folders(dir_path):
@@ -99,6 +115,7 @@ def get_gazebo_model_folders(dir_path):
             else:
                 models_paths.update(get_gazebo_model_folders(os.path.join(dir_path, item)))        
     return models_paths
+
 
 def load_gazebo_models():
     """Search for Gazebo models in the local `.gazebo/models` folder
@@ -143,6 +160,11 @@ def load_gazebo_models():
     if gazebo_folder is not None:
         if os.path.isdir(gazebo_folder):
             GAZEBO_MODELS.update(get_gazebo_model_folders(gazebo_folder))
+
+    if len(CUSTOM_GAZEBO_RESOURCE_PATHS) > 0:
+        for folder in CUSTOM_GAZEBO_RESOURCE_PATHS:
+            GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
+
     return GAZEBO_MODELS
 
 
@@ -193,7 +215,21 @@ def is_gazebo_model(name):
     if name not in GAZEBO_MODELS:
         # Try reloading the models
         load_gazebo_models()
-    return name in GAZEBO_MODELS
+    if name in GAZEBO_MODELS:
+        if is_in_custom_gazebo_resources_path(GAZEBO_MODELS[name]['path']):
+            return False
+        else:
+            return True
+    else:
+        return False
+
+
+def is_in_custom_gazebo_resources_path(dir_path):
+    for folder in CUSTOM_GAZEBO_RESOURCE_PATHS:
+        if dir_path in folder:
+            return True
+    return False
+
 
 def get_gazebo_model_sdf_filenames(model_name):
     if model_name not in GAZEBO_MODELS:

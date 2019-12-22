@@ -14,7 +14,8 @@
 # limitations under the License.
 import os
 from ..utils import load_yaml
-from ..simulation import SimulationModel, ModelGroup, Light
+from ..simulation import SimulationModel, ModelGroup, Light, \
+    add_custom_gazebo_resource_path
 from ._collection_manager import _CollectionManager
 from ..log import PCG_ROOT_LOGGER
 
@@ -340,3 +341,7 @@ class AssetsManager(_CollectionManager):
         """
         config = load_yaml(filename)
         self.from_dict(config)
+
+    @staticmethod
+    def add_custom_gazebo_resource_path(dir_path):
+        return add_custom_gazebo_resource_path(dir_path)
