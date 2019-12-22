@@ -23,7 +23,27 @@ version_file = os.path.join(os.path.dirname(__file__), 'pcg_gazebo/version.py')
 with open(version_file, 'r') as f:
     __version__ = eval(f.read().strip().split('=')[-1])
 
+requirements_required = [
+    'lxml',
+    'numpy',
+    'psutil',
+    'yasha',
+    'xmltodict',
+    'Jinja2',
+    'Shapely',
+    'bokeh',
+    'matplotlib',
+    'descartes',
+    'PyYAML',
+    'trimesh[all]',
+    'networkx',
+    'pycollada==0.6',
+    'rospkg',
+]
+
 requirements_ros = ['rospkg']
+
+requirements_test = ['pytest']
 
 setup(
     name='pcg_gazebo',
@@ -38,5 +58,12 @@ setup(
     keywords='gazebo ros simulation robotics',
     packages=[
         'pcg_gazebo'
-    ]
+    ],
+    package_data={
+        '': ['*.sdf.jinja']
+    },
+    install_requires=requirements_required,
+    extras_require=dict(
+        test=requirements_test
+    )
 )
