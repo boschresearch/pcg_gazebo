@@ -40,7 +40,7 @@ class XMLVector(XMLBase):
             'size of received={}, expected length={}'.format(
                 self._NAME, value, len(list(value)), self._size)
         for item in value:
-            assert isinstance(item, float) or isinstance(item, int)
+            assert self._is_scalar(item)
         self._value = list(value)
 
     def reset(self):
@@ -55,8 +55,9 @@ class XMLVector(XMLBase):
             print('Normal value must be a list with 3 elements')
             return False
         for item in self._value:
-            if not isinstance(item, float) and not isinstance(item, int):
-                print('Each vector element must be a float or integer')
+            if not self._is_scalar(item):
+                print('Each vector element must be a float or integer, '
+                      'value={}, type={}'.format(item, type(item)))
                 return False
         return True
 
