@@ -24,7 +24,10 @@ class Kd(XMLScalar):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        assert value >= 0, 'Input value must be equal or greater than zero'
+        assert self._is_scalar(value), \
+            'Input value for {} must be a scalar'.format(self._NAME)
+        assert value >= 0, \
+            'Input value for {} must be equal or greater than zero'.format(self._NAME)
         XMLScalar._set_value(self, value)
 
     def to_sdf(self):
