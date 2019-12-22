@@ -1,0 +1,55 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='test_static_model'>
+    <allow_auto_disable>1</allow_auto_disable>
+    <static>1</static>
+    <self_collide>0</self_collide>
+    <pose frame=''>0 0 0 0 0 0</pose>
+
+    <link name='body'>
+        <pose frame=''>1 0 3.5 0 0 0</pose>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+                
+        <visual name='body_visual'>
+            <geometry>
+                <box>
+                    <size>1 2 3</size>
+                </box>
+            </geometry>
+            <pose frame=''>0 0.4 0 0 -0.7 0</pose>
+            <cast_shadows>1</cast_shadows>
+            <transparency>0</transparency>
+        </visual>
+
+        <collision name='body_collision'>
+            <pose>0.6 1.2 0.05 0 0 0</pose>
+            <geometry>
+                <cylinder>
+                    <radius>2.4</radius>
+                    <length>5.6</length>
+                </cylinder>
+            </geometry>
+            <surface>
+                <friction>
+                    <ode>
+                        <mu>1</mu>
+                        <mu2>0.5</mu2>
+                    </ode>
+                    <torsional>
+                        <ode>
+                            <slip>0.5</slip>
+                        </ode>
+                    </torsional>
+                </friction>
+                <contact>
+                    <ode>
+                        <soft_cfm>0</soft_cfm>
+                    </ode>
+                </contact>                
+            </surface>
+            <max_contacts>10</max_contacts>
+        </collision>
+        </link>
+  </model>
+</sdf>
