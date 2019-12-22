@@ -157,6 +157,14 @@ def _find_ros_package(pkg_name):
     return pkg_path
 
 
+def _find_sdf_template(name):
+    if '.sdf.jinja' not in name:
+        filename = '{}.sdf.jinja'.format(name)
+    else:
+        filename = name
+    return get_template_path(filename)
+
+
 def _pretty_print_xml(xml):
     import lxml.etree as etree
     parser = etree.XMLParser(remove_blank_text=True)
@@ -225,6 +233,7 @@ def process_jinja_template(template, parameters=None, include_dir=None):
     base_env = Environment(loader=base_loader)
     # Add Jinja function similar to $(find <package>) in XACRO
     base_env.filters['find_ros_package'] = _find_ros_package
+    base_env.filters['find_sdf_template'] = _find_sdf_template
 
     if os.path.isfile(template):
         PCG_ROOT_LOGGER.info(
@@ -242,6 +251,37 @@ def process_jinja_template(template, parameters=None, include_dir=None):
 
 def generate_random_string(size=3):
     return ''.join(random.choice(string.ascii_letters) for i in range(size))
+
+
+def get_template_path(filename):
+    template_fullpath = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)),
+        '..',
+        'templates',
+        filename)
+    print(template_fullpath)
+    if os.path.isfile(template_fullpath):
+        return template_fullpath
+    else:
+        return None
+
+# Methods for testing types
+
+def is_string(obj):
+    import sys
+    if sys.version_info.major == 2:
+        return isinstance(obj, str) or isinstance(obj, unicode)
+    else:
+        return isinstance(obj, str)
+
+
+def is_scalar(obj):
+    import numpy as np
+    return isinstance(obj, float) or \
+        isinstance(obj, int) or \
+        isinstance(obj, np.float64) or \
+        isinstance(obj, np.int64)
+
 
 
 
