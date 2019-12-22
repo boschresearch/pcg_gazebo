@@ -25,6 +25,7 @@ from .sensors import IMU, Ray, Contact, Camera
 from ..parsers.sdf import create_sdf_element, is_sdf_element
 from ..parsers import sdf2urdf, urdf2sdf
 from ..log import PCG_ROOT_LOGGER
+from ..utils import is_string
 
 
 # FIXME: Add parsing of light sources and actors
@@ -72,14 +73,10 @@ class SimulationModel(object):
 
     @name.setter
     def name(self, value):
-        import sys
-        if sys.version_info[0] == 2:        
-            assert isinstance(value, str) or isinstance(value, unicode), \
-                'Model name should be a string'
-        else:
-            assert isinstance(value, str), \
-                'Model name should be a string'
-        assert len(value) > 0, 'Model name cannot be an empty string'
+        assert is_string(value), \
+            'Model name should be a string'
+        assert len(value) > 0, \
+            'Model name cannot be an empty string'
         self._name = value
 
     @property
@@ -88,7 +85,7 @@ class SimulationModel(object):
 
     @parent.setter
     def parent(self, value):
-        assert isinstance(value, str), 'Model parent name should be a string'
+        assert is_string(value), 'Model parent name should be a string'
         assert len(value) > 0, 'Model parent name cannot be an empty string'
         self._parent = value
 
@@ -171,7 +168,7 @@ class SimulationModel(object):
 
     @property
     def link_names(self):
-        return self._links.keys()
+        return list(self._links.keys())
 
     @property
     def joints(self):
@@ -183,11 +180,11 @@ class SimulationModel(object):
 
     @property
     def model_names(self):
-        return self._models.keys()
+        return list(self._models.keys())
 
     @property
     def joint_names(self):
-        return self._joints.keys()
+        return list(self._joints.keys())
 
     @property
     def plugins(self):
@@ -281,7 +278,7 @@ class SimulationModel(object):
         mesh_scale=[1, 1, 1], add_collision=True, parent=None, joint_type='fixed',
         pose=[0, 0, 0, 0, 0, 0], color=None, visual_parameters=dict(), 
         collision_parameters=dict()):        
-        assert isinstance(link_name, str), 'Link name must be a string'
+        assert is_string(link_name), 'Link name must be a string'
         assert isinstance(size, collections.Iterable), 'Size must be an array'
         assert len(list(size)) == 3, 'Input size must have 3 elements'
         assert isinstance(visual_parameters, dict), 'Visual geometry parameters must be a dict'
@@ -291,7 +288,7 @@ class SimulationModel(object):
             self.name, link_name))
         
         if joint_name is not None:
-            if not isinstance(joint_name, str):
+            if not is_string(joint_name):
                 msg = '[{}] Joint name must be a string, provided={}'.format(
                     self.name, joint_name)
                 self._logger.info(msg)
@@ -351,7 +348,7 @@ class SimulationModel(object):
                     self._logger.info('[{}] Setting random xkcd color={}, link_name={}'.format(
                         self.name, link.get_visual_by_name('visual').material.diffuse.value,
                         link_name))
-                elif isinstance(color, str):
+                elif is_string(color):
                     link.get_visual_by_name('visual').set_xkcd_color(color)
                     self._logger.info('[{}] Setting xkcd color={}, link_name={}'.format(
                         self.name, link.get_visual_by_name('visual').material.diffuse.value,
@@ -392,7 +389,7 @@ class SimulationModel(object):
         radius=0.001, add_visual=True, mesh_filename=None, mesh_scale=[1, 1, 1],
         add_collision=True, parent=None, joint_type='fixed', pose=[0, 0, 0, 0, 0, 0], 
         color=None, visual_parameters=dict(), collision_parameters=dict()):
-        assert isinstance(link_name, str), 'Link name must be a string'
+        assert is_string(link_name), 'Link name must be a string'
         assert isinstance(visual_parameters, dict), 'Visual geometry parameters must be a dict'
         assert isinstance(collision_parameters, dict), 'Collision geometry parameters must be a dict'
 
@@ -400,7 +397,7 @@ class SimulationModel(object):
             self.name, link_name))
 
         if joint_name is not None:
-            if not isinstance(joint_name, str):
+            if not is_string(joint_name):
                 msg = 'Joint name must be a string, provided={}'.format(joint_name)
                 self._logger.info(msg)
                 raise ValueError(msg)
@@ -448,7 +445,7 @@ class SimulationModel(object):
                     link.get_visual_by_name('visual').set_color()
                 elif color == 'xkcd':
                     link.get_visual_by_name('visual').set_xkcd_color()
-                elif isinstance(color, str) or isinstance(color, unicode):
+                elif is_string(color):
                     link.get_visual_by_name('visual').set_xkcd_color(color)
                 elif isinstance(color, collections.Iterable) and len(list(color)) == 4:
                     link.get_visual_by_name('visual').set_color(*color)
@@ -483,7 +480,7 @@ class SimulationModel(object):
         mesh_scale=[1, 1, 1], add_collision=True, parent=None, joint_type='fixed', 
         pose=[0, 0, 0, 0, 0, 0], color=None, visual_parameters=dict(), 
         collision_parameters=dict()):
-        assert isinstance(link_name, str), 'Link name must be a string'
+        assert is_string(link_name), 'Link name must be a string'
         assert isinstance(visual_parameters, dict), 'Visual geometry parameters must be a dict'
         assert isinstance(collision_parameters, dict), 'Collision geometry parameters must be a dict'
 
@@ -491,7 +488,7 @@ class SimulationModel(object):
             link_name, self.name))
 
         if joint_name is not None:
-            if not isinstance(joint_name, str):
+            if not is_string(joint_name):
                 msg = 'Joint name must be a string, provided={}'.format(joint_name)
                 self._logger.info(msg)
                 raise ValueError(msg)
@@ -542,7 +539,7 @@ class SimulationModel(object):
                     link.get_visual_by_name('visual').set_color()
                 elif color == 'xkcd':
                     link.get_visual_by_name('visual').set_xkcd_color()
-                elif isinstance(color, str) or isinstance(color, unicode):
+                elif is_string(color):
                     link.get_visual_by_name('visual').set_xkcd_color(color)
                 elif isinstance(color, collections.Iterable) and len(list(color)) == 4:
                     link.get_visual_by_name('visual').set_color(*color)
@@ -1420,7 +1417,7 @@ class SimulationModel(object):
             output_dir = os.path.join(os.path.expanduser('~'), '.gazebo', 'models')
             if not os.path.isdir(output_dir):
                 os.makedirs(output_dir)
-        elif isinstance(output_dir, str):
+        elif is_string(output_dir):
             assert os.path.isdir(output_dir), 'Invalid output directory, dir={}'.format(
                 output_dir)
 
@@ -1433,13 +1430,13 @@ class SimulationModel(object):
         PCG_ROOT_LOGGER.info('Output directory for Gazebo model <{}> = {}'.format(
             model_name, output_dir))
 
-        if author is None or not isinstance(author, str):
+        if author is None or not is_string(author):
             author = getpass.getuser()
 
-        if email is None or not isinstance(email, str):
+        if email is None or not is_string(email):
             email = '{}@email.com'.format(getpass.getuser())
 
-        if description is None or not isinstance(description, str):
+        if description is None or not is_string(description):
             description = ''
 
         PCG_ROOT_LOGGER.info('Gazebo model details <{}>:'.format(model_name))
