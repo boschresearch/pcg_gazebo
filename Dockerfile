@@ -9,9 +9,12 @@ RUN apt-get update && \
     libspatialindex-dev \
     pybind11-dev -y
 
-RUN pip3 install -r /tmp/pcg_gazebo/requirements.txt
-
 WORKDIR /tmp/pcg_gazebo
-RUN python3 setup.py install
+
+RUN pip3 install -e .
 
 RUN python3 -c "import pcg_gazebo"
+
+RUN pip3 install -e .[test]
+
+RUN pytest -x /tmp/pcg_gazebo/tests
