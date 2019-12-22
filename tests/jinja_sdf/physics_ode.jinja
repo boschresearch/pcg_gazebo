@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+{% import 'physics'|find_sdf_template as physics %}
+{{ physics.physics(
+    name=label,
+    default=0,
+    type=engine,
+    max_step_size=max_step_size,
+    real_time_factor=real_time_factor,
+    real_time_update_rate=real_time_update_rate,
+    max_contacts=max_contacts,
+    ode_solver_type=ode_solver_type,
+    ode_min_step_size=ode_min_step_size,
+    ode_iters=ode_iters,
+    ode_precon_iters=ode_precon_iters,
+    ode_sor=ode_sor,
+    ode_use_dynamic_moi_rescaling=ode_use_dynamic_moi_rescaling,
+    ode_friction_model=ode_friction_model,
+    ode_cfm=ode_cfm,
+    ode_erp=ode_erp,
+    ode_contact_max_correcting_vel=ode_contact_max_correcting_vel,
+    ode_contact_surface_layer=ode_contact_surface_layer) 
+}}
