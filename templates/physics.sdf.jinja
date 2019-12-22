@@ -1,0 +1,279 @@
+{#
+Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+For information on the respective copyright owner see the NOTICE file
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{# World physics #}
+
+{% macro physics(
+    name='default',
+    default=0,
+    type='ode',
+    max_step_size=0.001,
+    real_time_factor=1,
+    real_time_update_rate=1000,
+    max_contacts=20,
+    ode_solver_type='quick',
+    ode_min_step_size=0.0001,
+    ode_iters=50,
+    ode_precon_iters=0,
+    ode_sor=1.3,
+    ode_use_dynamic_moi_rescaling=0,
+    ode_friction_model='pyramid_model',
+    ode_cfm=0.0,
+    ode_erp=0.2,
+    ode_contact_max_correcting_vel=100,
+    ode_contact_surface_layer=0.001,
+    bullet_solver_type='sequential_impulse',
+    bullet_min_step_size=0.0001,
+    bullet_iters=50,
+    bullet_sor=1.3,
+    bullet_cfm=0,
+    bullet_erp=0.2,
+    bullet_contact_surface_layer=0.001,
+    bullet_split_impulse=1,
+    bullet_split_impulse_penetration_threshold=-0.01,
+    simbody_min_step_size=0.0001,
+    simbody_accuracy=0.001,
+    simbody_max_transient_velocity=0.01,
+    simbody_stiffness=100000000.0,
+    simbody_dissipation=100,
+    simbody_plastic_coef_restitution=0.5,
+    simbody_plastic_impact_velocity=0.5,
+    simbody_static_friction=0.9,
+    simbody_dynamic_friction=0.9,
+    simbody_viscous_friction=0,
+    simbody_override_impact_capture_velocity=0.001,
+    simbody_override_stiction_transition_velocity=0.001) 
+%}
+    <physics name="{{ name }}" default="{{ default }}" type="{{ type }}">
+        <max_step_size>{{ max_step_size }}</max_step_size>
+        <real_time_factor>{{ real_time_factor }}</real_time_factor>
+        <real_time_update_rate>{{ real_time_update_rate }}</real_time_update_rate>
+        <max_contacts>{{ max_contacts }}</max_contacts>
+
+        {% if type == 'ode' %}            
+            {{ ode_physics(
+                solver_type=ode_solver_type,
+                min_step_size=ode_min_step_size,
+                iters=ode_iters,
+                precon_iters=ode_precon_iters,
+                sor=ode_sor,
+                use_dynamic_moi_rescaling=ode_use_dynamic_moi_rescaling,
+                friction_model=ode_friction_model,
+                cfm=ode_cfm,
+                erp=ode_erp,
+                contact_max_correcting_vel=ode_contact_max_correcting_vel,
+                contact_surface_layer=ode_contact_surface_layer) 
+            }}            
+        {% elif type == 'bullet' %}
+            {{ bullet_physics(
+                type=bullet_solver_type,
+                min_step_size=bullet_min_step_size,
+                iters=bullet_iters,
+                sor=bullet_sor,
+                cfm=bullet_cfm,
+                erp=bullet_erp,
+                contact_surface_layer=bullet_contact_surface_layer,
+                split_impulse=bullet_split_impulse,
+                split_impulse_penetration_threshold=bullet_split_impulse_penetration_threshold) 
+            }}            
+        {% elif type == 'simbody' %}            
+            {{ simbody_physics(
+                min_step_size=simbody_min_step_size,
+                accuracy=simbody_accuracy,
+                max_transient_velocity=simbody_max_transient_velocity,
+                stiffness=simbody_stiffness,
+                dissipation=simbody_dissipation,
+                plastic_coef_restitution=simbody_plastic_coef_restitution,
+                plastic_impact_velocity=simbody_plastic_impact_velocity,
+                static_friction=simbody_static_friction,
+                dynamic_friction=simbody_dynamic_friction,
+                viscous_friction=simbody_viscous_friction,
+                override_impact_capture_velocity=simbody_override_impact_capture_velocity,
+                override_stiction_transition_velocity=simbody_override_stiction_transition_velocity) }}            
+        {% endif %}
+    </physics>
+{% endmacro %}
+
+{% macro ode_physics(
+    solver_type='quick',
+    min_step_size=0.0001,
+    iters=50,
+    precon_iters=0,
+    sor=1.3,
+    use_dynamic_moi_rescaling=0,
+    friction_model='pyramid_model',
+    cfm=0.0,
+    erp=0.2,
+    contact_max_correcting_vel=100,
+    contact_surface_layer=0.001)
+%}
+    <ode>
+        <solver>
+            <type>{{ solver_type }}</type>
+            <min_step_size>{{ min_step_size }}</min_step_size>
+            <iters>{{ iters }}</iters>
+            <precon_iters>{{ precon_iters }}</precon_iters>
+            <sor>{{ sor }}</sor>
+            <use_dynamic_moi_rescaling>{{ use_dynamic_moi_rescaling }}</use_dynamic_moi_rescaling>
+            <friction_model>{{ friction_model }}</friction_model>
+        </solver>
+        <constraints>
+            <cfm>{{ cfm }}</cfm>
+            <erp>{{ erp }}</erp>
+            <contact_max_correcting_vel>{{ contact_max_correcting_vel }}</contact_max_correcting_vel>
+            <contact_surface_layer>{{ contact_surface_layer }}</contact_surface_layer>
+        </constraints>
+    </ode>
+{% endmacro %}
+
+{% macro bullet_physics(
+    type='sequential_impulse',
+    min_step_size=0.0001,
+    iters=50,
+    sor=1.3,
+    cfm=0,
+    erp=0.2,
+    contact_surface_layer=0.001,
+    split_impulse=1,
+    split_impulse_penetration_threshold=-0.01
+) %}
+    <bullet>
+        <solver>
+            <type>{{ type }}</type>
+            <min_step_size>{{ min_step_size }}</min_step_size>
+            <iters>{{ iters }}</iters>
+            <sor>{{ sor }}</sor>
+        </solver>
+        <constraints>
+            <cfm>{{ cfm }}</cfm>
+            <erp>{{ erp }}</erp>
+            <contact_surface_layer>{{ contact_surface_layer }}</contact_surface_layer>
+            <split_impulse>{{ split_impulse }}</split_impulse>
+            <split_impulse_penetration_threshold>{{ split_impulse_penetration_threshold }}</split_impulse_penetration_threshold>
+        </constraints>
+    </bullet>
+{% endmacro %}
+
+{% macro simbody_physics(
+    min_step_size=0.0001,
+    accuracy=0.001,
+    max_transient_velocity=0.01,
+    stiffness=100000000.0,
+    dissipation=100,
+    plastic_coef_restitution=0.5,
+    plastic_impact_velocity=0.5,
+    static_friction=0.9,
+    dynamic_friction=0.9,
+    viscous_friction=0,
+    override_impact_capture_velocity=0.001,
+    override_stiction_transition_velocity=0.001) 
+%}
+    <simbody>
+        <min_step_size>{{ min_step_size }}</min_step_size>
+        <accuracy>{{ accuracy }}</accuracy>
+        <max_transient_velocity>{{ max_transient_velocity }}</max_transient_velocity>
+        <contact>
+            <stiffness>{{ stiffness }}</stiffness>
+            <dissipation>{{ dissipation }}</dissipation>
+            <plastic_coef_restitution>{{ plastic_coef_restitution }}</plastic_coef_restitution>
+            <plastic_impact_velocity>{{ plastic_impact_velocity }}</plastic_impact_velocity>
+            <static_friction>{{ static_friction }}</static_friction>
+            <dynamic_friction>{{ dynamic_friction }}</dynamic_friction>
+            <viscous_friction>{{ viscous_friction }}</viscous_friction>
+            <override_impact_capture_velocity>{{ override_impact_capture_velocity }}</override_impact_capture_velocity>
+            <override_stiction_transition_velocity>{{ override_stiction_transition_velocity }}</override_stiction_transition_velocity>
+        </contact>
+    </simbody>
+{% endmacro %}
+
+{# Collision physics #}
+
+{% macro collision_friction_properties(
+    sdf_version=1.6, 
+    mu=1.0, 
+    mu2=1.0,
+    slip1=0.0,
+    slip2=0.0,
+    friction=1.0,
+    friction2=1.0,
+    fdir1=[0, 0, 0],
+    rolling_friction=1.0) 
+%}    
+    <friction>
+        <ode>
+            <mu>{{ mu }}</mu>
+            <mu2>{{ mu2 }}</mu2>
+            <slip1>{{ slip1 }}</slip1>
+            <slip2>{{ slip2 }}</slip2>
+        </ode>
+        <bullet>
+            <friction>{{ friction }}</friction>
+            <friction2>{{ friction2 }}</friction2>
+            <fdir1>{{ fdir1|join(" ") }}</fdir1>
+            <rolling_friction>{{ rolling_friction }}</rolling_friction>
+        </bullet>                
+    </friction>
+
+{% endmacro %}
+
+{% macro collision_contact_properties(
+    sdf_version=1.6,
+    soft_cfm=0.0,
+    soft_erp=0.2,
+    kp=1000000000000,
+    kd=1.0,
+    max_vel=0.01,
+    min_depth=0.0,
+    split_impulse=1,
+    split_impulse_penetration_threshold=-0.01,
+    poissons_ratio=none,
+    elastic_modulus=none) 
+%}
+    <contact>
+        {% if poissons_ratio is not none %}
+            <poissons_ratio>{{ poissons_ratio }}</poissons_ratio>
+        {% endif %}
+        {% if elastic_modulus is not none %}
+            <elastic_modulus>{{ elastic_modulus }}</elastic_modulus>
+        {% endif %}
+        <ode>
+            <soft_cfm>{{ soft_cfm }}</soft_cfm>
+            <soft_erp>{{ soft_erp }}</soft_erp>
+            <kp>{{ kp }}</kp>
+            <kd>{{ kd }}</kd>
+            <max_vel>{{ max_vel }}</max_vel>
+            <min_depth>{{ min_depth }}</min_depth>
+        </ode>
+        <bullet>
+            <soft_cfm>{{ soft_cfm }}</soft_cfm>
+            <soft_erp>{{ soft_erp }}</soft_erp>
+            <kp>{{ kp }}</kp>
+            <kd>{{ kd }}</kd>
+            <split_impulse>{{ split_impulse }}</split_impulse>
+            <split_impulse_penetration_threshold>{{ split_impulse_penetration_threshold }}</split_impulse_penetration_threshold>
+        </bullet>            
+    </contact>
+{% endmacro %}
+
+{% macro bounce_properties(
+    restitution=0, 
+    threshold=0) %}
+    <bounce>
+        <restitution_coefficient>{{ restitution }}</restitution_coefficient>
+        <threshold>{{ threshold }}</threshold>
+    </bounce>
+{% endmacro %}

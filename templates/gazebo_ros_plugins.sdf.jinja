@@ -1,0 +1,105 @@
+{#
+Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+For information on the respective copyright owner see the NOTICE file
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% macro pose_gt(
+    robot_namespace='',
+    name='pose_gt',
+    base_link='base_link', 
+    topic_name='groundtruth', 
+    frame_name='world',
+    gaussian_noise=0.0,
+    update_rate=100,
+    ros_version=1) 
+%}    
+    {% if ros_version == 1 %}
+        <plugin name="{{ name }}" filename="libgazebo_ros_p3d.so">
+            {% if robot_namespace is not none %}
+                <robotNamespace>{{ robot_namespace }}</robotNamespace>
+            {% endif %}
+            <alwaysOn>true</alwaysOn>
+            <updateRate>{{ update_rate }}</updateRate>
+            <bodyName>{{ base_link }}</bodyName>
+            <topicName>{{ topic_name }}</topicName>
+            <gaussianNoise>{{ gaussian_noise }}</gaussianNoise>
+            <frameName>{{ frame_name }}</frameName>
+        </plugin>
+    {% endif %}
+{% endmacro %}
+
+{% macro diff_drive(
+    name='diff_drive_controller',
+    base_link='base_link',
+    command_topic='/cmd_vel',
+    odometry_topic='/groundtruth',
+    odometry_frame='',
+    wheel_separation=0,
+    wheel_diameter=0,
+    left_joint='wheel_left_joint',
+    right_joint='wheel_right_joint',
+    wheel_torque=0,
+    publish_odom_tf=0,
+    legacy_mode=0,
+    ros_version=1) 
+%}
+    {% if ros_version == 1 %}
+        <plugin name="{{ name }}" filename="libgazebo_ros_diff_drive.so">
+            <commandTopic>{{ command_topic }}</commandTopic>
+            <odometryTopic>{{ odometry_topic }}</odometryTopic>
+            <odometryFrame>{{ odometry_frame }}</odometryFrame>
+            <robotBaseFrame>{{ base_link }}</robotBaseFrame>
+            <wheelSeparation>{{ wheel_separation }}</wheelSeparation>
+            <wheelDiameter>{{ wheel_diameter }}</wheelDiameter>
+            <leftJoint>{{ left_joint }}</leftJoint>
+            <rightJoint>{{ right_joint }}</rightJoint>
+            <wheelTorque>{{ wheel_torque }}</wheelTorque>
+            <legacyMode>{{ legacy_mode }}</legacyMode>
+            <publishOdomTF>{{ publish_odom_tf }}</publishOdomTF>
+        </plugin>
+    {% endif %}
+{% endmacro %}
+
+{% macro ros_control(
+    name='gazebo_ros_control',
+    robot_namespace='',
+    robot_param='/robot_description',
+    robot_sim_type='gazebo_ros_control/DefaultRobotHWSim',
+    control_period=none,
+    emergency_stop_topic=none,
+    legacy_mode=1,
+    update_rate=50,
+    ros_version=1) 
+%}
+
+    {% if ros_version == 1 %}
+        <plugin name="{{ name }}" filename="libgazebo_ros_control.so">
+            {% if robot_namespace is not none %}
+                <robotNamespace>{{ robot_namespace }}</robotNamespace>
+            {% endif %}
+            <robotParam>{{ robot_param }}</robotParam>
+            <updateRate>{{ update_rate }}</updateRate>
+            <robotSimType>{{ robot_sim_type }}</robotSimType>        
+            <legacyModeNS>{{ legacy_mode }}</legacyModeNS>
+            {% if control_period is not none %}
+                <controlPeriod>{{ control_period }}</controlPeriod>
+            {% endif %}
+            {% if emergency_stop_topic is not none %}
+                <eStopTopic>{{ emergency_stop_topic }}</eStopTopic>
+            {% endif %}
+        </plugin>
+    {% endif %}    
+
+{% endmacro %}

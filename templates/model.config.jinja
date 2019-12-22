@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+{% set model_name = model_name|default('model', true) %}
+{% set version = version|default(1.0, true) %}
+{% set sdf_version = sdf_version|default('1.6', true) %}
+{% set sdf_filename = sdf_filename|default('model.sdf', true) %}
+{% set author_name = author_name|default('author', true) %}
+{% set author_email = author_email|default('author@email.com', true) %}
+{% set description = description|default('', true) %}
+
+<model>
+    <name>{{ model_name }}</name>
+    <version>{{ version }}</version>
+    <sdf version="{{ sdf_version }}">{{ sdf_filename }}</sdf>
+        
+    <author>
+        <name>{{ author_name }}</name>
+        <email>{{ author_email}}</email>
+    </author>
+    
+    <description>{{ description }}</description>
+</model>
