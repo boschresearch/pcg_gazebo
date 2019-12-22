@@ -1,0 +1,93 @@
+<?xml version="1.0" ?>
+<gazebo>
+    <sensor name="custom_imu" type="imu">
+        <always_on>true</always_on>
+        <update_rate>50</update_rate>
+        <visualize>true</visualize>
+        <pose>1 2 3 4 5 6</pose>
+        <topic>sensor_topic</topic>
+        <imu>
+            <topic>imu_topic</topic>
+            <angular_velocity>
+                <x>
+                    <noise type="none">
+                        <mean>0.2</mean>
+                        <stddev>0.02</stddev>
+                        <bias_mean>4</bias_mean>
+                        <bias_stddev>4</bias_stddev>
+                        <precision>0.5</precision>
+                    </noise>
+                </x>
+                <y>
+                    <noise type="gaussian">
+                        <mean>0.2</mean>
+                        <stddev>0.02</stddev>
+                        <bias_mean>4</bias_mean>
+                        <bias_stddev>4</bias_stddev>
+                        <precision>0.5</precision>
+                    </noise>
+                </y>                
+                <z>
+                    <noise type="gaussian_quantized">
+                        <mean>0.2</mean>
+                        <stddev>0.02</stddev>
+                        <bias_mean>4</bias_mean>
+                        <bias_stddev>4</bias_stddev>
+                        <precision>0.5</precision>
+                    </noise>
+                </z>
+            </angular_velocity>
+            <linear_acceleration>
+                <x>
+                    <noise type="none">
+                        <mean>0.2</mean>
+                        <stddev>0.02</stddev>
+                        <bias_mean>4</bias_mean>
+                        <bias_stddev>4</bias_stddev>
+                        <precision>0.5</precision>
+                    </noise>
+                </x>
+                <y>
+                    <noise type="gaussian">
+                        <mean>0.2</mean>
+                        <stddev>0.02</stddev>
+                        <bias_mean>4</bias_mean>
+                        <bias_stddev>4</bias_stddev>
+                        <precision>0.5</precision>
+                    </noise>
+                </y>                
+                <z>
+                    <noise type="gaussian_quantized">
+                        <mean>0.2</mean>
+                        <stddev>0.02</stddev>
+                        <bias_mean>4</bias_mean>
+                        <bias_stddev>4</bias_stddev>
+                        <precision>0.5</precision>
+                    </noise>
+                </z>
+            </linear_acceleration>            
+            <noise>
+                <type>gaussian</type>
+                <rate>
+                    <mean>0.2</mean>
+                    <stddev>0.02</stddev>
+                    <bias_mean>3</bias_mean>
+                    <bias_stddev>3</bias_stddev>
+                </rate>
+                <accel>
+                    <mean>0.2</mean>
+                    <stddev>0.02</stddev>
+                    <bias_mean>3</bias_mean>
+                    <bias_stddev>3</bias_stddev>
+                </accel>
+            </noise>
+        </imu>
+
+        <plugin name="some_imu_plugin" filename="imu_ros_plugin.so">
+            <param>10</param>
+            <block>
+                <subparam>1.245</subparam>
+            </block>
+        </plugin>
+    </sensor>
+</gazebo>

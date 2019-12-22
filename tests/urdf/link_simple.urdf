@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<link name="simple_link">
+    <visual>
+      <origin rpy="1 2 3" xyz="4 5 6"/>
+      <geometry>
+        <mesh filename="mesh"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1 2 3" xyz="4 5 6"/>
+      <geometry>
+        <cylinder length="0.5" radius="0.5"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.1"/>
+      <origin rpy="0 0 0" xyz="1 2 3"/>
+      <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+    </inertial>
+</link>
