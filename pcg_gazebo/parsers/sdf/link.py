@@ -15,6 +15,7 @@
 
 import collections
 from ..types import XMLBase
+from ...utils import is_string
 from .gravity import Gravity
 from .kinematic import Kinematic
 from .inertial import Inertial
@@ -57,8 +58,8 @@ class Link(XMLBase):
         return self.attributes['name']
 
     @name.setter
-    def name(self, value):
-        assert isinstance(value, str) or isinstance(value, unicode), \
+    def name(self, value):        
+        assert is_string(value), \
             'Name should be a string, received={}, type={}'.format(value, type(value))
         assert len(value) > 0, \
             'Name string should not be empty'
