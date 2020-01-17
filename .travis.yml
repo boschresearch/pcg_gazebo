@@ -3,8 +3,7 @@ sudo: required
 dist: bionic
 
 matrix:
-  include:
-    - env: PYTHON_VERSION=2.7
+  include:    
     - env: PYTHON_VERSION=3.4
     - env: PYTHON_VERSION=3.5
     - env: PYTHON_VERSION=3.6
