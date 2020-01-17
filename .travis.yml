@@ -1,0 +1,23 @@
+language: generic
+sudo: required
+dist: bionic
+
+matrix:
+  include:
+    - env: PYTHON_VERSION=2.7
+    - env: PYTHON_VERSION=3.4
+    - env: PYTHON_VERSION=3.5
+    - env: PYTHON_VERSION=3.6
+
+before_install:
+- sudo apt-get -qq update
+- sudo apt-get install python-pip python3-pip libspatialindex-dev pybind11-dev -y -qq
+
+install:
+- pip install -e .
+
+script: 
+- pip install pytest
+- python -c "import pcg_gazebo"
+- pip install -e .[test]
+- pytest -x tests
