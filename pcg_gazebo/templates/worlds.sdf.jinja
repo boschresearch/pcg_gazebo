@@ -1,0 +1,62 @@
+{#
+Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+For information on the respective copyright owner see the NOTICE file
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+#}
+
+{% import 'physics'|find_sdf_template as physics_macros %}
+
+{% macro world(
+    name='default',
+    gravity=[0, 0, -9.8],
+    wind_linear_velocity=none,
+    audio_device=none,
+    magnetic_field=none,    
+    physics=none,
+    items=none
+    ) 
+%}
+    <world name="{{ name }}">
+
+        {% if wind_linear_velocity is not none %}
+            <wind>
+                <linear_velocity>{{ wind_linear_velocity|join(' ') }}</linear_velocity>
+            </wind>
+        {% endif %} 
+
+        {% if audio_device is not none %}
+            <audio>
+                <device>{{ audio_device }}</device>
+            </audio>
+        {% endif %}
+
+        <gravity>{{ gravity|join(' ') }}</gravity>
+
+        {% if magnetic_field is not none %}
+            <magnetic_field>{{ magnetic_field|join(' ') }}</magnetic_field>            
+        {% endif %} 
+
+        {% if physics is not none %}
+            {{ physics }}            
+        {% else %}            
+            {{ physics_macros.physics() }}
+        {% endif %}
+
+        {% if items is not none %}
+            {% for item in items %}
+                {{ item }}
+            {% endfor %}
+        {% endif %}
+    </world>
+{% endmacro %}

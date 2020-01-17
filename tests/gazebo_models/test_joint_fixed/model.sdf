@@ -1,0 +1,45 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+    <model name='test_joint_fixed'>
+        <allow_auto_disable>1</allow_auto_disable>
+        <static>1</static>
+        <self_collide>0</self_collide>
+        <pose frame=''>0 0 0 0 0 0</pose>
+
+        <link name="link_1">
+            <pose>0 0 0 0 0 0</pose>
+            <inertial>
+                <mass>10</mass>
+                <inertia>
+                    <ixx>0.1</ixx>
+                    <iyy>0.1</iyy>
+                    <izz>0.1</izz>
+                    <ixy>0.0</ixy>
+                    <ixz>0.0</ixz>
+                    <iyz>0.0</iyz>
+                </inertia>
+            </inertial>
+        </link>
+
+        <link name="link_2">
+            <pose>10 0 0 0.2 0.4 0</pose>
+            <inertial>
+                <mass>20</mass>
+                <inertia>
+                    <ixx>0.2</ixx>
+                    <iyy>0.2</iyy>
+                    <izz>0.2</izz>
+                    <ixy>0.0</ixy>
+                    <ixz>0.0</ixz>
+                    <iyz>0.0</iyz>
+                </inertia>
+            </inertial>
+        </link>
+
+        <joint name="fixed_joint" type="fixed">
+            <parent>link_1</parent>
+            <child>link_2</child>
+        </joint>
+
+    </model>
+</sdf>

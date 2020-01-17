@@ -1,0 +1,5 @@
+<?xml version="1.0" ?>
+<gazebo reference="joint">
+    <stopCfm>0.1</stopCfm>
+    <stopErp>0.3</stopErp>
+</gazebo>

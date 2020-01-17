@@ -1,0 +1,523 @@
+{	
+	"xml_model_config":  {
+		"prefix": "pcg.xml.model.config",
+		"scope": "xml",
+		"description": "XML Model Configuration File Template",
+		"body": [
+			"<?xml version='1.0'?>",
+			"<model>",
+			"\t<name>model_name</name>",
+			"\t<version>1.0</version>",
+			"\t<sdf version=\"1.6\">model.sdf</sdf>",
+			"",
+			"\t<author>",
+			"\t\t<name>awesome author</name>",
+			"\t\t<email>awesome.author@mail.com</email>",
+			"\t</author>",
+			"",
+			"\t<description>awesome model</description>",
+			"</model>"
+		]
+	},
+
+	"jinja_set_var": {
+		"prefix": "pcg.jinja.set",
+		"scope": "jinja",
+		"description": "Jinja Set Variable",
+		"body": [
+			"{% set var = 0 %}"
+		]
+	},
+
+	"jinja_set_var_default": {
+		"prefix": "pcg.jinja.set_default",
+		"scope": "jinja",
+		"description": "Jinja Set Variable with Default Value",
+		"body": [
+			"{% set var = var|default(0, true) %}"
+		]
+	},
+	
+	"py_class_md_docstring": {
+		"prefix": "pcg.py.doc.class",
+		"scope": "python",
+		"description": "Python Class Docstring (Markdown)",
+		"body": [
+			"\"\"\"Class description",
+			"",
+			"> *Attributes*",
+			"",
+			"* `param` (*type:* `data_type`, *value:* `data`): Parameter description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"\"\"\""
+		]
+	},
+
+	"py_xml_class_md_docstring": {
+		"prefix": "pcg.py.doc.xml_class",
+		"scope": "python",
+		"description": "Python XML Parser Class Docstring (Markdown)",
+		"body": [
+			"\"\"\"Class description",
+			"",
+			"> *Attributes*",
+			"",
+			"* `param` (*type:* `data_type`, *value:* `data`): Parameter description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"> *Child elements*",
+			"",
+			"* `child`",
+			"",
+			"> *SDF versions",
+			"",
+			"* `1.4`",
+			"* `1.5`",
+			"* `1.6`",
+			"",
+			"> *Source*",
+			"",
+			"* [`elem` (SDF 1.4)](link)",
+			"* [`elem` (SDF 1.5)](link)",
+			"* [`elem` (SDF 1.6)](link)",
+			"\"\"\""
+		]
+	},
+
+	"py_func_md_docstring": {
+		"prefix": "pcg.py.doc.func",
+		"scope": "python",
+		"description": "Python Function Docstring (Markdown)",
+		"body": [
+			"\"\"\"Function description",
+			"",
+			"> *Input arguments*",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description",
+			"",
+			"> *Returns*",
+			"",
+			"Description of return values",
+			"\"\"\""
+		]
+	},
+
+	"py_module_md_docstring": {
+		"prefix": "pcg.py.doc.module",
+		"scope": "python",
+		"description": "Python Module Docstring (Markdown)",
+		"body": [
+			"\"\"\"Module description",
+			"\"\"\""
+		]
+	},
+
+	"py_param_md_docstring_snippet": {
+		"prefix": "pcg.py.doc.param",
+		"scope": "python",
+		"description": "Python Parameter Docstring Snippet (Markdown)",
+		"body": [
+			"* `param` (*type:* `data_type`, *default:* `data`): Parameter description"
+		]
+	},
+
+	"py_property_md_docstring": {
+		"prefix": "pcg.py.doc.property",
+		"scope": "python",
+		"description": "Python Property Docstring (Markdown)",
+		"body": [
+			"\"\"\"`data_type`: Property description\"\"\""
+		]
+	},
+
+	"py_script_md_docstring": {
+		"prefix": "pcg.py.doc.script",
+		"scope": "python",
+		"description": "Python Script Docstring (Markdown)",
+		"body": [
+			"\"\"\"**Description**",
+			"",
+			"Script description, with some formulas",
+			"",
+			"$$",
+			"	\\dot{v_c}(t) + \\mu_c v_c(t) = w_c",
+			"$$",
+			"",
+			"**Input ROS parameters**",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `value`): Parameter description",
+			"",
+			"**Input parameters**",
+			"",
+			"* `param` (*type:* `data_type`, *default:* `value`): Parameter description",
+			"",
+			"**Usage**",
+			"",
+			"Examples of usage",
+			"",
+			"```bash",
+			"rosrun pkg_name node_name --param value",
+			"```",
+			"",
+			"**Launch file snippet**",
+			"",
+			"```xml",
+			"<node name=\"name\" pkg=\"pkg_name\" type=\"name\" output=\"screen\">",
+			"	<rosparam subst_value=\"true\">",
+			"		param: value",
+			"	</rosparam>",
+			"</node>",
+			"```",
+			"**ROS services**",
+			"",
+			"> **`service_name`**",
+			"",
+			"*Service description file*",
+			"",
+			"[`service.file`](link_to_service_file)",
+			"",
+			"*Service call*",
+			"",
+			"```bash",
+			"rosservice call service_name",
+			"```",
+			"",
+			"Description of input parameters and return values",
+			"",
+			"\"\"\""
+		]
+	},
+
+	"py_license_header": {
+		"scope": "python",
+		"prefix": "pcg.py.license",
+		"description": "PCG License Header (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License."
+		]
+	},
+
+	"py_ros_test": {
+		"scope": "python",
+		"prefix": "pcg.py.test",
+		"description": "PCG ROS Test Script (Python)",
+		"body": [
+			"#!/usr/bin/env python",
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"import roslib",
+			"import unittest",
+			"# Other imported modules... ",
+			"",
+			"PKG = 'pcg_libraries'",
+			"roslib.load_manifest(PKG)",
+			"",
+			"",
+			"class TestModule(unittest.TestCase):",
+			"\tpass",
+			"",
+			"if __name__ == '__main__':",
+    		"\timport rosunit",
+    		"\trosunit.unitrun(PKG, 'test_module', TestModule)"
+		]
+	},
+
+	"py_sdf_scalar_class": {
+		"scope": "python",
+		"prefix": "pcg.py.sdf.scalar",
+		"description": "PCG SDF Scalar Element Class Template (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"from ..types import XMLScalar",
+			"",
+			"",
+			"class SDFElement(XMLScalar):",
+			"\t_NAME = 'sdf_element'",
+			"\t_TYPE = 'sdf'",
+			"",
+			"\tdef __init__(self, default=0):",
+			"\t\tXMLScalar.__init__(self, default)",
+			"",
+			"\tdef _set_value(self, value):",
+			"\t\tXMLScalar._set_value(self, value)"
+		]
+	},
+
+	"py_sdf_boolean_class": {
+		"scope": "python",
+		"prefix": "pcg.py.sdf.boolean",
+		"description": "PCG SDF Boolean Element Class Template (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"from ..types import XMLBoolean",
+			"",
+			"",
+			"class SDFElement(XMLBoolean):",
+			"\t_NAME = 'sdf_element'",
+			"\t_TYPE = 'sdf'",
+			"",
+			"\tdef __init__(self, default=False):",
+			"\t\tXMLBoolean.__init__(self, default)",
+			""			
+		]
+	},
+
+	"py_sdf_integer_class": {
+		"scope": "python",
+		"prefix": "pcg.py.sdf.integer",
+		"description": "PCG SDF Integer Element Class Template (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"from ..types import XMLInteger",
+			"",
+			"",
+			"class SDFElement(XMLInteger):",
+			"\t_NAME = 'sdf_element'",
+			"\t_TYPE = 'sdf'",
+			"",
+			"\tdef __init__(self, default=0):",
+			"\t\tXMLInteger.__init__(self, default)",
+			""			
+		]
+	},
+
+	"py_sdf_string_class": {
+		"scope": "python",
+		"prefix": "pcg.py.sdf.string",
+		"description": "PCG SDF String Element Class Template (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"from ..types import XMLString",
+			"",
+			"",
+			"class SDFElement(XMLString):",
+			"\t_NAME = 'sdf_element'",
+			"\t_TYPE = 'sdf'",
+			"",
+			"\tdef __init__(self, default='none'):",
+			"\t\tXMLString.__init__(self, default)",
+			""			
+		]
+	},
+
+	"py_sdf_vector_class": {
+		"scope": "python",
+		"prefix": "pcg.py.sdf.vector",
+		"description": "PCG SDF Vector Element Class Template (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"from ..types import XMLVector",
+			"",
+			"",
+			"class SDFElement(XMLVector):",
+			"\t_NAME = 'sdf_element'",
+			"\t_TYPE = 'sdf'",
+			"",
+			"\tdef __init__(self, vec_length=3):",
+			"\t\tXMLVector.__init__(self, vec_length)",
+			""			
+		]
+	},
+
+	"py_sdf_base_class": {
+		"scope": "python",
+		"prefix": "pcg.py.sdf.base",
+		"description": "PCG SDF Base Element Class Template (Python)",
+		"body": [
+			"# Copyright (c) $CURRENT_YEAR - The Procedural Generation for Gazebo authors",
+			"# For information on the respective copyright owner see the NOTICE file",
+			"#",
+			"# Licensed under the Apache License, Version 2.0 (the \"License\");",
+			"# you may not use this file except in compliance with the License.",
+			"# You may obtain a copy of the License at",
+			"#",
+			"#     http://www.apache.org/licenses/LICENSE-2.0",
+			"#",
+			"# Unless required by applicable law or agreed to in writing, software",
+			"# distributed under the License is distributed on an \"AS IS\" BASIS,",
+			"# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+			"# See the License for the specific language governing permissions and",
+			"# limitations under the License.",
+			"from ..types import XMLBase",
+			"# include here child creator classes",
+			"",
+			"",
+			"class SDFElement(XMLBase):",
+			"\t_NAME = 'sdf_element'",
+			"\t_TYPE = 'sdf'",
+			"",
+			"_ATTRIBUTES = dict(",
+			"\tatt='value'",
+			")",
+			"",
+			"_ATTRIBUTES_VERSIONS = dict(",
+			"\t_TYPE=['1.4', '1.5', '1.6']",
+			")",
+			"",
+			"_CHILDREN_CREATORS = dict(",
+			"\tchild=dict(creator=ChildClass, default=[], n_elems=1 or '+', optional=False, mode='')",
+			")",
+			"",
+			"_MODES = []",
+			"",
+			"def __init__(self, mode=''):",
+			"\tXMLBase.__init__(self)",
+			"\tself.reset(mode=mode)",
+			"",
+			"@property",
+			"def att(self):",			
+			"\treturn self.attributes['att']",
+			"",
+			"@att.setter",
+			"def att(self, value):",
+			"\t# Assert the input value is correct",
+			"\tself.attributes['att'] = value",
+			"",
+			"@property",
+			"def child(self):",
+			"\treturn self._get_child_element('child')",
+			"",
+			"@child.setter",
+			"def child(self, value):",
+			"\tself._add_child_element('child', value)",
+		]
+	},
+
+	"py_parser_add_attribute": {
+		"scope": "python",
+		"prefix": "pcg.py.parser.attribute.property",
+		"description": "PCG SDF/URDF/SDF Config Get/Set Methods for Attribute (Python)",
+		"body": [
+			"@property",
+			"def att(self):",
+			"\treturn self.attribute['att']",
+			"",
+			"@att.setter",
+			"def att(self, value):",
+			"\t# Assert value is correct here",
+			"\tself.attribute['att'] = value",
+		]
+	},
+
+	"py_parser_add_child": {
+		"scope": "python",
+		"prefix": "pcg.py.parser.child.property",
+		"description": "PCG SDF/URDF/SDF Config Get/Set Methods for Child Elements (Python)",
+		"body": [
+			"@property",
+			"def child(self):",
+			"\treturn self._get_child_element('child')",
+			"",
+			"@child.setter",
+			"def child(self, value):",
+			"\t# Assert value is correct here",
+			"\tself._add_child_element('child', value)",
+		]
+	},
+
+	"py_parser_add_child_dict_elem": {
+		"scope": "python",
+		"prefix": "pcg.py.parser.child.dict",
+		"description": "PCG SDF/URDF/SDF Config Child Dict Element (Python)",
+		"body": [
+			"child=dict(creator=Child, default=[], n_elems=1 or '+', optional=False, mode='')"
+		]
+	}
+}

@@ -1,0 +1,167 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+    
+    <plugin name="test_pcg_joint_state_manager"
+            filename="libpcg_joint_state_manager_plugin.so">
+        <namespace>pcg_test</namespace>
+    </plugin>
+    
+    <model name="door">
+        <link name="frame_left">
+            <pose>0 0.46 1.03 0 0 0</pose>
+            <visual name="frame_left_visual">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.08 0.08 2.06</size>
+                    </box>
+                </geometry>
+            </visual>
+
+            <collision name="frame_left_collision">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.08 0.08 2.06</size>
+                    </box>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="world_frame_left_joint" type="fixed">
+              <child>frame_left</child>
+              <parent>world</parent>
+              <axis>
+                <limit>
+                  <lower>0</lower>
+                  <upper>0</upper>
+                </limit>
+                <xyz>0 1 0</xyz>
+              </axis>
+        </joint>
+
+        <link name="frame_right">
+            <pose>0 -0.46 1.03 0 0 0</pose>
+            <visual name="frame_right_visual">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.08 0.08 2.06</size>
+                    </box>
+                </geometry>
+            </visual>
+
+            <collision name="frame_right_collision">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.08 0.08 2.06</size>
+                    </box>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="world_frame_right_join" type="fixed">
+              <child>frame_right</child>
+              <parent>world</parent>
+              <axis>
+                <limit>
+                  <lower>0</lower>
+                  <upper>0</upper>
+                </limit>
+                <xyz>0 1 0</xyz>
+              </axis>
+        </joint>
+
+        <link name="frame_top">
+            <pose>0 0 2.1 0 0 0</pose>
+            <visual name="frame_top_visual">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.08 1.0 0.08</size>
+                    </box>
+                </geometry>
+            </visual>
+
+            <collision name="frame_top_collision">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.08 0.84 0.08</size>
+                    </box>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="world_frame_top_joint" type="fixed">
+              <child>frame_top</child>
+              <parent>world</parent>
+              <axis>
+                <limit>
+                  <lower>0</lower>
+                  <upper>0</upper>
+                </limit>
+                <xyz>0 1 0</xyz>
+              </axis>
+        </joint>
+
+        <link name="door">
+            <pose>0 0 1.03 0 0 0</pose>
+
+            <inertial>
+                <pose>0 0 0 0 0 0</pose>
+                <mass>20</mass>
+
+                <inertia>
+                    <ixx>8.073</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>6.939</iyy>
+                    <iyz>0</iyz>
+                    <izz>1.1398</izz>
+                </inertia>
+            </inertial>
+
+            <visual name="door_visual">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.04 0.826 2.04</size>
+                    </box>
+                </geometry>
+                <material>
+                    <script>Gazebo/LightWood</script>
+                </material>
+            </visual>
+
+            <collision name="door_collision">
+                <pose>0 0 0 0 0 0</pose>
+                <geometry>
+                    <box>
+                        <size>0.04 0.826 2.04</size>
+                    </box>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="door_joint" type="revolute">
+            <child>door</child>
+            <parent>frame_right</parent>
+            <pose>0 0.413 0 0 0 0</pose>
+            <axis>
+                <limit>
+                    <lower>-1.57</lower>
+                    <upper>1.57</upper>
+                </limit>
+                <xyz>0 0 1</xyz>
+                <dynamics>
+                    <damping>0.001</damping>
+                    <spring_stiffness>0</spring_stiffness>
+                </dynamics>
+            </axis>
+        </joint>
+    </model>    
+  </world>
+</sdf>

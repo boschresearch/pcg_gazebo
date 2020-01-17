@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<robot name="robot">
+    <link name="simple_link">
+        <visual>
+            <origin rpy="1 2 3" xyz="4 5 6"/>
+            <geometry>
+                <mesh filename="mesh"/>
+            </geometry>
+        </visual>
+        <collision>
+        <origin rpy="1 2 3" xyz="4 5 6"/>
+            <geometry>
+                <cylinder length="0.5" radius="0.5"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="0.1"/>
+            <origin rpy="0 0 0" xyz="1 2 3"/>
+            <inertia ixx="0.1" ixy="0.0" ixz="0.0" iyy="0.1" iyz="0.0" izz="0.1"/>
+        </inertial>
+    </link>
+
+    <gazebo reference="simple_link">
+        <mu1>1.0</mu1>
+        <mu2>1.0</mu2>
+        <kp>1000000.0</kp>
+        <kd>100.0</kd>
+        <minDepth>0.001</minDepth>
+        <maxVel>1.0</maxVel>
+
+        <plugin filename="libplugin.so" name="plugin">
+            <param>-100.0</param>
+            <topic_name>topic</topic_name>
+        </plugin>
+
+        <sensor name="sensor" type="ray">
+            <always_on>true</always_on>
+            <update_rate>50</update_rate>
+            <visualize>true</visualize>
+            <ray>
+                <scan>
+                <horizontal>
+                    <samples>50</samples>
+                    <resolution>1.0</resolution>
+                    <min_angle>-0.0436</min_angle>
+                    <max_angle>0.0436</max_angle>
+                </horizontal>
+                </scan>
+                <range>
+                <min>0.01</min>
+                <max>0.15</max>
+                <resolution>1.0</resolution>
+                </range>
+            </ray>
+        </sensor>
+    </gazebo>
+
+    <gazebo>
+        <plugin filename="librobotplugin.so" name="robot_plugin">
+            <test>some_string</test>
+            <topic_name>robot_topic</topic_name>
+        </plugin>
+    </gazebo>
+</robot>

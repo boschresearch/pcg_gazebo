@@ -1,0 +1,35 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='test_box'>
+    <allow_auto_disable>1</allow_auto_disable>
+    <static>1</static>
+    <self_collide>0</self_collide>
+    <pose frame=''>0 0 0 0 0 0</pose>
+
+    <link name='body'>
+        <pose frame=''>0 0 0 0 0 0</pose>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+                
+        <visual name='body_visual'>
+            <geometry>
+                <box>
+                    <size>0.5 0.5 0.5</size>
+                </box>
+            </geometry>
+            <pose frame=''>0 0 0 0 0 0</pose>
+            <cast_shadows>1</cast_shadows>
+            <transparency>0</transparency>
+        </visual>
+
+        <collision name='body_collision'>
+            <pose frame=''>0 0 0 0 0 0</pose>
+            <geometry>
+                <box>
+                    <size>0.5 0.5 0.5</size>
+                </box>
+            </geometry>            
+        </collision>
+    </link>
+  </model>
+</sdf>
