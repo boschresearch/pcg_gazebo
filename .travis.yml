@@ -9,13 +9,13 @@ matrix:
 
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install python-pip python3-pip libspatialindex-dev pybind11-dev -y -qq
+- sudo apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
 
 install:
-- pip install -e .
+- pip3 install -e .
 
 script: 
-- pip install pytest
-- python -c "import pcg_gazebo"
-- pip install -e .[test]
+- pip3 install pytest
+- python3 -c "import pcg_gazebo"
+- pip3 install -e .[test]
 - pytest -x tests
