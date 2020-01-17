@@ -86,7 +86,8 @@ class Limit(XMLBase):
     @stiffness.setter
     def stiffness(self, value):
         if 'gazebo' not in self.children:
-            self.children['gazebo'] = Gazebo(*self._CHILDREN_CREATORS['gazebo']['default'])
+            self.children['gazebo'] = Gazebo(
+                *self._CHILDREN_CREATORS['gazebo']['default'])
         self.children['gazebo'].children['stiffness'].value = value
 
     @property
@@ -99,12 +100,13 @@ class Limit(XMLBase):
     @dissipation.setter
     def dissipation(self, value):
         if 'gazebo' not in self.children:
-            self.children['gazebo'] = Gazebo(*self._CHILDREN_CREATORS['gazebo']['default'])
+            self.children['gazebo'] = Gazebo(
+                *self._CHILDREN_CREATORS['gazebo']['default'])
         self.children['gazebo'].children['dissipation'].value = value
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('limit')
         obj.upper = self.upper
         obj.lower = self.lower

@@ -38,7 +38,8 @@ class Server(object):
         assert len(label) > 0, 'Simulation label should not be empty'
 
         if label in self._simulations:
-            self._logger.error('Simulation with label {} already exists'.format(label))
+            self._logger.error(
+                'Simulation with label {} already exists'.format(label))
             return False
 
         self._simulations[label] = ProcessManager(

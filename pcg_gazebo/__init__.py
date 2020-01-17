@@ -27,9 +27,9 @@ from .path import Path
 
 __all__ = [
     __version__,
-    'log', 
-    'generators', 
-    'simulation', 
+    'log',
+    'generators',
+    'simulation',
     'parsers',
     'task_manager',
     'transformations',

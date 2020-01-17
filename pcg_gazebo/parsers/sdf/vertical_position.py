@@ -20,7 +20,7 @@ from .noise import Noise
 class VerticalPosition(XMLBase):
     _NAME = 'vertical_position'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         noise=dict(creator=Noise)
     )

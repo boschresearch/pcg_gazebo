@@ -18,3 +18,12 @@ from .contact import Contact
 from .imu import IMU
 from .ray import Ray
 from .sensor import Sensor
+
+
+__all__ = [
+    'Camera',
+    'Contact',
+    'IMU',
+    'Ray',
+    'Sensor'
+]

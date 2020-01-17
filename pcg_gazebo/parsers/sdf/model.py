@@ -29,7 +29,7 @@ from .urdf import URDF
 class Model(XMLBase):
     _NAME = 'model'
     _TYPE = 'sdf'
-    
+
     _ATTRIBUTES = dict(
         name='model'
     )
@@ -125,7 +125,9 @@ class Model(XMLBase):
         if self.links is not None:
             for elem in self.links:
                 if elem.name == name:
-                    print('Link element with name {} already exists'.format(name))
+                    print(
+                        'Link element with name {}'
+                        ' already exists'.format(name))
                     return
         if link is not None:
             self._add_child_element('link', link)
@@ -156,7 +158,9 @@ class Model(XMLBase):
         if self.joints is not None:
             for elem in self.joints:
                 if elem.name == name:
-                    print('Joint element with name {} already exists'.format(name))
+                    print(
+                        'Joint element with name {}'
+                        ' already exists'.format(name))
                     return
         if joint is not None:
             self._add_child_element('joint', joint)
@@ -187,14 +191,16 @@ class Model(XMLBase):
         if self.models is not None:
             for elem in self.models:
                 if elem.name == name:
-                    print('Model element with name {} already exists'.format(name))
+                    print(
+                        'Model element with name {}'
+                        ' already exists'.format(name))
                     return
         if model is not None:
             self._add_child_element('model', model)
         else:
             model = Model()
             self._add_child_element('model', model)
-    
+
         self.children['model'][-1].name = name
 
     def get_model_by_name(self, name):

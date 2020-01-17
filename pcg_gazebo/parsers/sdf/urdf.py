@@ -22,11 +22,24 @@ class URDF(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        transmission=dict(creator=Transmission, n_elems='+', optional=True, mode='model'),
-        link=dict(creator=Link, n_elems='+', optional=True, model='model'),
-        mimic=dict(creator=Mimic, optional=True, mode='joint'),
-        safety_controller=dict(creator=SafetyController, optional=True, mode='joint')
-    )
+        transmission=dict(
+            creator=Transmission,
+            n_elems='+',
+            optional=True,
+            mode='model'),
+        link=dict(
+            creator=Link,
+            n_elems='+',
+            optional=True,
+            model='model'),
+        mimic=dict(
+            creator=Mimic,
+            optional=True,
+            mode='joint'),
+        safety_controller=dict(
+            creator=SafetyController,
+            optional=True,
+            mode='joint'))
 
     _MODES = ['model', 'joint']
 
@@ -68,7 +81,9 @@ class URDF(XMLBase):
         if self.transmissions is not None:
             for elem in self.transmissions:
                 if elem.name == name:
-                    print('Transmission element with name {} already exists'.format(name))
+                    print(
+                        'Transmission element with name {}'
+                        ' already exists'.format(name))
                     return
         if transmission is not None:
             self._add_child_element('transmission', transmission)
@@ -90,7 +105,9 @@ class URDF(XMLBase):
         if self.links is not None:
             for elem in self.links:
                 if elem.name == name:
-                    print('Link element with name {} already exists'.format(name))
+                    print(
+                        'Link element with name {}'
+                        ' already exists'.format(name))
                     return
         if link is not None:
             self._add_child_element('link', link)
@@ -111,7 +128,7 @@ class URDF(XMLBase):
     def _add_child_element(self, name, value=None):
         assert name in self._CHILDREN_CREATORS, \
             'Input URDF tag {} cannot be added'.format(name)
-        
+
         elem = self._CHILDREN_CREATORS[name]['creator']()
         assert elem is not None, 'Invalid URDF element'
 
@@ -140,16 +157,18 @@ class URDF(XMLBase):
                             for att in value[tag]:
                                 setattr(elem, att, value[tag][att])
                         else:
-                            if elem._NAME != 'empty':                                                                                                                                                
-                                if isinstance(value[tag], list):     
-                                    if sum([isinstance(x.__class__, dict) for x in value[tag]]) == 0:
-                                        elem._add_child_element(tag, value[tag])
+                            if elem._NAME != 'empty':
+                                if isinstance(value[tag], list):
+                                    if sum([isinstance(x.__class__, dict)
+                                            for x in value[tag]]) == 0:
+                                        elem._add_child_element(
+                                            tag, value[tag])
                                     else:
-                                        for item in value[tag]:                                                
+                                        for item in value[tag]:
                                             elem._add_child_element(tag, item)
                                 else:
-                                    elem._add_child_element(tag, value[tag])    
-            
+                                    elem._add_child_element(tag, value[tag])
+
             if 'n_elems' in self._CHILDREN_CREATORS[name]:
                 if self._CHILDREN_CREATORS[name]['n_elems'] == '+':
                     if name not in self.children:
@@ -159,5 +178,5 @@ class URDF(XMLBase):
                     self.children[name] = elem
             else:
                 self.children[name] = elem
-                    
+
             return True

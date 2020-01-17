@@ -84,7 +84,9 @@ class Actor(XMLBase):
         if self.links is not None:
             for elem in self.links:
                 if elem.name == name:
-                    print('Link element with name {} already exists'.format(name))
+                    print(
+                        'Link element with name {}'
+                        ' already exists'.format(name))
                     return
         if link is not None:
             self._add_child_element('link', link)
@@ -106,7 +108,9 @@ class Actor(XMLBase):
         if self.joints is not None:
             for elem in self.joints:
                 if elem.name == name:
-                    print('Joint element with name {} already exists'.format(name))
+                    print(
+                        'Joint element with name {}'
+                        ' already exists'.format(name))
                     return
         if joint is not None:
             self._add_child_element('joint', joint)
@@ -144,7 +148,9 @@ class Actor(XMLBase):
         if self.animations is not None:
             for elem in self.joints:
                 if elem.name == name:
-                    print('Animation element with name {} already exists'.format(name))
+                    print(
+                        'Animation element with name {}'
+                        ' already exists'.format(name))
                     return
         if animation is not None:
             self._add_child_element('animation', animation)

@@ -19,7 +19,7 @@ from ..types import XMLVector
 class Pose(XMLVector):
     _NAME = 'pose'
     _TYPE = 'sdf'
-    
+
     _ATTRIBUTES = dict(
         frame=''
     )
@@ -34,7 +34,7 @@ class Pose(XMLVector):
 
     @frame.setter
     def frame(self, value):
-        assert isinstance(value, str)        
+        assert isinstance(value, str)
         self.attributes['frame'] = value
 
     @property

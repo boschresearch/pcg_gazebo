@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from .link import Link
-from ..parsers.sdf import create_sdf_element
 from .properties import Collision, Visual
 
 
@@ -73,8 +72,9 @@ class Polyline(Link):
         self.update_visual()
 
     def to_sdf(self, type='model', name='polyline', sdf_version='1.6'):
-        assert type in ['polyline', 'geometry', 'collision', 'visual', 'link',
-                        'model', 'sdf'], 'Invalid type of the output SDF structure'
+        assert type in ['polyline', 'geometry', 'collision', 'visual',
+                        'link', 'model', 'sdf'], \
+            'Invalid type of the output SDF structure'
         if type in ['collision', 'visual', 'link', 'model']:
             assert isinstance(name, str), 'Name must be a string'
             assert len(name) > 0, 'Name string cannot be empty'

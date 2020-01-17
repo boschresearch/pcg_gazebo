@@ -19,45 +19,80 @@ from ...parsers.sdf import create_sdf_element, Format
 
 
 class Camera(Sensor):
-    def __init__(self, name='camera', type='camera', camera_name='camera',
-        always_on=True, update_rate=50, visualize=True, topic='camera', pose=[0, 0, 0, 0, 0, 0], 
-        noise_type='gaussian', noise_mean=0, noise_stddev=0, horizontal_fov=1.047,
-        image_width=320, image_height=240, image_format='R8G8B8', clip_near=0.1, 
-        clip_far=100, distortion_k1=0, distortion_k2=0, distortion_k3=0,
-        distortion_p1=0, distortion_p2=0, distortion_center=[0.5, 0.5]):
-        Sensor.__init__(self, name=name, always_on=always_on, update_rate=update_rate, 
-            visualize=visualize, topic=topic, pose=pose)
+    def __init__(
+            self,
+            name='camera',
+            type='camera',
+            camera_name='camera',
+            always_on=True,
+            update_rate=50,
+            visualize=True,
+            topic='camera',
+            pose=[0, 0, 0, 0, 0, 0],
+            noise_type='gaussian',
+            noise_mean=0,
+            noise_stddev=0,
+            horizontal_fov=1.047,
+            image_width=320,
+            image_height=240,
+            image_format='R8G8B8',
+            clip_near=0.1,
+            clip_far=100,
+            distortion_k1=0,
+            distortion_k2=0,
+            distortion_k3=0,
+            distortion_p1=0,
+            distortion_p2=0,
+            distortion_center=[0.5, 0.5]):
+        Sensor.__init__(
+            self,
+            name=name,
+            always_on=always_on,
+            update_rate=update_rate,
+            visualize=visualize,
+            topic=topic,
+            pose=pose)
         assert type in ['camera', 'depth'], \
             'A camera sensor can be either of type depth or camera'
         self._name = name
         self._type = type
         self._camera_name = camera_name
         # Set noise model
-        self._noise = Noise(mean=noise_mean, stddev=noise_stddev, type=noise_type)
-        
+        self._noise = Noise(
+            mean=noise_mean,
+            stddev=noise_stddev,
+            type=noise_type)
+
         # Set horizontal FOV
         self._horizontal_fov = horizontal_fov
-        
+
         # Set image configuration
-        assert image_format in Format._VALUE_OPTIONS, 'Invalid image format, ' \
-            'options={}'.format(Format._VALUE_OPTIONS) 
+        assert image_format in Format._VALUE_OPTIONS, 'Invalid' \
+            ' image format, options={}'.format(Format._VALUE_OPTIONS)
         self._image_format = image_format
         self._image_width = image_width
         self._image_height = image_height
-        
+
         # Set distortion parameters
-        assert distortion_k1 >= 0, 'Radial distortion coefficient k1 must be ' \
+        assert distortion_k1 >= 0, 'Radial ' \
+            'distortion coefficient k1 must be ' \
             'equal or greater than zero'
-        assert distortion_k2 >= 0, 'Radial distortion coefficient k2 must be ' \
+        assert distortion_k2 >= 0, 'Radial ' \
+            'distortion coefficient k2 must be ' \
             'equal or greater than zero'
-        assert distortion_k3 >= 0, 'Radial distortion coefficient k3 must be ' \
+        assert distortion_k3 >= 0, 'Radial ' \
+            'distortion coefficient k3 must be ' \
             'equal or greater than zero'
-        assert distortion_p1 >= 0, 'Tangential distortion coefficient p1 must ' \
+        assert distortion_p1 >= 0, 'Tangential' \
+            ' distortion coefficient p1 must ' \
             'be equal or greater than zero'
-        assert distortion_p2 >= 0, 'Tangential distortion coefficient p2 must ' \
+        assert distortion_p2 >= 0, 'Tangential' \
+            ' distortion coefficient p2 must ' \
             'be equal or greater than zero'
-        assert isinstance(distortion_center, list), 'Distortion center must be a list'
-        assert len(distortion_center) == 2, 'Distortion center must have two elements'        
+        assert isinstance(
+            distortion_center, list), 'Distortion center must be a list'
+        assert len(
+            distortion_center) == 2, 'Distortion center must have two elements'
         self._distortion_k1 = distortion_k1
         self._distortion_k2 = distortion_k2
         self._distortion_k3 = distortion_k3
@@ -97,8 +132,9 @@ class Camera(Sensor):
 
     @noise.setter
     def noise(self, values):
-        assert isinstance(values, dict), 'Noise parameters must be provided as' \
-            ' a dictionary'
+        assert isinstance(
+            values, dict), 'Noise parameters' \
+                ' must be provided as a dictionary'
         self._noise = Noise(**values)
 
     @property
@@ -117,7 +153,7 @@ class Camera(Sensor):
     @image_format.setter
     def image_format(self, value):
         assert value in Format._VALUE_OPTIONS, 'Invalid image format, ' \
-            'options={}'.format(Format._VALUE_OPTIONS) 
+            'options={}'.format(Format._VALUE_OPTIONS)
         self._image_format = value
 
     @property
@@ -143,7 +179,7 @@ class Camera(Sensor):
     @property
     def distortion_k1(self):
         return self._distortion_k1
-    
+
     @distortion_k1.setter
     def distortion_k1(self, value):
         self._distortion_k1 = value
@@ -175,7 +211,7 @@ class Camera(Sensor):
     @property
     def distortion_p2(self):
         return self._distortion_p2
-    
+
     @distortion_p2.setter
     def distortion_p2(self, value):
         self._distortion_p2 = value
@@ -204,56 +240,71 @@ class Camera(Sensor):
     def clip_far(self, value):
         self._clip_far = value
 
-    def add_ros_camera_plugin(self, name='camera', update_rate=0,
-        camera_name='camera', image_topic_name='image_raw', robot_namespace='',
-        camera_info_topic_name='camera_info', frame_name='camera_link',
-        hack_baseline=0.07):
+    def add_ros_camera_plugin(
+            self,
+            name='camera',
+            update_rate=0,
+            camera_name='camera',
+            image_topic_name='image_raw',
+            robot_namespace='',
+            camera_info_topic_name='camera_info',
+            frame_name='camera_link',
+            hack_baseline=0.07):
 
         self._plugin = Plugin()
         self._plugin.init_gazebo_ros_camera_plugin(
-            name=name, 
+            name=name,
             update_rate=update_rate,
-            camera_name=camera_name, 
-            image_topic_name=image_topic_name, 
-            camera_info_topic_name=camera_info_topic_name, 
+            camera_name=camera_name,
+            image_topic_name=image_topic_name,
+            camera_info_topic_name=camera_info_topic_name,
             frame_name=frame_name,
-            hack_baseline=hack_baseline, 
-            distortion_k1=self._distortion_k1, 
-            distortion_k2=self._distortion_k2, 
+            hack_baseline=hack_baseline,
+            distortion_k1=self._distortion_k1,
+            distortion_k2=self._distortion_k2,
             distortion_k3=self._distortion_k3,
-            distortion_t1=self._distortion_p1, 
+            distortion_t1=self._distortion_p1,
             distortion_t2=self._distortion_p2)
 
-    def add_ros_openni_kinect_plugin(self, name='camera_controller',
-        update_rate=0, always_on=True,
-        camera_name='camera', image_topic_name='color/image_raw',
-        camera_info_topic_name='color/camera_info', 
-        depth_image_topic_name='depth/image_rect_raw', 
-        depth_image_camera_info_topic_name='depth/camera_info',
-        point_cloud_topic_name='depth/points', frame_name='camera_link',
-        baseline=0.1, distortion_k1=0, distortion_k2=0, distortion_k3=0,
-        distortion_t1=0, distortion_t2=0, point_cloud_cutoff=0):
-        
+    def add_ros_openni_kinect_plugin(
+            self,
+            name='camera_controller',
+            update_rate=0,
+            always_on=True,
+            camera_name='camera',
+            image_topic_name='color/image_raw',
+            camera_info_topic_name='color/camera_info',
+            depth_image_topic_name='depth/image_rect_raw',
+            depth_image_camera_info_topic_name='depth/camera_info',
+            point_cloud_topic_name='depth/points',
+            frame_name='camera_link',
+            baseline=0.1,
+            distortion_k1=0,
+            distortion_k2=0,
+            distortion_k3=0,
+            distortion_t1=0,
+            distortion_t2=0,
+            point_cloud_cutoff=0):
+
         self._plugin = Plugin()
         self._plugin.init_openni_kinect_plugin(
-            name=name, 
-            update_rate=update_rate,
-            camera_name=camera_name, 
-            image_topic_name=image_topic_name,
-            camera_info_topic_name=camera_info_topic_name, 
-            depth_image_topic_name=depth_image_topic_name, 
-            depth_image_camera_info_topic_name=depth_image_camera_info_topic_name,
-            point_cloud_topic_name=point_cloud_topic_name, 
-            frame_name=frame_name,
-            baseline=baseline, 
-            distortion_k1=distortion_k1, 
-            distortion_k2=distortion_k2, 
-            distortion_k3=distortion_k3,
-            distortion_t1=distortion_t1, 
-            distortion_t2=distortion_t2, 
-            point_cloud_cutoff=point_cloud_cutoff, 
-            always_on=always_on
-        )
+            name,
+            update_rate,
+            camera_name,
+            image_topic_name,
+            camera_info_topic_name,
+            depth_image_topic_name,
+            depth_image_camera_info_topic_name,
+            point_cloud_topic_name,
+            frame_name,
+            baseline,
+            distortion_k1,
+            distortion_k2,
+            distortion_k3,
+            distortion_t1,
+            distortion_t2,
+            point_cloud_cutoff,
+            always_on)
 
     def to_sdf(self):
         sensor = Sensor.to_sdf(self)
@@ -285,12 +336,13 @@ class Camera(Sensor):
         sensor = Camera(name=sdf.name, type=sdf.type)
 
         assert hasattr(sdf, 'camera'), 'No camera block available'
-        assert hasattr(sdf.camera, 'image'), 'Camera has no image properties information'
+        assert hasattr(
+            sdf.camera, 'image'), 'Camera has no image properties information'
 
         sensor.camera_name = sdf.camera.name
-        
+
         if sdf.camera.noise is not None:
-            sensor.noise = Noise.from_sdf(sdf.noise)        
+            sensor.noise = Noise.from_sdf(sdf.noise)
 
         tags = ['format', 'width', 'height']
         for tag in tags:
@@ -301,7 +353,12 @@ class Camera(Sensor):
             tags = ['k1', 'k2', 'k3', 'p1', 'p2']
             for tag in tags:
                 if hasattr(sdf.camera.distortion, tag):
-                    setattr(sensor, 'distortion_' + tag, getattr(sdf.camera.distortion, tag).value)
+                    setattr(
+                        sensor,
+                        'distortion_' + tag,
+                        getattr(
+                            sdf.camera.distortion,
+                            tag).value)
 
         if sdf.camera.clip is not None:
             if sdf.camera.clip.near is not None:
@@ -310,7 +367,8 @@ class Camera(Sensor):
                 sensor.clip_far = sdf.camera.clip.far.value
 
         if sdf.plugins is not None:
-            assert len(sdf.plugins) == 1, 'Only one plugin per sensor is supported'            
+            assert len(
+                sdf.plugins) == 1, 'Only one plugin per sensor is supported'
             sensor._plugin = Plugin.from_sdf(sdf.plugins[0])
 
         return sensor

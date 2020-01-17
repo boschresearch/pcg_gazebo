@@ -48,7 +48,7 @@ class Axis(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('xyz')
         obj.value = self.xyz
         return obj

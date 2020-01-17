@@ -19,7 +19,7 @@ from ..types import XMLScalar
 class Precision(XMLScalar):
     _NAME = 'precision'
     _TYPE = 'sdf'
-    
+
     def __init__(self):
         XMLScalar.__init__(self)
 

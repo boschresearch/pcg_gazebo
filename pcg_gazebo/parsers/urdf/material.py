@@ -89,7 +89,7 @@ class Material(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('material')
         if self._mode == 'color':
             obj.diffuse = self.color.rgba

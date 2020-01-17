@@ -16,20 +16,46 @@
 from .sensor import Sensor
 from ..properties import Noise, Plugin
 from ...parsers.sdf import create_sdf_element
-from ...log import PCG_ROOT_LOGGER
 
 
 class Ray(Sensor):
-    def __init__(self, name='ray', always_on=True, update_rate=50, 
-        visualize=True, topic='scan', pose=[0, 0, 0, 0, 0, 0],
-        horizontal_samples=640, horizontal_resolution=1,
-        horizontal_min_angle=0, horizontal_max_angle=0, vertical_samples=1, 
-        vertical_resolution=1, vertical_min_angle=0, vertical_max_angle=0,
-        range_min=0, range_max=0, range_resolution=0, noise_mean=0, noise_stddev=0):
-        Sensor.__init__(self, name=name, always_on=always_on, update_rate=update_rate, 
-            visualize=visualize, topic=topic, pose=pose)
+    def __init__(
+            self,
+            name='ray',
+            always_on=True,
+            update_rate=50,
+            visualize=True,
+            topic='scan',
+            pose=[
+                0,
+                0,
+                0,
+                0,
+                0,
+                0],
+            horizontal_samples=640,
+            horizontal_resolution=1,
+            horizontal_min_angle=0,
+            horizontal_max_angle=0,
+            vertical_samples=1,
+            vertical_resolution=1,
+            vertical_min_angle=0,
+            vertical_max_angle=0,
+            range_min=0,
+            range_max=0,
+            range_resolution=0,
+            noise_mean=0,
+            noise_stddev=0):
+        Sensor.__init__(
+            self,
+            name=name,
+            always_on=always_on,
+            update_rate=update_rate,
+            visualize=visualize,
+            topic=topic,
+            pose=pose)
 
-        self._scan = dict()        
+        self._scan = dict()
         self.set_scan_properties(
             horizontal_samples=horizontal_samples,
             horizontal_resolution=horizontal_resolution,
@@ -50,9 +76,16 @@ class Ray(Sensor):
             mean=noise_mean,
             stddev=noise_stddev)
 
-    def set_scan_properties(self, horizontal_samples=640, horizontal_resolution=1,
-        horizontal_min_angle=0, horizontal_max_angle=0, vertical_samples=1, 
-        vertical_resolution=1, vertical_min_angle=0, vertical_max_angle=0):
+    def set_scan_properties(
+            self,
+            horizontal_samples=640,
+            horizontal_resolution=1,
+            horizontal_min_angle=0,
+            horizontal_max_angle=0,
+            vertical_samples=1,
+            vertical_resolution=1,
+            vertical_min_angle=0,
+            vertical_max_angle=0):
         assert horizontal_min_angle <= horizontal_max_angle, \
             'Horizontal angle range is invalid'
         assert vertical_min_angle <= vertical_max_angle, \
@@ -74,7 +107,7 @@ class Ray(Sensor):
             min_angle=vertical_min_angle,
             max_angle=vertical_max_angle
         )
-        
+
     def set_range_properties(self, min=0, max=0, resolution=0):
         assert min <= max, 'Invalid range limits'
         self._range['min'] = min
@@ -86,8 +119,8 @@ class Ray(Sensor):
         self._noise.mean = mean
         self._noise.stddev = stddev
 
-    def add_ros_plugin(self, name='ray', frame_name='world', 
-        topic_name='/scan'):
+    def add_ros_plugin(self, name='ray', frame_name='world',
+                       topic_name='/scan'):
         self._plugin = Plugin()
         self._plugin.init_gazebo_ros_laser_plugin(
             name=name,
@@ -97,20 +130,28 @@ class Ray(Sensor):
 
     def to_sdf(self):
         sensor = Sensor.to_sdf(self)
-        sensor.type = 'ray'        
+        sensor.type = 'ray'
 
         sensor.ray = create_sdf_element('ray')
         sensor.ray.reset(with_optional_elements=True)
 
-        sensor.ray.scan.horizontal.resolution = self._scan['horizontal']['resolution']
-        sensor.ray.scan.horizontal.samples = self._scan['horizontal']['samples']
-        sensor.ray.scan.horizontal.min_angle = self._scan['horizontal']['min_angle']
-        sensor.ray.scan.horizontal.max_angle = self._scan['horizontal']['max_angle']
+        sensor.ray.scan.horizontal.resolution = \
+            self._scan['horizontal']['resolution']
+        sensor.ray.scan.horizontal.samples = \
+            self._scan['horizontal']['samples']
+        sensor.ray.scan.horizontal.min_angle = \
+            self._scan['horizontal']['min_angle']
+        sensor.ray.scan.horizontal.max_angle = \
+            self._scan['horizontal']['max_angle']
 
-        sensor.ray.scan.vertical.resolution = self._scan['vertical']['resolution']
-        sensor.ray.scan.vertical.samples = self._scan['vertical']['samples']
-        sensor.ray.scan.vertical.min_angle = self._scan['vertical']['min_angle']
-        sensor.ray.scan.vertical.max_angle = self._scan['vertical']['max_angle']
+        sensor.ray.scan.vertical.resolution = \
+            self._scan['vertical']['resolution']
+        sensor.ray.scan.vertical.samples = \
+            self._scan['vertical']['samples']
+        sensor.ray.scan.vertical.min_angle = \
+            self._scan['vertical']['min_angle']
+        sensor.ray.scan.vertical.max_angle = \
+            self._scan['vertical']['max_angle']
 
         sensor.ray.range.min = self._range['min']
         sensor.ray.range.max = self._range['max']
@@ -124,7 +165,8 @@ class Ray(Sensor):
 
     @staticmethod
     def from_sdf(sdf):
-        assert sdf.xml_element_name == 'sensor', 'Only SDF sensors can be parsed'
+        assert sdf.xml_element_name == 'sensor', \
+            'Only SDF sensors can be parsed'
         assert sdf.type == 'ray', 'Only ray sensors can be parsed'
         sensor = Ray(name=sdf.name)
 
@@ -135,22 +177,47 @@ class Ray(Sensor):
         if sdf.topic is not None:
             sensor.topic = sdf.topic.value
         if sdf.pose is not None:
-            sensor.pose = sdf.pose.value        
+            sensor.pose = sdf.pose.value
 
+        if sdf.ray.scan.vertical is not None:
+            vertical_samples = sdf.ray.scan.vertical.samples.value
+        else:
+            vertical_samples = 1
+
+        if sdf.ray.scan.vertical is not None:
+            vertical_resolution = sdf.ray.scan.vertical.resolution.value
+        else:
+            vertical_resolution = 1
+
+        if sdf.ray.scan.vertical is not None:
+            vertical_min_angle = sdf.ray.scan.vertical.min_angle.value
+        else:
+            vertical_min_angle = 0
+
+        if sdf.ray.scan.vertical is not None:
+            vertical_max_angle = sdf.ray.scan.vertical.max_angle.value
+        else:
+            vertical_max_angle = 0
         sensor.set_scan_properties(
-            horizontal_samples=sdf.ray.scan.horizontal.samples.value, 
+            horizontal_samples=sdf.ray.scan.horizontal.samples.value,
             horizontal_resolution=sdf.ray.scan.horizontal.resolution.value,
-            horizontal_min_angle=sdf.ray.scan.horizontal.min_angle.value, 
-            horizontal_max_angle=sdf.ray.scan.horizontal.max_angle.value, 
-            vertical_samples=sdf.ray.scan.vertical.samples.value if sdf.ray.scan.vertical is not None else 1, 
-            vertical_resolution=sdf.ray.scan.vertical.resolution.value if sdf.ray.scan.vertical is not None else 1, 
-            vertical_min_angle=sdf.ray.scan.vertical.min_angle.value if sdf.ray.scan.vertical is not None else 0, 
-            vertical_max_angle=sdf.ray.scan.vertical.max_angle.value if sdf.ray.scan.vertical is not None else 0)
+            horizontal_min_angle=sdf.ray.scan.horizontal.min_angle.value,
+            horizontal_max_angle=sdf.ray.scan.horizontal.max_angle.value,
+            vertical_samples=vertical_samples,
+            vertical_resolution=vertical_resolution,
+            vertical_min_angle=vertical_min_angle,
+            vertical_max_angle=vertical_max_angle)
 
-        sensor.set_range_properties(
-            min=sdf.ray.range.min.value, 
-            max=sdf.ray.range.max.value, 
-            resolution=sdf.ray.range.resolution.value if sdf.ray.range.resolution is not None else 0)
+        if sdf.ray.range.resolution is not None:
+            sensor.set_range_properties(
+                sdf.ray.range.min.value,
+                sdf.ray.range.max.value,
+                sdf.ray.range.resolution.value)
+        else:
+            sensor.set_range_properties(
+                sdf.ray.range.min.value,
+                sdf.ray.range.max.value,
+                0)
 
         if sdf.ray.noise is not None:
             sensor.set_noise(
@@ -159,7 +226,8 @@ class Ray(Sensor):
                 stddev=sdf.ray.noise.stddev.value)
 
         if sdf.plugins is not None:
-            assert len(sdf.plugins) == 1, 'Only one plugin per sensor is supported'            
+            assert len(
+                sdf.plugins) == 1, 'Only one plugin per sensor is supported'
             sensor._plugin = Plugin.from_sdf(sdf.plugins[0])
-        
+
         return sensor

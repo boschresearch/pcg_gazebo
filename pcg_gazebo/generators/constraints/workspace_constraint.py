@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from .constraint import Constraint
-import numpy as np
+from ...utils import is_string
 import collections
 import random
 from shapely.geometry import Polygon, LineString, Point, MultiPoint
@@ -23,7 +23,7 @@ class WorkspaceConstraint(Constraint):
     """Class that represents the spatial workspace where models are allowed in.
     The `geometry` input is a `dict` containing all the arguments necessary to
     generate the workspace geometry. For now, only 2D workspaces are supported.
-    The `holes` input is a list of `dict` with the same geometry description of 
+    The `holes` input is a list of `dict` with the same geometry description of
     the input `geometry` and describe exclusion areas inside the workspace.
 
     The supported geometry inputs to represent a workspace are
@@ -36,9 +36,10 @@ class WorkspaceConstraint(Constraint):
         description=dict(
             points=[
                [0, 0, 0],
-               [0, 1, 1], 
+               [0, 1, 1],
                ...
-               ]  # List of 3D points that describe the vertices of the plane area      
+               ]  # List of 3D points that describe the
+                    vertices of the plane area
         )
     )
     ```
@@ -51,9 +52,9 @@ class WorkspaceConstraint(Constraint):
         description=dict(
             points=[
                [0, 0, 0],
-               [0, 1, 1], 
+               [0, 1, 1],
                ...
-               ]  # List of 3D points that describe the line      
+               ]  # List of 3D points that describe the line
         )
     )
     ```
@@ -71,34 +72,48 @@ class WorkspaceConstraint(Constraint):
     ```
 
     **Others are still not implemented**
-    
+
     > *Attributes*
 
-    * `LABEL` (*type:* `str`, *value:* `workspace`): Name of the constraint class
-    * `GEOMETRIES` (*type:* `list`): List of input geometries that can be used to set a workspace
+    * `LABEL` (*type:* `str`, *value:* `workspace`): Name of
+    the constraint class
+    * `GEOMETRIES` (*type:* `list`): List of input geometries
+    that can be used to set a workspace
 
-    > *Input arguments* 
+    > *Input arguments*
 
-    * `geometry` (*type:* `dict`, *default:* `None`): Input arguments of the geometry to be generated
-    * `frame` (*type:* `str`, *default:* `'world'`): Name of the frame of reference of the workspace (**not implemented**)
-    * `holes` (*type:* `dict`, *default:* `None`): Geometries that represent exclusion areas inside the workspace
+    * `geometry` (*type:* `dict`, *default:* `None`): Input
+    arguments of the geometry to be generated
+    * `frame` (*type:* `str`, *default:* `'world'`): Name of
+    the frame of reference of the workspace (**not implemented**)
+    * `holes` (*type:* `dict`, *default:* `None`): Geometries
+    that represent exclusion areas inside the workspace
     """
     _LABEL = 'workspace'
-    _GEOMETRIES = ['line', 'area', 'volume', 'multi_line', 'multi_point', 'circle']
+    _GEOMETRIES = [
+        'line',
+        'area',
+        'volume',
+        'multi_line',
+        'multi_point',
+        'circle']
+
     def __init__(self, geometry=None, frame='world', holes=None):
         Constraint.__init__(self)
 
-        assert isinstance(geometry, dict), 'Geometry specification must be a dictionary'
+        assert isinstance(
+            geometry, dict), 'Geometry specification must be a dictionary'
         assert 'type' in geometry, 'No geometry type was specified'
         assert geometry['type'] in self._GEOMETRIES, \
             'Invalid workspace geometry, options={}'.format(self._GEOMETRIES)
-        assert isinstance(frame, str) or isinstance(frame, unicode), \
+        assert is_string(frame), \
             'Input frame name must be a string'
 
         self._geometry_type = geometry['type']
         self._holes = list()
         self._geometry = None
-        self._geometry = self.generate_geometry(self._geometry_type, geometry['description'])
+        self._geometry = self.generate_geometry(
+            self._geometry_type, geometry['description'])
 
         if holes is not None:
             for hole in holes:
@@ -114,11 +129,12 @@ class WorkspaceConstraint(Constraint):
 
     def generate_geometry(self, type, description):
         """Generate a `shapely` entity according to the geometry description
-        provided. The input `type` containts the name of the geometry to 
+        provided. The input `type` containts the name of the geometry to
         be generated and the necessary arguments must be provided in the `dict`
         input `description`.
 
-        Possible geometries according to the different input values in `type` are:
+        Possible geometries according to the different input
+        values in `type` are:
 
         * `area`
 
@@ -126,9 +142,10 @@ class WorkspaceConstraint(Constraint):
         description=dict(
            points=[
                [0, 0, 0],
-               [0, 1, 1], 
+               [0, 1, 1],
                ...
-               ]  # List of 3D points that describe the vertices of the plane area      
+               ]  # List of 3D points that describe the
+                    vertices of the plane area
         )
         ```
 
@@ -138,7 +155,7 @@ class WorkspaceConstraint(Constraint):
         description=dict(
            points=[
                [0, 0, 0],
-               [0, 1, 1], 
+               [0, 1, 1],
                ...
                ]  # List of 3D points that describe the line
         )
@@ -157,14 +174,16 @@ class WorkspaceConstraint(Constraint):
 
         > *Input arguments*
 
-        * `type` (*type:* `str`): Geometry type. Options are: `line`, `area`, `volume`, `multi_line`, `multi_point`, `circle`
+        * `type` (*type:* `str`): Geometry type. Options
+         are: `line`, `area`, `volume`, `multi_line`, `multi_point`, `circle`
         * `description` (*type:* `dict`): Arguments to describe the geometry
         """
         assert isinstance(description, dict), \
             'Description information must be a dictionary'
         if 'points' in description:
             return self._generate_geometry_from_points(type, **description)
-        elif type == 'circle' and 'center' in description and 'radius' in description:
+        elif type == 'circle' and \
+                'center' in description and 'radius' in description:
             return self._generate_circle(**description)
         else:
             raise NotImplementedError()
@@ -175,8 +194,11 @@ class WorkspaceConstraint(Constraint):
 
         > *Input arguments*
 
-        * `geometry_type` (*type:* `str`): Type of geometry, options are `line` and `area`
-        * `points` (*type:* `list`): List of 3D vectors representing the vertices of the area or the points on the line 
+        * `geometry_type` (*type:* `str`): Type of geometry,
+         options are `line` and `area`
+        * `points` (*type:* `list`): List of 3D vectors
+         representing the vertices of the area or the
+         points on the line
         """
         if geometry_type == 'line':
             # Only x and y coordinates are considered for line
@@ -187,17 +209,20 @@ class WorkspaceConstraint(Constraint):
         else:
             raise NotImplementedError()
         return geometry
-    
+
     def _generate_circle(self, center, radius):
-        """Return a `shapely.Polygon` representing the circle 
+        """Return a `shapely.Polygon` representing the circle
         described by `center` and `radius`.
 
         > *Input arguments*
 
-        * `center` (*type:* `list`): 2D or 3D vector representing the center of the circle. For 2D points, the Z component is assumed to be 0.
+        * `center` (*type:* `list`): 2D or 3D vector
+         representing the center of the circle. For 2D
+         points, the Z component is assumed to be 0.
         * `radius` (*type:* `float`): Radius of the circle
         """
-        assert len(center) in [2, 3], 'Center of circle must have 2 or 3 elements'
+        assert len(center) in [
+            2, 3], 'Center of circle must have 2 or 3 elements'
         assert radius > 0, 'Radius must be greater than zero'
         return Point(*center).buffer(radius)
 
@@ -211,11 +236,11 @@ class WorkspaceConstraint(Constraint):
             geo = self.get_geometry()
             min_x, min_y, max_x, max_y = geo.bounds
             pnt = Point(
-                random.uniform(min_x, max_x), 
+                random.uniform(min_x, max_x),
                 random.uniform(min_y, max_y))
             while not geo.contains(pnt):
                 pnt = Point(
-                    random.uniform(min_x, max_x), 
+                    random.uniform(min_x, max_x),
                     random.uniform(min_y, max_y))
             return pnt
         else:
@@ -224,7 +249,7 @@ class WorkspaceConstraint(Constraint):
     def contains_point(self, point):
         """Return True if `point` is part of the workspace.
 
-        > *Input arguments* 
+        > *Input arguments*
 
         * `point` (*type:* `list` or `numpy.ndarray`): 2D point
         """
@@ -248,7 +273,7 @@ class WorkspaceConstraint(Constraint):
 
         > *Input arguments*
 
-        * `polygons` (*type:* list of `shapely.Polygon`): List of polygons        
+        * `polygons` (*type:* list of `shapely.Polygon`): List of polygons
         """
         assert isinstance(polygons, collections.Iterable), \
             'Invalid list of polygons'
@@ -270,5 +295,5 @@ class WorkspaceConstraint(Constraint):
         """Return the workspace geometry"""
         geometry = self._geometry
         for geo in self._holes:
-            geometry = geometry.difference(geo) 
+            geometry = geometry.difference(geo)
         return geometry

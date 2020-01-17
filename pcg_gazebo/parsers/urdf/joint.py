@@ -67,7 +67,7 @@ class Joint(XMLBase):
     @type.setter
     def type(self, value):
         assert isinstance(value, str), 'Joint type must be a string'
-        assert value in ['revolute', 'continuous', 'prismatic', 'fixed', \
+        assert value in ['revolute', 'continuous', 'prismatic', 'fixed',
                          'floating', 'planar'], 'Invalid joint type'
         self.attributes['type'] = value
 
@@ -137,7 +137,7 @@ class Joint(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('joint')
         obj.name = self.name
         obj.type = self.type

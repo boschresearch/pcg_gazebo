@@ -23,11 +23,17 @@ class Physics(object):
     def __init__(self, max_step_size=0.001, real_time_factor=1,
                  real_time_update_rate=1000, max_contacts=20, engine='ode',
                  name='default_physics', default=False):
-        assert max_step_size > 0, 'Max. step size must be greater than zero'
-        assert real_time_factor > 0, 'Real time factor must be greater than zero'
-        assert real_time_update_rate > 0, 'Real time update rate must be greater than zero'
-        assert max_contacts > 0, 'Number of max. contancts must be greater than zero'
-        assert engine in self._PHYSICS_ENGINES, 'Physics engine name must belong to list {}'.format(self._PHYSICS_ENGINES)
+        assert max_step_size > 0, 'Max. step size must' \
+            ' be greater than zero'
+        assert real_time_factor > 0, 'Real time factor' \
+            ' must be greater than zero'
+        assert real_time_update_rate > 0, 'Real time update' \
+            ' rate must be greater than zero'
+        assert max_contacts > 0, 'Number of max.' \
+            ' contancts must be greater than zero'
+        assert engine in self._PHYSICS_ENGINES, 'Physics' \
+            ' engine name must belong to list {}'.format(
+                self._PHYSICS_ENGINES)
         assert isinstance(name, str), 'Physics name must be a string'
         assert len(name) > 0, 'Physics name input cannot be empty'
 
@@ -134,7 +140,9 @@ class Physics(object):
 
     def print_description(self, param_name):
         if param_name not in self._description:
-            print('No parameter description available for {}'.format(param_name))
+            print(
+                'No parameter description'
+                ' available for {}'.format(param_name))
             return
 
         print(param_name)
@@ -160,7 +168,8 @@ class Physics(object):
         physics.type = self._properties['engine']
         physics.max_step_size = self._properties['max_step_size']
         physics.real_time_factor = self._properties['real_time_factor']
-        physics.real_time_update_rate = self._properties['real_time_update_rate']
+        physics.real_time_update_rate = \
+            self._properties['real_time_update_rate']
         physics.max_contacts = self._properties['max_contacts']
 
         if type == 'physics':
@@ -190,7 +199,7 @@ class Physics(object):
         return sdf
 
     @staticmethod
-    def from_sdf(sdf):                
+    def from_sdf(sdf):
         if sdf.type == 'ode':
             from . import ODE
             physics = ODE()
@@ -215,12 +224,12 @@ class Physics(object):
             physics.real_time_update_rate = sdf.real_time_update_rate.value
         if sdf.max_contacts is not None:
             physics.max_contacts = sdf.max_contacts.value
-        
-        if sdf.type == 'ode':           
-            if sdf.ode is not None: 
+
+        if sdf.type == 'ode':
+            if sdf.ode is not None:
                 if sdf.ode.solver is not None:
                     solver_param_names = [
-                        'type', 
+                        'type',
                         'iters',
                         'use_dynamic_moi_rescaling',
                         'precon_iters',
@@ -229,48 +238,65 @@ class Physics(object):
                         'friction_model']
 
                     for param_name in solver_param_names:
-                        if getattr(sdf.ode.solver, param_name) is not None:                
-                            setattr(physics, param_name, getattr(sdf.ode.solver, param_name).value)
+                        if getattr(sdf.ode.solver, param_name) is not None:
+                            setattr(
+                                physics, param_name, getattr(
+                                    sdf.ode.solver, param_name).value)
                 if sdf.ode.constraints is not None:
                     const_param_names = [
                         'cfm',
                         'erp',
                         'contact_surface_layer',
-                        'contact_max_correcting_vel']                        
+                        'contact_max_correcting_vel']
 
                     for param_name in const_param_names:
-                        if getattr(sdf.ode.constraints, param_name) is not None:                
-                            setattr(physics, param_name, getattr(sdf.ode.constraints, param_name).value)
+                        if getattr(
+                                sdf.ode.constraints,
+                                param_name) is not None:
+                            setattr(
+                                physics, param_name, getattr(
+                                    sdf.ode.constraints, param_name).value)
         elif sdf.type == 'bullet':
             if sdf.bullet is not None:
                 if sdf.bullet.solver is not None:
                     solver_param_names = [
-                        'type', 
+                        'type',
                         'iters',
                         'sor',
                         'min_step_size']
 
                     for param_name in solver_param_names:
-                        if getattr(sdf.bullet.solver, param_name) is not None:                
-                            setattr(physics, param_name, getattr(sdf.bullet.solver, param_name).value)
+                        if getattr(sdf.bullet.solver, param_name) is not None:
+                            setattr(
+                                physics, param_name, getattr(
+                                    sdf.bullet.solver, param_name).value)
                 if sdf.bullet.constraints is not None:
                     const_param_names = [
                         'cfm',
                         'erp',
                         'contact_surface_layer',
                         'split_impulse',
-                        'split_impulse_penetration_threshold']                        
+                        'split_impulse_penetration_threshold']
 
                     for param_name in const_param_names:
-                        if getattr(sdf.bullet.constraints, param_name) is not None:                
-                            setattr(physics, param_name, getattr(sdf.bullet.constraints, param_name).value)
+                        if getattr(
+                                sdf.bullet.constraints,
+                                param_name) is not None:
+                            setattr(
+                                physics, param_name, getattr(
+                                    sdf.bullet.constraints, param_name).value)
         elif sdf.type == 'simbody':
             if sdf.simbody is not None:
-                param_names = ['min_step_size', 'accuracy', 'max_transient_velocity']
+                param_names = [
+                    'min_step_size',
+                    'accuracy',
+                    'max_transient_velocity']
                 for param_name in param_names:
-                    if getattr(sdf.simbody, param_name) is not None:                
-                        setattr(physics, param_name, getattr(sdf.simbody, param_name).value)
-                if sdf.simbody.contact is not None:         
+                    if getattr(sdf.simbody, param_name) is not None:
+                        setattr(
+                            physics, param_name, getattr(
+                                sdf.simbody, param_name).value)
+                if sdf.simbody.contact is not None:
                     param_names = [
                         'stiffness',
                         'dissipation',
@@ -283,7 +309,11 @@ class Physics(object):
                         'override_stiction_transition_velocity']
 
                     for param_name in param_names:
-                        if getattr(sdf.simbody.contact, param_name) is not None:                
-                            setattr(physics, param_name, getattr(sdf.simbody.contact, param_name).value)
+                        if getattr(
+                                sdf.simbody.contact,
+                                param_name) is not None:
+                            setattr(
+                                physics, param_name, getattr(
+                                    sdf.simbody.contact, param_name).value)
 
         return physics

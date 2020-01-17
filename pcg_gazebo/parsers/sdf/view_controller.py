@@ -26,6 +26,6 @@ class ViewController(XMLString):
 
     def _set_value(self, value):
         assert value in self._VALUE_OPTIONS, \
-            '[{}] options are {}'.format(self.xml_element_name, 
-            self._VALUE_OPTIONS)
+            '[{}] options are {}'.format(self.xml_element_name,
+                                         self._VALUE_OPTIONS)
         self._value = value

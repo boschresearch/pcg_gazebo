@@ -28,7 +28,8 @@ class Collision(XMLBase):
     _CHILDREN_CREATORS = dict(
         geometry=dict(creator=Geometry),
         pose=dict(creator=Pose, n_elems=1, optional=True),
-        max_contacts=dict(creator=MaxContacts, n_elems=1, default=[10], optional=True),
+        max_contacts=dict(
+            creator=MaxContacts, n_elems=1, default=[10], optional=True),
         surface=dict(creator=Surface, optional=True),
         laser_retro=dict(creator=LaserRetro, default=[0], optional=True)
     )
@@ -82,7 +83,7 @@ class Collision(XMLBase):
     @surface.setter
     def surface(self, value):
         self._add_child_element('surface', value)
-    
+
     @property
     def laser_retro(self):
         return self._get_child_element('laser_retro')

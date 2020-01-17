@@ -17,10 +17,11 @@ from ..types import XMLBase
 from .size import Size
 from .normal import Normal
 
+
 class Plane(XMLBase):
     _NAME = 'plane'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         size=dict(creator=Size, default=[2]),
         normal=dict(creator=Normal)

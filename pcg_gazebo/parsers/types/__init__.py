@@ -20,3 +20,14 @@ from .integer import XMLInteger
 from .scalar import XMLScalar
 from .string import XMLString
 from .vector import XMLVector
+
+
+__all__ = [
+    'XMLBase',
+    'XMLBoolean',
+    'XMLCustom',
+    'XMLInteger',
+    'XMLScalar',
+    'XMLString',
+    'XMLVector'
+]

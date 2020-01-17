@@ -38,7 +38,7 @@ class Mimic(XMLBase):
         assert isinstance(value, float) or isinstance(value, int), \
             'Input value must be either a float or an integer'
         self.attributes['multiplier'] = float(value)
-    
+
     @property
     def offset(self):
         return float(self.attributes['offset'])

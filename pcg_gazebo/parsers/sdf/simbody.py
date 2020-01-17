@@ -26,12 +26,28 @@ class Simbody(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        min_step_size=dict(creator=MinStepSize, default=[0.0001], mode='physics'),
-        accuracy=dict(creator=Accuracy, default=[0.001], mode='physics'),
-        max_transient_velocity=dict(creator=MaxTransientVelocity, default=[0.01], mode='physics'),
-        contact=dict(creator=Contact, default=['simbody'], optional=True, mode='physics'),
-        must_be_loop_joint=dict(creator=MustBeLoopJoint, default=[False], optional=True, mode='joint')
-    )
+        min_step_size=dict(
+            creator=MinStepSize,
+            default=[0.0001],
+            mode='physics'),
+        accuracy=dict(
+            creator=Accuracy,
+            default=[0.001],
+            mode='physics'),
+        max_transient_velocity=dict(
+            creator=MaxTransientVelocity,
+            default=[0.01],
+            mode='physics'),
+        contact=dict(
+            creator=Contact,
+            default=['simbody'],
+            optional=True,
+            mode='physics'),
+        must_be_loop_joint=dict(
+            creator=MustBeLoopJoint,
+            default=[False],
+            optional=True,
+            mode='joint'))
 
     _MODES = ['physics', 'joint']
 
@@ -82,7 +98,7 @@ class Simbody(XMLBase):
     @property
     def must_be_loop_joint(self):
         return self._get_child_element('must_be_loop_joint')
-    
+
     @must_be_loop_joint.setter
     def must_be_loop_joint(self, value):
         if self._mode != 'joint':

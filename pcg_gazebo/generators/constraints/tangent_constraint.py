@@ -28,7 +28,7 @@ class TangentConstraint(Constraint):
 
     * `plane`:
 
-    To set a reference plane to which models will be placed tangently, 
+    To set a reference plane to which models will be placed tangently,
     the `reference` input must be provided as
 
     ```python
@@ -43,14 +43,20 @@ class TangentConstraint(Constraint):
 
     > *Attributes*
 
-    * `LABEL` (*type:* `str`, *value:* `'tangent'`): Name of the constraint class
-    * `_REFERENCE_TYPES` (*type:* `list`): List of types of references that can be used for the computation
-    * `_reference` (*type:* `dict`): Arguments of the type of reference used.    
+    * `LABEL` (*type:* `str`, *value:* `'tangent'`): Name of the
+    constraint class
+    * `_REFERENCE_TYPES` (*type:* `list`): List of types of references
+    that can be used for the computation
+    * `_reference` (*type:* `dict`): Arguments of the type of reference
+    used.
 
     > *Input arguments*
 
-    * `reference` (*type:* `dict`): Arguments for the reference used for the tangent computation
-    * `frame` (*type:* `str`, *default:* `world`): Name of the frame of reference with respect to which the poses are going to be generated (**not implemented**)
+    * `reference` (*type:* `dict`): Arguments for the reference used
+    for the tangent computation
+    * `frame` (*type:* `str`, *default:* `world`): Name of the frame
+    of reference with respect to which the poses are going to be
+    generated (**not implemented**)
     """
     _LABEL = 'tangent'
 
@@ -60,44 +66,38 @@ class TangentConstraint(Constraint):
         """Class constructor."""
         Constraint.__init__(self)
 
-        assert isinstance(reference, dict), 'Input reference is not a dictionary'
+        assert isinstance(
+            reference, dict), 'Input reference is not a dictionary'
         assert 'type' in reference and 'args' in reference, \
             'type and args missing from reference definition'
-        assert reference['type'] in self._REFERENCE_TYPES, 'Invalid reference type'
+        assert reference['type'] in self._REFERENCE_TYPES, \
+            'Invalid reference type'
         PCG_ROOT_LOGGER.info('Creating a tangent constraint')
 
         self._reference = reference
 
     def apply_constraint(self, model):
-        """Compute and apply the tangent constraint for the 
+        """Compute and apply the tangent constraint for the
         provided model using the reference input.
-        
+
         > *Input arguments*
 
-        * `model` (*type:* `pcg_gazebo.simulation.SimulationModel`): Model entity to have its pose adapted so that it is placed tangent to the reference
+        * `model` (*type:* `pcg_gazebo.simulation.SimulationModel`):
+        Model entity to have its pose adapted so that it is placed
+        tangent to the reference
         """
         meshes = model.get_meshes()
         position = np.array([0, 0, 0])
         min_distances = list()
 
         if self._reference['type'] == 'plane':
-            for mesh in meshes:            
+            for mesh in meshes:
                 d = trimesh.points.point_plane_distance(
-                    mesh.vertices, 
+                    mesh.vertices,
                     self._reference['args']['normal'],
-                    self._reference['args']['origin'])                
+                    self._reference['args']['origin'])
                 min_distances.append(np.min(d))
-        
+
             position = np.min(min_distances) * \
                 np.array(self._reference['args']['normal'])
-            model.pose.position = model.pose.position - position        
-
-
-        
-        
-        
-
-
-        
-
-    
+            model.pose.position = model.pose.position - position

@@ -34,7 +34,7 @@ class Rate(XMLBase):
     def __init__(self, type='none'):
         XMLBase.__init__(self)
         self.reset()
-        
+
     @property
     def mean(self):
         return self._get_child_element('mean')
@@ -66,4 +66,3 @@ class Rate(XMLBase):
     @bias_stddev.setter
     def bias_stddev(self, value):
         self._add_child_element('bias_stddev', value)
-

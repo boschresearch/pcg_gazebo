@@ -81,9 +81,10 @@ class Plane(Link):
         return self._visuals[0]
 
     def to_sdf(self, type='model', name='plane', sdf_version='1.6',
-        resource_prefix='', model_folder=None, copy_resources=False):
+               resource_prefix='', model_folder=None, copy_resources=False):
         assert type in ['plane', 'geometry', 'collision', 'visual', 'link',
-                        'model', 'sdf'], 'Invalid type of the output SDF structure'
+                        'model', 'sdf'], \
+                            'Invalid type of the output SDF structure'
         if type in ['collision', 'visual', 'link', 'model']:
             assert isinstance(name, str), 'Name must be a string'
             assert len(name) > 0, 'Name string cannot be empty'
@@ -99,8 +100,8 @@ class Plane(Link):
         if type == 'geometry':
             return self._collisions[0].geometry.to_sdf()
 
-        return Link.to_sdf(self, type, name, sdf_version, resource_prefix, 
-            model_folder, copy_resources)
+        return Link.to_sdf(self, type, name, sdf_version, resource_prefix,
+                           model_folder, copy_resources)
 
     def update_collision(self):
         self._collisions[0].set_geometry(

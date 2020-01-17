@@ -23,5 +23,6 @@ class Humidity(XMLScalar):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        assert value >= 0, 'Humidity must be equal or greater than zero'
+        assert value >= 0, 'Humidity must be equal' \
+            ' or greater than zero'
         XMLScalar._set_value(self, value)

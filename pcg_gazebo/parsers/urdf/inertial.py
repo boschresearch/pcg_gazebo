@@ -59,7 +59,7 @@ class Inertial(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('inertial')
         obj.pose = self.origin.to_sdf()
         obj.inertia = self.inertia.to_sdf()

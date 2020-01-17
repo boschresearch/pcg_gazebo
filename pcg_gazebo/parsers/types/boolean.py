@@ -27,11 +27,12 @@ class XMLBoolean(XMLBase):
 
     def _set_value(self, value):
         if value in [0, 1]:
-            value = bool(value)            
+            value = bool(value)
         if value in ['true', 'false']:
             value = True if value == 'true' else False
         assert isinstance(value, bool), \
-            '[{}] Input value must be a boolean, 0 or 1, type={}, name={}, received={}'.format(
+            '[{}] Input value must be a boolean, 0' \
+            ' or 1, type={}, name={}, received={}'.format(
                 self.xml_element_name, self._TYPE, self._NAME, type(value))
         self._value = bool(value)
 

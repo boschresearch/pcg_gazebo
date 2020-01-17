@@ -23,9 +23,12 @@ class ForceTorque(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        frame=dict(creator=Frame, default=['child']),
-        measure_direction=dict(creator=MeasureDirection, default=['child_to_parent'])
-    )
+        frame=dict(
+            creator=Frame,
+            default=['child']),
+        measure_direction=dict(
+            creator=MeasureDirection,
+            default=['child_to_parent']))
 
     def __init__(self):
         XMLBase.__init__(self)

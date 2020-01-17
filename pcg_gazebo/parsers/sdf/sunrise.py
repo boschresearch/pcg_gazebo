@@ -24,7 +24,8 @@ class Sunrise(XMLScalar):
 
     def _set_value(self, value):
         assert self._is_scalar(value), \
-            'Input value must be either a float or an integer, provided={}'.format(
+            'Input value must be either a float' \
+            ' or an integer, provided={}'.format(
                 type(value))
         assert value >= 0, \
             'Value must be greater or equal to zero, provided={}'.format(value)

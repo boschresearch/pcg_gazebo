@@ -12,14 +12,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Spatial constraints for the placement of simulation entities into the world."""
+"""Spatial constraints for the placement of simulation
+entities into the world.
+"""
 from .constraint import Constraint
 from .workspace_constraint import WorkspaceConstraint
 from .tangent_constraint import TangentConstraint
 
+__all__ = [
+    'Constraint',
+    'WorkspaceConstraint',
+    'TangentConstraint'
+]
+
 
 def create_constraint(tag, **kwargs):
-    """Constraint factory that returns the constraint according 
+    """Constraint factory that returns the constraint according
     to its `LABEL` definition. It returns `None` if the constraint name
     is invalid.
 
@@ -29,7 +37,7 @@ def create_constraint(tag, **kwargs):
     * `kwargs`: Inputs for the constraint class constructor
     """
     import inspect
-    from ...log import PCG_ROOT_LOGGER    
+    from ...log import PCG_ROOT_LOGGER
 
     for obj in Constraint.__subclasses__():
         if inspect.isclass(obj):

@@ -23,6 +23,7 @@ class Density(XMLScalar):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        assert value >= 0.0, \
-            '[{}] Input must be equal or greater than zero'.format(self.xml_element_name)
+        assert value >= 0.0, '[{}] Input must be equal' \
+            ' or greater than zero'.format(
+                self.xml_element_name)
         XMLScalar._set_value(self, value)

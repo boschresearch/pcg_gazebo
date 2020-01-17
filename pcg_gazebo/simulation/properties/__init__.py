@@ -25,3 +25,19 @@ from .mesh import Mesh
 from .noise import Noise
 from .plugin import Plugin
 from .pose import Pose
+
+
+__all__ = [
+    'Axis',
+    'BoundingBox',
+    'Collision',
+    'Footprint',
+    'Geometry',
+    'Inertial',
+    'Visual',
+    'Material',
+    'Mesh',
+    'Noise',
+    'Plugin',
+    'Pose'
+]

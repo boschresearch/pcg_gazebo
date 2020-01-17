@@ -26,12 +26,32 @@ class IMU(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        angular_velocity=dict(creator=AngularVelocity, optional=True, sdf_versions=['1.5', '1.6']),
-        linear_acceleration=dict(creator=LinearAcceleration, optional=True, sdf_versions=['1.5', '1.6']),
-        topic=dict(creator=Topic, default=['__default_topic__'], optional=True),
-        orientation_reference_frame=dict(creator=OrientationReferenceFrame, optional=True, sdf_versions=['1.6']),
-        noise=dict(creator=Noise, optional=True, sdf_versions=['1.4', '1.5'])
-    )
+        angular_velocity=dict(
+            creator=AngularVelocity,
+            optional=True,
+            sdf_versions=[
+                '1.5',
+                '1.6']),
+        linear_acceleration=dict(
+            creator=LinearAcceleration,
+            optional=True,
+            sdf_versions=[
+                '1.5',
+                '1.6']),
+        topic=dict(
+            creator=Topic,
+            default=['__default_topic__'],
+            optional=True),
+        orientation_reference_frame=dict(
+            creator=OrientationReferenceFrame,
+            optional=True,
+            sdf_versions=['1.6']),
+        noise=dict(
+            creator=Noise,
+            optional=True,
+            sdf_versions=[
+                '1.4',
+                '1.5']))
 
     def __init__(self):
         XMLBase.__init__(self)

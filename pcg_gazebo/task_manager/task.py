@@ -13,12 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import sys
 import datetime
-import subprocess
 import psutil
 import signal
-from time import sleep, time
+from time import sleep
 from threading import Timer, Thread
 from ..log import create_logger, get_log_dir
 
@@ -55,7 +53,8 @@ class Task(object):
         self._simulation_timeout = simulation_timeout
 
         # Create the log directory, if it doesn't exist already
-        self._log_dir = get_log_dir() if output_log_dir is None else output_log_dir
+        self._log_dir = get_log_dir() \
+            if output_log_dir is None else output_log_dir
         if not os.path.isdir(self._log_dir):
             os.makedirs(self._log_dir)
 
@@ -85,12 +84,14 @@ class Task(object):
             # and they will then be replaced by the assigned value
             for param_name in params:
                 self._command = self._command.replace(
-                    '{' + param_name +'}', str(params[param_name]))
+                    '{' + param_name + '}', str(params[param_name]))
 
         self._logger.info('Task created')
         self._logger.info('\tName: {}'.format(self._task_name))
         self._logger.info('\tCommand: {}'.format(self._command))
-        self._logger.info('\tROS network configuration: {}'.format(self._process_config))
+        self._logger.info(
+            '\tROS network configuration: {}'.format(
+                self._process_config))
         self._logger.info('\tRuns Gazebo?: {}'.format(self._has_gazebo))
         self._logger.info('\tType: {}'.format(self._type))
         self._logger.info('\tRequired task? {}'.format(self._required))
@@ -144,8 +145,6 @@ class Task(object):
             'Applying network configuration for simulation timeout')
         self._process_config.set_env_variables()
 
-        start_process_timeout = time()
-        clock_time = 0
         while self.is_running() and self._process is not None:
             self._logger.info('Simulation timeout')
 
@@ -160,26 +159,35 @@ class Task(object):
                 self._logger.warning('Process {} already '
                                      'terminated'.format(process.pid))
         except Exception as e:
-            self._logger.error('Error in on_terminate function, message=' + str(e))
+            self._logger.error(
+                'Error in on_terminate function, message=' + str(e))
 
     def is_running(self):
         if self._process is None:
             return False
         for proc in self.get_all_processes():
             if not psutil.pid_exists(proc.pid):
-                self._logger.info('Task {} is not running'.format(self._task_name))
+                self._logger.info(
+                    'Task {} is not running'.format(
+                        self._task_name))
                 return False
         return True
 
     def kill(self):
         if self._process is None:
-            self._logger.warning('Task <{}> - Process object is invalid'.format(self._task_name))
+            self._logger.warning(
+                'Task <{}> - Process object is '
+                'invalid'.format(self._task_name))
             return
         if len(self._process_children) == 0:
-            self._logger.warning('Task <{}> - No children processes found'.format(self._task_name))
+            self._logger.warning(
+                'Task <{}> - No children processes'
+                ' found'.format(self._task_name))
             return
         try:
-            self._logger.warning('Task <{}> - Killing process tree...'.format(self._task_name))
+            self._logger.warning(
+                'Task <{}> - Killing process '
+                'tree...'.format(self._task_name))
 
             for p in self.get_all_processes():
                 if psutil.pid_exists(p.pid):
@@ -192,7 +200,7 @@ class Task(object):
                                              p.pid)
                     else:
                         self._logger.warning('Child process %d still '
-                                           'running', p.pid)
+                                             'running', p.pid)
                 else:
                     self._logger.warning('Child process %d is not alive',
                                          p.pid)
@@ -207,30 +215,42 @@ class Task(object):
                 'Alive{}'.format(str(gone), str(alive)))
 
             self._process_timeout_triggered = True
-            self._logger.info('Task <{}> - PROCESS TIMEOUT - finishing process...'.format(self._task_name))
+            self._logger.info(
+                'Task <{}> - PROCESS TIMEOUT - '
+                'finishing process...'.format(
+                    self._task_name))
         except Exception as ex:
             self._logger.warning('Error occurred while killing processes, '
-                               'message=%s' % str(ex))
+                                 'message=%s' % str(ex))
 
         self._process = None
         self._process_children = None
-        self._logger.info('Task <{}> - Process objects were reset'.format(self._task_name))
+        self._logger.info(
+            'Task <{}> - Process objects were reset'.format(self._task_name))
 
         if callable(self._task_killed_callback):
-            self._logger.info('Calling task <{}> end callback function'.format(self._task_name))
+            self._logger.info(
+                'Calling task <{}> end callback function'.format(
+                    self._task_name))
             self._task_killed_callback(self._task_name)
-            self._logger.info('Task <{}> - Callback finished'.format(self._task_name))
+            self._logger.info(
+                'Task <{}> - Callback finished'.format(self._task_name))
 
-        self._logger.info('Task <{}> - Processes finished'.format(self._task_name))
+        self._logger.info(
+            'Task <{}> - Processes finished'.format(self._task_name))
 
     def wait(self, timeout=None):
         if self._process is not None:
             try:
                 exit_code = self._process.wait(timeout)
-                self._logger.info('Task <{}> finished, exit_code={}'.format(self._task_name, exit_code))
+                self._logger.info(
+                    'Task <{}> finished, exit_code={}'.format(
+                        self._task_name, exit_code))
                 return True
             except psutil.TimeoutExpired as ex:
-                self._logger.info('Task <{}> still running'.format(self._task_name))
+                self._logger.info(
+                    'Task <{}> still running'.format(
+                        self._task_name))
                 return False
         return False
 
@@ -272,12 +292,15 @@ class Task(object):
             os.makedirs(env_variables['ROS_HOME'])
 
         self._logger.info('Running command=' + self._command)
-        self._logger.info('ROS network configuration=' + str(self._process_config))
+        self._logger.info('ROS network configuration=' +
+                          str(self._process_config))
         self._logger.info('Process log file=' + self._log_filename)
         self._logger.info('Directory for log files=' + self._log_dir)
 
         if self._process_timeout is not None:
-            self._logger.info('Process timeout={} seconds'.format(self._process_timeout))
+            self._logger.info(
+                'Process timeout={} seconds'.format(
+                    self._process_timeout))
             self._process_timer = Timer(self._process_timeout, self.kill)
 
         self._process = psutil.Popen(

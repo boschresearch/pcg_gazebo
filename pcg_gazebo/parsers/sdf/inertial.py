@@ -22,7 +22,7 @@ from .mass import Mass
 class Inertial(XMLBase):
     _NAME = 'inertial'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         inertia=dict(creator=Inertia),
         pose=dict(creator=Pose),

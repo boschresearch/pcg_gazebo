@@ -22,4 +22,3 @@ class Parent(XMLString):
 
     def __init__(self, default='parent'):
         XMLString.__init__(self, default)
-        

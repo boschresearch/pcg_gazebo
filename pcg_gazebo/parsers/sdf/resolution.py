@@ -26,4 +26,3 @@ class Resolution(XMLScalar):
     def _set_value(self, value):
         assert value >= 0, 'Input value must be equal or greater to zero'
         XMLScalar._set_value(self, value)
-

@@ -22,4 +22,3 @@ class MinAngle(XMLScalar):
 
     def __init__(self, default=0):
         XMLScalar.__init__(self, default)
-

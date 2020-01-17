@@ -19,7 +19,7 @@ from ..types import XMLVector
 class XYZ(XMLVector):
     _NAME = 'xyz'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=[0, 0, 1]):
         XMLVector.__init__(self, 3)
         self.value = default

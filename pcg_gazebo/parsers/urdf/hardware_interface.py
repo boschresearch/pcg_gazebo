@@ -22,4 +22,3 @@ class HardwareInterface(XMLString):
 
     def __init__(self, default='EffortJointInterface'):
         XMLString.__init__(self, default=default)
-        

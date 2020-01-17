@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from ...utils import is_scalar
 from ..types import XMLScalar
 
 
@@ -28,7 +27,7 @@ class MaxVel(XMLScalar):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('max_vel')
         obj.value = self.value
         return obj

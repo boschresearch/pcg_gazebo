@@ -19,9 +19,9 @@ from ..types import XMLScalar
 class Dissipation(XMLScalar):
     _NAME = 'dissipation'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=100):
         XMLScalar.__init__(self, default)
 
-    def _set_value(self, value):        
+    def _set_value(self, value):
         XMLScalar._set_value(self, value, min_value=0)

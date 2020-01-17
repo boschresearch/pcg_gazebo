@@ -31,7 +31,8 @@ class Geometry(XMLBase):
     _CHILDREN_CREATORS = dict(
         empty=dict(creator=Empty, mode='empty', n_elems=1),
         box=dict(creator=Box, mode='box', n_elems=1),
-        image=dict(creator=Image, mode='image', default=['geometry'], n_elems=1),
+        image=dict(
+            creator=Image, mode='image', default=['geometry'], n_elems=1),
         cylinder=dict(creator=Cylinder, mode='cylinder', n_elems=1),
         sphere=dict(creator=Sphere, mode='sphere', n_elems=1),
         plane=dict(creator=Plane, mode='plane', n_elems=1),
@@ -39,7 +40,15 @@ class Geometry(XMLBase):
         polyline=dict(creator=Polyline, mode='polyline', n_elems=1)
     )
 
-    _MODES = ['empty', 'box', 'image', 'cylinder', 'sphere', 'plane', 'mesh', 'polyline']
+    _MODES = [
+        'empty',
+        'box',
+        'image',
+        'cylinder',
+        'sphere',
+        'plane',
+        'mesh',
+        'polyline']
 
     def __init__(self):
         XMLBase.__init__(self)

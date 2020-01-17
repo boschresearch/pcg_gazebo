@@ -25,7 +25,8 @@ class Clouds(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        ambient=dict(creator=Ambient, default=[[0.8, 0.8, 0.8, 1.0]], optional=True),
+        ambient=dict(
+            creator=Ambient, default=[[0.8, 0.8, 0.8, 1.0]], optional=True),
         speed=dict(creator=Speed, default=[0.6], optional=True),
         direction=dict(creator=Direction, default=[0.0], optional=True),
         humidity=dict(creator=Humidity, default=[0.5], optional=True),
@@ -35,7 +36,7 @@ class Clouds(XMLBase):
     def __init__(self):
         XMLBase.__init__(self)
         self.reset()
-    
+
     @property
     def ambient(self):
         return self._get_child_element('ambient')
@@ -47,23 +48,23 @@ class Clouds(XMLBase):
     @property
     def speed(self):
         return self._get_child_element('speed')
-    
+
     @speed.setter
-    def speed(self, value):        
+    def speed(self, value):
         self._add_child_element('speed', value)
 
     @property
     def direction(self):
         return self._get_child_element('direction')
-    
+
     @direction.setter
-    def direction(self, value):        
+    def direction(self, value):
         self._add_child_element('direction', value)
 
     @property
     def humidity(self):
         return self._get_child_element('humidity')
-    
+
     @humidity.setter
     def humidity(self, value):
         self._add_child_element('humidity', value)
@@ -71,7 +72,7 @@ class Clouds(XMLBase):
     @property
     def mean_size(self):
         return self._get_child_element('mean_size')
-    
+
     @mean_size.setter
     def mean_size(self, value):
         self._add_child_element('mean_size', value)

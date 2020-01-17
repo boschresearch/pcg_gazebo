@@ -40,7 +40,7 @@ class Child(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('child')
         obj.value = self.link
         return obj

@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import collections
 from ..types import XMLVector
 
 
@@ -27,6 +26,6 @@ class Background(XMLVector):
         self._value = default
 
     def _set_value(self, value):
-        assert self._is_array(value) and self._is_numeric_vector(value, [0, 1]), \
-            'Invalid background vector'
+        assert self._is_array(value) and self._is_numeric_vector(
+            value, [0, 1]), 'Invalid background vector'
         XMLVector._set_value(self, value)

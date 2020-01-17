@@ -19,10 +19,16 @@ from ...parsers.sdf import create_sdf_element
 
 
 class IMU(Sensor):
-    def __init__(self, name='imu', always_on=True, update_rate=50, 
-        visualize=False, topic='topic', pose=[0, 0, 0, 0, 0, 0]):
-        Sensor.__init__(self, name=name, always_on=always_on, update_rate=update_rate, 
-            visualize=visualize, topic=topic, pose=pose)
+    def __init__(self, name='imu', always_on=True, update_rate=50,
+                 visualize=False, topic='topic', pose=[0, 0, 0, 0, 0, 0]):
+        Sensor.__init__(
+            self,
+            name=name,
+            always_on=always_on,
+            update_rate=update_rate,
+            visualize=visualize,
+            topic=topic,
+            pose=pose)
 
         self._elements = dict()
         self._elements['angular_velocity'] = dict(
@@ -35,10 +41,10 @@ class IMU(Sensor):
             x=Noise(),
             y=Noise(),
             z=Noise()
-        )              
+        )
 
         self._topic = topic
-    
+
     @property
     def topic(self):
         return self._topic
@@ -49,14 +55,14 @@ class IMU(Sensor):
         assert len(value) > 0, 'Topic name string cannot be empty'
         self._topic = value
 
-    def set_noise(self, element, component, mean=0, stddev=0, bias_mean=0, 
-        bias_stddev=0, precision=0, type='none'):
+    def set_noise(self, element, component, mean=0, stddev=0, bias_mean=0,
+                  bias_stddev=0, precision=0, type='none'):
         assert element in self._elements, \
             'Invalid IMU element, options=' + str(self._elements.keys())
-        
+
         assert component in self._elements[element], \
             'Invalid component for IMU element {}'.format(element)
-        
+
         self._elements[element][component] = Noise(
             mean, stddev, bias_mean, bias_stddev, precision, type)
 
@@ -66,9 +72,16 @@ class IMU(Sensor):
                 return self._elements[element][component]
         return None
 
-    def add_ros_plugin(self, name='imu', robot_namespace='',
-        always_on=True, update_rate=50, body_name='', topic_name='', 
-        gaussian_noise=0.0, frame_name='world'):
+    def add_ros_plugin(
+            self,
+            name='imu',
+            robot_namespace='',
+            always_on=True,
+            update_rate=50,
+            body_name='',
+            topic_name='',
+            gaussian_noise=0.0,
+            frame_name='world'):
         self._plugin = Plugin()
         self._plugin.init_gazebo_ros_imu_sensor_plugin(
             name=name,
@@ -86,37 +99,52 @@ class IMU(Sensor):
 
         sensor.imu = create_sdf_element('imu')
         sensor.imu.topic = self.topic
-        
+
         sensor.imu.angular_velocity = create_sdf_element('angular_velocity')
         sensor.imu.angular_velocity.reset(with_optional_elements=True)
 
-        sensor.imu.angular_velocity.x.noise = self._elements['angular_velocity']['x'].to_sdf()
-        sensor.imu.angular_velocity.y.noise = self._elements['angular_velocity']['y'].to_sdf()
-        sensor.imu.angular_velocity.z.noise = self._elements['angular_velocity']['z'].to_sdf()
+        sensor.imu.angular_velocity.x.noise = \
+            self._elements['angular_velocity']['x'].to_sdf()
+        sensor.imu.angular_velocity.y.noise = \
+            self._elements['angular_velocity']['y'].to_sdf()
+        sensor.imu.angular_velocity.z.noise = \
+            self._elements['angular_velocity']['z'].to_sdf()
 
-        sensor.imu.linear_acceleration = create_sdf_element('linear_acceleration')
+        sensor.imu.linear_acceleration = create_sdf_element(
+            'linear_acceleration')
         sensor.imu.linear_acceleration.reset(with_optional_elements=True)
 
-        sensor.imu.linear_acceleration.x.noise = self._elements['linear_acceleration']['x'].to_sdf()
-        sensor.imu.linear_acceleration.y.noise = self._elements['linear_acceleration']['y'].to_sdf()
-        sensor.imu.linear_acceleration.z.noise = self._elements['linear_acceleration']['z'].to_sdf()
+        sensor.imu.linear_acceleration.x.noise = \
+            self._elements['linear_acceleration']['x'].to_sdf()
+        sensor.imu.linear_acceleration.y.noise = \
+            self._elements['linear_acceleration']['y'].to_sdf()
+        sensor.imu.linear_acceleration.z.noise = \
+            self._elements['linear_acceleration']['z'].to_sdf()
 
         # For SDF 1.4 and 1.5, the noise element must be initialized
         sensor.imu.noise = create_sdf_element('noise')
         sensor.imu.noise.rate = create_sdf_element('rate')
-        sensor.imu.noise.rate.mean = self._elements['angular_velocity']['x'].mean
-        sensor.imu.noise.rate.stddev = self._elements['angular_velocity']['x'].stddev
-        sensor.imu.noise.rate.bias_mean = self._elements['angular_velocity']['x'].bias_mean
-        sensor.imu.noise.rate.bias_stddev = self._elements['angular_velocity']['x'].bias_stddev
+        sensor.imu.noise.rate.mean = \
+            self._elements['angular_velocity']['x'].mean
+        sensor.imu.noise.rate.stddev = \
+            self._elements['angular_velocity']['x'].stddev
+        sensor.imu.noise.rate.bias_mean = \
+            self._elements['angular_velocity']['x'].bias_mean
+        sensor.imu.noise.rate.bias_stddev = \
+            self._elements['angular_velocity']['x'].bias_stddev
 
         sensor.imu.noise.accel = create_sdf_element('accel')
 
         sensor.imu.noise.accel = create_sdf_element('accel')
-        sensor.imu.noise.accel.mean = self._elements['linear_acceleration']['x'].mean
-        sensor.imu.noise.accel.stddev = self._elements['linear_acceleration']['x'].stddev
-        sensor.imu.noise.accel.bias_mean = self._elements['linear_acceleration']['x'].bias_mean
-        sensor.imu.noise.accel.bias_stddev = self._elements['linear_acceleration']['x'].bias_stddev
-        
+        sensor.imu.noise.accel.mean = \
+            self._elements['linear_acceleration']['x'].mean
+        sensor.imu.noise.accel.stddev = \
+            self._elements['linear_acceleration']['x'].stddev
+        sensor.imu.noise.accel.bias_mean = \
+            self._elements['linear_acceleration']['x'].bias_mean
+        sensor.imu.noise.accel.bias_stddev = \
+            self._elements['linear_acceleration']['x'].bias_stddev
+
         return sensor
 
     @staticmethod
@@ -127,11 +155,17 @@ class IMU(Sensor):
             for component in ['x', 'y', 'z']:
                 if hasattr(sdf.imu, element):
                     if hasattr(getattr(sdf.imu, element), component):
-                        noise = getattr(getattr(sdf.imu, element), component).noise 
-                        sensor._elements[element][component] = Noise.from_sdf(noise)
-                        
+                        noise = getattr(
+                            getattr(
+                                sdf.imu,
+                                element),
+                            component).noise
+                        sensor._elements[element][component] = Noise.from_sdf(
+                            noise)
+
         if sdf.plugins is not None:
-            assert len(sdf.plugins) == 1, 'Only one plugin per sensor is supported'            
+            assert len(
+                sdf.plugins) == 1, 'Only one plugin per sensor is supported'
             sensor._plugin = Plugin.from_sdf(sdf.plugins[0])
 
         return sensor

@@ -26,7 +26,7 @@ from .format import Format
 class Image(XMLBase):
     _NAME = 'image'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         uri=dict(creator=URI, mode='geometry'),
         scale=dict(creator=Scale, default=[1], mode='geometry'),

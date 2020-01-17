@@ -13,11 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ...parsers.sdf import create_sdf_element
-import os
 import collections
 import itertools
-import re
-import rospkg
 import numpy as np
 from .mesh import Mesh
 from .footprint import Footprint
@@ -32,7 +29,7 @@ except ImportError:
 class Geometry(object):
     _GEO_TYPES = ['box', 'cylinder', 'sphere', 'plane', 'mesh']
 
-    def __init__(self, geo_type=None, **kwargs):                
+    def __init__(self, geo_type=None, **kwargs):
         self._sdf = None
         self._mesh = None
         self._mesh_pkg_name = None
@@ -49,7 +46,7 @@ class Geometry(object):
                     for tag in kwargs:
                         self.set_param(tag, kwargs[tag])
 
-                if geo_type == 'box':                    
+                if geo_type == 'box':
                     self._mesh = Mesh.create_box(
                         size=self.get_param('size'))
                 elif geo_type == 'cylinder':
@@ -62,7 +59,7 @@ class Geometry(object):
                 elif geo_type == 'plane':
                     self._mesh = Mesh.create_box(
                         size=self.get_param('size') + [0.001])
-                
+
     def get_samples(self):
         pnts = None
         if self.get_type() == 'sphere':
@@ -71,13 +68,13 @@ class Geometry(object):
             for theta in np.linspace(0, 2 * np.pi, n / 2):
                 for psi in np.linspace(0, 2 * np.pi, n / 2):
                     pnt = np.array([
-                        radius * np.sin(theta) * np.cos(psi), 
-                        radius * np.sin(theta) * np.sin(psi), 
+                        radius * np.sin(theta) * np.cos(psi),
+                        radius * np.sin(theta) * np.sin(psi),
                         radius * np.cos(theta)])
                     if pnts is None:
                         pnts = pnt
                     else:
-                        pnts = np.vstack((pnts, pnt))       
+                        pnts = np.vstack((pnts, pnt))
         elif self.get_type() == 'plane':
             size = self.get_param('size')
             for i in [-size[0] / 2, size[0] / 2]:
@@ -85,11 +82,10 @@ class Geometry(object):
                     if pnts is None:
                         pnts = np.array([i, j])
                     else:
-                        pnts = np.vstack((pnts, np.array([i, j])))                        
+                        pnts = np.vstack((pnts, np.array([i, j])))
         elif self.get_type() == 'cylinder':
             n = 20
-            angle = np.linspace(0, 2 * np.pi, int(n / 2))
-            
+
             radius = self.get_param('radius')
             length = self.get_param('length')
 
@@ -114,7 +110,7 @@ class Geometry(object):
                     pnts = np.vstack((pnts, pnt))
         elif self.get_type() == 'mesh':
             pnts = self._mesh.get_samples(1000)
-                    
+
         return pnts
 
     def get_mesh(self, position=None, quat=None):
@@ -133,7 +129,7 @@ class Geometry(object):
         return transformed_mesh
 
     def get_footprint(self, position=None, quat=None, use_bounding_box=False,
-        z_limits=None):
+                      z_limits=None):
         from ...transformations import quaternion_matrix
         if position is None:
             position = np.array([0, 0, 0])
@@ -143,7 +139,7 @@ class Geometry(object):
 
         footprint = None
         fp_poly = self._mesh.get_footprint_polygon(
-            z_limits=z_limits, 
+            z_limits=z_limits,
             use_global_frame=True,
             transform=quaternion_matrix(quat),
             offset=position,
@@ -163,7 +159,7 @@ class Geometry(object):
             return 'mesh'
         else:
             return None
-                
+
     def get_param(self, param_name):
         if self._sdf is None and self._mesh is None:
             return None
@@ -186,7 +182,7 @@ class Geometry(object):
         return True
 
     def get_bounds(self):
-        if self._sdf is not None:            
+        if self._sdf is not None:
             if self._sdf._NAME == 'box':
                 size = self._sdf.size.value
                 bounds = dict(
@@ -196,7 +192,7 @@ class Geometry(object):
                     upper_y=size[1] / 2.0,
                     lower_z=-1 * size[2] / 2.0,
                     upper_z=size[2] / 2.0
-                ) 
+                )
             elif self._sdf._NAME == 'cylinder':
                 radius = self._sdf.radius.value
                 length = self._sdf.length.value
@@ -235,30 +231,30 @@ class Geometry(object):
             bounds = self._mesh.bounds
         else:
             return None
-        
+
         return bounds
 
     def get_center(self):
-        if self._sdf is not None:            
+        if self._sdf is not None:
             return [0, 0, 0]
-        elif self._mesh is not None:            
+        elif self._mesh is not None:
             return self._mesh.center
         else:
             return None
 
     def set_box(self, size):
         assert isinstance(size, collections.Iterable), \
-            'Invalid input array' 
+            'Invalid input array'
         size = list(size)
         assert len(size) == 3, 'Input size vector must have 3 elements'
         for elem in size:
             assert elem > 0, 'Size element must be greater than zero'
-        self._sdf = create_sdf_element('box')                
+        self._sdf = create_sdf_element('box')
         self.set_param('size', size)
         self._mesh = Mesh.create_box(
             size=size)
         self._geo_type = 'box'
-                
+
     def set_cylinder(self, radius, length):
         assert radius > 0, 'Radius must be greater than zero'
         assert length > 0, 'Length must be greater than zero'
@@ -280,18 +276,19 @@ class Geometry(object):
 
     def set_plane(self, size, normal):
         assert isinstance(size, collections.Iterable), \
-            'Invalid size array' 
+            'Invalid size array'
         size = list(size)
         assert len(size) == 2, 'Input size vector must have 2 elements'
         for elem in size:
             assert elem > 0, 'Size element must be greater than zero'
 
         assert isinstance(normal, collections.Iterable), \
-            'Invalid normal array' 
+            'Invalid normal array'
         normal = list(normal)
         assert len(normal) == 3, 'Input normal vector must have 3 elements'
         for elem in normal:
-            assert elem >= 0, 'Normal element must be greater than or equal to zero'
+            assert elem >= 0, \
+                'Normal element must be greater than or equal to zero'
         self._sdf = create_sdf_element('plane')
         self.set_param('size', size)
         self.set_param('normal', normal)
@@ -299,27 +296,34 @@ class Geometry(object):
             size=size + [0.001])
         self._geo_type = 'plane'
 
-    def set_mesh(self, mesh, scale=[1, 1, 1], load_mesh=True):      
+    def set_mesh(self, mesh, scale=[1, 1, 1], load_mesh=True):
         if isinstance(mesh, str):
-            self._mesh = Mesh(mesh, load_mesh)        
+            self._mesh = Mesh(mesh, load_mesh)
         else:
             self._mesh = Mesh.from_mesh(mesh, scale)
-        # self._sdf = self._mesh.to_sdf()   
+        # self._sdf = self._mesh.to_sdf()
         self._mesh.scale = scale
         self._geo_type = 'mesh'
 
-    def to_sdf(self, mesh_filename=None, model_folder=None, copy_resources=False):
+    def to_sdf(
+            self,
+            mesh_filename=None,
+            model_folder=None,
+            copy_resources=False):
         PCG_ROOT_LOGGER.info('Convert geometry to SDF')
         sdf = create_sdf_element('geometry')
+
         if self._sdf is not None or self._geo_type == 'mesh':
             if self._geo_type == 'mesh':
+                if self._mesh.filename is not None:
+                    mesh_filename = None
                 self._sdf = self._mesh.to_sdf(
-                    mesh_filename=None if self._mesh.filename is not None else mesh_filename,
-                    model_folder=model_folder, 
+                    mesh_filename=mesh_filename,
+                    model_folder=model_folder,
                     copy_resources=copy_resources)
-            setattr(sdf, self._sdf.xml_element_name, self._sdf)                        
+            setattr(sdf, self._sdf.xml_element_name, self._sdf)
         else:
-            sdf = None        
+            sdf = None
         return sdf
 
     @staticmethod
@@ -330,7 +334,7 @@ class Geometry(object):
             geo.set_box(sdf.box.size.value)
         elif sdf.cylinder is not None:
             geo.set_cylinder(
-                radius=sdf.cylinder.radius.value, 
+                radius=sdf.cylinder.radius.value,
                 length=sdf.cylinder.length.value)
         elif sdf.sphere is not None:
             geo.set_sphere(sdf.sphere.radius.value)
@@ -338,10 +342,10 @@ class Geometry(object):
             geo.set_plane(
                 size=sdf.plane.size.value,
                 normal=sdf.plane.normal.value)
-        elif sdf.mesh is not None:            
+        elif sdf.mesh is not None:
             geo.set_mesh(
-                mesh=sdf.mesh.uri.value, 
-                scale=sdf.mesh.scale.value, 
+                mesh=sdf.mesh.uri.value,
+                scale=sdf.mesh.scale.value,
                 load_mesh=False)
         return geo
 
@@ -374,7 +378,7 @@ class Geometry(object):
             else:
                 return None
         elif self._mesh:
-            marker.type = Marker.MESH_RESOURCE            
+            marker.type = Marker.MESH_RESOURCE
             marker.mesh_resource = 'file://' + self._mesh.filename
             marker.scale.x = self._mesh.scale[0]
             marker.scale.y = self._mesh.scale[1]

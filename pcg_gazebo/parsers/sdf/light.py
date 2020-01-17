@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
+from ..utils import is_string
 from .pose import Pose
 from .cast_shadows import CastShadows
 from .diffuse import Diffuse
@@ -38,7 +39,7 @@ class Light(XMLBase):
         attenuation=dict(creator=Attenuation),
         direction=dict(creator=Direction, default=[[0, 0, -1]]),
         spot=dict(creator=Spot, optional=True),
-        pose=dict(creator=Pose, optional=True)   
+        pose=dict(creator=Pose, optional=True)
     )
 
     def __init__(self):
@@ -51,13 +52,9 @@ class Light(XMLBase):
 
     @name.setter
     def name(self, value):
-        import sys
-        if sys.version_info[0] == 2:
-            assert isinstance(value, str) or isinstance(value, unicode), \
-                'Name should be a string, received={}, type={}'.format(value, type(value))
-        else:
-            assert isinstance(value, str), \
-                'Name should be a string, received={}, type={}'.format(value, type(value))
+        assert is_string(value), 'Name should'\
+            ' be a string, received={}, type={}'.format(
+                value, type(value))
         assert len(value) > 0, \
             'Name string should not be empty'
         self.attributes['name'] = value
@@ -68,13 +65,9 @@ class Light(XMLBase):
 
     @type.setter
     def type(self, value):
-        import sys
-        if sys.version_info[0] == 2:
-            assert isinstance(value, str) or isinstance(value, unicode), \
-                'Name should be a string, received={}, type={}'.format(value, type(value))
-        else:
-            assert isinstance(value, str), \
-                'Name should be a string, received={}, type={}'.format(value, type(value))
+        assert is_string(value), 'Name should' \
+            ' be a string, received={}, type={}'.format(
+                value, type(value))
         assert len(value) > 0, \
             'Name string should not be empty'
         assert value in ['point', 'directional', 'spot'], \
@@ -84,12 +77,12 @@ class Light(XMLBase):
     @property
     def pose(self):
         return self._get_child_element('pose')
-    
+
     @pose.setter
     def pose(self, value):
         self._add_child_element('pose', value)
 
-    @property 
+    @property
     def cast_shadows(self):
         return self._get_child_element('cast_shadows')
 
@@ -97,7 +90,7 @@ class Light(XMLBase):
     def cast_shadows(self, value):
         self._add_child_element('cast_shadows', value)
 
-    @property 
+    @property
     def diffuse(self):
         return self._get_child_element('diffuse')
 
@@ -105,7 +98,7 @@ class Light(XMLBase):
     def diffuse(self, value):
         self._add_child_element('diffuse', value)
 
-    @property 
+    @property
     def specular(self):
         return self._get_child_element('specular')
 
@@ -113,15 +106,15 @@ class Light(XMLBase):
     def specular(self, value):
         self._add_child_element('specular', value)
 
-    @property 
+    @property
     def attenuation(self):
         return self._get_child_element('attenuation')
 
     @attenuation.setter
     def attenuation(self, value):
         self._add_child_element('attenuation', value)
-    
-    @property 
+
+    @property
     def direction(self):
         return self._get_child_element('direction')
 
@@ -129,7 +122,7 @@ class Light(XMLBase):
     def direction(self, value):
         self._add_child_element('direction', value)
 
-    @property 
+    @property
     def spot(self):
         return self._get_child_element('spot')
 

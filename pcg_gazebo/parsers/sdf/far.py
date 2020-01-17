@@ -23,5 +23,5 @@ class Far(XMLScalar):
     def __init__(self, default=0):
         XMLScalar.__init__(self, default)
 
-    def _set_value(self, value):        
+    def _set_value(self, value):
         XMLScalar._set_value(self, value, min_value=0)

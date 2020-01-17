@@ -15,17 +15,20 @@
 
 from ...parsers.sdf import create_sdf_element
 
+
 class Noise(object):
     _NOISE_TYPES = ['none', 'gaussian', 'gaussian_quantized']
 
-    def __init__(self, mean=0, stddev=0, bias_mean=0, bias_stddev=0, 
-        precision=0, type='none'):
+    def __init__(self, mean=0, stddev=0, bias_mean=0, bias_stddev=0,
+                 precision=0, type='none'):
         assert type in self._NOISE_TYPES, \
             'Invalid noise type, options=' + str(self._NOISE_TYPES)
         assert mean >= 0, 'Mean must be greater or equal to zero'
-        assert stddev >= 0, 'Standard deviation must be greater or equal to zero'
+        assert stddev >= 0, 'Standard deviation must be greater' \
+            ' or equal to zero'
         assert bias_mean >= 0, 'Bias mean must be greater or equal to zero'
-        assert bias_stddev >= 0, 'Bias standard deviation must be greater or equal to zero'
+        assert bias_stddev >= 0, 'Bias standard deviation must' \
+            ' be greater or equal to zero'
         assert precision >= 0, 'Precision must be greater or equal to zero'
 
         self._type = type
@@ -60,7 +63,8 @@ class Noise(object):
 
     @stddev.setter
     def stddev(self, value):
-        assert value >= 0, 'Standard deviation must be greater or equal to zero'
+        assert value >= 0, 'Standard deviation must ' \
+            'be greater or equal to zero'
         self._stddev = value
 
     @property
@@ -78,7 +82,8 @@ class Noise(object):
 
     @bias_stddev.setter
     def bias_stddev(self, value):
-        assert value >= 0, 'Bias standard deviation must be greater or equal to zero'
+        assert value >= 0, 'Bias standard deviation must be' \
+            ' greater or equal to zero'
         self._bias_stddev = value
 
     @property
@@ -98,7 +103,7 @@ class Noise(object):
         sdf.bias_stddev = self._bias_stddev
         sdf.precision = self._precision
         return sdf
-    
+
     @staticmethod
     def from_sdf(sdf):
         noise = Noise()

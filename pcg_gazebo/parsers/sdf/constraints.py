@@ -19,7 +19,8 @@ from .erp import ERP
 from .contact_max_correcting_vel import ContactMaxCorrectingVel
 from .contact_surface_layer import ContactSurfaceLayer
 from .split_impulse import SplitImpulse
-from .split_impulse_penetration_threshold import SplitImpulsePenetrationThreshold
+from .split_impulse_penetration_threshold import \
+    SplitImpulsePenetrationThreshold
 
 
 class Constraints(XMLBase):
@@ -30,10 +31,12 @@ class Constraints(XMLBase):
         cfm=dict(creator=CFM),
         erp=dict(creator=ERP),
         contact_surface_layer=dict(creator=ContactSurfaceLayer),
-        contact_max_correcting_vel=dict(creator=ContactMaxCorrectingVel, mode='ode'),
-        split_impulse=dict(creator=SplitImpulse, mode='bullet'),
-        split_impulse_penetration_threshold=dict(creator=SplitImpulsePenetrationThreshold, mode='bullet')
-    )
+        contact_max_correcting_vel=dict(
+            creator=ContactMaxCorrectingVel, mode='ode'),
+        split_impulse=dict(
+            creator=SplitImpulse, mode='bullet'),
+        split_impulse_penetration_threshold=dict(
+            creator=SplitImpulsePenetrationThreshold, mode='bullet'))
 
     _MODES = ['ode', 'bullet']
 
@@ -95,10 +98,16 @@ class Constraints(XMLBase):
                 print('Constraints must have 4 child objects')
                 return False
             if 'contact_max_correcting_vel' not in self.children:
-                print('Constraints has no item tagged as contact_max_correcting_vel')
+                print(
+                    'Constraints has no item tagged'
+                    ' as contact_max_correcting_vel')
                 return False
-            if not isinstance(self.children['contact_max_correcting_vel'], ContactMaxCorrectingVel):
-                print('Constraints element child is not of type contact_max_correcting_vel')
+            if not isinstance(
+                    self.children['contact_max_correcting_vel'],
+                    ContactMaxCorrectingVel):
+                print(
+                    'Constraints element child is not'
+                    ' of type contact_max_correcting_vel')
                 return False
         if self._mode == 'bullet':
             if len(self.children) != 5:
@@ -111,10 +120,16 @@ class Constraints(XMLBase):
                 print('Constraints element child is not of type split_impulse')
                 return False
             if 'split_impulse_penetration_threshold' not in self.children:
-                print('Constraints has no item tagged as split_impulse_penetration_threshold')
+                print(
+                    'Constraints has no item tagged'
+                    ' as split_impulse_penetration_threshold')
                 return False
-            if not isinstance(self.children['split_impulse_penetration_threshold'], SplitImpulsePenetrationThreshold):
-                print('Constraints element child is not of type split_impulse_penetration_threshold')
+            if not isinstance(
+                    self.children['split_impulse_penetration_threshold'],
+                    SplitImpulsePenetrationThreshold):
+                print(
+                    'Constraints element child is not'
+                    ' of type split_impulse_penetration_threshold')
                 return False
         if 'cfm' not in self.children:
             print('Constraints has no item tagged as CFM')
@@ -131,7 +146,11 @@ class Constraints(XMLBase):
         if not isinstance(self.children['erp'], ERP):
             print('Constraints element child is not of type ERP')
             return False
-        if not isinstance(self.children['contact_surface_layer'], ContactSurfaceLayer):
-            print('Constraints element child is not of type ContactSurfaceLayer')
+        if not isinstance(
+                self.children['contact_surface_layer'],
+                ContactSurfaceLayer):
+            print(
+                'Constraints element child is'
+                ' not of type ContactSurfaceLayer')
             return False
         return XMLBase.is_valid(self)

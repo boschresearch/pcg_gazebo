@@ -19,9 +19,9 @@ from ..types import XMLScalar
 class Mass(XMLScalar):
     _NAME = 'mass'
     _TYPE = 'sdf'
-    
+
     def __init__(self):
         XMLScalar.__init__(self)
 
-    def _set_value(self, value):        
+    def _set_value(self, value):
         XMLScalar._set_value(self, value, min_value=1e-10)

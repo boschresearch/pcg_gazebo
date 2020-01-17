@@ -14,18 +14,14 @@
 # limitations under the License.
 import os
 import re
-import sys
 import rospkg
 from .log import PCG_ROOT_LOGGER
-from .utils import PCG_RESOURCES_ROOT_DIR
+from .utils import is_string
+
 
 class Path(object):
     def __init__(self, uri):
-        if sys.version_info[0] == 2:
-            assert isinstance(uri, str) or isinstance(uri, unicode), \
-                'Input URI must be a string or unicode'
-        else:
-            assert isinstance(uri, str), 'Input URI must be a string'
+        assert is_string(uri), 'Input URI must be a string'
 
         self._original_uri = uri
         self._gazebo_model = None
@@ -36,7 +32,9 @@ class Path(object):
             PCG_ROOT_LOGGER.error(msg)
             raise ValueError(uri)
 
-        PCG_ROOT_LOGGER.info('URI {} resolved={}'.format(uri, self.absolute_uri))
+        PCG_ROOT_LOGGER.info(
+            'URI {} resolved={}'.format(
+                uri, self.absolute_uri))
 
     @property
     def original_uri(self):
@@ -91,7 +89,7 @@ class Path(object):
         if self._ros_pkg is None:
             return None
         relative_path = self._absolute_uri.replace(
-            rospkg.RosPack().get_path(self._ros_pkg), 
+            rospkg.RosPack().get_path(self._ros_pkg),
             '')
         prefix = '$(find {})'.format(self._ros_pkg)
         if relative_path[0] != '/':
@@ -103,8 +101,8 @@ class Path(object):
         if os.path.isfile(filename):
             for pkg_name in finder.list():
                 if finder.get_path(pkg_name) in filename:
-                    return pkg_name 
-        return None            
+                    return pkg_name
+        return None
 
     def resolve_uri(self, uri):
         from .simulation import get_gazebo_model_path, \
@@ -128,51 +126,59 @@ class Path(object):
                 PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
             self._ros_pkg = get_gazebo_model_ros_pkg(self._gazebo_model)
-            filename = uri.replace('model://{}'.format(self._gazebo_model), model_path)
+            filename = uri.replace(
+                'model://{}'.format(self._gazebo_model), model_path)
             self._ros_pkg = self._get_ros_package_name(filename)
             return filename
         elif 'package://' in uri:
-            result = re.findall('package://\w+/', uri)
+            result = re.findall(r'package://\w+/', uri)
             if len(result) != 1:
-                msg = 'Invalid package path for provided mesh uri {}'.format(uri)
+                msg = 'Invalid package path for provided mesh uri {}'.format(
+                    uri)
                 PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
-            self._ros_pkg = result[0].replace('package://', '').replace('/', '')
+            self._ros_pkg = result[0].replace(
+                'package://', '').replace('/', '')
             if self._ros_pkg not in rospkg.RosPack().list():
-                msg = 'Package {} was not found, uri={}'.format(self._ros_pkg, uri)
+                msg = 'Package {} was not found, uri={}'.format(
+                    self._ros_pkg, uri)
                 PCG_ROOT_LOGGER.error(msg)
                 raise rospkg.ResourceNotFound(msg)
             pkg_path = rospkg.RosPack().get_path(self._ros_pkg)
             return uri.replace(result[0], pkg_path + '/')
         elif '$(find' in uri:
             uri_temp = uri.replace('$', '')
-            result = re.findall('(find \w+)', uri_temp)
+            result = re.findall(r'(find \w+)', uri_temp)
             if len(result) == 0:
-                msg = 'Invalid package path for provided mesh uri {}'.format(uri)
+                msg = 'Invalid package path for provided mesh uri {}'.format(
+                    uri)
                 PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
 
             self._ros_pkg = result[0].split()[1]
 
             if self._ros_pkg not in rospkg.RosPack().list():
-                msg = 'Package {} was not found, uri={}'.format(self._ros_pkg, uri)
+                msg = 'Package {} was not found, uri={}'.format(
+                    self._ros_pkg, uri)
                 PCG_ROOT_LOGGER.error(msg)
                 raise rospkg.ResourceNotFound(msg)
             pkg_path = rospkg.RosPack().get_path(self._ros_pkg)
-            return uri_temp.replace('(find {})'.format(self._ros_pkg), pkg_path)            
+            return uri_temp.replace(
+                '(find {})'.format(
+                    self._ros_pkg), pkg_path)
         else:
             return None
 
     def _resolve_gazebo_model(self):
-        from .simulation import get_gazebo_model_names, get_gazebo_model_path, \
-            load_gazebo_models
+        from .simulation import get_gazebo_model_names, \
+            get_gazebo_model_path, load_gazebo_models
 
         load_gazebo_models()
         for name in get_gazebo_model_names():
             gazebo_path = get_gazebo_model_path(name)
             if gazebo_path in os.path.dirname(self.absolute_uri):
                 self._gazebo_model = name
-                return 
+                return
 
     def _resolve_ros_package(self):
         for ros_pkg in rospkg.RosPack().list():

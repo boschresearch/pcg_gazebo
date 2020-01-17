@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from time import time, sleep
+from time import time
 from threading import Thread
 from ..log import create_logger
 try:
@@ -23,9 +23,15 @@ try:
 except ImportError:
     ROS_AVAILABLE = False
 
+
 class SimulationTimer(Thread):
-    def __init__(self, simulation_timeout=0, start_gazebo_timeout=60, ros_config=None,
-                 output_log_dir=None, callback=None):
+    def __init__(
+            self,
+            simulation_timeout=0,
+            start_gazebo_timeout=60,
+            ros_config=None,
+            output_log_dir=None,
+            callback=None):
         assert ROS_AVAILABLE, 'ROS components could not be loaded'
         Thread.__init__(self)
         assert ros_config is not None, 'ROS network configuration cannot' \
@@ -51,15 +57,21 @@ class SimulationTimer(Thread):
         self._sim_time_sub = rospy.Subscriber(
             'clock', Clock, self._clock_callback)
 
-        self._logger.info('Simulation timeout configured, '
-                          'simulation_timeout={}, '
-                          'start_gazebo_timeout={}'.format(self._simulation_timeout, self._start_gazebo_timeout))
+        self._logger.info(
+            'Simulation timeout configured, '
+            'simulation_timeout={}, '
+            'start_gazebo_timeout={}'.format(
+                self._simulation_timeout,
+                self._start_gazebo_timeout))
 
     def _clock_callback(self, msg):
-        self._gazebo_clock = rospy.Time(msg.clock.secs, msg.clock.nsecs).to_sec()
+        self._gazebo_clock = rospy.Time(
+            msg.clock.secs, msg.clock.nsecs).to_sec()
 
     def run(self):
-        self._logger.info('Starting simulation timer - Timeout = {} s'.format(self._simulation_timeout))
+        self._logger.info(
+            'Starting simulation timer - Timeout = {} s'.format(
+                self._simulation_timeout))
 
         rate = rospy.Rate(100)
 
@@ -69,7 +81,9 @@ class SimulationTimer(Thread):
             rate.sleep()
             if self._gazebo_clock == 0:
                 if time() - start_process_timeout > self._start_gazebo_timeout:
-                    self._logger.error('Clock was not initialized for {} seconds'.format(self._start_gazebo_timeout))
+                    self._logger.error(
+                        'Clock was not initialized for {} seconds'.format(
+                            self._start_gazebo_timeout))
                     self._success = False
                     break
             if rospy.is_shutdown():

@@ -13,14 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 class Constraint(object):
     """Abstract constraint class.
-    
-    > *Attributes* 
 
-    * `LABEL` (*type:* `str`): Name of the constraint class.    
+    > *Attributes*
+
+    * `LABEL` (*type:* `str`): Name of the constraint class.
     """
     _LABEL = None
+
     def __init__(self):
         """Class constructor."""
-    

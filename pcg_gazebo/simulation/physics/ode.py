@@ -57,12 +57,14 @@ class ODE(Physics):
         self._properties['sor'] = sor
         self._properties['type'] = type
         self._properties['precon_iters'] = precon_iters
-        self._properties['use_dynamic_moi_rescaling'] = use_dynamic_moi_rescaling
+        self._properties['use_dynamic_moi_rescaling'] = \
+            use_dynamic_moi_rescaling
         self._properties['friction_model'] = friction_model
         self._properties['cfm'] = cfm
         self._properties['erp'] = erp
         self._properties['contact_surface_layer'] = contact_surface_layer
-        self._properties['contact_max_correcting_vel'] = contact_max_correcting_vel
+        self._properties['contact_max_correcting_vel'] = \
+            contact_max_correcting_vel
 
         self._description['min_step_size'] = 'The time duration which ' \
             'advances with each iteration of the dynamics engine, this has ' \
@@ -208,12 +210,14 @@ class ODE(Physics):
         physics.type = self._properties['engine']
         physics.max_step_size = self._properties['max_step_size']
         physics.real_time_factor = self._properties['real_time_factor']
-        physics.real_time_update_rate = self._properties['real_time_update_rate']
+        physics.real_time_update_rate = \
+            self._properties['real_time_update_rate']
         physics.max_contacts = self._properties['max_contacts']
         # Set ODE solver parameters
         physics.ode.solver.type = self._properties['type']
         physics.ode.solver.iters = self._properties['iters']
-        physics.ode.solver.use_dynamic_moi_rescaling = self._properties['use_dynamic_moi_rescaling']
+        physics.ode.solver.use_dynamic_moi_rescaling = self._properties[
+            'use_dynamic_moi_rescaling']
         physics.ode.solver.precon_iters = self._properties['precon_iters']
         physics.ode.solver.sor = self._properties['sor']
         physics.ode.solver.min_step_size = self._properties['min_step_size']
@@ -221,8 +225,10 @@ class ODE(Physics):
         # Set ODE constraint parameters
         physics.ode.constraints.cfm = self._properties['cfm']
         physics.ode.constraints.erp = self._properties['erp']
-        physics.ode.constraints.contact_surface_layer = self._properties['contact_surface_layer']
-        physics.ode.constraints.contact_max_correcting_vel = self._properties['contact_max_correcting_vel']
+        physics.ode.constraints.contact_surface_layer = \
+            self._properties['contact_surface_layer']
+        physics.ode.constraints.contact_max_correcting_vel = self._properties[
+            'contact_max_correcting_vel']
 
         if type == 'physics':
             return physics

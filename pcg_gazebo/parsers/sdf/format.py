@@ -27,5 +27,6 @@ class Format(XMLString):
         XMLString.__init__(self, default)
 
     def _set_value(self, value):
-        assert value in self._VALUE_OPTIONS, 'Options are {}'.format(self._VALUE_OPTIONS)
+        assert value in self._VALUE_OPTIONS, 'Options are {}'.format(
+            self._VALUE_OPTIONS)
         XMLString._set_value(self, value)

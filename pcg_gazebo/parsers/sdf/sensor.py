@@ -41,7 +41,8 @@ class Sensor(XMLBase):
         plugin=dict(creator=Plugin, n_elems='+', optional=True),
         altimeter=dict(creator=Altimeter, optional=True, mode='altimeter'),
         camera=dict(creator=Camera, optional=True, mode='camera'),
-        force_torque=dict(creator=ForceTorque, optional=True, mode='force_torque'),
+        force_torque=dict(
+            creator=ForceTorque, optional=True, mode='force_torque'),
         contact=dict(creator=Contact, default=['sensor'], mode='contact'),
         ray=dict(creator=Ray, mode='ray'),
         imu=dict(creator=IMU, mode='imu')
@@ -79,7 +80,8 @@ class Sensor(XMLBase):
     @type.setter
     def type(self, value):
         assert value in self._MODES, \
-            'Invalid sensor type, received={}, options={}'.format(value, self._MODES)
+            'Invalid sensor type, received={}, options={}'.format(
+                value, self._MODES)
         self.attributes['type'] = value
         self._mode = value
 
@@ -147,7 +149,7 @@ class Sensor(XMLBase):
 
     @force_torque.setter
     def force_torque(self, value):
-        self._mode = 'force_torque'            
+        self._mode = 'force_torque'
         self._add_child_element('force_torque', value)
 
     @property
@@ -185,14 +187,16 @@ class Sensor(XMLBase):
         assert mode in self._MODES, \
             'Invalid sensor type, received={}, options={}'.format(
                 mode, self._MODES)
-        self.attributes['type'] = mode        
-        XMLBase.reset(self, mode, with_optional_elements)        
+        self.attributes['type'] = mode
+        XMLBase.reset(self, mode, with_optional_elements)
 
     def add_plugin(self, name, plugin=None):
         if self.plugins is not None:
             for elem in self.plugins:
                 if elem.name == name:
-                    print('Plugin element with name {} already exists'.format(name))
+                    print(
+                        'Plugin element with name {}'
+                        ' already exists'.format(name))
                     return
         if plugin is not None:
             self._add_child_element('plugin', plugin)

@@ -23,10 +23,10 @@ class Animation(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        filename=dict(creator=Filename, default=['__default__']),
-        scale=dict(creator=Scale, default=[1], optional=True),
-        interpolate_x=dict(creator=InterpolateX, default=[False], optional=True)
-    )
+        filename=dict(
+            creator=Filename, default=['__default__']), scale=dict(
+            creator=Scale, default=[1], optional=True), interpolate_x=dict(
+                creator=InterpolateX, default=[False], optional=True))
 
     def __init__(self):
         XMLBase.__init__(self)

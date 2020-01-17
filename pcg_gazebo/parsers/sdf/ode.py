@@ -46,16 +46,25 @@ class ODE(XMLBase):
         fdir1=dict(creator=FDir1, default=[[0, 0, 0]], mode='collision'),
         slip1=dict(creator=Slip1, default=[0], mode='collision'),
         slip2=dict(creator=Slip2, default=[0], mode='collision'),
-        soft_cfm=dict(creator=SoftCFM, default=[0], mode='contact', optional=True),
-        soft_erp=dict(creator=SoftERP, default=[0.2], mode='contact', optional=True),
+        soft_cfm=dict(
+            creator=SoftCFM, default=[0], mode='contact', optional=True),
+        soft_erp=dict(
+            creator=SoftERP, default=[0.2], mode='contact', optional=True),
         kp=dict(creator=Kp, default=[1e12], mode='contact', optional=True),
         kd=dict(creator=Kd, default=[1], mode='contact', optional=True),
-        max_vel=dict(creator=MaxVel, default=[0.01], mode='contact', optional=True),
-        min_depth=dict(creator=MinDepth, default=[0], mode='contact', optional=True),
-        provide_feedback=dict(creator=ProvideFeedback, default=[False], mode='joint', optional=True),
+        max_vel=dict(
+            creator=MaxVel, default=[0.01], mode='contact', optional=True),
+        min_depth=dict(
+            creator=MinDepth, default=[0], mode='contact', optional=True),
+        provide_feedback=dict(
+            creator=ProvideFeedback,
+            default=[False],
+            mode='joint',
+            optional=True),
         cfm=dict(creator=CFM, default=[0], mode='joint', optional=True),
         erp=dict(creator=ERP, default=[0.2], mode='joint', optional=True),
-        limit=dict(creator=Limit, default=['joint'], mode='joint', optional=True),
+        limit=dict(
+            creator=Limit, default=['joint'], mode='joint', optional=True),
         slip=dict(creator=Slip, default=[0], mode='torsional', optional=True)
     )
 
@@ -80,7 +89,7 @@ class ODE(XMLBase):
         return self._get_child_element('constraints')
 
     @constraints.setter
-    def constraints(self, value):        
+    def constraints(self, value):
         if self._mode != 'physics':
             self.reset(mode='physics')
         self._add_child_element('constraints', value)
@@ -106,7 +115,7 @@ class ODE(XMLBase):
         self._add_child_element('mu2', value)
 
     @property
-    def fdir1(self):        
+    def fdir1(self):
         return self._get_child_element('fdir1')
 
     @fdir1.setter
@@ -136,7 +145,7 @@ class ODE(XMLBase):
         self._add_child_element('slip1', value)
 
     @property
-    def slip2(self):        
+    def slip2(self):
         return self._get_child_element('slip2')
 
     @slip2.setter
@@ -146,7 +155,7 @@ class ODE(XMLBase):
         self._add_child_element('slip2', value)
 
     @property
-    def soft_cfm(self):        
+    def soft_cfm(self):
         return self._get_child_element('soft_cfm')
 
     @soft_cfm.setter

@@ -14,9 +14,7 @@
 # limitations under the License.
 import os
 import sys
-import time
 import signal
-import yaml
 from time import sleep, time
 from threading import Thread, Event
 from collections import OrderedDict
@@ -25,8 +23,10 @@ from ..log import create_logger, get_log_dir
 from .gazebo_proxy import GazeboProxy
 from .task import Task
 from .stage import Stage
-from .task_templates import TASK_ROS_CORE, TASK_GAZEBO_EMPTY_WORLD, TASK_RVIZ, \
-    TASK_SIMULATION_TIMER, TASK_ROSBAG_RECORD_TOPICS, TASK_RQT
+from .task_templates import TASK_ROS_CORE, \
+    TASK_GAZEBO_EMPTY_WORLD, TASK_RVIZ, \
+    TASK_SIMULATION_TIMER, TASK_ROSBAG_RECORD_TOPICS, \
+    TASK_RQT
 
 
 class ProcessManager(object):
@@ -39,7 +39,8 @@ class ProcessManager(object):
         self.__LABEL = label
         self._logger = create_logger(name='process_manager',
                                      output_dir=output_log_dir)
-        self._log_dir = get_log_dir() if output_log_dir is None else output_log_dir
+        self._log_dir = get_log_dir() \
+            if output_log_dir is None else output_log_dir
 
         if not os.path.isdir(self._log_dir):
             os.makedirs(self._log_dir)
@@ -67,13 +68,14 @@ class ProcessManager(object):
         # Run all tasks thread
         self._run_tasks_thread = None
 
-        self._recording_filenames = list()        
+        self._recording_filenames = list()
 
         try:
             signal.signal(signal.SIGTERM, self._signal_handler)
             signal.signal(signal.SIGINT, self._signal_handler)
         except ValueError as ex:
-            self._logger.error('Failed to link signal handler, message={}'.format(ex))
+            self._logger.error(
+                'Failed to link signal handler, message={}'.format(ex))
 
     def __del__(self):
         self._logger.info('Killing process manager and all its tasks...')
@@ -120,7 +122,9 @@ class ProcessManager(object):
     def _task_terminated_callback(self, name):
         if name in self._tasks:
             if self._tasks[name].required:
-                self._logger.warning('Required task <{}> has been terminated, killing all tasks'.format(name))
+                self._logger.warning(
+                    'Required task <{}> has been terminated,'
+                    ' killing all tasks'.format(name))
                 for task in self._tasks:
                     if task == name:
                         continue
@@ -136,37 +140,52 @@ class ProcessManager(object):
         self._is_running.clear()
         for idx, stage in zip(range(len(self._stages)), self._stages):
             self._logger.info('Starting #{} stage={}'.format(idx, stage))
-            self._logger.info('  Tasks={}'.format(self._stages[stage].get_tasks()))
+            self._logger.info(
+                '  Tasks={}'.format(
+                    self._stages[stage].get_tasks()))
             self._current_stage = stage
 
             if self._stages[stage].test_start_condition():
-                self._logger.info('Stage #{} {} starting conditions fulfilled'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {} starting conditions fulfilled'.format(
+                        idx, stage))
             else:
-                self._logger.info('Stage #{} {} starting conditions failed'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {} starting conditions failed'.format(
+                        idx, stage))
                 self.kill_all_tasks()
                 self._is_running.clear()
                 break
 
-            self._logger.info('Stage #{} {} - running pre-stage functions'.format(
-                idx, stage))
+            self._logger.info(
+                'Stage #{} {} - running pre-stage '
+                'functions'.format(idx, stage))
             if not self._stages[stage].run_pre_stage_fcns():
-                self._logger.info('Stage #{} {} - error while running pre-stage'
-                                  ' functions'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {} - error while running pre-stage'
+                    ' functions'.format(
+                        idx, stage))
                 self.kill_all_tasks()
                 self._is_running.clear()
                 break
 
             if self.run_stage(stage, timeout):
-                self._logger.info('Stage #{} {} started successfully'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {} started successfully'.format(
+                        idx, stage))
             else:
                 self.kill_all_tasks()
                 self._is_running.clear()
                 break
 
             if self._stages[stage].test_end_condition():
-                self._logger.info('Stage #{} {} end conditions fulfilled'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {} end conditions fulfilled'.format(
+                        idx, stage))
             else:
-                self._logger.info('Stage #{} {} end conditions failed'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {} end conditions failed'.format(
+                        idx, stage))
                 self.kill_all_tasks()
                 self._is_running.clear()
                 break
@@ -174,8 +193,10 @@ class ProcessManager(object):
             self._logger.info('Stage #{} {}  - running post-stage '
                               'functions'.format(idx, stage))
             if not self._stages[stage].run_post_stage_fcns():
-                self._logger.info('Stage #{} {}  - error while running post-stage'
-                                  ' functions'.format(idx, stage))
+                self._logger.info(
+                    'Stage #{} {}  - error while running post-stage'
+                    ' functions'.format(
+                        idx, stage))
                 self.kill_all_tasks()
                 self._is_running.clear()
                 break
@@ -188,7 +209,7 @@ class ProcessManager(object):
         return self._is_running.is_set()
 
     def is_roscore_running(self, timeout=30):
-        from . import is_roscore_running        
+        from . import is_roscore_running
         start_time = time()
         while time() - start_time < timeout:
             if is_roscore_running(self._ros_config.ros_master_uri):
@@ -196,14 +217,14 @@ class ProcessManager(object):
         return is_roscore_running(self._ros_config.ros_master_uri)
 
     def is_gazebo_running(self, timeout=30):
-        from . import is_gazebo_running        
+        from . import is_gazebo_running
         start_time = time()
         while time() - start_time < timeout:
             if is_gazebo_running(self._ros_config.ros_master_uri):
                 return True
         return is_gazebo_running(self._ros_config.ros_master_uri)
 
-    def has_topics(self, topics, timeout=30):                
+    def has_topics(self, topics, timeout=30):
         assert isinstance(topics, list), 'Topics input must be a list'
         for topic in topics:
             assert isinstance(topic, str), 'Topic name must be a string'
@@ -227,7 +248,8 @@ class ProcessManager(object):
     def set_rosparam(self, params):
         from . import set_rosparam
         if not self.is_roscore_running(timeout=0):
-            self._logger.error('roscore is not running! Cannot publish parameter')
+            self._logger.error(
+                'roscore is not running! Cannot publish parameter')
             return False
         assert isinstance(params, dict), 'Parameter structure must be a dict'
         set_rosparam(params, self._ros_config.ros_master_uri)
@@ -236,7 +258,7 @@ class ProcessManager(object):
     def get_rostopic_list(self):
         from . import get_rostopic_list
         return get_rostopic_list(self._ros_config.ros_master_uri)
-        
+
     def has_services(self, services, timeout=30):
         from . import get_rosservice_list
         assert timeout > 0, 'Timeout must be greater than zero'
@@ -320,16 +342,20 @@ class ProcessManager(object):
             for task in self._stages[stage].get_tasks():
                 self._logger.info('Starting task <{}>'.format(task))
                 self._tasks[task].run()
-            self._logger.info('Waiting for all tasks from stage {}' \
-                ' to start...'.format(stage))
+            self._logger.info('Waiting for all tasks from stage {}'
+                              ' to start...'.format(stage))
             start_time = time()
             while time() - start_time < timeout:
-                running = [self._tasks[name].is_running() for name in self._stages[stage].get_tasks()]
+                running = [self._tasks[name].is_running()
+                           for name in self._stages[stage].get_tasks()]
                 if sum(running) == len(self._stages[stage].get_tasks()):
                     break
-                self._logger.info('Waiting for tasks={}'.format(self._stages[stage].get_tasks()))
+                self._logger.info(
+                    'Waiting for tasks={}'.format(
+                        self._stages[stage].get_tasks()))
                 sleep(0.5)
-            running = [self._tasks[name].is_running() for name in self._stages[stage].get_tasks()]
+            running = [self._tasks[name].is_running()
+                       for name in self._stages[stage].get_tasks()]
             if sum(running) != len(self._stages[stage].get_tasks()):
                 self._logger.error('Error! Not all tasks started. Killing '
                                    'remaining tasks')
@@ -442,18 +468,27 @@ class ProcessManager(object):
                 self._stages.move_to_end(name)
         return True
 
-    def init_task(self, name, command, has_gazebo, type=None, params=dict(), 
-        required=False, process_timeout=None, simulation_timeout=None, stage=None):
+    def init_task(
+            self,
+            name,
+            command,
+            has_gazebo,
+            type=None,
+            params=dict(),
+            required=False,
+            process_timeout=None,
+            simulation_timeout=None,
+            stage=None):
         self._logger.info('Initialize task, name={}, command={}'.format(
-            name, command))        
+            name, command))
         if name in self._tasks:
             self._logger.error('Task {} already exists'.format(name))
             return False
 
         self._logger.info('Test if Gazebo is already running...')
         if has_gazebo and self.is_gazebo_running(0):
-            self._logger.error('An instance of Gazebo is already running for' \
-                ' network configuration=')
+            self._logger.error('An instance of Gazebo is already running for'
+                               ' network configuration=')
             self._logger.error(self._ros_config)
             return False
 
@@ -464,14 +499,14 @@ class ProcessManager(object):
             if len(self._stages['roscore'].get_tasks()) == 0:
                 self._stages['roscore'].add_task(name)
             else:
-                self._logger.error('There is already a roscore task for the' \
-                    ' roscore stage')
+                self._logger.error('There is already a roscore task for the'
+                                   ' roscore stage')
                 return False
         elif stage in self._stages:
             self._logger.info('Stage <{}> already exists'.format(stage))
             if name in self._stages[stage].get_tasks():
-                self._logger.error('Task <{}> already exists in stage ' \
-                    '<{}>'.format(name, stage))
+                self._logger.error('Task <{}> already exists in stage '
+                                   '<{}>'.format(name, stage))
                 return False
             self._stages[stage].add_task(name)
         elif stage is None:
@@ -481,8 +516,8 @@ class ProcessManager(object):
                 if not self.add_stage(stage):
                     return False
             if name in self._stages[stage].get_tasks():
-                self._logger.error('Task <{}> already exists in stage ' \
-                    '<{}>'.format(name, stage))
+                self._logger.error('Task <{}> already exists in stage '
+                                   '<{}>'.format(name, stage))
                 return False
 
             self._logger.info('Adding <{}> to stage <{}>'.format(name, stage))
@@ -493,8 +528,8 @@ class ProcessManager(object):
             if not self.add_stage(stage):
                 return False
             if name in self._stages[stage].get_tasks():
-                self._logger.error('Task <{}> already exists in stage ' \
-                    '<{}>'.format(name, stage))
+                self._logger.error('Task <{}> already exists in stage '
+                                   '<{}>'.format(name, stage))
                 return False
             self._logger.info('Adding <{}> to stage <{}>'.format(stage, name))
 
@@ -557,7 +592,8 @@ class ProcessManager(object):
         if task_name in self._tasks:
             if task_name != 'roscore':
                 self._tasks[task_name].run()
-                if 'simulation_timer' in self._tasks and self._tasks[task_name].has_gazebo:
+                if 'simulation_timer' in self._tasks and \
+                        self._tasks[task_name].has_gazebo:
                     self._tasks['simulation_timer'].run()
         self._is_running.clear()
 
@@ -652,11 +688,13 @@ class ProcessManager(object):
     def has_required_tasks(self):
         has_required_tasks = False
         for task in self._tasks:
-            has_required_tasks = has_required_tasks or self._tasks[task].required
+            has_required_tasks = has_required_tasks \
+                or self._tasks[task].required
         return has_required_tasks
 
     def have_all_tasks_ended(self):
-        return sum([not self._tasks[name].is_running() for name in self._tasks]) == len(self._tasks)
+        return sum([not self._tasks[name].is_running()
+                    for name in self._tasks]) == len(self._tasks)
 
     def wait(self, task_name=None, timeout=30):
         self._logger.info('Wait for tasks for finish')
@@ -680,7 +718,10 @@ class ProcessManager(object):
                     for name in self._tasks:
                         if self._tasks[name].required:
                             if self._tasks[name].wait(0.001):
-                                self._logger.info('Required task <{}> was terminated or has not started!'.format(name))
+                                self._logger.info(
+                                    'Required task <{}> was '
+                                    'terminated or has not '
+                                    'started!'.format(name))
                                 required_tasks_running = False
                                 break
                             # else:
@@ -702,4 +743,5 @@ class ProcessManager(object):
             self._ros_config.unlock_port(self._ros_config.ros_port)
             self._ros_config.unlock_port(self._ros_config.gazebo_port)
         else:
-            self._logger.error('Task with name <{}> does not exist'.format(task_name))
+            self._logger.error(
+                'Task with name <{}> does not exist'.format(task_name))

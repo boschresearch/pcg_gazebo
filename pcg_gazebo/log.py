@@ -33,8 +33,13 @@ def update_log_dir(add_timestamp=True):
     if add_timestamp:
         PCG_LOG_DIR = os.path.join(
             PCG_LOG_DIR_ROOT,
-            datetime.datetime.now().isoformat().replace(':', '_') + '_{}'.format(
-                ''.join(random.choice(string.ascii_letters) for i in range(3))))
+            datetime.datetime.now().isoformat().replace(
+                ':',
+                '_') +
+            '_{}'.format(
+                ''.join(
+                    random.choice(
+                        string.ascii_letters) for i in range(3))))
     else:
         PCG_LOG_DIR = PCG_LOG_DIR_ROOT
 
@@ -50,8 +55,8 @@ def get_log_dir():
     return PCG_LOG_DIR
 
 
-def create_logger(name, log_filename=None, output_dir=None, 
-    log_level=logging.ERROR):
+def create_logger(name, log_filename=None, output_dir=None,
+                  log_level=logging.ERROR):
     logger = logging.getLogger(name)
     if len(logger.handlers) == 0:
         out_hdlr = logging.StreamHandler(sys.stdout)
@@ -82,5 +87,3 @@ def create_logger(name, log_filename=None, output_dir=None,
 
 
 PCG_ROOT_LOGGER = create_logger('pcg_gazebo')
-
-

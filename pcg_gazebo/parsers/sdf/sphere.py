@@ -20,7 +20,7 @@ from .radius import Radius
 class Sphere(XMLBase):
     _NAME = 'sphere'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         radius=dict(creator=Radius)
     )

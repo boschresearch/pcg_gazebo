@@ -28,18 +28,19 @@ class ConstraintsManager(_CollectionManager):
         return ConstraintsManager._INSTANCE
 
     def add(self, name, type, **kwargs):
-        """Add a new positioning constraint class to the internal 
+        """Add a new positioning constraint class to the internal
         constraints list.
-        
+
         > *Input arguments*
-        
+
         * `name` (*type:* `str`): ID name for the constraint class instance
         * `type` (*type:* `str`): Name of the constraints class to be created
-        * `kwargs` (*type:* `dict`): Input arguments for the constraint class 
-        to be created        
+        * `kwargs` (*type:* `dict`): Input arguments for the constraint class
+        to be created
         """
         if self.has_element(name):
-            PCG_ROOT_LOGGER.error('Constraint with name <{}> already exists'.format(name))
+            PCG_ROOT_LOGGER.error(
+                'Constraint with name <{}> already exists'.format(name))
             return False
         self._collection[name] = create_constraint(type, **kwargs)
         return True
@@ -53,7 +54,9 @@ class ConstraintsManager(_CollectionManager):
                 self.from_dict(elem)
         else:
             if not self.add(**config):
-                PCG_ROOT_LOGGER.error('Failed to parse constraint configuration={}'.format(config))
-            
+                PCG_ROOT_LOGGER.error(
+                    'Failed to parse constraint'
+                    ' configuration={}'.format(config))
+
     def from_yaml(self, filename):
         pass

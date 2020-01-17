@@ -19,7 +19,7 @@ from ..types import XMLString
 class FrictionModel(XMLString):
     _NAME = 'friction_model'
     _TYPE = 'sdf'
-    
+
     _VALUE_OPTIONS = ['pyramid_model', 'box_model', 'cone_model']
 
     def __init__(self):
@@ -27,5 +27,7 @@ class FrictionModel(XMLString):
 
     def _set_value(self, value):
         assert isinstance(value, str)
-        assert value in self._VALUE_OPTIONS, 'Options are {}, received={}'.format(self._VALUE_OPTIONS, value)
+        assert value in self._VALUE_OPTIONS, 'Options' \
+            ' are {}, received={}'.format(
+                self._VALUE_OPTIONS, value)
         XMLString._set_value(self, value)

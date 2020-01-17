@@ -19,7 +19,7 @@ from ..types import XMLScalar
 class Width(XMLScalar):
     _NAME = 'width'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=320):
         XMLScalar.__init__(self, default)
 

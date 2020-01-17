@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
 from ...parsers.sdf import create_sdf_element
 from .material import Material
 from .geometry import Geometry
@@ -21,13 +20,13 @@ import collections
 
 
 class Visual(object):
-    def __init__(self, 
-        name='visual',
-        pose=[0, 0, 0, 0, 0, 0],
-        cast_shadows=True,
-        transparency=0,
-        geometry_type=None,
-        geometry_args=None):
+    def __init__(self,
+                 name='visual',
+                 pose=[0, 0, 0, 0, 0, 0],
+                 cast_shadows=True,
+                 transparency=0,
+                 geometry_type=None,
+                 geometry_args=None):
         self._sdf_visual = create_sdf_element('visual')
         self._sdf_visual.reset(with_optional_elements=True)
         self._sdf_visual.name = name
@@ -42,7 +41,7 @@ class Visual(object):
         self._geometry = Geometry()
         self._mesh = None
         self._pose = Pose()
-        
+
         mat = self._material.get_random_xkcd_material_as_sdf()
         self._default_display_color = mat.diffuse.value
 
@@ -124,7 +123,7 @@ class Visual(object):
             upper = [bounds['upper_x'], bounds['upper_y'], bounds['upper_z']]
 
             lower = self._pose.quat.rotate(lower)
-            upper = self._pose.quat.rotate(upper)            
+            upper = self._pose.quat.rotate(upper)
 
             bounds['lower_x'] = lower[0] + self.pose.x
             bounds['upper_x'] = upper[0] + self.pose.x
@@ -144,10 +143,13 @@ class Visual(object):
             center[2] += self.pose.z
         return center
 
-    def set_material_script(self, name, uri='file://media/materials/scripts/gazebo.material'):
+    def set_material_script(
+            self,
+            name,
+            uri='file://media/materials/scripts/gazebo.material'):
         self._sdf_visual.material = \
             self._material.get_script_material_as_sdf(name, uri)
-        self.enable_property('material')            
+        self.enable_property('material')
 
     def set_xkcd_color(self, name=None):
         if name is not None:
@@ -157,7 +159,7 @@ class Visual(object):
         else:
             self._sdf_visual.material = \
                 self._material.get_random_xkcd_material_as_sdf()
-        self.enable_property('material')            
+        self.enable_property('material')
 
     def set_color(self, r=None, g=None, b=None, a=1):
         self._sdf_visual.material = self._material.get_color_material(
@@ -194,16 +196,22 @@ class Visual(object):
         assert name in self._include_in_sdf, 'Invalid property name'
         return self._include_in_sdf[name]
 
-    def to_sdf(self, resource_prefix='', model_folder=None, 
-        copy_resources=False):
+    def to_sdf(self, resource_prefix='', model_folder=None,
+               copy_resources=False):
         visual = create_sdf_element('visual')
         visual.name = self.name
+        if len(resource_prefix) == 0:
+            mesh_filename = self.name
+        else:
+            mesh_filename = '{}_{}'.format(
+                resource_prefix,
+                self.name)
         visual.geometry = self._geometry.to_sdf(
-            mesh_filename=self.name if len(resource_prefix) == 0 else '{}_{}'.format(resource_prefix, self.name), 
+            mesh_filename=mesh_filename,
             model_folder=model_folder,
             copy_resources=copy_resources)
         if self.using_property('material'):
-            visual.material = self._sdf_visual.material                        
+            visual.material = self._sdf_visual.material
         if self.using_property('pose'):
             visual.pose = self._pose.to_sdf()
         if self.using_property('cast_shadows'):
@@ -222,7 +230,7 @@ class Visual(object):
         if sdf.cast_shadows is not None:
             visual.cast_shadows = sdf.cast_shadows.value
             visual.enable_property('cast_shadows')
-            
+
         if sdf.transparency is not None:
             visual.transparency = sdf.transparency.value
             visual.enable_property('transparency')
@@ -230,11 +238,11 @@ class Visual(object):
         if sdf.pose is not None:
             visual.pose = Pose.from_sdf(sdf.pose)
             visual.enable_property('pose')
-        
+
         if sdf.material is not None:
             visual._sdf_visual.material = sdf.material
             visual.enable_property('material')
-            
+
         return visual
 
     def to_marker(self):
@@ -258,5 +266,5 @@ class Visual(object):
                 marker.color.r = 0.0
                 marker.color.g = 0.0
                 marker.color.b = 1.0
-                marker.color.a = 1.0                
+                marker.color.a = 1.0
         return marker

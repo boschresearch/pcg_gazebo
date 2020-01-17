@@ -19,7 +19,7 @@ from ..types import XMLScalar
 class ERP(XMLScalar):
     _NAME = 'erp'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=0.2):
         XMLScalar.__init__(self, default)
 

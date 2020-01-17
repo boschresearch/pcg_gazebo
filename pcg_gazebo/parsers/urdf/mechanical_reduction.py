@@ -22,4 +22,3 @@ class MechanicalReduction(XMLScalar):
 
     def __init__(self, default=1):
         XMLScalar.__init__(self, default=default)
-        

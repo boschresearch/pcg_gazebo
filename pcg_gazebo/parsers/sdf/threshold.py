@@ -19,6 +19,6 @@ from ..types import XMLScalar
 class Threshold(XMLScalar):
     _NAME = 'threshold'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=0):
         XMLScalar.__init__(self, default)

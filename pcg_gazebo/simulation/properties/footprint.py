@@ -16,8 +16,6 @@ import collections
 from shapely import affinity, ops
 from shapely.geometry import Point, MultiPoint
 from copy import deepcopy
-import numpy as np
-from .pose import Pose
 
 
 class Footprint(object):
@@ -44,22 +42,22 @@ class Footprint(object):
         self._points = pnts
 
     def get_footprint_polygon(self, offset=[0, 0], angle=0):
-        if len(self._polygons) > 1:            
+        if len(self._polygons) > 1:
             footprint = ops.cascaded_union(self._polygons)
-        elif len(self._polygons) == 1:            
+        elif len(self._polygons) == 1:
             footprint = self._polygons[0]
         elif self._points is not None:
-            mp = MultiPoint(
-                [(self._points[i, 0], self._points[i, 1]) for i in range(self._points.shape[0])])
+            mp = MultiPoint([(self._points[i, 0], self._points[i, 1])
+                             for i in range(self._points.shape[0])])
             footprint = mp.convex_hull
-        else:            
+        else:
             return None
 
         self._offset = offset
         self._heading = angle
 
         self._original_footprint = deepcopy(footprint)
-                
+
         footprint = affinity.rotate(footprint, self._heading, use_radians=True)
         footprint = affinity.translate(
             footprint, self._offset[0], self._offset[1], 0)
@@ -73,5 +71,3 @@ class Footprint(object):
         assert len(offset) == 2, \
             'Offset must have 2 elements'
         self._offset = offset
-    
-

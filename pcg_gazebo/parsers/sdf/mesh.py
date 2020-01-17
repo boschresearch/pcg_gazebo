@@ -22,7 +22,7 @@ from .scale import Scale
 class Mesh(XMLBase):
     _NAME = 'mesh'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         uri=dict(creator=URI),
         scale=dict(creator=Scale),

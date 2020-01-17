@@ -31,10 +31,11 @@ class Camera(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        noise=dict(creator=Noise, default=['gaussian'], optional=True, mode='sensor'),
+        noise=dict(
+            creator=Noise, default=['gaussian'], optional=True, mode='sensor'),
         horizontal_fov=dict(creator=HorizontalFOV, mode='sensor'),
         image=dict(creator=Image, default=['camera'], mode='sensor'),
-        clip=dict(creator=Clip, mode='sensor'), 
+        clip=dict(creator=Clip, mode='sensor'),
         save=dict(creator=Save, optional=True, mode='sensor'),
         depth_camera=dict(creator=DepthCamera, optional=True, mode='sensor'),
         distortion=dict(creator=Distortion, optional=True, mode='sensor'),
@@ -46,7 +47,7 @@ class Camera(XMLBase):
     _ATTRIBUTES = dict(
         name='default'
     )
-    
+
     _MODES = ['sensor', 'gui']
 
     def __init__(self, mode='sensor'):
@@ -136,7 +137,7 @@ class Camera(XMLBase):
     @property
     def pose(self):
         return self._get_child_element('pose')
-    
+
     @pose.setter
     def pose(self, value):
         if self._mode != 'gui':
@@ -146,7 +147,7 @@ class Camera(XMLBase):
     @property
     def view_controller(self):
         return self._get_child_element('view_controller')
-    
+
     @view_controller.setter
     def view_controller(self, value):
         if self._mode != 'gui':

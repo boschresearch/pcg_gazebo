@@ -30,7 +30,7 @@ class MaxContacts(XMLInteger):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('max_contacts')
         obj.value = self.value
         return obj

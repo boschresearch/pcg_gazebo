@@ -23,7 +23,7 @@ from .static import Static
 class Include(XMLBase):
     _NAME = 'include'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         uri=dict(creator=URI),
         pose=dict(creator=Pose, optional=True),

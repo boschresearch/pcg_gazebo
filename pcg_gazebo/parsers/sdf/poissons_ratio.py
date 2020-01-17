@@ -24,5 +24,6 @@ class PoissonsRatio(XMLScalar):
 
     def _set_value(self, value):
         assert value >= -1 and value <= 0.5, \
-            'Poissons ratio must lie between -1 and 0.5, received={}'.format(value)
+            'Poissons ratio must lie between -1' \
+            ' and 0.5, received={}'.format(value)
         XMLScalar._set_value(self, value)
