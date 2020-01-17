@@ -24,5 +24,4 @@ class Transparency(XMLScalar):
         XMLScalar.__init__(self, default=0)
 
     def _set_value(self, value):
-        assert value >= 0 and value <= 1
-        XMLScalar._set_value(self, value)
+        XMLScalar._set_value(self, value, min_value=0, max_value=1)

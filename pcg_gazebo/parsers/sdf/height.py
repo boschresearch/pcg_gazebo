@@ -24,5 +24,4 @@ class Height(XMLScalar):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        assert value > 0, 'Input value must be greater than zero'
-        XMLScalar._set_value(self, value)
+        XMLScalar._set_value(self, value, min_value=0)

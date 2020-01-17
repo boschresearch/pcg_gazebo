@@ -35,6 +35,4 @@ class Mu(XMLScalar):
             ode="(float) Coefficient of friction in the range of [0, 1]")
 
     def _set_value(self, value):
-        assert value >= 0, \
-            'Input value must be greater than zero, received={}'.format(value)
-        XMLScalar._set_value(self, value)
+        XMLScalar._set_value(self, value, min_value=0)

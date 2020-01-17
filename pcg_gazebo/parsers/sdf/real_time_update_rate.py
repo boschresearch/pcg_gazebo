@@ -23,6 +23,4 @@ class RealTimeUpdateRate(XMLScalar):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        assert self._is_scalar(value)
-        assert value > 0
-        XMLScalar._set_value(self, value)
+        XMLScalar._set_value(self, value, min_value=0)

@@ -23,6 +23,5 @@ class Mass(XMLScalar):
     def __init__(self):
         XMLScalar.__init__(self)
 
-    def _set_value(self, value):
-        assert value > 0
-        XMLScalar._set_value(self, value)
+    def _set_value(self, value):        
+        XMLScalar._set_value(self, value, min_value=1e-10)

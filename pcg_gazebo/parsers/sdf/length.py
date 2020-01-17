@@ -24,5 +24,4 @@ class Length(XMLScalar):
         XMLScalar.__init__(self)
 
     def _set_value(self, value):
-        assert value >= 0, 'Length must be greater or equal than zero'
-        XMLScalar._set_value(self, value)
+        XMLScalar._set_value(self, value, min_value=0)
