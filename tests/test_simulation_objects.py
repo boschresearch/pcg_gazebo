@@ -32,6 +32,7 @@ from pcg_gazebo.parsers import parse_sdf, parse_sdf_config
 from pcg_gazebo.parsers.urdf import create_urdf_element
 from pcg_gazebo.parsers.sdf import create_sdf_element
 
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
 INVALID_SIZES = [
     dict(),
@@ -356,7 +357,7 @@ class TestSimulationObjects(unittest.TestCase):
 
         finder = rospkg.RosPack()
         root_test_model_path = os.path.join(
-            finder.get_path('pcg_libraries'), 'test', 'gazebo_models')
+            CUR_DIR, 'gazebo_models')
 
         LIST_TEST_MODELS = dict(
             test_static_model=dict(

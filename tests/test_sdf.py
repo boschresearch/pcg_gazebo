@@ -403,7 +403,9 @@ class TestSDFParser(unittest.TestCase):
                     except AssertionError as error:
                         pass
                     else:
-                        self.fail('No assertion error raised while setting {} for {}'.format(value, obj.NAME))
+                        self.fail(
+                            'No assertion error raised while setting {} for {}'.format(
+                                value, sdf_tag))
                     
     def test_pose(self):
         sdf_obj = create_sdf_element('pose')
