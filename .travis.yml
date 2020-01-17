@@ -9,7 +9,7 @@ matrix:
 
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
+- sudo apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
 
 install:
 - pip3 install -e .
