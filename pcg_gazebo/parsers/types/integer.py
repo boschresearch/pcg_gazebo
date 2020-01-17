@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from ...utils import is_scalar
 from . import XMLBase
 
 
@@ -25,15 +25,32 @@ class XMLInteger(XMLBase):
         self._default = default
         self._value = default
 
-    def _set_value(self, value):
+    def _set_value(self, value, min_value=None, max_value=None):
         assert not isinstance(value, bool), \
             '[{}] Input value cannot be a boolean'.format(
                 self.xml_element_name)
-        assert isinstance(value, float) or isinstance(value, int), \
+        assert is_scalar(value), \
             '[{}] Input value must be a float or an integer, received={}'.format(
                 self.xml_element_name, value)
         if isinstance(value, float):
-            assert value.is_integer()
+            assert value.is_integer(), \
+                '[{}] Provided floating point value does not hold an integer value'.format(
+                    self.xml_element_name)
+
+        if min_value is not None:
+            assert value >= min_value, \
+                'Value for {} must be greater or equal to {}'.format(
+                    self._NAME, min_value)
+
+        if max_value is not None:
+            if min_value is not None:
+                assert max_value > min_value, \
+                    'Max. value {} for {} is not greater than provided min. value {}'.format(
+                        max_value, self._NAME, min_value)
+            assert value <= max_value, \
+                'Value for {} must be less or equal to {}'.format(
+                    self._NAME, max_value)
+
         self._value = int(value)
 
     def reset(self):
