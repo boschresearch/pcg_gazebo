@@ -255,11 +255,9 @@ def generate_random_string(size=3):
 
 def get_template_path(filename):
     template_fullpath = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        '..',
+        os.path.dirname(os.path.abspath(__file__)),        
         'templates',
         filename)
-    print(template_fullpath)
     if os.path.isfile(template_fullpath):
         return template_fullpath
     else:
@@ -282,6 +280,10 @@ def is_scalar(obj):
         isinstance(obj, np.float64) or \
         isinstance(obj, np.int64)
 
+def is_integer(obj):
+    import numpy as np
+    return isinstance(obj, int) or \
+        isinstance(obj, np.int64)
 
 
 
