@@ -4,9 +4,8 @@ dist: bionic
 
 matrix:
   include:    
-    - env: PYTHON_VERSION=3.4
-    - env: PYTHON_VERSION=3.5
     - env: PYTHON_VERSION=3.6
+    - env: PYTHON_VERSION=3.8
 
 before_install:
 - sudo apt-get -qq update
