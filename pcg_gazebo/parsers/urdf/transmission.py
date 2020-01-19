@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLBase
-from ..utils import is_string
+from ...utils import is_string
 from .type import Type
 from .actuator import Actuator
 from .hardware_interface import HardwareInterface

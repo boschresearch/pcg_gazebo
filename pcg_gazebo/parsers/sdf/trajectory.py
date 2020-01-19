@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
-from ..utils import is_string
+from ...utils import is_string
 from .waypoint import Waypoint
 
 

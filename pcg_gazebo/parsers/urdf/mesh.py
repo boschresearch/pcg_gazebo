@@ -14,7 +14,7 @@
 # limitations under the License.
 import sys
 from ..types import XMLBase
-from ..utils import is_string
+from ...utils import is_string
 
 
 class Mesh(XMLBase):

@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLBase
-from ..utils import is_string
+from ...utils import is_string
 from .inertial import Inertial
 from .collision import Collision
 from .gazebo import Gazebo

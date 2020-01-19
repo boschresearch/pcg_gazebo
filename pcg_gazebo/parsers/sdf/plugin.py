@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLCustom
-from ..utils import is_string
+from ...utils import is_string
 
 
 class Plugin(XMLCustom):

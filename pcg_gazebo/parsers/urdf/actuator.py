@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLBase
-from ..utils import is_string
+from ...utils import is_string
 from .mechanical_reduction import MechanicalReduction
 from .hardware_interface import HardwareInterface
 

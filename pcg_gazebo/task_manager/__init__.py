@@ -14,12 +14,21 @@
 # limitations under the License.
 """This module holds all entities related to task scheduling and stages.
 """
-import os
-import subprocess
-from ..log import PCG_ROOT_LOGGER
+from .gazebo_proxy import GazeboProxy
+from .process_manager import ProcessManager
+from .ros_config import ROSConfig
+from .server import Server
+from .simulation_timer import SimulationTimer
+from .stage import Stage
+from .task_templates import TASK_GAZEBO_EMPTY_WORLD, TASK_ROS_CORE, \
+    TASK_ROSBAG_RECORD_ALL, TASK_ROSBAG_RECORD_TOPICS, \
+    TASK_RQT, TASK_RVIZ, TASK_SIMULATION_TF_MANAGER, TASK_SIMULATION_TIMER
+from .task import Task
 
 
 def is_roscore_running(ros_master_uri='http://localhost:11311'):
+    import os
+    import subprocess
     """Return True if a `roscore` is running for the provided ROS URI
 
     > *Input parameters*
@@ -49,6 +58,8 @@ def is_gazebo_running(ros_master_uri='http://localhost:11311'):
     * `ros_master_uri` (*type:* `str`, *default:*
      (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -71,6 +82,8 @@ def rosnode_exists(name, ros_master_uri='http://localhost:11311'):
     * `ros_master_uri` (*type:* `str`, *default:*
      (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -94,6 +107,9 @@ def get_rosparam_list(ros_master_uri='http://localhost:11311'):
     * `ros_master_uri` (*type:* `str`, *default:*
      (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -118,6 +134,9 @@ def get_rostopic_list(ros_master_uri='http://localhost:11311'):
     * `ros_master_uri` (*type:* `str`, *default:*
      (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -142,6 +161,9 @@ def get_rosservice_list(ros_master_uri='http://localhost:11311'):
     * `ros_master_uri` (*type:* `str`, *default:*
      (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -169,6 +191,9 @@ def set_rosparam(params, ros_master_uri='http://localhost:11311'):
      (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
     import yaml
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     assert isinstance(params, dict, 'Parameters must be provided as dict')
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
@@ -183,3 +208,27 @@ def set_rosparam(params, ros_master_uri='http://localhost:11311'):
         PCG_ROOT_LOGGER.error(
             'Error setting ROS parameters, message={}'.format(ex))
         return None
+
+
+__all__ = [
+    'GazeboProxy',
+    'ProcessManager',
+    'ROSConfig',
+    'Server',
+    'SimulationTimer',
+    'Stage',
+    'Task',
+    'TASK_GAZEBO_EMPTY_WORLD',
+    'TASK_ROS_CORE',
+    'TASK_ROSBAG_RECORD_ALL',
+    'TASK_ROSBAG_RECORD_TOPICS',
+    'TASK_RQT',
+    'TASK_RVIZ',
+    'TASK_SIMULATION_TF_MANAGER',
+    'TASK_SIMULATION_TIMER',
+    'get_rosparam_list',
+    'get_rosservice_list',
+    'get_rostopic_list',
+    'is_gazebo_running',
+    'is_roscore_running'
+]
