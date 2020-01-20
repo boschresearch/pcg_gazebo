@@ -11,7 +11,7 @@ before_install:
 - sudo apt-get -qq update
 - sudo apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
 - sudo pip3 install pip --upgrade
-- sudo pip3 install flake8 autopep8 setuptools
+- sudo pip3 install setuptools flake8 autopep8
 
 install:
 - pip3 install -e .
