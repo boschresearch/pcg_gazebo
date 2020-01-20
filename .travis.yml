@@ -1,5 +1,5 @@
 language: generic
-sudo: enabled
+sudo: required
 dist: bionic
 
 matrix:
@@ -8,9 +8,9 @@ matrix:
     - env: PYTHON_VERSION=3.8
 
 before_install:
-- apt-get -qq update
-- apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
-- pip3 install flake8 autopep8
+- sudo apt-get -qq update
+- sudo apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
+- sudo pip3 install flake8 autopep8
 
 install:
 - pip3 install -e .
