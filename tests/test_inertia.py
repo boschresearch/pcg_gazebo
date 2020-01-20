@@ -20,6 +20,7 @@ from pcg_gazebo.simulation.properties import Inertial
 
 CORRECT_ROS_NAMESPACE = '/pcg_test'
 
+
 def get_solid_sphere_inertia(mass, radius):
     fac = 2. / 5
     return dict(
@@ -31,6 +32,7 @@ def get_solid_sphere_inertia(mass, radius):
         ixz=0,
         iyz=0
     )
+
 
 def get_hollow_sphere_inertia(mass, radius):
     fac = 2. / 3
@@ -44,6 +46,7 @@ def get_hollow_sphere_inertia(mass, radius):
         iyz=0
     )
 
+
 def get_ellipsoid_inertia(mass, axis_length_x, axis_length_y, axis_length_z):
     fac = 1. / 5
     return dict(
@@ -55,6 +58,7 @@ def get_ellipsoid_inertia(mass, axis_length_x, axis_length_y, axis_length_z):
         ixz=0,
         iyz=0
     )
+
 
 def get_cuboid_inertia(mass, length_x, length_y, length_z):
     fac = 1. / 12
@@ -68,6 +72,7 @@ def get_cuboid_inertia(mass, length_x, length_y, length_z):
         iyz=0
     )
 
+
 def get_centered_rod_inertia(mass, length, axis):
     fac = 1. / 12
     return dict(
@@ -79,6 +84,7 @@ def get_centered_rod_inertia(mass, length, axis):
         ixz=0,
         iyz=0
     )
+
 
 class TestPCGGeneratorInertial(unittest.TestCase):
     def test_default_values(self):
@@ -108,12 +114,13 @@ class TestPCGGeneratorInertial(unittest.TestCase):
 
         inertia = Inertial.create_solid_sphere_inertia(mass, radius)
         for tag in ref_inertia:
-            self.assertEqual(ref_inertia[tag], getattr(inertia, tag),
-                'Element {} set with wrong value, correct={}, value={}'.format(
-                    tag, 
-                    ref_inertia[tag],
-                    getattr(inertia, tag)
-                ))
+            self.assertEqual(
+                ref_inertia[tag],
+                getattr(inertia, tag),
+                'Element {} set with wrong value, '
+                'correct={}, value={}'.format(
+                    tag, ref_inertia[tag], getattr(
+                        inertia, tag)))
 
     def test_hollow_sphere_inertia(self):
         # Test invalid inputs
@@ -126,19 +133,20 @@ class TestPCGGeneratorInertial(unittest.TestCase):
         for test_input in inputs:
             with self.assertRaises(AssertionError):
                 Inertial.create_hollow_sphere_inertia(*test_input)
-        
+
         mass = random.random()
         radius = random.random()
         ref_inertia = get_hollow_sphere_inertia(mass, radius)
 
         inertia = Inertial.create_hollow_sphere_inertia(mass, radius)
         for tag in ref_inertia:
-            self.assertEqual(ref_inertia[tag], getattr(inertia, tag),
-                'Element {} set with wrong value, correct={}, value={}'.format(
-                    tag, 
-                    ref_inertia[tag],
-                    getattr(inertia, tag)
-                ))
+            self.assertEqual(
+                ref_inertia[tag],
+                getattr(inertia, tag),
+                'Element {} set with wrong value, '
+                'correct={}, value={}'.format(
+                    tag, ref_inertia[tag], getattr(
+                        inertia, tag)))
 
     def test_ellipsoid_inertia(self):
         # Test invalid inputs
@@ -160,17 +168,18 @@ class TestPCGGeneratorInertial(unittest.TestCase):
 
         ref_inertia = get_ellipsoid_inertia(
             mass, axis_length_x, axis_length_y, axis_length_z)
-    
+
         inertia = Inertial.create_ellipsoid_inertia(
             mass, axis_length_x, axis_length_y, axis_length_z)
 
-        for tag in ref_inertia:            
-            self.assertEqual(ref_inertia[tag], getattr(inertia, tag),
-                'Element {} set with wrong value, correct={}, value={}'.format(
-                    tag, 
-                    ref_inertia[tag],
-                    getattr(inertia, tag)
-                ))
+        for tag in ref_inertia:
+            self.assertEqual(
+                ref_inertia[tag],
+                getattr(inertia, tag),
+                'Element {} set with wrong value, '
+                'correct={}, value={}'.format(
+                    tag, ref_inertia[tag], getattr(
+                        inertia, tag)))
 
     def test_cuboid_inertia(self):
         # Test invalid inputs
@@ -192,17 +201,18 @@ class TestPCGGeneratorInertial(unittest.TestCase):
 
         ref_inertia = get_cuboid_inertia(
             mass, length_x, length_y, length_z)
-    
+
         inertia = Inertial.create_cuboid_inertia(
             mass, length_x, length_y, length_z)
 
-        for tag in ref_inertia:            
-            self.assertEqual(ref_inertia[tag], getattr(inertia, tag),
-                'Element {} set with wrong value, correct={}, value={}'.format(
-                    tag, 
-                    ref_inertia[tag],
-                    getattr(inertia, tag)
-                ))
+        for tag in ref_inertia:
+            self.assertEqual(
+                ref_inertia[tag],
+                getattr(inertia, tag),
+                'Element {} set with wrong value, '
+                'correct={}, value={}'.format(
+                    tag, ref_inertia[tag], getattr(
+                        inertia, tag)))
 
     def test_centered_rod_inerita(self):
         # Test invalid inputs
@@ -210,7 +220,7 @@ class TestPCGGeneratorInertial(unittest.TestCase):
             [0, 0, []],
             [1, 1, None],
             [1, 1, [1, 1]],
-            [1, 1, [1, 1, 1]],            
+            [1, 1, [1, 1, 1]],
         ]
         for test_input in inputs:
             with self.assertRaises(AssertionError):
@@ -224,16 +234,18 @@ class TestPCGGeneratorInertial(unittest.TestCase):
 
         for test_input in inputs:
             ref_inertia = get_centered_rod_inertia(*test_input)
-        
+
             inertia = Inertial.create_centered_rod_inertia(*test_input)
 
-            for tag in ref_inertia:            
-                self.assertEqual(ref_inertia[tag], getattr(inertia, tag),
-                    'Element {} set with wrong value, correct={}, value={}'.format(
-                        tag, 
-                        ref_inertia[tag],
-                        getattr(inertia, tag)
-                    )) 
+            for tag in ref_inertia:
+                self.assertEqual(
+                    ref_inertia[tag],
+                    getattr(inertia, tag),
+                    'Element {} set with wrong '
+                    'value, correct={}, value={}'.format(
+                        tag, ref_inertia[tag], getattr(
+                            inertia, tag)))
+
 
 if __name__ == '__main__':
     unittest.main()

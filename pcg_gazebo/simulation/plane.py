@@ -84,7 +84,7 @@ class Plane(Link):
                resource_prefix='', model_folder=None, copy_resources=False):
         assert type in ['plane', 'geometry', 'collision', 'visual', 'link',
                         'model', 'sdf'], \
-                            'Invalid type of the output SDF structure'
+            'Invalid type of the output SDF structure'
         if type in ['collision', 'visual', 'link', 'model']:
             assert isinstance(name, str), 'Name must be a string'
             assert len(name) > 0, 'Name string cannot be empty'

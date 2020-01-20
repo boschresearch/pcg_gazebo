@@ -263,15 +263,15 @@ class XMLBase(object):
                         # Check if it is not an empty dictionary
                         assert len(
                             value) != 0, 'Dictionary for object {}' \
-                                ' properties is empty'.format(tag)
+                            ' properties is empty'.format(tag)
                     for elem in value:
                         # Setting attributes, if provided
                         if elem == 'attributes':
                             for att in value[elem]:
                                 assert att in obj.attributes or hasattr(
                                     obj, att), 'No attribute <{}> for' \
-                                        ' <{}>, input={}'.format(
-                                            att, tag, value[elem])
+                                    ' <{}>, input={}'.format(
+                                        att, tag, value[elem])
                         else:
                             if not obj.is_valid_element(elem):
                                 PCG_ROOT_LOGGER.warning(

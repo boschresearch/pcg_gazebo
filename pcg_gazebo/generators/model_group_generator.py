@@ -88,8 +88,8 @@ class ModelGroupGenerator(object):
 
     def run(self, group_name='default', pose=[0, 0, 0, 0, 0, 0]):
         if self._assets_manager.has_element(
-                group_name) and \
-                    self._assets_manager.is_model_group(group_name):
+            group_name) and \
+                self._assets_manager.is_model_group(group_name):
             model_group = self._assets_manager.get(group_name)
         else:
             model_group = ModelGroup(name=group_name)

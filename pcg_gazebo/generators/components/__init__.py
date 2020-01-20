@@ -19,4 +19,4 @@ from .walls import Walls
 __all__ = [
     'HingedDoor',
     'Walls'
-    ]
+]

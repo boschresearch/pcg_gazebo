@@ -230,14 +230,14 @@ class Mesh(object):
             # Combine all closed polygons into one
             closed_polys = unary_union(closed_polys)
             return closed_polys, combined_section
-        except AttributeError as ex:
+        except AttributeError:
             return None, None
 
     def _slice_mesh_with_plane(self, plane_normal=[0, 0, 1], plane_origin=None,
                                transform=None, offset=[0, 0, 0]):
         assert len(
             plane_normal) == 3, 'Plane normal' \
-                ' vector must have three components'
+            ' vector must have three components'
         assert np.sum(
             plane_normal) == 1, 'Plane normal vector must be a unit vector'
         assert len(offset) == 3, 'Offset vector must have three components'
@@ -405,7 +405,7 @@ class Mesh(object):
                     pnts = mesh.sample(n_samples)
                 else:
                     pnts = np.vstack((pnts, mesh.sample(n_samples)))
-        except ValueError as ex:
+        except ValueError:
             pnts = self.vertices
 
         return pnts
@@ -448,7 +448,7 @@ class Mesh(object):
             use_bounding_box=False):
         assert len(
             plane_normal) == 3, 'Plane normal vector' \
-                ' must have three components'
+            ' must have three components'
         assert np.sum(
             plane_normal) == 1, 'Plane normal vector must be a unit vector'
         assert len(offset) == 3, 'Offset vector must have three components'
@@ -558,7 +558,8 @@ class Mesh(object):
             except ValueError as ex:
                 PCG_ROOT_LOGGER.warning(
                     'Mesh sectioning failed, using the vertices'
-                    ' bounding box instead, filename={}'.format(self.filename))
+                    ' bounding box instead, filename={}, message={}'.format(
+                        self.filename, str(ex)))
                 vertices = np.unique(mesh.vertices, axis=0)
                 return MultiPoint(
                     [(vertices[i, 0], vertices[i, 1])
@@ -768,13 +769,13 @@ class Mesh(object):
             show=True):
         try:
             from descartes.patch import PolygonPatch
-        except ImportError as ex:
+        except ImportError:
             PCG_ROOT_LOGGER.warning('Install descartes to plot the footprint')
             return None
 
         try:
             from matplotlib import pyplot
-        except ImportError as ex:
+        except ImportError:
             PCG_ROOT_LOGGER.warning('Install matplotlib to plot the footprint')
             return None
 

@@ -259,8 +259,8 @@ class RandomPoseEngine(Engine):
             elif config['policy']['name'] == 'value':
                 assert isinstance(config['policy']['args'], int) or isinstance(
                     config['policy']['args'], float), \
-                        'Argument for policy value must be an ' \
-                        'integer or a float'
+                    'Argument for policy value must be an ' \
+                    'integer or a float'
                 for i in range(len(dofs)):
                     if dofs[i] in config['dofs']:
                         pose[i] = config['policy']['args']

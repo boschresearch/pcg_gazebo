@@ -93,9 +93,9 @@ class Inertial(object):
     @iyy.setter
     def iyy(self, value):
         assert is_scalar(value), \
-                'Input value must be a float' \
-                ' or an integer, provided={}'.format(
-                    type(value))
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._iyy = value
 
     @property
@@ -131,9 +131,9 @@ class Inertial(object):
         assert isinstance(
             value, float) or isinstance(
             value, int), \
-                'Input value must be a float' \
-                ' or an integer, provided={}'.format(
-                    type(value))
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._ixz = value
 
     @property
@@ -145,9 +145,9 @@ class Inertial(object):
         assert isinstance(
             value, float) or isinstance(
             value, int), \
-                'Input value must be a float' \
-                ' or an integer, provided={}'.format(
-                    type(value))
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._iyz = value
 
     @property

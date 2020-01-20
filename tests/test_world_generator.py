@@ -60,7 +60,7 @@ FIXED_ENGINE = dict(
     models=['box'],
     poses=[
         [0, 0, 0, 0, 0, 0]
-        ]
+    ]
 )
 
 RANDOM_ENGINE = dict(
@@ -91,31 +91,31 @@ RANDOM_ENGINE = dict(
                         args='cool_workspace'
                     )
                 )
-            ]            
+            ]
         )
     ],
     constraints=[
         dict(
             model='test_box',
             constraint='tangent_to_ground_plane'
-        )        
-    ]      
+        )
+    ]
 )
 
 WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict( 
-      type='area',
-      description=dict(
-        points=[
-            [-6, -4, 0],
-            [-3, -4, 0],
-            [-3, 0, 0],
-            [-6, 0, 0]
-        ]         
-      )
+    geometry=dict(
+        type='area',
+        description=dict(
+          points=[
+              [-6, -4, 0],
+              [-3, -4, 0],
+              [-3, 0, 0],
+              [-6, 0, 0]
+          ]
+        )
     ),
     holes=[
         dict(
@@ -124,8 +124,8 @@ WORKSPACE_CONSTRAINT = dict(
                 center=[-5, 0, 0],
                 radius=0.2
             )
-        ) 
-    ]         
+        )
+    ]
 )
 
 TANGENT_CONSTRAINT = dict(
@@ -137,8 +137,8 @@ TANGENT_CONSTRAINT = dict(
         args=dict(
             origin=[0, 0, 0],
             normal=[0, 0, 1]
-        )            
-    )      
+        )
+    )
 )
 
 TEST_MODEL_GROUP_GENERATOR = dict(
@@ -170,7 +170,7 @@ class TestWorldGenerator(unittest.TestCase):
             assets=dict(
                 assets=[
                     dict(description=BOX_MODEL),
-                    dict(description=BOX_FLOOR_MODEL),                    
+                    dict(description=BOX_FLOOR_MODEL),
                     BOX_FACTORY_INPUT,
                     TEST_MODEL_GROUP_GENERATOR
                 ],
@@ -217,7 +217,7 @@ class TestWorldGenerator(unittest.TestCase):
                                         args='boxes_workspace'
                                     )
                                 )
-                            ]            
+                            ]
                         )
                     ]
                 ),
@@ -252,8 +252,8 @@ class TestWorldGenerator(unittest.TestCase):
                                         name='value',
                                         args=0
                                     )
-                                )                                
-                            ]            
+                                )
+                            ]
                         )
                     ]
                 )
@@ -263,38 +263,38 @@ class TestWorldGenerator(unittest.TestCase):
                     name='boxes_workspace',
                     type='workspace',
                     frame='world',
-                    geometry=dict( 
-                    type='area',
-                    description=dict(
-                        points=[
-                            [-6, -4, 0],
-                            [-3, -4, 0],
-                            [-3, 0, 0],
-                            [-6, 0, 0]
-                        ]         
+                    geometry=dict(
+                        type='area',
+                        description=dict(
+                            points=[
+                                [-6, -4, 0],
+                                [-3, -4, 0],
+                                [-3, 0, 0],
+                                [-6, 0, 0]
+                            ]
+                        )
                     )
-                    )         
                 ),
                 dict(
                     name='generated_boxes_workspace',
                     type='workspace',
                     frame='world',
-                    geometry=dict( 
-                    type='area',
-                    description=dict(
-                        points=[
-                            [-100, -100, 0],
-                            [100, -100, 0],
-                            [100, 100, 0],
-                            [-100, 100, 0]
-                        ]         
+                    geometry=dict(
+                        type='area',
+                        description=dict(
+                            points=[
+                                [-100, -100, 0],
+                                [100, -100, 0],
+                                [100, 100, 0],
+                                [-100, 100, 0]
+                            ]
+                        )
                     )
-                    )         
                 )
             ]
         )
 
-        generator = WorldGenerator()        
+        generator = WorldGenerator()
         generator.from_dict(wg_config)
 
         self.assertTrue(generator.is_asset('box'))
@@ -305,7 +305,7 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertEqual(model.name, 'box')
 
         self.assertTrue(generator.is_asset('box_floor'))
-        self.assertTrue(generator.assets.is_model('box_floor'))        
+        self.assertTrue(generator.assets.is_model('box_floor'))
         model = generator.get_asset('box_floor')
         self.assertIsNotNone(model)
         self.assertIsInstance(model, SimulationModel)
@@ -319,7 +319,8 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertEqual(model.name, 'box_factory')
 
         self.assertTrue(generator.is_asset('box_generated'))
-        self.assertTrue(generator.assets.is_model_group_generator('box_generated'))
+        self.assertTrue(
+            generator.assets.is_model_group_generator('box_generated'))
         model = generator.get_asset('box_generated')
         self.assertIsNotNone(model)
         self.assertIsInstance(model, ModelGroup)
@@ -328,9 +329,11 @@ class TestWorldGenerator(unittest.TestCase):
 
         for engine in wg_config['engines']:
             self.assertTrue(generator.engines.has_element(engine['tag']))
-        
+
         for constraint in wg_config['constraints']:
-            self.assertTrue(generator.engines.has_constraint(constraint['name']))
+            self.assertTrue(
+                generator.engines.has_constraint(
+                    constraint['name']))
 
         self.assertTrue(generator.run_engines())
 
@@ -339,13 +342,17 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertIn('default', generator.world.model_groups)
         self.assertIn('box_generated', generator.world.model_groups)
         self.assertIn('box_generated_1', generator.world.model_groups)
-        
-        self.assertEqual(generator.export_world('/tmp', 'test.world'), '/tmp/test.world')
+
+        self.assertEqual(
+            generator.export_world(
+                '/tmp',
+                'test.world'),
+            '/tmp/test.world')
         self.assertTrue(os.path.isfile('/tmp/test.world'))
 
     def test_add_assets(self):
-        generator = WorldGenerator()        
-        generator.add_asset(BOX_MODEL)        
+        generator = WorldGenerator()
+        generator.add_asset(BOX_MODEL)
         self.assertTrue(generator.is_asset('box'))
         self.assertTrue(generator.assets.is_model('box'))
         model = generator.get_asset('box')
@@ -355,7 +362,7 @@ class TestWorldGenerator(unittest.TestCase):
 
         generator.add_asset(BOX_FLOOR_MODEL)
         self.assertTrue(generator.is_asset('box_floor'))
-        self.assertTrue(generator.assets.is_model('box_floor'))        
+        self.assertTrue(generator.assets.is_model('box_floor'))
         model = generator.get_asset('box_floor')
         self.assertIsNotNone(model)
         self.assertIsInstance(model, SimulationModel)
@@ -371,7 +378,8 @@ class TestWorldGenerator(unittest.TestCase):
 
         generator.add_asset(**TEST_MODEL_GROUP_GENERATOR)
         self.assertTrue(generator.is_asset('box_generated'))
-        self.assertTrue(generator.assets.is_model_group_generator('box_generated'))
+        self.assertTrue(
+            generator.assets.is_model_group_generator('box_generated'))
         model = generator.get_asset('box_generated')
         self.assertIsNotNone(model)
         self.assertIsInstance(model, ModelGroup)
@@ -393,7 +401,7 @@ class TestWorldGenerator(unittest.TestCase):
         generator.from_dict(config)
 
         self.assertTrue(generator.is_asset('box_factory'))
-        self.assertTrue(generator.assets.is_factory_input('box_factory'))        
+        self.assertTrue(generator.assets.is_factory_input('box_factory'))
         model = generator.get_asset('box_factory')
         self.assertIsNotNone(model)
         self.assertIsInstance(model, SimulationModel)
@@ -418,21 +426,21 @@ class TestWorldGenerator(unittest.TestCase):
     def test_set_physics_engines_args(self):
         generator = WorldGenerator()
         generator.set_physics_engine(
-            'ode', 
-            max_step_size=0.001, 
+            'ode',
+            max_step_size=0.001,
             real_time_factor=1,
-            real_time_update_rate=1000, 
+            real_time_update_rate=1000,
             max_contacts=20,
-            min_step_size=0.0001, 
-            iters=50, 
-            sor=1.3, 
+            min_step_size=0.0001,
+            iters=50,
+            sor=1.3,
             type='quick',
-            precon_iters=0, 
+            precon_iters=0,
             use_dynamic_moi_rescaling=False,
-            friction_model='pyramid_model', 
-            cfm=0, 
+            friction_model='pyramid_model',
+            cfm=0,
             erp=0.2,
-            contact_surface_layer=0.001, 
+            contact_surface_layer=0.001,
             contact_max_correcting_vel=100)
 
         self.assertIsNotNone(generator.world.physics)
@@ -441,16 +449,16 @@ class TestWorldGenerator(unittest.TestCase):
         generator = WorldGenerator()
         generator.set_physics_engine(
             'bullet',
-            max_step_size=0.001, 
+            max_step_size=0.001,
             real_time_factor=1,
-            real_time_update_rate=1000, 
+            real_time_update_rate=1000,
             max_contacts=20,
-            min_step_size=0.0001, 
-            iters=50, 
-            sor=1.3, 
-            cfm=0, 
+            min_step_size=0.0001,
+            iters=50,
+            sor=1.3,
+            cfm=0,
             erp=0.2,
-            contact_surface_layer=0.001, 
+            contact_surface_layer=0.001,
             split_impulse=True,
             split_impulse_penetration_threshold=-0.01)
 
@@ -460,19 +468,19 @@ class TestWorldGenerator(unittest.TestCase):
         generator = WorldGenerator()
         generator.set_physics_engine(
             'simbody',
-            max_step_size=0.001, 
+            max_step_size=0.001,
             real_time_factor=1,
-            real_time_update_rate=1000, 
+            real_time_update_rate=1000,
             max_contacts=20,
-            min_step_size=0.0001, 
+            min_step_size=0.0001,
             accuracy=0.001,
-            max_transient_velocity=0.01, 
+            max_transient_velocity=0.01,
             stiffness=1e8,
-            dissipation=100, 
+            dissipation=100,
             plastic_coef_restitution=0.5,
-            plastic_impact_velocity=0.5, 
+            plastic_impact_velocity=0.5,
             static_friction=0.9,
-            dynamic_friction=0.9, 
+            dynamic_friction=0.9,
             viscous_friction=0,
             override_impact_capture_velocity=0.001,
             override_stiction_transition_velocity=0.001)
@@ -485,20 +493,20 @@ class TestWorldGenerator(unittest.TestCase):
             physics=dict(
                 engine='ode',
                 args=dict(
-                    max_step_size=0.001, 
+                    max_step_size=0.001,
                     real_time_factor=1,
-                    real_time_update_rate=1000, 
+                    real_time_update_rate=1000,
                     max_contacts=20,
-                    min_step_size=0.0001, 
-                    iters=50, 
-                    sor=1.3, 
+                    min_step_size=0.0001,
+                    iters=50,
+                    sor=1.3,
                     type='quick',
-                    precon_iters=0, 
+                    precon_iters=0,
                     use_dynamic_moi_rescaling=False,
-                    friction_model='pyramid_model', 
-                    cfm=0, 
+                    friction_model='pyramid_model',
+                    cfm=0,
                     erp=0.2,
-                    contact_surface_layer=0.001, 
+                    contact_surface_layer=0.001,
                     contact_max_correcting_vel=100
                 )
             )
@@ -513,16 +521,16 @@ class TestWorldGenerator(unittest.TestCase):
             physics=dict(
                 engine='bullet',
                 args=dict(
-                    max_step_size=0.001, 
+                    max_step_size=0.001,
                     real_time_factor=1,
-                    real_time_update_rate=1000, 
+                    real_time_update_rate=1000,
                     max_contacts=20,
-                    min_step_size=0.0001, 
-                    iters=50, 
-                    sor=1.3, 
-                    cfm=0, 
+                    min_step_size=0.0001,
+                    iters=50,
+                    sor=1.3,
+                    cfm=0,
                     erp=0.2,
-                    contact_surface_layer=0.001, 
+                    contact_surface_layer=0.001,
                     split_impulse=True,
                     split_impulse_penetration_threshold=-0.01
                 )
@@ -538,19 +546,19 @@ class TestWorldGenerator(unittest.TestCase):
             physics=dict(
                 engine='simbody',
                 args=dict(
-                    max_step_size=0.001, 
+                    max_step_size=0.001,
                     real_time_factor=1,
-                    real_time_update_rate=1000, 
+                    real_time_update_rate=1000,
                     max_contacts=20,
-                    min_step_size=0.0001, 
+                    min_step_size=0.0001,
                     accuracy=0.001,
-                    max_transient_velocity=0.01, 
+                    max_transient_velocity=0.01,
                     stiffness=1e8,
-                    dissipation=100, 
+                    dissipation=100,
                     plastic_coef_restitution=0.5,
-                    plastic_impact_velocity=0.5, 
+                    plastic_impact_velocity=0.5,
                     static_friction=0.9,
-                    dynamic_friction=0.9, 
+                    dynamic_friction=0.9,
                     viscous_friction=0,
                     override_impact_capture_velocity=0.001,
                     override_stiction_transition_velocity=0.001
@@ -562,6 +570,7 @@ class TestWorldGenerator(unittest.TestCase):
         generator.from_dict(config)
         self.assertIsNotNone(generator.world.physics)
         self.assertEqual(generator.world.physics.engine, 'simbody')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -296,7 +296,7 @@ class AssetsManager(_CollectionManager):
             model = None
             try:
                 model = SimulationModel.from_gazebo_model(tag)
-            except ValueError as ex:
+            except ValueError:
                 model = ModelGroup.from_gazebo_model(tag)
         elif self.is_model_group_generator(tag):
             model = self._collection[tag].run(group_name=tag, *args, **kwargs)

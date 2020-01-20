@@ -31,7 +31,7 @@ class XMLVector(XMLBase):
         self._size = size
         self._value = [0 for _ in range(self._size)]
 
-    def _set_value(self, value):
+    def _set_value(self, value, min_value=None, max_value=None):
         assert isinstance(value, collections.Iterable), \
             'Input must be iterable, element={}, received={}, type={}'.format(
                 self._NAME, value, type(value))
@@ -41,6 +41,20 @@ class XMLVector(XMLBase):
                 self._NAME, value, len(list(value)), self._size)
         for item in value:
             assert self._is_scalar(item)
+            if min_value is not None:
+                assert item >= min_value, \
+                    '[{}] Value must be greater or equal to {}'.format(
+                        self._NAME, min_value)
+
+            if max_value is not None:
+                if min_value is not None:
+                    assert max_value > min_value, \
+                        '[{}] Max. value {} is not greater than' \
+                        ' provided min. value {}'.format(
+                            self._NAME, max_value, min_value)
+                assert item <= max_value, \
+                    '[{}] Value must be less or equal to {}'.format(
+                        self._NAME, max_value)
         self._value = list(value)
 
     def reset(self):

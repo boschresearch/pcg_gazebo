@@ -19,7 +19,7 @@ from pcg_gazebo.generators.creators import sphere
 from pcg_gazebo.generators import CollisionChecker, SingletonCollisionChecker
 
 
-class TestCollisionChecker(unittest.TestCase):                
+class TestCollisionChecker(unittest.TestCase):
     def test_reset_scenario(self):
         main_sphere = sphere(mass=1, radius=0.5, name='sphere')
 
@@ -69,7 +69,9 @@ class TestCollisionChecker(unittest.TestCase):
         self.assertEqual(cc1.n_fixed_models, 1)
         self.assertEqual(cc2.n_fixed_models, 1)
 
-        self.assertEqual(cc1.fixed_models[0].to_sdf(), cc2.fixed_models[0].to_sdf())
+        self.assertEqual(
+            cc1.fixed_models[0].to_sdf(),
+            cc2.fixed_models[0].to_sdf())
 
     def test_collision_check(self):
         main_sphere = sphere(mass=1, radius=0.5, name='sphere')
@@ -81,12 +83,13 @@ class TestCollisionChecker(unittest.TestCase):
         self.assertEqual(cc.n_meshes, 1)
 
         centers = np.random.uniform(0, 3, size=(20, 3))
-        
+
         for k in range(centers.shape[0]):
             c = centers[k, :]
             radius = np.random.uniform(0.5, 1)
-            model = sphere(mass=1, radius=radius, name='test', pose=[i for i in c] + [0, 0, 0])
-            self.assertIsNotNone(model)            
+            model = sphere(mass=1, radius=radius, name='test',
+                           pose=[i for i in c] + [0, 0, 0])
+            self.assertIsNotNone(model)
 
             if np.linalg.norm(c) <= 0.5:
                 self.assertTrue(cc.check_collision_with_current_scene(model))
@@ -108,7 +111,8 @@ class TestCollisionChecker(unittest.TestCase):
         for k in range(centers.shape[0]):
             c = centers[k, :]
             radius = np.random.uniform(0.01, 0.1)
-            model = sphere(mass=1, radius=radius, name='test', pose=[i for i in c] + [0, 0, 0])
+            model = sphere(mass=1, radius=radius, name='test',
+                           pose=[i for i in c] + [0, 0, 0])
             self.assertIsNotNone(model)
 
             self.assertTrue(cc.check_collision_with_current_scene(model))
@@ -126,10 +130,12 @@ class TestCollisionChecker(unittest.TestCase):
         for k in range(centers.shape[0]):
             c = centers[k, :]
             radius = np.random.uniform(0.5, 1.0)
-            model = sphere(mass=1, radius=radius, name='test', pose=[i for i in c] + [0, 0, 0])
+            model = sphere(mass=1, radius=radius, name='test',
+                           pose=[i for i in c] + [0, 0, 0])
             self.assertIsNotNone(model)
 
             self.assertTrue(cc.check_collision_with_current_scene(model))
+
 
 if __name__ == '__main__':
     unittest.main()

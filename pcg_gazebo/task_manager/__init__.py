@@ -27,8 +27,6 @@ from .task import Task
 
 
 def is_roscore_running(ros_master_uri='http://localhost:11311'):
-    import os
-    import subprocess
     """Return True if a `roscore` is running for the provided ROS URI
 
     > *Input parameters*
@@ -37,6 +35,9 @@ def is_roscore_running(ros_master_uri='http://localhost:11311'):
      (`http://localhost:11311`)): The ROS URI of the target
       `roscore` node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -46,6 +47,8 @@ def is_roscore_running(ros_master_uri='http://localhost:11311'):
         )
         return True
     except subprocess.CalledProcessError as ex:
+        PCG_ROOT_LOGGER.error(
+            'Error testing roscore, message={}'.format(ex))
         return False
 
 
@@ -60,6 +63,7 @@ def is_gazebo_running(ros_master_uri='http://localhost:11311'):
     """
     import os
     import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -70,6 +74,8 @@ def is_gazebo_running(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8')
         return 'gazebo' in output
     except subprocess.CalledProcessError as ex:
+        PCG_ROOT_LOGGER.error(
+            'Error testing Gazebo server, message={}'.format(ex))
         return False
 
 
@@ -84,6 +90,7 @@ def rosnode_exists(name, ros_master_uri='http://localhost:11311'):
     """
     import os
     import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -94,6 +101,8 @@ def rosnode_exists(name, ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8')
         return name in output
     except subprocess.CalledProcessError as ex:
+        PCG_ROOT_LOGGER.error(
+            'Error testing ROS master, message={}'.format(ex))
         return False
 
 

@@ -64,7 +64,7 @@ def _parse_factory_input_as_vector(var):
         except Exception as ex:
             PCG_ROOT_LOGGER.warning(
                 'Could not evaluate variable lambda function, returning string'
-                ', input={}'.format(var))
+                ', input={}, message={}'.format(var, str(ex)))
             return var
 
         if isinstance(vars, float) or isinstance(vars, int):

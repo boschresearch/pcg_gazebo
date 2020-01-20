@@ -12,14 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Parsing module to generated and convert SDF, URDF and SDF Configuration formats.
+"""Parsing module to generated and convert SDF,
+URDF and SDF Configuration formats.
 
 > *Sources*
 
 * [SDF format](http://sdformat.org/)
 * [URDF format specifications](https://wiki.ros.org/urdf/XML)
 """
-from ..log import PCG_ROOT_LOGGER
 
 
 def parse_sdf(input_xml):
@@ -113,24 +113,15 @@ def parse_xml(input_xml, type='sdf'):
     `collections.OrderedDict`: Dictionary where the XML tags are the keys.
     """
     import os
-    import sys
+    from ..utils import is_string
+    from ..log import PCG_ROOT_LOGGER
 
-    if sys.version_info[0] == 3:
-        if not isinstance(input_xml, str):
-            msg = 'Input XML must be either a filename or a string, received={}'.format(
+    if not is_string(input_xml):
+        msg = 'Input XML must be either a' \
+            ' filename or a string, received={}'.format(
                 input_xml)
-            PCG_ROOT_LOGGER.error(msg)
-            raise Exception(msg)
-    else:
-        if not isinstance(
-                input_xml,
-                str) and not isinstance(
-                input_xml,
-                unicode):
-            msg = 'Input XML must be either a filename or a string, received={}'.format(
-                input_xml)
-            PCG_ROOT_LOGGER.error(msg)
-            raise Exception(msg)
+        PCG_ROOT_LOGGER.error(msg)
+        raise Exception(msg)
 
     if os.path.isfile(input_xml):
         filename = input_xml
@@ -348,10 +339,7 @@ def convert_from_string(str_input_xml):
 
 
 def expand_nested_models(sdf):
-    from ..simulation.properties import Pose
-    from ..simulation import get_gazebo_model_sdf
     from ..simulation import SimulationModel
-    from copy import deepcopy
 
     if sdf.xml_element_name == 'model':
         if sdf.includes is None and sdf.models is None:
@@ -383,11 +371,11 @@ def sdf2urdf(sdf):
 
     `pcg_gazebo.parsers.types.XMLBase` as an URDF element.
     """
-    from .sdf import create_sdf_element
     from .urdf import create_urdf_element
     from ..simulation.properties import Pose
     from ..path import Path
     import numpy as np
+    from ..log import PCG_ROOT_LOGGER
 
     assert sdf is not None, 'Input SDF is invalid'
     SDF2URDF_OPT = dict(
@@ -412,7 +400,8 @@ def sdf2urdf(sdf):
         dynamics='dynamics')
 
     assert sdf._NAME in SDF2URDF_OPT.keys(), \
-        'SDF element of type <{}> not available for conversion to URDF'.format(sdf._NAME)
+        'SDF element of type <{}> not ' \
+        'available for conversion to URDF'.format(sdf._NAME)
 
     urdf = create_urdf_element(SDF2URDF_OPT[sdf._NAME])
 
@@ -429,13 +418,15 @@ def sdf2urdf(sdf):
                     parent_link = model_sdf.get_link_by_name(
                         joint.parent.value)
                     if parent_link is None:
-                        msg = 'Parent link <{}> for joint <{}> does not exist!'.format(
-                            joint.parent.value, joint.name)
+                        msg = 'Parent link <{}> for joint' \
+                            ' <{}> does not exist!'.format(
+                                joint.parent.value, joint.name)
                         PCG_ROOT_LOGGER.error(msg)
                         raise ValueError(msg)
                     if parent_link.pose is not None:
                         parent_pose = Pose(
-                            parent_link.pose.value[0:3], parent_link.pose.value[3::])
+                            parent_link.pose.value[0:3],
+                            parent_link.pose.value[3::])
                     else:
                         parent_pose = Pose()
                 else:
@@ -443,8 +434,9 @@ def sdf2urdf(sdf):
 
                 child_link = model_sdf.get_link_by_name(joint.child.value)
                 if child_link is None:
-                    msg = 'Child link <{}> for joint <{}> does not exist!'.format(
-                        joint.child.value, joint.name)
+                    msg = 'Child link <{}> for joint ' \
+                        '<{}> does not exist!'.format(
+                            joint.child.value, joint.name)
                     PCG_ROOT_LOGGER.error(msg)
                     raise ValueError(msg)
 
@@ -646,7 +638,8 @@ def urdf2sdf(urdf):
     )
 
     assert urdf._NAME in URDF2SDF_OPT.keys(), \
-        'URDF element of type <{}> not available for conversion to SDF'.format(urdf._NAME)
+        'URDF element of type <{}> not available' \
+        ' for conversion to SDF'.format(urdf._NAME)
 
     sdf = create_sdf_element(URDF2SDF_OPT[urdf._NAME])
 
@@ -655,8 +648,10 @@ def urdf2sdf(urdf):
         if urdf.gazebos is not None:
             for gazebo in urdf.gazebos:
                 if gazebo.reference is not None:
-                    # In case the Gazebo block is referenced to a link or joint,
-                    # copy child elements to the respective link or joint
+                    # In case the Gazebo block is
+                    # referenced to a link or joint,
+                    # copy child elements to the
+                    # respective link or joint
                     if urdf.get_link_by_name(gazebo.reference):
                         for link in urdf.links:
                             if link.name == gazebo.reference:
@@ -820,31 +815,38 @@ def urdf2sdf(urdf):
 
                 if urdf.gazebo is not None:
                     if urdf.gazebo.maxContacts:
-                        sdf_collision.max_contacts = urdf.gazebo.maxContacts.value
+                        sdf_collision.max_contacts = \
+                            urdf.gazebo.maxContacts.value
                     if urdf.gazebo.mu1:
                         if not sdf_collision.surface:
                             sdf_collision.surface = create_sdf_element(
                                 'surface')
                         if not sdf_collision.surface.friction:
-                            sdf_collision.surface.friction = create_sdf_element(
-                                'friction')
+                            sdf_collision.surface.friction = \
+                                create_sdf_element(
+                                    'friction')
                             sdf_collision.surface.friction.reset(
                                 with_optional_elements=True)
 
-                        sdf_collision.surface.friction.ode.mu = urdf.gazebo.mu1.value
-                        sdf_collision.surface.friction.bullet.friction = urdf.gazebo.mu1.value
+                        sdf_collision.surface.friction.ode.mu = \
+                            urdf.gazebo.mu1.value
+                        sdf_collision.surface.friction.bullet.friction = \
+                            urdf.gazebo.mu1.value
                     if urdf.gazebo.mu2:
                         if not sdf_collision.surface:
                             sdf_collision.surface = create_sdf_element(
                                 'surface')
                         if not sdf_collision.surface.friction:
-                            sdf_collision.surface.friction = create_sdf_element(
-                                'friction')
+                            sdf_collision.surface.friction = \
+                                create_sdf_element(
+                                    'friction')
                             sdf_collision.surface.friction.reset(
                                 with_optional_elements=True)
 
-                        sdf_collision.surface.friction.ode.mu2 = urdf.gazebo.mu2.value
-                        sdf_collision.surface.friction.bullet.friction2 = urdf.gazebo.mu2.value
+                        sdf_collision.surface.friction.ode.mu2 = \
+                            urdf.gazebo.mu2.value
+                        sdf_collision.surface.friction.bullet.friction2 = \
+                            urdf.gazebo.mu2.value
                     if urdf.gazebo.kp:
                         if not sdf_collision.surface:
                             sdf_collision.surface = create_sdf_element(
@@ -855,8 +857,10 @@ def urdf2sdf(urdf):
                             sdf_collision.surface.contact.reset(
                                 mode='collision', with_optional_elements=True)
 
-                        sdf_collision.surface.contact.ode.kp = urdf.gazebo.kp.value
-                        sdf_collision.surface.contact.bullet.kp = urdf.gazebo.kp.value
+                        sdf_collision.surface.contact.ode.kp = \
+                            urdf.gazebo.kp.value
+                        sdf_collision.surface.contact.bullet.kp = \
+                            urdf.gazebo.kp.value
                     if urdf.gazebo.kd:
                         if not sdf_collision.surface:
                             sdf_collision.surface = create_sdf_element(
@@ -867,8 +871,10 @@ def urdf2sdf(urdf):
                             sdf_collision.surface.contact.reset(
                                 mode='collision', with_optional_elements=True)
 
-                        sdf_collision.surface.contact.ode.kd = urdf.gazebo.kd.value
-                        sdf_collision.surface.contact.bullet.kd = urdf.gazebo.kd.value
+                        sdf_collision.surface.contact.ode.kd = \
+                            urdf.gazebo.kd.value
+                        sdf_collision.surface.contact.bullet.kd = \
+                            urdf.gazebo.kd.value
                     if urdf.gazebo.minDepth:
                         if not sdf_collision.surface:
                             sdf_collision.surface = create_sdf_element(
@@ -879,7 +885,8 @@ def urdf2sdf(urdf):
                             sdf_collision.surface.contact.reset(
                                 mode='collision', with_optional_elements=True)
 
-                        sdf_collision.surface.contact.ode.min_depth = urdf.gazebo.minDepth.value
+                        sdf_collision.surface.contact.ode.min_depth = \
+                            urdf.gazebo.minDepth.value
                     if urdf.gazebo.maxVel:
                         if not sdf_collision.surface:
                             sdf_collision.surface = create_sdf_element(
@@ -890,14 +897,13 @@ def urdf2sdf(urdf):
                             sdf_collision.surface.contact.reset(
                                 mode='collision', with_optional_elements=True)
 
-                        sdf_collision.surface.contact.ode.max_vel = urdf.gazebo.maxVel.value
+                        sdf_collision.surface.contact.ode.max_vel = \
+                            urdf.gazebo.maxVel.value
 
                 sdf.add_collision(sdf_collision.name, sdf_collision)
 
     elif urdf._NAME == 'robot':
         import networkx
-        import sys
-        from ..simulation.properties import Pose
         sdf.name = urdf.name
 
         # Create a graph to find the connections between
@@ -921,10 +927,15 @@ def urdf2sdf(urdf):
                 raise ValueError(
                     'Link <{}> is not connected by any joint'.format(n))
 
-        start_nodes = [n for n in robot_graph.nodes() if robot_graph.out_degree(
-            n) > 0 and robot_graph.in_degree(n) == 0]
-        end_nodes = [n for n in robot_graph.nodes() if robot_graph.out_degree(
-            n) == 0 and robot_graph.in_degree(n) > 0]
+        start_nodes = list()
+        end_nodes = list()
+        for n in robot_graph.nodes():
+            if robot_graph.out_degree(n) > 0 and \
+                    robot_graph.in_degree(n) == 0:
+                start_nodes.append(n)
+            if robot_graph.out_degree(n) == 0 and \
+                    robot_graph.in_degree(n) > 0:
+                end_nodes.append(n)
 
         assert len(start_nodes) == 1, \
             'The URDF structure should have only one start node' \
@@ -959,7 +970,7 @@ def urdf2sdf(urdf):
                                 if parent_link.pose is not None:
                                     pose = Pose.from_sdf(
                                         parent_link.pose) + \
-                                            Pose.from_urdf(joint.origin)
+                                        Pose.from_urdf(joint.origin)
                                 else:
                                     pose = Pose.from_urdf(joint.origin)
                                 child_link.pose = pose.to_sdf()
@@ -970,6 +981,7 @@ def urdf2sdf(urdf):
 
 def merge_massless_links(sdf):
     from copy import deepcopy
+    from ..log import PCG_ROOT_LOGGER
     if sdf.joints is None:
         return sdf
 
@@ -1029,6 +1041,7 @@ def merge_massless_links(sdf):
 def merge_links(parent, child):
     from copy import deepcopy
     from ..simulation.properties import Pose
+    from ..log import PCG_ROOT_LOGGER
 
     if parent.inertial is not None and \
             child.inertial is not None:
@@ -1118,17 +1131,18 @@ def merge_links(parent, child):
 
             # Refactor sensors for changes in visual and collision elements
             if new_link.sensors[-1].type == 'contact':
+                old_collision_name = \
+                    new_link.sensors[-1].contact.collision.value
                 try:
                     # Replacing the name of the collision body in the sensor
                     # if the collision body name changed
-                    old_collision_name = \
-                        new_link.sensors[-1].contact.collision.value
                     if old_collision_name in collision_name_refactors:
                         new_link.sensors[-1].contact.collision.value = \
                             collision_name_refactors[old_collision_name]
                 except AttributeError as ex:
                     PCG_ROOT_LOGGER.error(
-                        'Could not refactor collision body name <{}>'.format())
+                        'Could not refactor collision body name <{}>, '
+                        'message={}'.format(old_collision_name, str(ex)))
             PCG_ROOT_LOGGER.info(
                 'Adding sensor <{}> to parent'
                 ' link <{}> from merged link <{}>'.format(

@@ -44,7 +44,7 @@ class Pose(object):
                     assert isinstance(
                         elem, float) or isinstance(
                         elem, int), 'Each element from rpy must' \
-                            ' be either a float or an integer'
+                        ' be either a float or an integer'
                 self._quat = Pose.rpy2quat(*list(rpy))
             elif len(list(rot)) == 4:
                 quat = list(rot)
