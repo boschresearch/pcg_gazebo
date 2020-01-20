@@ -15,7 +15,7 @@ before_install:
 - sudo pip3 install flake8 autopep8
 
 install:
-- pip3 install -e .
+- pip3 install --user -e . 
 
 script: 
 - autopep8 --recursive --aggressive --diff --exit-code pcg_gazebo
