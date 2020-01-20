@@ -848,8 +848,8 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid(),
                         'Sphere object is invalid')
 
-        correct_str = '<plane><normal>0 0 1</normal><size>' \
-            '0 0</size></plane>'
+        correct_str = '<plane><size>0 0</size>' \
+            '<normal>0 0 1</normal></plane>'
         xml_str = sdf_obj.to_xml_as_str()
         self.assertEqual(
             xml_str,
@@ -1223,8 +1223,8 @@ class TestSDFParser(unittest.TestCase):
                         'SubMesh object is invalid')
 
         sdf_obj.name = 'test'
-        correct_str = '<submesh><name>test</name><center>0' \
-            '</center></submesh>'
+        correct_str = '<submesh><center>0</center>' \
+            '<name>test</name></submesh>'
         xml_str = sdf_obj.to_xml_as_str()
         self.assertEqual(
             xml_str,
@@ -2558,7 +2558,7 @@ class TestSDFParser(unittest.TestCase):
         xml_str = sdf_obj.to_xml_as_str()
         self.assertEqual(
             xml_str,
-            '<real_time_update_rate>0</real_time_update_rate>',
+            '<real_time_update_rate>1</real_time_update_rate>',
             'Invalid XML dump string, value=' + str(xml_str))
 
     def test_min_step_size(self):
@@ -2823,7 +2823,7 @@ class TestSDFParser(unittest.TestCase):
         xml_str = sdf_obj.to_xml_as_str()
         self.assertEqual(
             xml_str,
-            '<split_impulse_penetration_threshold>0'
+            '<split_impulse_penetration_threshold>-0.01'
             '</split_impulse_penetration_threshold>',
             'Invalid XML dump string, value=' + str(xml_str))
 
