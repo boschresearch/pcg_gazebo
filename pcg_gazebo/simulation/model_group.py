@@ -221,7 +221,7 @@ class ModelGroup(object):
             else:
                 name = model_name
             return self.add_model(name, model)
-        except ValueError as ex:
+        except ValueError:
             sdf = get_gazebo_model_sdf(model_name)
             if sdf.lights is not None:
                 PCG_ROOT_LOGGER.info(

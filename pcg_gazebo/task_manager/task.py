@@ -249,8 +249,8 @@ class Task(object):
                 return True
             except psutil.TimeoutExpired as ex:
                 self._logger.info(
-                    'Task <{}> still running'.format(
-                        self._task_name))
+                    'Task <{}> still running, message={}'.format(
+                        self._task_name, str(ex)))
                 return False
         return False
 

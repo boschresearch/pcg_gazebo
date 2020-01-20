@@ -1,5 +1,5 @@
 language: generic
-sudo: required
+sudo: enabled
 dist: bionic
 
 matrix:
@@ -8,13 +8,16 @@ matrix:
     - env: PYTHON_VERSION=3.8
 
 before_install:
-- sudo apt-get -qq update
-- sudo apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
+- apt-get -qq update
+- apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
+- pip3 install flake8 autopep8
 
 install:
 - pip3 install -e .
 
 script: 
+- autopep8 --recursive --aggressive --diff --exit-code pcg_gazebo
+- flake8 pcg_gazebo
 - pip3 install pytest
 - python3 -c "import pcg_gazebo"
 - pip3 install -e .[test]

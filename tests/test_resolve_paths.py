@@ -19,8 +19,9 @@ from pcg_gazebo import Path
 
 CWD = os.path.dirname(os.path.abspath(__file__))
 
+
 class TestResolvePaths(unittest.TestCase):
-    def test_valid_file_paths(self):        
+    def test_valid_file_paths(self):
         original_uri = os.path.join(
             CWD, 'meshes', 'cube.dae')
 
@@ -40,7 +41,7 @@ class TestResolvePaths(unittest.TestCase):
     def test_gazebo_model_path(self):
         original_uri = 'model://test_joint_fixed/model.sdf'
         absolute_uri = os.path.join(
-            CWD, 
+            CWD,
             'gazebo_models',
             'test_joint_fixed',
             'model.sdf')
@@ -116,6 +117,7 @@ class TestResolvePaths(unittest.TestCase):
         for uri in invalid_path_names:
             with self.assertRaises(ValueError):
                 Path(uri)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -134,7 +134,7 @@ class Camera(Sensor):
     def noise(self, values):
         assert isinstance(
             values, dict), 'Noise parameters' \
-                ' must be provided as a dictionary'
+            ' must be provided as a dictionary'
         self._noise = Noise(**values)
 
     @property

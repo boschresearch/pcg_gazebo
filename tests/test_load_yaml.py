@@ -15,7 +15,6 @@
 # limitations under the License.
 import os
 import unittest
-import rospkg
 from pcg_gazebo.utils import load_yaml
 
 CWD = os.path.dirname(os.path.abspath(__file__))
@@ -29,7 +28,7 @@ class TestLoadYAML(unittest.TestCase):
     def test_load_dummy_with_include(self):
         filename = os.path.join(CWD, 'yaml', 'dummy.yaml')
         data = load_yaml(filename)
-        
+
         for tag in ['a', 'b', 'c']:
             self.assertIn(tag, data)
 
@@ -53,6 +52,7 @@ class TestLoadYAML(unittest.TestCase):
 
     def test_load_from_string(self):
         pass
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -17,7 +17,8 @@ import unittest
 import numpy as np
 from pcg_gazebo.generators import EngineManager
 from pcg_gazebo.generators.engines import FixedPoseEngine, RandomPoseEngine
-from pcg_gazebo.generators.constraints import TangentConstraint, WorkspaceConstraint
+from pcg_gazebo.generators.constraints import TangentConstraint, \
+    WorkspaceConstraint
 
 
 FIXED_ENGINE = dict(
@@ -26,7 +27,7 @@ FIXED_ENGINE = dict(
     models=['test_static_model'],
     poses=[
         [0, 0, 0, 0, 0, 0]
-        ]
+    ]
 )
 
 RANDOM_ENGINE = dict(
@@ -54,31 +55,31 @@ RANDOM_ENGINE = dict(
                         args='cool_workspace'
                     )
                 )
-            ]            
+            ]
         )
     ],
     constraints=[
         dict(
             model='test_box',
             constraint='tangent_to_ground_plane'
-        )        
-    ]      
+        )
+    ]
 )
 
 WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict( 
-      type='area',
-      description=dict(
-        points=[
-            [-6, -4, 0],
-            [-3, -4, 0],
-            [-3, 0, 0],
-            [-6, 0, 0]
-        ]         
-      )
+    geometry=dict(
+        type='area',
+        description=dict(
+          points=[
+              [-6, -4, 0],
+              [-3, -4, 0],
+              [-3, 0, 0],
+              [-6, 0, 0]
+          ]
+        )
     ),
     holes=[
         dict(
@@ -87,8 +88,8 @@ WORKSPACE_CONSTRAINT = dict(
                 center=[-5, 0, 0],
                 radius=0.2
             )
-        ) 
-    ]         
+        )
+    ]
 )
 
 TANGENT_CONSTRAINT = dict(
@@ -100,14 +101,15 @@ TANGENT_CONSTRAINT = dict(
         args=dict(
             origin=[0, 0, 0],
             normal=[0, 0, 1]
-        )            
-    )      
+        )
+    )
 )
+
 
 class TestEnginesConstraintsManagers(unittest.TestCase):
     def test_add_engines(self):
         manager = EngineManager()
-        
+
         manager.add(**FIXED_ENGINE)
         self.assertIn('add_fixed_models', manager.tags)
         self.assertEqual(manager.size, 1)
@@ -163,7 +165,7 @@ class TestEnginesConstraintsManagers(unittest.TestCase):
 
     def test_run_fixed_pose_engine(self):
         manager = EngineManager()
-        
+
         manager.add(**FIXED_ENGINE)
         self.assertIn('add_fixed_models', manager.tags)
         self.assertEqual(manager.size, 1)
@@ -180,6 +182,6 @@ class TestEnginesConstraintsManagers(unittest.TestCase):
         self.assertEqual(np.sum(models[0].pose.position), 0)
         self.assertEqual(np.sum(models[0].pose.quat[0:3]), 0)
 
-        
+
 if __name__ == '__main__':
     unittest.main()

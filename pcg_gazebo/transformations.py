@@ -56,8 +56,8 @@ Notes
 
 Matrices (M) can be inverted using numpy.linalg.inv(M), concatenated using
 numpy.dot(M0, M1), or used to transform homogeneous coordinates (v) using
-numpy.dot(M, v) for shape (4, \*) "point of arrays", respectively
-numpy.dot(v, M.T) for shape (\*, 4) "array of points".
+numpy.dot(M, v) for shape (4, *) "point of arrays", respectively
+numpy.dot(v, M.T) for shape (*, 4) "array of points".
 
 Calculations are carried out with numpy.float64 precision.
 
@@ -869,7 +869,7 @@ def orthogonalization_matrix(lengths, angles):
 def superimposition_matrix(v0, v1, scaling=False, usesvd=True):
     """Return matrix to transform given vector set into second vector set.
 
-    v0 and v1 are shape (3, \*) or (4, \*) arrays of at least 3 vectors.
+    v0 and v1 are shape (3, *) or (4, *) arrays of at least 3 vectors.
 
     If usesvd is True, the weighted sum of squared deviations (RMSD) is
     minimized according to the algorithm by W. Kabsch [8]. Otherwise the

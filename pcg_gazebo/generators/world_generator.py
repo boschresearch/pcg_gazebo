@@ -246,8 +246,8 @@ class WorldGenerator:
                 model = SimulationModel.from_gazebo_model(gazebo_model_name)
             except ValueError as ex:
                 PCG_ROOT_LOGGER.error(
-                    'Error loading Gazebo model <{}>'.format(
-                        gazebo_model_name))
+                    'Error loading Gazebo model <{}>, message={}'.format(
+                        gazebo_model_name, str(ex)))
                 return False
 
             if model is None:
@@ -526,7 +526,7 @@ class WorldGenerator:
             for elem in config['constraints']:
                 assert isinstance(
                     elem, dict), 'Constraint description' \
-                        ' is not a dictionary={}'.format(elem)
+                    ' is not a dictionary={}'.format(elem)
                 self._engines.add_constraint(**elem)
 
             PCG_ROOT_LOGGER.info('Constraints:')

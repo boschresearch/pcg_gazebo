@@ -55,10 +55,4 @@ class Size(XMLVector):
         self.value[2] = float(value)
 
     def _set_value(self, value):
-        assert self._is_numeric_vector(value), \
-            'Input is not a numeric vector'
-        value = list(value)
-        assert len(value) == self._size
-        for elem in value:
-            assert elem >= 0
-        XMLVector._set_value(self, value)
+        XMLVector._set_value(self, value, min_value=0)
