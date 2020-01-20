@@ -12,15 +12,14 @@ before_install:
 - sudo apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
 - sudo pip3 install pip --upgrade
 - sudo pip3 install setuptools
-- sudo pip3 install flake8 autopep8
+- sudo pip3 install flake8 autopep8 pytest
 
 install:
-- pip3 install --user -e . 
+- sudo pip3 install -e . 
 
 script: 
 - autopep8 --recursive --aggressive --diff --exit-code pcg_gazebo
 - flake8 pcg_gazebo
-- pip3 install pytest
 - python3 -c "import pcg_gazebo"
-- pip3 install -e .[test]
+- sudo pip3 install -e .[test]
 - pytest -x tests
