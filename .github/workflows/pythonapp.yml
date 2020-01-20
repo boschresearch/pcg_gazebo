@@ -15,15 +15,16 @@ jobs:
         python-version: 3.6
     - name: Install dependencies
       run: |
-        apt-get -qq update
-        apt-get install libspatialindex-dev pybind11-dev -y -qq
+        sudo apt-get -qq update
+        sudo apt-get install libspatialindex-dev pybind11-dev -y -qq
     - name: Lint with flake8
       run: |
-        pip install flake8
+        pip install flake8 autopep8
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 pcg_gazebo
+        flake8 tests
+        autopep8 --recursive --aggressive --diff --exit-code pcg_gazebo
+        autopep8 --recursive --aggressive --diff --exit-code tests        
     - name: Test with pytest
       run: |
         pip install pytest
