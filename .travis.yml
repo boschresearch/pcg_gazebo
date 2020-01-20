@@ -9,8 +9,9 @@ matrix:
 
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
-- sudo pip3 install flake8 autopep8
+- sudo apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
+- sudo pip3 install pip --upgrade
+- sudo pip3 install flake8 autopep8 setuptools
 
 install:
 - pip3 install -e .
