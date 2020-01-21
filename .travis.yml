@@ -1,6 +1,9 @@
 language: python
 dist: xenial
 
+cache:
+  directories:
+    - ~/.cache/pip
 # Some dependencies, like python-fcl are only available 
 # for 2.7 and 3.6
 matrix:
