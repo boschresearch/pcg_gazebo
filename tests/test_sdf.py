@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 import unittest
 from pcg_gazebo.parsers.sdf import create_sdf_element
 from pcg_gazebo.parsers.urdf import create_urdf_element
@@ -1223,13 +1224,15 @@ class TestSDFParser(unittest.TestCase):
                         'SubMesh object is invalid')
 
         sdf_obj.name = 'test'
-        correct_str = '<submesh><center>0</center>' \
-            '<name>test</name></submesh>'
-        xml_str = sdf_obj.to_xml_as_str()
-        self.assertEqual(
-            xml_str,
-            correct_str,
-            'Invalid XML dump string, value=' + str(xml_str))
+
+        if sys.version_info[0] > 2:
+            correct_str = '<submesh><center>0</center>' \
+                '<name>test</name></submesh>'
+            xml_str = sdf_obj.to_xml_as_str()
+            self.assertEqual(
+                xml_str,
+                correct_str,
+                'Invalid XML dump string, value=' + str(xml_str))
 
     def test_mesh(self):
         sdf_obj = create_sdf_element('mesh')
@@ -1281,17 +1284,17 @@ class TestSDFParser(unittest.TestCase):
                          'Mesh should have 3 child elements')
         self.assertTrue(sdf_obj.is_valid(),
                         'Mesh object is invalid')
-
-        correct_str = '<mesh><uri>test</uri>' \
-            '<scale>1 1 1</scale>' \
-            '<submesh><center>1</center>' \
-            '<name>submesh_name</name></submesh>' \
-            '</mesh>'
-        xml_str = sdf_obj.to_xml_as_str()
-        self.assertEqual(
-            xml_str,
-            correct_str,
-            'Invalid XML dump string, value=' + str(xml_str))
+        if sys.version_info[0] > 2:
+            correct_str = '<mesh><uri>test</uri>' \
+                '<scale>1 1 1</scale>' \
+                '<submesh><center>1</center>' \
+                '<name>submesh_name</name></submesh>' \
+                '</mesh>'
+            xml_str = sdf_obj.to_xml_as_str()
+            self.assertEqual(
+                xml_str,
+                correct_str,
+                'Invalid XML dump string, value=' + str(xml_str))
 
         sdf_obj.reset()
         self.assertEqual(len(sdf_obj.children), 2,
@@ -1337,12 +1340,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid(),
                         'Cylinder object is invalid')
         xml_str = sdf_obj.to_xml_as_str()
-        correct_str = '<cylinder><radius>0</radius><length>' \
-            '0</length></cylinder>'
-        self.assertEqual(
-            xml_str,
-            correct_str,
-            'Invalid XML dump string, value=' + str(xml_str))
+        if sys.version_info[0] > 2:
+            correct_str = '<cylinder><radius>0</radius><length>' \
+                '0</length></cylinder>'
+            self.assertEqual(
+                xml_str,
+                correct_str,
+                'Invalid XML dump string, value=' + str(xml_str))
 
     def test_sphere(self):
         sdf_obj = create_sdf_element('sphere')
