@@ -12,9 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import collections
 from .engine import Engine
-from copy import deepcopy
 from ...log import PCG_ROOT_LOGGER
 
 
@@ -23,16 +21,30 @@ class PatternEngine(Engine):
 
     _MODES = ['rectangular', 'circular', 'cuboid']
 
-    def __init__(self, assets_manager, callback_fcn_get_constraint=None,
-        models=None, poses=None, constraints=None, pose=[0, 0, 0, 0, 0, 0],
-        mode=None, args=None, collision_checker=None):                
+    def __init__(
+            self,
+            assets_manager,
+            callback_fcn_get_constraint=None,
+            models=None,
+            poses=None,
+            constraints=None,
+            pose=[
+                0,
+                0,
+                0,
+                0,
+                0,
+                0],
+            mode=None,
+            args=None,
+            collision_checker=None):
         Engine.__init__(
-            self, 
+            self,
             assets_manager=assets_manager,
             callback_fcn_get_constraint=callback_fcn_get_constraint,
             models=models,
             constraints=constraints,
-            collision_checker=collision_checker)      
+            collision_checker=collision_checker)
 
         if mode not in self._MODES:
             msg = 'Invalid pattern mode, options={}'.format(self._MODES)

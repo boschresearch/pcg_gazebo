@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-import inspect
-
-from ..types import XMLBase
-
 from .accel import Accel
 from .accuracy import Accuracy
 from .actor import Actor
@@ -161,8 +155,10 @@ from .orientation_reference_frame import OrientationReferenceFrame
 from .origin_visual import OriginVisual
 from .outer_angle import OuterAngle
 from .output import Output
-from .override_impact_capture_velocity import OverrideImpactCaptureVelocity
-from .override_stiction_transition_velocity import OverrideStictionTransitionVelocity
+from .override_impact_capture_velocity import \
+    OverrideImpactCaptureVelocity
+from .override_stiction_transition_velocity import \
+    OverrideStictionTransitionVelocity
 from .p1 import P1
 from .p2 import P2
 from .parent import Parent
@@ -215,7 +211,8 @@ from .sor import Sor
 from .specular import Specular
 from .speed import Speed
 from .sphere import Sphere
-from .split_impulse_penetration_threshold import SplitImpulsePenetrationThreshold
+from .split_impulse_penetration_threshold import \
+    SplitImpulsePenetrationThreshold
 from .split_impulse import SplitImpulse
 from .spot import Spot
 from .spring_reference import SpringReference
@@ -264,8 +261,11 @@ from .z import Z
 
 
 def get_all_sdf_element_classes():
+    import sys
+    import inspect
+    from ..types import XMLBase
     output = list()
-    module_name = os.path.dirname(os.path.realpath(__file__))
+
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -275,7 +275,10 @@ def get_all_sdf_element_classes():
 
 
 def create_sdf_element(tag, *args):
-    module_name = os.path.dirname(os.path.realpath(__file__))
+    import sys
+    import inspect
+    from ..types import XMLBase
+
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -286,7 +289,10 @@ def create_sdf_element(tag, *args):
 
 
 def create_sdf_type(tag):
-    module_name = os.path.dirname(os.path.realpath(__file__))
+    import sys
+    import inspect
+    from ..types import XMLBase
+
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -297,4 +303,256 @@ def create_sdf_type(tag):
 
 
 def is_sdf_element(obj):
-    return obj.__class__ in XMLBase.__subclasses__() and obj._TYPE == 'sdf'
+    from ..types import XMLBase
+    return obj.__class__ in XMLBase.__subclasses__() and \
+        obj._TYPE == 'sdf'
+
+
+__all__ = [
+    'get_all_sdf_element_classes',
+    'create_sdf_element',
+    'create_sdf_type',
+    'is_sdf_element',
+    'Accel',
+    'Accuracy',
+    'Actor',
+    'AllowAutoDisable',
+    'Altimeter',
+    'AlwaysOn',
+    'Ambient',
+    'AngularVelocity',
+    'Animation',
+    'Attenuation',
+    'AutoStart',
+    'Axis',
+    'Axis2',
+    'Background',
+    'BiasMean',
+    'BiasStdDev',
+    'Bounce',
+    'Box',
+    'Bullet',
+    'Camera',
+    'CastShadows',
+    'CategoryBitmask',
+    'Center',
+    'CFM',
+    'Child',
+    'Clip',
+    'Clouds',
+    'Coefficient',
+    'CollideBitmask',
+    'CollideWithoutContact',
+    'CollideWithoutContactBitmask',
+    'Collision',
+    'Color',
+    'Constant',
+    'Constraints',
+    'Contact',
+    'ContactMaxCorrectingVel',
+    'ContactSurfaceLayer',
+    'Cylinder',
+    'Damping',
+    'DelayStart',
+    'Density',
+    'DepthCamera',
+    'Diffuse',
+    'Direction',
+    'Dissipation',
+    'Distortion',
+    'DynamicFriction',
+    'Dynamics',
+    'Effort',
+    'ElasticModulus',
+    'Emissive',
+    'Empty',
+    'EnableWind',
+    'End',
+    'ERP',
+    'FallOff',
+    'Far',
+    'FDir1',
+    'Filename',
+    'Fog',
+    'ForceTorque',
+    'Format',
+    'Frame',
+    'Friction',
+    'Friction2',
+    'FrictionModel',
+    'Geometry',
+    'Granularity',
+    'Gravity',
+    'Grid',
+    'GUI',
+    'Height',
+    'Horizontal',
+    'HorizontalFOV',
+    'Humidity',
+    'Image',
+    'IMU',
+    'Include',
+    'Inertia',
+    'Inertial',
+    'InheritYaw',
+    'InitialPosition',
+    'InnerAngle',
+    'InterpolateX',
+    'Iters',
+    'IXX',
+    'IXY',
+    'IXZ',
+    'IYY',
+    'IYZ',
+    'IZZ',
+    'Joint',
+    'K1',
+    'K2',
+    'K3',
+    'Kd',
+    'Kinematic',
+    'Kp',
+    'LaserRetro',
+    'Length',
+    'Light',
+    'Lighting',
+    'Limit',
+    'Linear',
+    'LinearAcceleration',
+    'Link',
+    'Localization',
+    'Loop',
+    'Lower',
+    'Mass',
+    'Material',
+    'Max',
+    'MaxAngle',
+    'MaxContacts',
+    'MaxDist',
+    'MaxStepSize',
+    'MaxTransientVelocity',
+    'MaxVel',
+    'Mean',
+    'MeanSize',
+    'MeasureDirection',
+    'Mesh',
+    'Min',
+    'MinAngle',
+    'MinDepth',
+    'MinDist',
+    'MinStepSize',
+    'Model',
+    'Mu',
+    'Mu2',
+    'MustBeLoopJoint',
+    'Name',
+    'Near',
+    'Noise',
+    'Normal',
+    'NormalMap',
+    'ODE',
+    'OrientationReferenceFrame',
+    'OriginVisual',
+    'OuterAngle',
+    'Output',
+    'OverrideImpactCaptureVelocity',
+    'OverrideStictionTransitionVelocity',
+    'P1',
+    'P2',
+    'Parent',
+    'PatchRadius',
+    'Path',
+    'Physics',
+    'Plane',
+    'PlasticCoefRestitution',
+    'PlasticImpactVelocity',
+    'Plugin',
+    'Point',
+    'PoissonsRatio',
+    'Polyline',
+    'Pose',
+    'Precision',
+    'PreConIters',
+    'ProvideFeedback',
+    'Quadratic',
+    'Radius',
+    'Range',
+    'Rate',
+    'Ray',
+    'RealTimeFactor',
+    'RealTimeUpdateRate',
+    'Resolution',
+    'RestitutionCoefficient',
+    'RollingFriction',
+    'Samples',
+    'Save',
+    'Scale',
+    'Scan',
+    'Scene',
+    'Script',
+    'SDF',
+    'SelfCollide',
+    'Sensor',
+    'Shader',
+    'Shadows',
+    'Simbody',
+    'Size',
+    'Skin',
+    'Sky',
+    'Slip',
+    'Slip1',
+    'Slip2',
+    'SoftCFM',
+    'SoftERP',
+    'Solver',
+    'Sor',
+    'Specular',
+    'Speed',
+    'Sphere',
+    'SplitImpulse',
+    'SplitImpulsePenetrationThreshold',
+    'Spot',
+    'SpringReference',
+    'SpringStiffness',
+    'Start',
+    'Static',
+    'StaticFriction',
+    'StdDev',
+    'Stiffness',
+    'SubMesh',
+    'Sunrise',
+    'Sunset',
+    'Surface',
+    'SurfaceRadius',
+    'Threshold',
+    'Time',
+    'Topic',
+    'Torsional',
+    'TrackVisual',
+    'Trajectory',
+    'Transparency',
+    'Type',
+    'UpdateRate',
+    'Upper',
+    'URDF',
+    'URI',
+    'UseDynamicMOIRescaling',
+    'UseModelFrame',
+    'UseParentModelFrame',
+    'UsePatchRadius',
+    'Velocity',
+    'Vertical',
+    'VerticalPosition',
+    'VerticalVelocity',
+    'ViewController',
+    'ViscousFriction',
+    'Visual',
+    'Visualize',
+    'Waypoint',
+    'Width',
+    'World',
+    'X',
+    'XYZ',
+    'Y',
+    'Z'
+]

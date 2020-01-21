@@ -25,15 +25,38 @@ from .trajectory import Trajectory
 class Script(XMLBase):
     _NAME = 'script'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
-        name=dict(creator=Name, mode='material', default=['default']),
-        uri=dict(creator=URI, mode='material', default=['file://media/materials/scripts/gazebo.material'], n_elems='+', optional=True),
-        loop=dict(creator=Loop, mode='actor', default=[True], optional=True),
-        delay_start=dict(creator=DelayStart, mode='actor', default=[0], optional=True),
-        auto_start=dict(creator=AutoStart, mode='actor', default=[True], optional=True),
-        trajectory=dict(creator=Trajectory, mode='actor', optional=True, n_elems='+')
-    )
+        name=dict(
+            creator=Name,
+            mode='material',
+            default=['default']),
+        uri=dict(
+            creator=URI,
+            mode='material',
+            default=['file://media/materials/scripts/gazebo.material'],
+            n_elems='+',
+            optional=True),
+        loop=dict(
+            creator=Loop,
+            mode='actor',
+            default=[True],
+            optional=True),
+        delay_start=dict(
+            creator=DelayStart,
+            mode='actor',
+            default=[0],
+            optional=True),
+        auto_start=dict(
+            creator=AutoStart,
+            mode='actor',
+            default=[True],
+            optional=True),
+        trajectory=dict(
+            creator=Trajectory,
+            mode='actor',
+            optional=True,
+            n_elems='+'))
 
     _MODES = ['material', 'actor']
 

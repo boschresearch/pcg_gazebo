@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLBase
+from ...utils import is_string
 from .inertial import Inertial
 from .collision import Collision
 from .gazebo import Gazebo
@@ -45,7 +46,7 @@ class Link(XMLBase):
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str) or isinstance(value, unicode), \
+        assert is_string(value), \
             'Link name should be string or unicode'
         assert len(value) > 0, 'Name string cannot be empty'
         self.attributes['name'] = str(value)
@@ -121,7 +122,9 @@ class Link(XMLBase):
         if self.collisions is not None:
             for elem in self.collisions:
                 if elem.name == name:
-                    print('Collision element with name <{}> already exists'.format(name))
+                    print(
+                        'Collision element with name <{}>'
+                        ' already exists'.format(name))
                     return
         if collision is not None:
             self._add_child_element('collision', collision)
@@ -143,7 +146,9 @@ class Link(XMLBase):
         if self.visuals is not None:
             for elem in self.visuals:
                 if elem.name == name:
-                    print('Visual element with name <{}> already exists'.format(name))
+                    print(
+                        'Visual element with name <{}>'
+                        ' already exists'.format(name))
                     return
         if visual is not None:
             self._add_child_element('visual', visual)

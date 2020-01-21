@@ -26,7 +26,7 @@ class TestPose(unittest.TestCase):
 
             p_result = p1 + p2
             self.assertEqual(
-                np.sum(p1.position + p2.position - p_result.position), 
+                np.sum(p1.position + p2.position - p_result.position),
                 0)
 
             self.assertEqual(p_result.x, p1.x + p2.x)
@@ -42,7 +42,7 @@ class TestPose(unittest.TestCase):
             p_result = p_ref + p_target
             self.assertEqual(np.sum(p_result.quat - p_target.quat), 0)
 
-    def test_euler_transformation(self):        
+    def test_euler_transformation(self):
         for i in range(3):
             vec = np.zeros(3)
             vec[i] = 2 * np.pi * np.random.random()
@@ -69,6 +69,7 @@ class TestPose(unittest.TestCase):
                 np.isclose(np.sum(np.array(urdf.xyz) - p.position), 0))
             self.assertTrue(
                 np.isclose(np.sum(np.array(urdf.rpy) - np.array(p.rpy)), 0))
+
 
 if __name__ == '__main__':
     unittest.main()

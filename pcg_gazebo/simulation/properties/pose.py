@@ -33,44 +33,49 @@ class Pose(object):
         self._pos = pos
         self._quat = np.array([0, 0, 0, 1])
 
-        if rot is not None:            
+        if rot is not None:
             assert isinstance(rot, collections.Iterable), \
                 'Input rot vector must be iterable'
             if len(list(rot)) == 3:
                 rpy = list(rot)
                 assert len(rpy) == 3, 'Input rpy vector must have' \
-                    ' 3 elements (roll, pitch, yaw)'            
+                    ' 3 elements (roll, pitch, yaw)'
                 for elem in rpy:
-                    assert isinstance(elem, float) or isinstance(elem, int), \
-                        'Each element from rpy must be either a float or an integer'
+                    assert isinstance(
+                        elem, float) or isinstance(
+                        elem, int), 'Each element from rpy must' \
+                        ' be either a float or an integer'
                 self._quat = Pose.rpy2quat(*list(rpy))
             elif len(list(rot)) == 4:
                 quat = list(rot)
                 assert len(quat) == 4, 'Input quat vector must have' \
                     ' 4 elements (qx, qy, qz, qw)'
                 for elem in quat:
-                    assert isinstance(elem, float) or isinstance(elem, int), \
-                        'Each element from quaternion must be either a float or an integer'
+                    assert isinstance(
+                        elem, float) or isinstance(
+                        elem, int), 'Each element from quaternion ' \
+                        'must be either a float or an integer'
                 self._quat = np.array(quat)
             else:
-                msg = 'Rotation vector must have either 3 (rpy) or 4 (quat) elements, received={}'.format(
-                    len(list(rot)))
+                msg = 'Rotation vector must have either 3' \
+                    ' (rpy) or 4 (quat) elements, received={}'.format(
+                        len(list(rot)))
                 PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
 
         self._is_updated = True
-     
+
     def __str__(self):
-        msg = 'Position (x, y, z) [m]: {}, {}, {}\n'.format(*self._pos)  
+        msg = 'Position (x, y, z) [m]: {}, {}, {}\n'.format(*self._pos)
         msg += '\t - x: {}\n'.format(self._pos[0])
         msg += '\t - y: {}\n'.format(self._pos[1])
         msg += '\t - z: {}\n'.format(self._pos[2])
         rpy = self.rpy
-        msg +=  'Orientation rpy (roll, pitch, yaw) (degrees): \n'
+        msg += 'Orientation rpy (roll, pitch, yaw) (degrees): \n'
         msg += '\t - Roll: {}\n'.format(rpy[0] * 180 / np.pi)
         msg += '\t - Pitch: {}\n'.format(rpy[1] * 180 / np.pi)
         msg += '\t - Yaw: {}\n'.format(rpy[2] * 180 / np.pi)
-        return msg   
+        return msg
 
     def __add__(self, pose):
         q = quaternion_multiply(self.quat, pose.quat)
@@ -81,14 +86,17 @@ class Pose(object):
     def __sub__(self, pose):
         q = self.get_transform(pose.quat, self.quat)
 
-        diff_p = self.position - pose.position        
-        p = np.dot(quaternion_matrix(pose.quat)[0:3, 0:3].T, 
-            np.dot(diff_p, quaternion_matrix(pose.quat)[0:3, 0:3]))
+        diff_p = self.position - pose.position
+        p = np.dot(quaternion_matrix(pose.quat)[0:3, 0:3].T,
+                   np.dot(diff_p, quaternion_matrix(pose.quat)[0:3, 0:3]))
         return Pose(pos=p, rot=q)
 
     def __eq__(self, pose):
-        return np.allclose(self.position, pose.position) and \
-            is_same_transform(quaternion_matrix(self.quat), quaternion_matrix(pose.quat))
+        return np.allclose(
+            self.position, pose.position) and is_same_transform(
+            quaternion_matrix(
+                self.quat), quaternion_matrix(
+                pose.quat))
 
     @property
     def is_updated(self):
@@ -125,7 +133,7 @@ class Pose(object):
         assert isinstance(value, float) or isinstance(value, int), \
             'Input must be a float or an integer'
         self._pos[1] = value
-    
+
     @property
     def z(self):
         return self._pos[2]
@@ -153,7 +161,7 @@ class Pose(object):
         return self._quat
 
     @quat.setter
-    def quat(self, q):        
+    def quat(self, q):
         assert isinstance(q, collections.Iterable), \
             'Input vector must be iterable'
         assert len(list(q)) == 4, \
@@ -171,7 +179,7 @@ class Pose(object):
     @staticmethod
     def Rx(angle):
         return rotation_matrix(angle, [1, 0, 0])[0:3, 0:3]
-        
+
     @staticmethod
     def Ry(angle):
         return rotation_matrix(angle, [0, 1, 0])[0:3, 0:3]
@@ -179,7 +187,7 @@ class Pose(object):
     @staticmethod
     def Rz(angle):
         return rotation_matrix(angle, [0, 0, 1])[0:3, 0:3]
-    
+
     @staticmethod
     def quat2rpy(q):
         return list(euler_from_quaternion(q))
@@ -222,10 +230,11 @@ class Pose(object):
     def from_sdf(sdf):
         assert sdf._NAME == 'pose', 'SDF element must be a <pose> entity'
         return Pose(sdf.value[0:3], sdf.value[3::])
-        
+
     @staticmethod
     def from_urdf(urdf):
-        assert urdf._NAME == 'origin', 'URDF element must be an <origin> entity'
+        assert urdf._NAME == 'origin', \
+            'URDF element must be an <origin> entity'
         return Pose(urdf.xyz, urdf.rpy)
 
     def to_urdf(self):
@@ -233,4 +242,3 @@ class Pose(object):
         urdf.xyz = self.position.tolist()
         urdf.rpy = self.rpy
         return urdf
-        

@@ -27,12 +27,13 @@ class MinDepth(XMLScalar):
         assert self._is_scalar(value), \
             'Input value for {} must be a scalar'.format(self._NAME)
         assert value >= 0, \
-            'Input value for {} must be equal or greater than zero'.format(self._NAME)
+            'Input value for {} must be equal' \
+            ' or greater than zero'.format(self._NAME)
         XMLScalar._set_value(self, value)
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('min_depth')
         obj.value = self.value
         return obj

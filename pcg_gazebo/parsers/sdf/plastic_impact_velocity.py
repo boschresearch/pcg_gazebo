@@ -19,7 +19,7 @@ from ..types import XMLScalar
 class PlasticImpactVelocity(XMLScalar):
     _NAME = 'plastic_impact_velocity'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=0.5):
         XMLScalar.__init__(self, default)
 

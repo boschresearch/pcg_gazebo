@@ -33,7 +33,7 @@ class Slip2(XMLScalar):
     def __init__(self, default=0):
         XMLScalar.__init__(self, default)
         self._description = dict(
-            ode='(float) Force dependent slip direction 1 in collision local' \
+            ode='(float) Force dependent slip direction 1 in collision local'
                 ' frame, between the range of [0,1]')
 
     def _set_value(self, value):

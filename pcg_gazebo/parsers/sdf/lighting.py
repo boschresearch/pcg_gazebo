@@ -19,6 +19,6 @@ from ..types import XMLBoolean
 class Lighting(XMLBoolean):
     _NAME = 'lighting'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=False):
         XMLBoolean.__init__(self, default)

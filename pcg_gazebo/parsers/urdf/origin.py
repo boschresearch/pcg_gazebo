@@ -63,7 +63,7 @@ class Origin(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('pose')
         obj.pose = self.xyz + self.rpy
         return obj

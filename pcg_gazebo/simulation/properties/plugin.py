@@ -50,7 +50,8 @@ class Plugin(object):
 
     @params.setter
     def params(self, value):
-        assert isinstance(value, dict), 'Parameters must be provided as a dictionary'
+        assert isinstance(
+            value, dict), 'Parameters must be provided as a dictionary'
         self._params = value
 
     @property
@@ -72,12 +73,19 @@ class Plugin(object):
             if isinstance(data[tag], dict):
                 Plugin._replace_value_in_dict(data[tag], old_value, new_value)
             elif data[tag] == old_value:
-                    data[tag] = new_value
+                data[tag] = new_value
 
-    def init_gazebo_ros_p3d_plugin(self, name='p3d', robot_namespace='', 
-        body_name=None, topic_name='/groundtruth', frame_name='world', 
-        xyz_offset=[0, 0, 0], rpy_offset=[0, 0, 0], gaussian_noise=0, 
-        update_rate=50):
+    def init_gazebo_ros_p3d_plugin(
+            self,
+            name='p3d',
+            robot_namespace='',
+            body_name=None,
+            topic_name='/groundtruth',
+            frame_name='world',
+            xyz_offset=[0, 0, 0],
+            rpy_offset=[0, 0, 0],
+            gaussian_noise=0,
+            update_rate=50):
         self.name = name
         self.filename = 'libgazebo_ros_p3d.so'
 
@@ -91,9 +99,16 @@ class Plugin(object):
         self._params['gaussianNoise'] = gaussian_noise
         self._params['updateRate'] = update_rate
 
-    def init_gazebo_ros_imu_sensor_plugin(self, name='imu', robot_namespace='',
-        always_on=True, update_rate=50, body_name='', topic_name='', 
-        gaussian_noise=0.0, frame_name='world'):
+    def init_gazebo_ros_imu_sensor_plugin(
+            self,
+            name='imu',
+            robot_namespace='',
+            always_on=True,
+            update_rate=50,
+            body_name='',
+            topic_name='',
+            gaussian_noise=0.0,
+            frame_name='world'):
         self.name = name
         self.filename = 'libgazebo_ros_imu_sensor.so'
 
@@ -106,8 +121,8 @@ class Plugin(object):
         self._params['gaussianNoise'] = gaussian_noise
         self._params['frameName'] = frame_name
 
-    def init_gazebo_ros_laser_plugin(self, name='ray', frame_name='world', 
-        topic_name='/scan'):
+    def init_gazebo_ros_laser_plugin(self, name='ray', frame_name='world',
+                                     topic_name='/scan'):
         self.name = name
         self.filename = 'libgazebo_ros_laser.so'
 
@@ -116,7 +131,7 @@ class Plugin(object):
         self._params['frameName'] = frame_name
 
     def init_gazebo_ros_bumper_plugin(self, name='bumper', robot_namespace='',
-        frame_name='world', topic_name='bumper'):
+                                      frame_name='world', topic_name='bumper'):
         self.name = name
         self.filename = 'libgazebo_ros_bumper.so'
 
@@ -125,11 +140,21 @@ class Plugin(object):
         self._params['frameName'] = frame_name
         self._params['bumperTopicName'] = topic_name
 
-    def init_gazebo_ros_camera_plugin(self, name='camera', robot_namespace='',
-        update_rate=0, camera_name='camera', image_topic_name='image_raw', 
-        camera_info_topic_name='camera_info', frame_name='camera_link',
-        hack_baseline=0.07, distortion_k1=0, distortion_k2=0, distortion_k3=0,
-        distortion_t1=0, distortion_t2=0):
+    def init_gazebo_ros_camera_plugin(
+            self,
+            name='camera',
+            robot_namespace='',
+            update_rate=0,
+            camera_name='camera',
+            image_topic_name='image_raw',
+            camera_info_topic_name='camera_info',
+            frame_name='camera_link',
+            hack_baseline=0.07,
+            distortion_k1=0,
+            distortion_k2=0,
+            distortion_k3=0,
+            distortion_t1=0,
+            distortion_t2=0):
         self.name = name
         self.filename = 'libgazebo_ros_camera.so'
 
@@ -147,14 +172,25 @@ class Plugin(object):
         self._params['distortionT1'] = distortion_t1
         self._params['distortionT2'] = distortion_t2
 
-    def init_openni_kinect_plugin(self, name='camera', update_rate=0,
-        camera_name='camera', image_topic_name='color/image_raw',
-        camera_info_topic_name='color/camera_info', 
-        depth_image_topic_name='depth/image_rect_raw', 
-        depth_image_camera_info_topic_name='depth/camera_info',
-        point_cloud_topic_name='depth/points', frame_name='camera_link',
-        baseline=0.1, distortion_k1=0, distortion_k2=0, distortion_k3=0,
-        distortion_t1=0, distortion_t2=0, point_cloud_cutoff=0, always_on=True):
+    def init_openni_kinect_plugin(
+            self,
+            name='camera',
+            update_rate=0,
+            camera_name='camera',
+            image_topic_name='color/image_raw',
+            camera_info_topic_name='color/camera_info',
+            depth_image_topic_name='depth/image_rect_raw',
+            depth_image_camera_info_topic_name='depth/camera_info',
+            point_cloud_topic_name='depth/points',
+            frame_name='camera_link',
+            baseline=0.1,
+            distortion_k1=0,
+            distortion_k2=0,
+            distortion_k3=0,
+            distortion_t1=0,
+            distortion_t2=0,
+            point_cloud_cutoff=0,
+            always_on=True):
         self.name = name
         self.filename = 'libgazebo_ros_openni_kinect.so'
 
@@ -165,7 +201,8 @@ class Plugin(object):
         self._params['imageTopicName'] = image_topic_name
         self._params['cameraInfoTopicName'] = camera_info_topic_name
         self._params['depthImageTopicName'] = depth_image_topic_name
-        self._params['depthImageCameraInfoTopicName'] = depth_image_camera_info_topic_name
+        self._params['depthImageCameraInfoTopicName'] = \
+            depth_image_camera_info_topic_name
         self._params['pointCloudTopicName'] = point_cloud_topic_name
         self._params['frameName'] = frame_name,
         self._params['hackBaseline'] = baseline

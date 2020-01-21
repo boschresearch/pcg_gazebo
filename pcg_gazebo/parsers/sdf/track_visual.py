@@ -26,13 +26,13 @@ class TrackVisual(XMLBase):
     _NAME = 'track_visual'
     _TYPE = 'sdf'
 
-
     _CHILDREN_CREATORS = dict(
         name=dict(creator=Name, default=['__default__'], optional=True),
         min_dist=dict(creator=MinDist, default=[0], optional=True),
         max_dist=dict(creator=MaxDist, default=[0], optional=True),
         static=dict(creator=Static, default=[False], optional=True),
-        use_model_frame=dict(creator=UseModelFrame, default=[True], optional=True),
+        use_model_frame=dict(
+            creator=UseModelFrame, default=[True], optional=True),
         xyz=dict(creator=XYZ, default=[[-5.0, 0.0, 3.0]], optional=True),
         inherit_yaw=dict(creator=InheritYaw, default=[False], optional=True)
     )
@@ -40,7 +40,7 @@ class TrackVisual(XMLBase):
     def __init__(self):
         XMLBase.__init__(self)
         self.reset()
-    
+
     @property
     def name(self):
         return self._get_child_element('name')

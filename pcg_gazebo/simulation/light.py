@@ -20,15 +20,15 @@ from ..log import PCG_ROOT_LOGGER
 
 
 class Light(object):
-    def __init__(self, name='default', type='point', 
-        pose=[0, 0, 0, 0, 0, 0], cast_shadows=True, 
-        inner_angle=None, outer_angle=None, falloff=None):
+    def __init__(self, name='default', type='point',
+                 pose=[0, 0, 0, 0, 0, 0], cast_shadows=True,
+                 inner_angle=None, outer_angle=None, falloff=None):
         self._sdf = LightSDF()
         self.name = name
         self.type = type
         self.cast_shadows = cast_shadows
 
-        self._pose = Pose() 
+        self._pose = Pose()
         self.pose = pose
 
         if type == 'spot':
@@ -36,14 +36,15 @@ class Light(object):
                 PCG_ROOT_LOGGER.warning(
                     'Spot light settings maybe invalid,'
                     ' name={}, inner_angle={}, outer_angle={}, '
-                    'falloff={}'.format(self.name, inner_angle, outer_angle, falloff))        
+                    'falloff={}'.format(
+                        self.name, inner_angle, outer_angle, falloff))
             else:
                 self.set_spot(
                     inner_angle=inner_angle,
                     outer_angle=outer_angle,
                     falloff=falloff
                 )
-        
+
     @property
     def name(self):
         return self._sdf.name
@@ -85,10 +86,10 @@ class Light(object):
                 'qw, qx, qy, qz)'
             for item in vec:
                 assert isinstance(item, float) or isinstance(item, int), \
-                    'All elements in pose vector must be a float or an integer'        
-            
+                    'All elements in pose vector must be a float or an integer'
+
             self._pose = Pose(pos=vec[0:3], rot=vec[3::])
-            
+
     @property
     def diffuse(self):
         return self._sdf.diffuse.value
@@ -120,11 +121,11 @@ class Light(object):
     @range.setter
     def range(self, value):
         self._sdf.attenuation.range = value
-    
+
     @property
     def linear(self):
         return self._sdf.attenuation.linear.value
-    
+
     @linear.setter
     def linear(self, value):
         self._sdf.attenuation.linear = value
@@ -132,7 +133,7 @@ class Light(object):
     @property
     def constant(self):
         return self._sdf.attenuation.constant.value
-    
+
     @constant.setter
     def constant(self, value):
         self._sdf.attenuation.constant = value
@@ -140,7 +141,7 @@ class Light(object):
     @property
     def quadratic(self):
         return self._sdf.attenuation.quadratic.value
-    
+
     @quadratic.setter
     def quadratic(self, value):
         self._sdf.attenuation.quadratic = value
@@ -148,9 +149,9 @@ class Light(object):
     @property
     def inner_angle(self):
         return self._sdf.spot.inner_angle.value
-    
+
     @inner_angle.setter
-    def inner_angle(self, value):        
+    def inner_angle(self, value):
         if self.type != 'spot':
             msg = 'Light <{}> is not a spot light'.format(self.name)
             PCG_ROOT_LOGGER.error(msg)
@@ -160,9 +161,9 @@ class Light(object):
     @property
     def outer_angle(self):
         return self._sdf.spot.outer_angle.value
-    
+
     @outer_angle.setter
-    def outer_angle(self, value):        
+    def outer_angle(self, value):
         if self.type != 'spot':
             msg = 'Light <{}> is not a spot light'.format(self.name)
             PCG_ROOT_LOGGER.error(msg)
@@ -172,9 +173,9 @@ class Light(object):
     @property
     def falloff(self):
         return self._sdf.spot.falloff.value
-    
+
     @falloff.setter
-    def falloff(self, value):        
+    def falloff(self, value):
         if self.type != 'spot':
             msg = 'Light <{}> is not a spot light'.format(self.name)
             PCG_ROOT_LOGGER.error(msg)
@@ -202,7 +203,7 @@ class Light(object):
         if falloff < 0:
             msg = 'Falloff must be greater than or equal to zero'
             PCG_ROOT_LOGGER.error(msg)
-            raise ValueError(msg)        
+            raise ValueError(msg)
         self._sdf.spot.inner_angle = inner_angle
         self._sdf.spot.outer_angle = outer_angle
         self._sdf.spot.falloff = falloff
@@ -210,7 +211,7 @@ class Light(object):
     def to_sdf(self):
         return self._sdf
 
-    @staticmethod 
+    @staticmethod
     def from_sdf(sdf):
         from copy import deepcopy
         assert sdf._NAME == 'light', 'Only light elements can be parsed'
@@ -221,5 +222,3 @@ class Light(object):
     @staticmethod
     def from_dict(config):
         return Light(**config)
-
-    

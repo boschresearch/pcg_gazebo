@@ -37,7 +37,7 @@ class Sky(XMLBase):
     @property
     def time(self):
         return self._get_child_element('time')
-    
+
     @time.setter
     def time(self, value):
         self._add_child_element('time', value)
@@ -45,7 +45,7 @@ class Sky(XMLBase):
     @property
     def sunrise(self):
         return self._get_child_element('sunrise')
-    
+
     @sunrise.setter
     def sunrise(self, value):
         self._add_child_element('sunrise', value)
@@ -53,7 +53,7 @@ class Sky(XMLBase):
     @property
     def sunset(self):
         return self._get_child_element('sunset')
-    
+
     @sunset.setter
     def sunset(self, value):
         self._add_child_element('sunset', value)
@@ -61,7 +61,7 @@ class Sky(XMLBase):
     @property
     def clouds(self):
         return self._get_child_element('clouds')
-    
+
     @clouds.setter
     def clouds(self, value):
         self._add_child_element('clouds', value)

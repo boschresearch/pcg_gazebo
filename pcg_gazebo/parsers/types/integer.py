@@ -30,11 +30,13 @@ class XMLInteger(XMLBase):
             '[{}] Input value cannot be a boolean'.format(
                 self.xml_element_name)
         assert is_scalar(value), \
-            '[{}] Input value must be a float or an integer, received={}'.format(
+            '[{}] Input value must be a float or' \
+            ' an integer, received={}'.format(
                 self.xml_element_name, value)
         if isinstance(value, float):
             assert value.is_integer(), \
-                '[{}] Provided floating point value does not hold an integer value'.format(
+                '[{}] Provided floating point value does' \
+                ' not hold an integer value'.format(
                     self.xml_element_name)
 
         if min_value is not None:
@@ -45,7 +47,8 @@ class XMLInteger(XMLBase):
         if max_value is not None:
             if min_value is not None:
                 assert max_value > min_value, \
-                    'Max. value {} for {} is not greater than provided min. value {}'.format(
+                    'Max. value {} for {} is not greater' \
+                    ' than provided min. value {}'.format(
                         max_value, self._NAME, min_value)
             assert value <= max_value, \
                 'Value for {} must be less or equal to {}'.format(

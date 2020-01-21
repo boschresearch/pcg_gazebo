@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from ...utils import is_scalar
 from ..types import XMLScalar
 
 
@@ -26,9 +25,9 @@ class StopCFM(XMLScalar):
     def _set_value(self, value):
         XMLScalar._set_value(self, value, min_value=0)
 
-    def to_sdf(self):                
+    def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         print('WARNING: stopCfm only translates to SDF cfm for the ODE engine')
         obj = create_sdf_element('cfm')
         obj.value = self.value

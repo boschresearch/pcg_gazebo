@@ -19,6 +19,6 @@ from ..types import XMLBoolean
 class EnableWind(XMLBoolean):
     _NAME = 'enable_wind'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=False):
         XMLBoolean.__init__(self, default)

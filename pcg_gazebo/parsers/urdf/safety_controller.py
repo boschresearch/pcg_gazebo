@@ -24,7 +24,7 @@ class SafetyController(XMLBase):
         soft_lower_limit='0',
         soft_upper_limit='0',
         k_position='0',
-        k_velocity='0'    
+        k_velocity='0'
     )
 
     def __init__(self):

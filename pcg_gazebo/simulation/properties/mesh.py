@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import sys
 import numpy as np
 import collections
 import trimesh
@@ -21,8 +20,8 @@ import logging
 from copy import deepcopy
 from shapely.affinity import translate
 from shapely.geometry import Polygon, MultiPolygon, LineString, \
-    MultiLineString, MultiPoint, LinearRing
-from shapely.ops import cascaded_union, unary_union, triangulate, polygonize
+    MultiPoint
+from shapely.ops import unary_union, triangulate, polygonize
 from ...log import PCG_ROOT_LOGGER
 from ...parsers.sdf import create_sdf_element
 from ...path import Path
@@ -30,6 +29,7 @@ from ...path import Path
 # Disabling trimesh's logging messages
 logger = logging.getLogger('trimesh')
 logger.disabled = True
+
 
 class Mesh(object):
     def __init__(self, filename=None, load_mesh=False):
@@ -44,9 +44,9 @@ class Mesh(object):
         self._bounds = None
         self._center = None
         self._scale = [1, 1, 1]
-        
+
         self._footprint_states = list()
-        
+
         if load_mesh:
             self.load_mesh()
             self.compute_bounds()
@@ -55,8 +55,9 @@ class Mesh(object):
     def create_sphere(radius=1):
         assert radius > 0, 'Sphere radius must be greater than zero'
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.icosphere(radius=radius)        
-        PCG_ROOT_LOGGER.info('Sphere mesh created, radius [m]={}'.format(radius))
+        mesh._mesh = trimesh.creation.icosphere(radius=radius)
+        PCG_ROOT_LOGGER.info(
+            'Sphere mesh created, radius [m]={}'.format(radius))
         return mesh
 
     @staticmethod
@@ -64,9 +65,10 @@ class Mesh(object):
         assert radius > 0, 'Cylinder radius must be greater than zero'
         assert height > 0, 'Cylinder height must be greater than zero'
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.cylinder(radius=radius, height=height)     
-        PCG_ROOT_LOGGER.info('Cylinder mesh created, radius [m]={}, height [m]={}'.format(
-            radius, height))   
+        mesh._mesh = trimesh.creation.cylinder(radius=radius, height=height)
+        PCG_ROOT_LOGGER.info(
+            'Cylinder mesh created, radius [m]={}, height [m]={}'.format(
+                radius, height))
         return mesh
 
     @staticmethod
@@ -74,9 +76,10 @@ class Mesh(object):
         assert radius > 0, 'Capsule radius must be greater than zero'
         assert height > 0, 'Capsule height must be greater than zero'
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.capsule(radius=radius, height=height)     
-        PCG_ROOT_LOGGER.info('Capsule mesh created, radius [m]={}, height [m]={}'.format(
-            radius, height))   
+        mesh._mesh = trimesh.creation.capsule(radius=radius, height=height)
+        PCG_ROOT_LOGGER.info(
+            'Capsule mesh created, radius [m]={}, height [m]={}'.format(
+                radius, height))
         return mesh
 
     @staticmethod
@@ -88,13 +91,14 @@ class Mesh(object):
             assert elem > 0, 'Size vector components must be greater than zero'
 
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.box(extents=size)        
+        mesh._mesh = trimesh.creation.box(extents=size)
         PCG_ROOT_LOGGER.info('Box mesh created, size={}'.format(size))
         return mesh
 
     @staticmethod
     def from_mesh(mesh, scale=[1, 1, 1]):
-        assert isinstance(mesh, trimesh.Trimesh), 'Invalid mesh structure input'
+        assert isinstance(
+            mesh, trimesh.Trimesh), 'Invalid mesh structure input'
         output = Mesh()
         output._mesh = mesh
         output._scale = scale
@@ -141,7 +145,8 @@ class Mesh(object):
         vec = list(vec)
         assert len(vec) == 3, 'Input scale array must have 3 elements'
         for elem in vec:
-            assert elem > 0, 'Scale vector components must be greater than zero'
+            assert elem > 0, 'Scale vector' \
+                ' components must be greater than zero'
         self._scale = vec
 
     @property
@@ -174,13 +179,13 @@ class Mesh(object):
     @staticmethod
     def _multiline2points(lines):
         points = None
-        for l in lines.geoms:                        
-            line_points = np.array([[x, y] for x, y in zip(*l.xy)])                    
+        for l in lines.geoms:
+            line_points = np.array([[x, y] for x, y in zip(*l.xy)])
             if points is None:
                 points = line_points
             else:
                 points = np.vstack([points, line_points])
-        
+
         points = np.unique(points, axis=0)
         return points
 
@@ -201,43 +206,54 @@ class Mesh(object):
             plane_normal=plane_normal,
             heights=z_levels)
         fp_offset = [mesh.bounds[0, 0], mesh.bounds[0, 1]]
-        
+
         try:
             # Filter out sections that are invalid
             sections = [s for s in sections if s is not None]
 
             combined_section = np.sum(sections)
             # Retrieve all vertices, Path2D provides the index for the point
-            vertices = combined_section.vertices        
+            vertices = combined_section.vertices
             # List of closed polygons
             closed_polys = list()
-            
+
             for trimesh_line in combined_section.entities:
                 if trimesh_line.closed:
                     points = vertices[trimesh_line.points]
                     # Create polygon
-                    closed_polys.append(translate(Polygon(points), fp_offset[0], fp_offset[1]))
+                    closed_polys.append(
+                        translate(
+                            Polygon(points),
+                            fp_offset[0],
+                            fp_offset[1]))
 
-            # Combine all closed polygons into one            
+            # Combine all closed polygons into one
             closed_polys = unary_union(closed_polys)
             return closed_polys, combined_section
-        except AttributeError as ex:
+        except AttributeError:
             return None, None
 
-    def _slice_mesh_with_plane(self, plane_normal=[0, 0, 1], plane_origin=None, 
-        transform=None, offset=[0, 0, 0]):
-        assert len(plane_normal) == 3, 'Plane normal vector must have three components'
-        assert np.sum(plane_normal) == 1, 'Plane normal vector must be a unit vector'
+    def _slice_mesh_with_plane(self, plane_normal=[0, 0, 1], plane_origin=None,
+                               transform=None, offset=[0, 0, 0]):
+        assert len(
+            plane_normal) == 3, 'Plane normal' \
+            ' vector must have three components'
+        assert np.sum(
+            plane_normal) == 1, 'Plane normal vector must be a unit vector'
         assert len(offset) == 3, 'Offset vector must have three components'
 
         if plane_origin is not None:
-            assert len(plane_origin) == 3, 'Origin vector must have three components'
+            assert len(
+                plane_origin) == 3, 'Origin vector must have three components'
 
         if transform is not None:
-            assert transform.shape == (4, 4), 'The transform matrix must be (4, 4)'
+            assert transform.shape == (
+                4, 4), 'The transform matrix must be (4, 4)'
 
         if not self.load_mesh():
-            PCG_ROOT_LOGGER.error('Failed to load mesh, filename={}'.format(self.filename))
+            PCG_ROOT_LOGGER.error(
+                'Failed to load mesh, filename={}'.format(
+                    self.filename))
             return False
 
         sliced_meshes = list()
@@ -254,7 +270,7 @@ class Mesh(object):
 
             sliced_meshes.append(
                 trimesh.intersections.slice_mesh_plane(
-                geo, plane_normal, plane_origin))
+                    geo, plane_normal, plane_origin))
 
         return sliced_meshes
 
@@ -262,10 +278,13 @@ class Mesh(object):
         assert len(offset) == 3, 'Offset vector must have three components'
 
         if transform is not None:
-            assert transform.shape == (4, 4), 'The transform matrix must be (4, 4)'
+            assert transform.shape == (
+                4, 4), 'The transform matrix must be (4, 4)'
 
         if not self.load_mesh():
-            PCG_ROOT_LOGGER.error('Failed to load mesh, filename={}'.format(self.filename))
+            PCG_ROOT_LOGGER.error(
+                'Failed to load mesh, filename={}'.format(
+                    self.filename))
             return False
 
         sliced_meshes = list()
@@ -330,11 +349,11 @@ class Mesh(object):
         transformed_meshes = list()
         for mesh in self.get_meshes():
             mesh = mesh.copy()
-            
+
             mesh.apply_transform(rot)
             mesh.apply_translation(position)
             transformed_meshes.append(mesh)
-        
+
         return transformed_meshes
 
     def load_mesh(self):
@@ -350,14 +369,7 @@ class Mesh(object):
                 PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
 
-            # try:            
-            if sys.version_info[0] > 2:
-                entity = trimesh.load_mesh(self._filename)
-            else:
-                try:
-                    entity = trimesh.load_mesh(self._filename)
-                except:                    
-                    entity = trimesh.load_mesh(self._filename)
+            entity = trimesh.load_mesh(self._filename)
 
             if isinstance(entity, trimesh.Scene):
                 meshes = list(entity.dump())
@@ -373,13 +385,7 @@ class Mesh(object):
             PCG_ROOT_LOGGER.info(
                 'Mesh successfully loaded from file, '
                 'filename={}, # vertices={}'.format(
-                    self._filename, self.n_vertices))                
-            # except ValueError as ex:
-            #     self._mesh = None
-            #     PCG_ROOT_LOGGER.error(
-            #         'Error occurred while opening mesh {}, message={}'.format(
-            #         self.filename, ex))
-            #     return False
+                    self._filename, self.n_vertices))
             return True
         else:
             return True
@@ -390,7 +396,7 @@ class Mesh(object):
         if self._mesh is None:
             return None
 
-        try:            
+        try:
             n_vertices = self.n_vertices
             pnts = None
             for mesh in self.get_meshes():
@@ -399,15 +405,16 @@ class Mesh(object):
                     pnts = mesh.sample(n_samples)
                 else:
                     pnts = np.vstack((pnts, mesh.sample(n_samples)))
-        except ValueError as ex:
+        except ValueError:
             pnts = self.vertices
 
         return pnts
 
     def compute_bounds(self):
         if not self.load_mesh():
-            PCG_ROOT_LOGGER.error('Cannot compute mesh bounds, filename={}'.format(
-                self.filename))
+            PCG_ROOT_LOGGER.error(
+                'Cannot compute mesh bounds, filename={}'.format(
+                    self.filename))
             return False
 
         self._bounds = dict(
@@ -429,44 +436,58 @@ class Mesh(object):
             self._bounds['lower_z'] = bounds[0, 2]
             self._bounds['upper_z'] = bounds[1, 2]
         return self._bounds
-    
-    def get_footprint_polygon(self, z_limits=None, use_global_frame=False, origin=None,
-        plane_normal=[0, 0, 1], transform=None, offset=[0, 0, 0], use_bounding_box=False):
-        assert len(plane_normal) == 3, 'Plane normal vector must have three components'
-        assert np.sum(plane_normal) == 1, 'Plane normal vector must be a unit vector'
+
+    def get_footprint_polygon(
+            self,
+            z_limits=None,
+            use_global_frame=False,
+            origin=None,
+            plane_normal=[0, 0, 1],
+            transform=None,
+            offset=[0, 0, 0],
+            use_bounding_box=False):
+        assert len(
+            plane_normal) == 3, 'Plane normal vector' \
+            ' must have three components'
+        assert np.sum(
+            plane_normal) == 1, 'Plane normal vector must be a unit vector'
         assert len(offset) == 3, 'Offset vector must have three components'
 
         if origin is not None:
             assert len(origin) == 3, 'Origin vector must have three components'
 
         if transform is not None:
-            assert transform.shape == (4, 4), 'The transform matrix must be (4, 4)'
+            assert transform.shape == (
+                4, 4), 'The transform matrix must be (4, 4)'
 
         if not self.load_mesh():
-            PCG_ROOT_LOGGER.error('Cannot calculate footprint, filename={}'.format(
-                self.filename))
+            PCG_ROOT_LOGGER.error(
+                'Cannot calculate footprint, filename={}'.format(
+                    self.filename))
             return None
 
         footprint = None
         for m in self.get_meshes():
-            mesh = m.copy()        
+            mesh = m.copy()
 
             if transform is not None:
                 # Apply transformation matrix to mesh before sectioning it
                 mesh.apply_transform(transform)
 
             if offset is not None:
-                mesh.apply_translation(offset)        
+                mesh.apply_translation(offset)
 
             step = 0.01
-            
-            if z_limits is None:            
-                PCG_ROOT_LOGGER.info('Section mesh along the Z limit={}, filename={}'.format(
-                    mesh.bounds[:, 2].flatten(), self.filename))
+
+            if z_limits is None:
+                PCG_ROOT_LOGGER.info(
+                    'Section mesh along the Z limit={},'
+                    ' filename={}'.format(
+                        mesh.bounds[:, 2].flatten(), self.filename))
                 z_limits = mesh.bounds[:, 2].flatten()
 
                 if (z_limits[1] - z_limits[0]) < step:
-                    step = (z_limits[1] - z_limits[0]) / 10               
+                    step = (z_limits[1] - z_limits[0]) / 10
 
                 z_levels = np.arange(0, z_limits[1] - z_limits[0] + step, step)
 
@@ -477,21 +498,23 @@ class Mesh(object):
                 if z_limits[0] >= mesh.bounds[1, 2]:
                     PCG_ROOT_LOGGER.warning(
                         'Lower Z limit provided is outside of mesh range,'
-                        ' no footprint for this range, min_z_limit={}, max_z_bound={}'.format(
+                        ' no footprint for this range, min_z_limit={},'
+                        ' max_z_bound={}'.format(
                             z_limits[0], mesh.bounds[1, 2]))
                     return None
                 if z_limits[1] <= mesh.bounds[0, 2]:
                     PCG_ROOT_LOGGER.warning(
                         'Upper Z limit provided is outside of mesh range,'
-                        ' no footprint for this range, max_z_limit={}, min_z_bound={}'.format(
+                        ' no footprint for this range, max_z_limit={},'
+                        ' min_z_bound={}'.format(
                             z_limits[1], mesh.bounds[0, 2]))
                     return None
 
-                z_limits[0] = max(z_limits[0], mesh.bounds[0, 2]) 
-                z_limits[1] = min(z_limits[1], mesh.bounds[1, 2]) 
+                z_limits[0] = max(z_limits[0], mesh.bounds[0, 2])
+                z_limits[1] = min(z_limits[1], mesh.bounds[1, 2])
 
                 if np.abs(z_limits[1] - z_limits[0]) < 10 * step:
-                    step = np.abs(z_limits[1] - z_limits[0]) / 10      
+                    step = np.abs(z_limits[1] - z_limits[0]) / 10
 
                 z_levels = np.arange(0, z_limits[1] - z_limits[0] + step, step)
 
@@ -499,75 +522,86 @@ class Mesh(object):
                     origin = deepcopy(mesh.bounds[0, :])
                     origin[2] = z_limits[0]
 
-            PCG_ROOT_LOGGER.info('Sections will be acquired in the following Z heights={}'.format(z_levels))
+            PCG_ROOT_LOGGER.info(
+                'Sections will be acquired in the'
+                ' following Z heights={}'.format(z_levels))
 
             polys = list()
             # List of lines for the rest of the forms found in the sections
             # that do not form a closed polygon
             lines = list()
 
-            # Since trimesh computes the Path2D objects for the section contours in a 
-            # different coordinate system to the mesh itself, store the 
-            # lower bound to correct the position later
+            # Since trimesh computes the Path2D objects for the section
+            # contours in a different coordinate system to the mesh
+            # itself, store the lower bound to correct the position later
             fp_offset = [mesh.bounds[0, 0], mesh.bounds[0, 1]]
 
-            # mesh = self._get_mesh_slice(z_limits=z_limits, transform=transform, offset=offset)
             if mesh.is_empty:
-                PCG_ROOT_LOGGER.warning('Mesh is empty after slicing in interval={}'.format(z_limits))
+                PCG_ROOT_LOGGER.warning(
+                    'Mesh is empty after slicing in interval={}'.format(
+                        z_limits))
                 return None
 
-            if use_bounding_box:            
+            if use_bounding_box:
                 mesh = mesh.bounding_box_oriented
 
             try:
                 closed_polys, combined_section = self._get_combined_sections(
-                    mesh, origin, plane_normal, z_levels)   
+                    mesh, origin, plane_normal, z_levels)
 
                 if None in [closed_polys, combined_section]:
                     PCG_ROOT_LOGGER.warning(
                         'No slices found for mesh provided limits,'
-                        ' z_limits={}, filename={}'.format(z_limits, self._filename))
+                        ' z_limits={}, filename={}'.format(
+                            z_limits, self._filename))
                     return None
             except ValueError as ex:
                 PCG_ROOT_LOGGER.warning(
                     'Mesh sectioning failed, using the vertices'
-                    ' bounding box instead, filename={}'.format(self.filename))
-                vertices = np.unique(mesh.vertices, axis=0)            
-                return MultiPoint([(vertices[i, 0], vertices[i, 1]) for i in range(vertices.shape[0])]).convex_hull
-                            
-            #combined_section.show()
+                    ' bounding box instead, filename={}, message={}'.format(
+                        self.filename, str(ex)))
+                vertices = np.unique(mesh.vertices, axis=0)
+                return MultiPoint(
+                    [(vertices[i, 0], vertices[i, 1])
+                        for i in range(vertices.shape[0])]).convex_hull
+
+            # combined_section.show()
             # Retrieve all vertices, Path2D provides the index for the point
             vertices = combined_section.vertices
 
-            # Get all remaining lines that are not included in any of the polygons
+            # Get all remaining lines that are not included in any of the
+            # polygons
             for trimesh_line in combined_section.entities:
                 if trimesh_line.closed:
-                    continue    
+                    continue
                 line = translate(LineString(
-                    vertices[trimesh_line.points]), fp_offset[0], fp_offset[1])                           
-                
+                    vertices[trimesh_line.points]), fp_offset[0], fp_offset[1])
+
                 has_similar_line = False
                 for l in lines:
                     if l.almost_equals(line, decimal=3):
                         has_similar_line = True
                         break
                 if not has_similar_line:
-                    lines.append(line)        
+                    lines.append(line)
 
             if footprint is None:
                 footprint = deepcopy(closed_polys)
             else:
                 footprint = unary_union([footprint] + closed_polys)
-            PCG_ROOT_LOGGER.info('Closed polys found in the sections, area={}, filename={}'.format(
-                footprint.area, self.filename))
+            PCG_ROOT_LOGGER.info(
+                'Closed polys found in the sections,'
+                ' area={}, filename={}'.format(
+                    footprint.area, self.filename))
 
             # Create list of open polygons to be processed
-            open_polys = list()       
-            
-            if len(lines) > 0:            
+            open_polys = list()
+
+            if len(lines) > 0:
                 PCG_ROOT_LOGGER.info(
                     'Processing remaining section lines into closed'
                     ' polygons, filename={}'.format(self.filename))
+
                 def has_intersection(lines):
                     for i in range(len(lines)):
                         for j in range(len(lines)):
@@ -594,7 +628,7 @@ class Mesh(object):
                     lines.remove(line_j)
 
                     lines.append(new_line)
-                
+
                 for line in lines:
                     if isinstance(line, LineString) or line.is_empty:
                         continue
@@ -603,68 +637,90 @@ class Mesh(object):
                     try:
                         polys = polys + list(polygonize(line))
                     except ValueError as ex:
-                        PCG_ROOT_LOGGER.error('Could not polygonize lines, message={}, filename={}'.format(ex, self.filename))
+                        PCG_ROOT_LOGGER.error(
+                            'Could not polygonize lines, message={},'
+                            ' filename={}'.format(
+                                ex, self.filename))
 
                     try:
-                        # Use Delaunay triangulation on the remaining intersecting lines                          
-                        polys = polys + triangulate(MultiPoint(self._multiline2points(line)))                                                         
+                        # Use Delaunay triangulation on the remaining
+                        # intersecting lines
+                        polys = polys + \
+                            triangulate(MultiPoint(
+                                self._multiline2points(line)))
                     except ValueError as ex:
                         PCG_ROOT_LOGGER.error(
-                            'Could not triangulate lines, message={}, filename={}'.format(ex, self.filename))
+                            'Could not triangulate lines, message={},'
+                            ' filename={}'.format(
+                                ex, self.filename))
 
                     if len(polys) == 0:
                         PCG_ROOT_LOGGER.error(
-                            'Polygon list is empty, using convex hull of all lines,'
+                            'Polygon list is empty, using convex'
+                            ' hull of all lines,'
                             ' filename={}'.format(self.filename))
                         polys = [line.convex_hull]
-                        
-                    for poly in polys:                                                  
-                        if poly.is_empty or poly.area <= 1e-4 or not poly.is_valid or \
-                            (not isinstance(poly, Polygon) and not isinstance(poly, MultiPolygon)):
+
+                    for poly in polys:
+                        if poly.is_empty or poly.area <= 1e-4 or \
+                            not poly.is_valid or \
+                                (not isinstance(poly, Polygon) and
+                                    not isinstance(poly, MultiPolygon)):
                             continue
 
                         # Calculate the difference between the closed
                         # polygons and the new triangle to avoid the
-                        # polygon's interior                
-                        try:    
+                        # polygon's interior
+                        try:
                             poly = poly.difference(closed_polys)
-                        except:
-                            continue
-                                            
-                        if poly.is_empty or poly.area <= 1e-4 or not poly.is_valid or \
-                            (not isinstance(poly, Polygon) and not isinstance(poly, MultiPolygon)):
+                        except BaseException:
                             continue
 
-                        # Use ray tracing to see if the polygon's 
-                        # centroid crosses the mesh at some point                
-                        ray_origins = np.array([[poly.centroid.x, poly.centroid.y, mesh.bounds[0, 2]]])
+                        if poly.is_empty or poly.area <= 1e-4 or \
+                            not poly.is_valid or \
+                                (not isinstance(poly, Polygon) and
+                                    not isinstance(poly, MultiPolygon)):
+                            continue
+
+                        # Use ray tracing to see if the polygon's
+                        # centroid crosses the mesh at some point
+                        ray_origins = np.array(
+                            [[
+                                poly.centroid.x,
+                                poly.centroid.y,
+                                mesh.bounds[0, 2]
+                            ]])
                         ray_directions = np.array([[0, 0, 1]])
-                                            
-                        locations, index_ray, index_tri = mesh.ray.intersects_location(
-                            ray_origins=ray_origins,
-                            ray_directions=ray_directions)            
 
-                        if len(locations) > 0:                                                     
-                            open_polys.append(poly.buffer(0.001))                            
-                    
+                        locations, index_ray, index_tri = \
+                            mesh.ray.intersects_location(
+                                ray_origins=ray_origins,
+                                ray_directions=ray_directions)
+
+                        if len(locations) > 0:
+                            open_polys.append(poly.buffer(0.001))
+
             footprint = unary_union([footprint] + open_polys)
             # Dilate and erode the polygon to get rid of small gaps
             footprint = footprint.buffer(0.005).buffer(-0.005)
-            
-            PCG_ROOT_LOGGER.info('Removing internal polygons from footprint, filename={}'.format(
-                self.filename))
+
+            PCG_ROOT_LOGGER.info(
+                'Removing internal polygons from '
+                'footprint, filename={}'.format(
+                    self.filename))
             # Remove interior polygons
-            if isinstance(footprint, Polygon): 
-                for interior_poly in footprint.interiors:                    
+            if isinstance(footprint, Polygon):
+                for interior_poly in footprint.interiors:
                     interior_poly = Polygon(interior_poly)
                     footprint = footprint.union(interior_poly)
             elif isinstance(footprint, MultiPolygon):
                 for geo in footprint.geoms:
-                    for interior_poly in geo.interiors:                        
+                    for interior_poly in geo.interiors:
                         interior_poly = Polygon(interior_poly)
                         geo = geo.union(interior_poly)
-            PCG_ROOT_LOGGER.info('Footprint final area, area={}, filename={}'.format(
-                footprint.area, self.filename))
+            PCG_ROOT_LOGGER.info(
+                'Footprint final area, area={}, filename={}'.format(
+                    footprint.area, self.filename))
 
         return footprint
 
@@ -684,8 +740,10 @@ class Mesh(object):
         else:
             origin = self._mesh.centroid
 
-        assert len(plane_normal) == 3, 'Plane normal vector must have three components'
-        assert np.sum(plane_normal) == 1, 'Plane normal vector must be a unit vector'
+        assert len(plane_normal) == 3, 'Plane normal vector' \
+            ' must have three components'
+        assert np.sum(plane_normal) == 1, 'Plane normal vector' \
+            ' must be a unit vector'
 
         slices = list()
         for mesh in self.get_meshes():
@@ -697,18 +755,27 @@ class Mesh(object):
         scene = trimesh.Scene(slices)
         scene.show()
 
-    def show_footprint(self, z_limits=None, use_global_frame=False, origin=None,
-        plane_normal=[0, 0, 1], transform=None, offset=[0, 0, 0], figsize=(10, 8),
-        alpha=0.5, ax=None, show=True):
+    def show_footprint(
+            self,
+            z_limits=None,
+            use_global_frame=False,
+            origin=None,
+            plane_normal=[0, 0, 1],
+            transform=None,
+            offset=[0, 0, 0],
+            figsize=(10, 8),
+            alpha=0.5,
+            ax=None,
+            show=True):
         try:
             from descartes.patch import PolygonPatch
-        except ImportError as ex:
+        except ImportError:
             PCG_ROOT_LOGGER.warning('Install descartes to plot the footprint')
             return None
 
         try:
             from matplotlib import pyplot
-        except ImportError as ex:
+        except ImportError:
             PCG_ROOT_LOGGER.warning('Install matplotlib to plot the footprint')
             return None
 
@@ -724,7 +791,12 @@ class Mesh(object):
             transform=None,
             offset=[0, 0, 0])
 
-        patch = PolygonPatch(footprint, facecolor='blue', edgecolor='black', alpha=0.5, zorder=2)
+        patch = PolygonPatch(
+            footprint,
+            facecolor='blue',
+            edgecolor='black',
+            alpha=0.5,
+            zorder=2)
         ax.add_patch(patch)
 
         if show:
@@ -736,17 +808,17 @@ class Mesh(object):
             ax.set_ylim(-y_lim, y_lim)
             ax.grid(True)
 
-        return ax    
+        return ax
 
-    def to_sdf(self, uri_type=None, mesh_filename=None, model_folder=None, 
-        copy_resources=False):
-        if self._filename is None:            
-            from ...utils import generate_random_string, PCG_RESOURCES_ROOT_DIR 
+    def to_sdf(self, uri_type=None, mesh_filename=None, model_folder=None,
+               copy_resources=False):
+        if self._filename is None:
+            from ...utils import generate_random_string, PCG_RESOURCES_ROOT_DIR
             PCG_ROOT_LOGGER.info('Exporting mesh to file')
             if mesh_filename:
                 PCG_ROOT_LOGGER.info('Mesh filename: {}'.format(mesh_filename))
             if model_folder:
-                PCG_ROOT_LOGGER.info('Model folder: {}'.format(model_folder))            
+                PCG_ROOT_LOGGER.info('Model folder: {}'.format(model_folder))
             if model_folder is not None:
                 if not os.path.isdir(model_folder):
                     PCG_ROOT_LOGGER.warning(
@@ -754,19 +826,19 @@ class Mesh(object):
                         ' does not exist, using the default {}, '
                         'dir={}'.format(PCG_RESOURCES_ROOT_DIR, model_folder))
                     model_folder = PCG_RESOURCES_ROOT_DIR
-                folder = os.path.join(model_folder, 'meshes')            
+                folder = os.path.join(model_folder, 'meshes')
 
                 if mesh_filename is None:
                     filename = generate_random_string(10)
                 else:
-                    filename = mesh_filename                
+                    filename = mesh_filename
             else:
-                folder = os.path.join(PCG_RESOURCES_ROOT_DIR, 'meshes')            
+                folder = os.path.join(PCG_RESOURCES_ROOT_DIR, 'meshes')
                 filename = generate_random_string(10)
 
-            if not os.path.isdir(folder):                                
-                os.makedirs(folder)        
-                        
+            if not os.path.isdir(folder):
+                os.makedirs(folder)
+
             # Store the mesh as STL per default
             self.export_mesh(filename, folder, format='stl')
 
@@ -786,24 +858,25 @@ class Mesh(object):
                     'dir={}'.format(model_folder))
             else:
                 folder = os.path.join(model_folder, 'meshes')
-                if not os.path.isdir(folder):                                
-                    os.makedirs(folder)       
+                if not os.path.isdir(folder):
+                    os.makedirs(folder)
 
                 if mesh_filename is None:
                     mesh_filename = os.path.basename(self._uri.absolute_uri)
                 old_filename = self._uri.absolute_uri
                 copyfile(
                     old_filename,
-                    os.path.join(folder, mesh_filename))   
+                    os.path.join(folder, mesh_filename))
                 self._uri = Path(os.path.join(folder, mesh_filename))
                 self._filename = self._uri.absolute_uri
-                PCG_ROOT_LOGGER.info('Mesh file was copied from {} to {}'.format(
-                    old_filename, self._uri.absolute_uri))
+                PCG_ROOT_LOGGER.info(
+                    'Mesh file was copied from {} to {}'.format(
+                        old_filename, self._uri.absolute_uri))
 
         assert self.filename is not None, \
             'Mesh has not filename to fill the SDF element'
-        
-        mesh = create_sdf_element('mesh')        
+
+        mesh = create_sdf_element('mesh')
 
         PCG_ROOT_LOGGER.info(self._uri.model_uri)
 
@@ -822,34 +895,37 @@ class Mesh(object):
             else:
                 msg = 'Invalid type of URI for SDF export'
                 PCG_ROOT_LOGGER.error(msg)
-                raise ValueError(msg)        
+                raise ValueError(msg)
         mesh.scale = self._scale
-        return mesh    
+        return mesh
 
-    def export_mesh(self, filename=None, folder=None, format='stl'):        
+    def export_mesh(self, filename=None, folder=None, format='stl'):
         if not self.load_mesh():
             PCG_ROOT_LOGGER.error('Cannot show section')
             return None
         export_formats = ['stl', 'dae', 'obj', 'json']
         if format not in export_formats:
-            PCG_ROOT_LOGGER.error('Invalid mesh export format, options={}'.format(
-                export_formats))
+            PCG_ROOT_LOGGER.error(
+                'Invalid mesh export format, options={}'.format(
+                    export_formats))
             return None
         if not os.path.isdir(folder):
-            PCG_ROOT_LOGGER.error('Export folder does not exist, provided={}'.format(
-                folder))
+            PCG_ROOT_LOGGER.error(
+                'Export folder does not exist, provided={}'.format(folder))
             return None
-        
-        mesh_filename = os.path.join(folder, filename + '.' + format)                
+
+        mesh_filename = os.path.join(folder, filename + '.' + format)
         trimesh.exchange.export.export_mesh(
-            self._mesh, mesh_filename, file_type=format if format != 'stl' else 'stl_ascii')
+            self._mesh,
+            mesh_filename,
+            file_type=format if format != 'stl' else 'stl_ascii')
         return mesh_filename
 
     def plane_fit(self):
         if not self.load_mesh():
             PCG_ROOT_LOGGER.error('Cannot show section')
             return None
-        
+
         center, normal = trimesh.points.plane_fit(self.vertices)
         return center, normal
 

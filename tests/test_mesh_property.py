@@ -18,7 +18,7 @@ import sys
 import unittest
 import numpy as np
 from pcg_gazebo.simulation.properties import Mesh
-import rospkg
+
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 CUBE_FILENAME_PREFIX = os.path.join(CUR_DIR, 'meshes', 'cube')
@@ -49,15 +49,24 @@ class TestSimulationObjectProperties(unittest.TestCase):
         )
 
         # Test bound values
-        for tag in bounds:            
-            self.assertTrue(np.isclose(mesh.bounds[tag], bounds[tag], 1e-4), 
+        for tag in bounds:
+            self.assertTrue(
+                np.isclose(
+                    mesh.bounds[tag],
+                    bounds[tag],
+                    1e-4),
                 msg='Bound {} is incorrect, expected={}, retrieved={}'.format(
-                    tag, bounds[tag], mesh.bounds[tag]))
-    
+                    tag,
+                    bounds[tag],
+                    mesh.bounds[tag]))
+
     def test_monkey_mesh_stl(self):
         # Try and load the wrong format
         with self.assertRaises(ValueError):
-            mesh = Mesh(filename=MONKEY_FILENAME_PREFIX + '.abc', load_mesh=True)
+            mesh = Mesh(
+                filename=MONKEY_FILENAME_PREFIX +
+                '.abc',
+                load_mesh=True)
 
         mesh = Mesh(filename=MONKEY_FILENAME_PREFIX + '.stl', load_mesh=True)
         self.assertIsNotNone(mesh.mesh, 'Mesh object was not loaded')
@@ -73,24 +82,44 @@ class TestSimulationObjectProperties(unittest.TestCase):
         )
 
         # Test bound values
-        for tag in bounds:            
-            self.assertTrue(np.isclose(mesh.bounds[tag], bounds[tag], 1e-4), 
+        for tag in bounds:
+            self.assertTrue(
+                np.isclose(
+                    mesh.bounds[tag],
+                    bounds[tag],
+                    1e-4),
                 msg='Bound {} is incorrect, expected={}, retrieved={}'.format(
-                    tag, bounds[tag], mesh.bounds[tag]))    
+                    tag,
+                    bounds[tag],
+                    mesh.bounds[tag]))
 
-        # Load monkey with offset 
-        mesh = Mesh(filename=MONKEY_FILENAME_PREFIX + '_offset.stl', load_mesh=True)
+        # Load monkey with offset
+        mesh = Mesh(
+            filename=MONKEY_FILENAME_PREFIX +
+            '_offset.stl',
+            load_mesh=True)
         self.assertIsNotNone(mesh.mesh, 'Mesh {} object was not loaded'.format(
             MONKEY_FILENAME_PREFIX + '_offset.stl'))
-        self.assertIsNotNone(mesh.bounds, 'Mesh bounds for {} were not computed'.format(
-            MONKEY_FILENAME_PREFIX + '_offset.stl'))
+        self.assertIsNotNone(
+            mesh.bounds,
+            'Mesh bounds for {} were not computed'.format(
+                MONKEY_FILENAME_PREFIX +
+                '_offset.stl'))
 
         # Test bound values
-        for tag in bounds:            
-            self.assertTrue(np.isclose(mesh.bounds[tag], bounds[tag] + MONKEY_OFFSET, 1e-4), 
+        for tag in bounds:
+            self.assertTrue(
+                np.isclose(
+                    mesh.bounds[tag],
+                    bounds[tag] +
+                    MONKEY_OFFSET,
+                    1e-4),
                 msg='Bound {} is incorrect, expected={}, retrieved={}'.format(
-                    tag, bounds[tag] + MONKEY_OFFSET, mesh.bounds[tag]))    
-    
+                    tag,
+                    bounds[tag] +
+                    MONKEY_OFFSET,
+                    mesh.bounds[tag]))
+
     def test_cube_mesh_collada(self):
         if sys.version_info[0] == 2:
             return

@@ -64,7 +64,7 @@ class Material(object):
         'Gazebo/BuildingFrame',
         'Gazebo/Runway',
         'Gazebo/Grass'
-        ]
+    ]
 
     def __init__(self):
         self._xkcd_colors = self.get_xkcd_colors_list()
@@ -117,7 +117,7 @@ class Material(object):
         obj = create_sdf_element('material')
         obj.script = create_sdf_element('script')
         obj.script.name = name
-        obj.script.add_uri(uri)        
+        obj.script.add_uri(uri)
         return obj
 
     @staticmethod
@@ -135,7 +135,9 @@ class Material(object):
             for line in xkcd_file:
                 if 'License:' in line:
                     continue
-                color_name = line.split('#')[0].replace(' ', '_').replace('\t', '')
+                color_name = line.split('#')[0].replace(
+                    ' ', '_').replace('\t', '')
                 hex = line.split('#')[1]
-                colors[color_name] = tuple(int(hex[i:i+2], 16) for i in (0, 2 ,4))
+                colors[color_name] = tuple(
+                    int(hex[i:i + 2], 16) for i in (0, 2, 4))
         return colors

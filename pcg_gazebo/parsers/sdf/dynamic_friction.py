@@ -19,9 +19,9 @@ from ..types import XMLScalar
 class DynamicFriction(XMLScalar):
     _NAME = 'dynamic_friction'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=0.9):
         XMLScalar.__init__(self, default)
 
-    def _set_value(self, value):        
+    def _set_value(self, value):
         XMLScalar._set_value(self, value, min_value=0)

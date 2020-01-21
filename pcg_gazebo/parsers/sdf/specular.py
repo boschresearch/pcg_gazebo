@@ -26,6 +26,6 @@ class Specular(XMLVector):
 
     def _set_value(self, value):
         assert self._is_numeric_vector(value, [0, 1]), \
-            'Input is not a valid specular vector'        
-        value = list(value)        
+            'Input is not a valid specular vector'
+        value = list(value)
         XMLVector._set_value(self, value)

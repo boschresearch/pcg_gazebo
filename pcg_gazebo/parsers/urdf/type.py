@@ -22,4 +22,3 @@ class Type(XMLString):
 
     def __init__(self, default='transmission_interface/SimpleTransmission'):
         XMLString.__init__(self, default=default)
-        

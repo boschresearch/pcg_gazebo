@@ -15,6 +15,7 @@
 from ..types import XMLBase
 from .camera import Camera
 
+
 class GUI(XMLBase):
     _NAME = 'gui'
     _TYPE = 'sdf'
@@ -30,14 +31,15 @@ class GUI(XMLBase):
     def __init__(self):
         XMLBase.__init__(self)
         self.reset()
-    
+
     @property
     def fullscreen(self):
         return bool(int(self.attributes['fullscreen']))
 
     @fullscreen.setter
     def fullscreen(self, value):
-        assert self._is_boolean(int(value)), 'Fullscreen input is not a boolean'
+        assert self._is_boolean(
+            int(value)), 'Fullscreen input is not a boolean'
         self.attributes['fullscreen'] = str(int(value))
 
     @property

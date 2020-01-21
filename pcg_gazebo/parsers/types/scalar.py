@@ -32,7 +32,7 @@ class XMLScalar(XMLBase):
             '[{}] Input value must be either a float or an integer for {},' \
             ' received={}, type={}'.format(
                 self.xml_element_name, self._NAME, value, type(value))
-        
+
         if min_value is not None:
             assert value >= min_value, \
                 '[{}] Value must be greater or equal to {}'.format(
@@ -41,7 +41,8 @@ class XMLScalar(XMLBase):
         if max_value is not None:
             if min_value is not None:
                 assert max_value > min_value, \
-                    '[{}] Max. value {} is not greater than provided min. value {}'.format(
+                    '[{}] Max. value {} is not greater than' \
+                    ' provided min. value {}'.format(
                         self._NAME, max_value, min_value)
             assert value <= max_value, \
                 '[{}] Value must be less or equal to {}'.format(

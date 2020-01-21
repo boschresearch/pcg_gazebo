@@ -23,6 +23,7 @@ from .rate import Rate
 from .accel import Accel
 from .type import Type
 
+
 class Noise(XMLBase):
     _NAME = 'noise'
     _TYPE = 'sdf'
@@ -40,10 +41,17 @@ class Noise(XMLBase):
         stddev=dict(creator=StdDev, optional=True),
         bias_mean=dict(creator=BiasMean, optional=True),
         bias_stddev=dict(creator=BiasStdDev, optional=True),
-        precision=dict(creator=Precision, optional=True),
-        rate=dict(creator=Rate, optional=True, sdf_versions=['1.4', '1.5']),
-        accel=dict(creator=Accel, optional=True, sdf_versions=['1.4', '1.5']),
-        type=dict(creator=Type, default=['gaussian'], optional=True, sdf_versions=['1.4'])
+        precision=dict(
+            creator=Precision, optional=True),
+        rate=dict(
+            creator=Rate, optional=True, sdf_versions=['1.4', '1.5']),
+        accel=dict(
+            creator=Accel, optional=True, sdf_versions=['1.4', '1.5']),
+        type=dict(
+            creator=Type,
+            default=['gaussian'],
+            optional=True,
+            sdf_versions=['1.4'])
     )
 
     def __init__(self, type='none'):
@@ -55,11 +63,11 @@ class Noise(XMLBase):
         )
 
     @property
-    def type(self):        
+    def type(self):
         return self._get_child_element('type')
-        
+
     @type.setter
-    def type(self, value):        
+    def type(self, value):
         assert value in ['none', 'gaussian', 'gaussian_quantized']
         self.attributes['type'] = value
         self._add_child_element('type', value)

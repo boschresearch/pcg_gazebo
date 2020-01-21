@@ -25,7 +25,7 @@ from .iyz import IYZ
 class Inertia(XMLBase):
     _NAME = 'inertia'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         ixx=dict(creator=IXX),
         iyy=dict(creator=IYY),

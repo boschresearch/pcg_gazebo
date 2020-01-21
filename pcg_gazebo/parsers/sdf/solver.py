@@ -33,7 +33,8 @@ class Solver(XMLBase):
         sor=dict(creator=Sor, default=[1.3]),
         type=dict(creator=Type, default=['quick']),
         precon_iters=dict(creator=PreConIters, default=[0], mode='ode'),
-        use_dynamic_moi_rescaling=dict(creator=UseDynamicMOIRescaling, default=[False], mode='ode'),
+        use_dynamic_moi_rescaling=dict(
+            creator=UseDynamicMOIRescaling, default=[False], mode='ode'),
         friction_model=dict(creator=FrictionModel, mode='ode')
     )
 

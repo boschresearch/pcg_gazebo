@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
 class _CollectionManager(object):
     """Base class for managing collections."""
     _INSTANCE = None
@@ -32,13 +33,13 @@ class _CollectionManager(object):
 
     def add(self, element):
         """Add element to the collection.
-        
+
         > *Input arguments*
-        
+
         * `element`: New collection element.
-        
+
         > *Returns*
-        
+
         `True`, is successfull. `False` otherwise.
         """
         if not self.has_element(element.name):
@@ -49,16 +50,16 @@ class _CollectionManager(object):
 
     def create_empty(self, *args, **kwargs):
         raise NotImplementedError()
-        
+
     def remove(self, tag):
         """Remove an element from the collection.
-        
+
         > *Input arguments*
-        
+
         * `tag` (*type:* `str`): Tag of the element to be removed.
-        
+
         > *Returns*
-        
+
         `True`, if element could be removed. `False` if `tag` is invalid.
         """
         if self.has_element(tag):
@@ -68,13 +69,13 @@ class _CollectionManager(object):
 
     def get(self, tag):
         """Return an element from the collection.
-        
+
         > *Input arguments*
-        
+
         * `tag` (*type:* `str`): Tag of the element
-        
+
         > *Returns*
-        
+
         Collection element. `None` if `tag` is invalid.
         """
         if self.has_element(tag):
@@ -84,9 +85,9 @@ class _CollectionManager(object):
 
     def has_element(self, tag):
         """Return `True` if an element for `tag` exists.
-        
+
         > *Input arguments*
-        
-        * `tag` (*type:* `str`): Tag of the element.        
+
+        * `tag` (*type:* `str`): Tag of the element.
         """
         return tag in self.tags

@@ -28,12 +28,13 @@ class Mu1(XMLScalar):
         assert self._is_scalar(value), \
             'Input value for {} must be a scalar'.format(self._NAME)
         assert value >= 0, \
-            'Input value for {} must be equal or greater than zero'.format(self._NAME)
+            'Input value for {} must be equal or' \
+            ' greater than zero'.format(self._NAME)
         XMLScalar._set_value(self, value)
 
     def to_sdf(self, engine='ode'):
         from ..sdf import create_sdf_element
-        
+
         assert engine in ['ode', 'bullet'], 'Accepted engine inputs are ode' \
             ' or bullet'
         if engine == 'ode':

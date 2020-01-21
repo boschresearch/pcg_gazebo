@@ -49,7 +49,8 @@ class Bullet(Physics):
         self._properties['erp'] = erp
         self._properties['contact_surface_layer'] = contact_surface_layer
         self._properties['split_impulse'] = split_impulse
-        self._properties['split_impulse_penetration_threshold'] = split_impulse_penetration_threshold
+        self._properties['split_impulse_penetration_threshold'] = \
+            split_impulse_penetration_threshold
 
         self._description['min_step_size'] = 'The time duration which ' \
             'advances with each iteration of the dynamics engine, this has' \
@@ -163,7 +164,8 @@ class Bullet(Physics):
         physics.type = self._properties['engine']
         physics.max_step_size = self._properties['max_step_size']
         physics.real_time_factor = self._properties['real_time_factor']
-        physics.real_time_update_rate = self._properties['real_time_update_rate']
+        physics.real_time_update_rate = \
+            self._properties['real_time_update_rate']
         physics.max_contacts = self._properties['max_contacts']
         # Set Bullet solver parameters
         physics.bullet.solver.min_step_size = self._properties['min_step_size']
@@ -173,9 +175,13 @@ class Bullet(Physics):
         # Set Bullet constraint parameters
         physics.bullet.constraints.cfm = self._properties['cfm']
         physics.bullet.constraints.erp = self._properties['erp']
-        physics.bullet.constraints.contact_surface_layer = self._properties['contact_surface_layer']
-        physics.bullet.constraints.split_impulse = self._properties['split_impulse']
-        physics.bullet.constraints.split_impulse_penetration_threshold = self._properties['split_impulse_penetration_threshold']
+        physics.bullet.constraints.contact_surface_layer = self._properties[
+            'contact_surface_layer']
+        physics.bullet.constraints.split_impulse = \
+            self._properties['split_impulse']
+        physics.bullet.constraints.split_impulse_penetration_threshold = \
+            self._properties[
+                'split_impulse_penetration_threshold']
 
         if type == 'physics':
             return physics

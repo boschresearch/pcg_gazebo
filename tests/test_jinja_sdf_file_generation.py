@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-import rospkg
 import unittest
 import random
 import string
@@ -24,12 +23,14 @@ from pcg_gazebo.parsers import parse_sdf
 
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 def get_random_string(size=3):
     return ''.join(random.choice(string.ascii_letters) for i in range(size))
 
+
 def generate_sdf(test_case, params):
     xml = process_jinja_template(os.path.join(
-        CUR_DIR, 'jinja_sdf', '{}.jinja'.format(test_case)), params)            
+        CUR_DIR, 'jinja_sdf', '{}.jinja'.format(test_case)), params)
     return parse_sdf(xml)
 
 
@@ -50,29 +51,37 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
             ode_precon_iters=random.randint(1, 3),
             ode_sor=random.random(),
             ode_use_dynamic_moi_rescaling=random.choice([True, False]),
-            ode_friction_model=random.choice(['pyramid_model', 'box_model', 'cone_model']),
+            ode_friction_model=random.choice(
+                ['pyramid_model', 'box_model', 'cone_model']),
             ode_cfm=random.random(),
             ode_erp=random.random(),
             ode_contact_max_correcting_vel=random.random(),
             ode_contact_surface_layer=random.random()
         )
 
-        sdf = generate_sdf(test_case, params)            
+        sdf = generate_sdf(test_case, params)
 
         self.assertIsNotNone(
-            sdf, 
+            sdf,
             'SDF was not generated {} could not be parsed'.format(test_case))
         self.assertEqual(
-            sdf.xml_element_name, 'physics', 
+            sdf.xml_element_name, 'physics',
             'SDF element for file {} should be physics')
 
         # Test general physics properties
         self.assertEqual(sdf.name, params['label'])
         self.assertEqual(sdf.default, '0')
         self.assertEqual(sdf.type, 'ode')
-        self.assertTrue(np.isclose(sdf.max_step_size.value, params['max_step_size']))
-        self.assertEqual(sdf.real_time_factor.value, params['real_time_factor'])
-        self.assertEqual(sdf.real_time_update_rate.value, params['real_time_update_rate'])
+        self.assertTrue(
+            np.isclose(
+                sdf.max_step_size.value,
+                params['max_step_size']))
+        self.assertEqual(
+            sdf.real_time_factor.value,
+            params['real_time_factor'])
+        self.assertEqual(
+            sdf.real_time_update_rate.value,
+            params['real_time_update_rate'])
         self.assertEqual(sdf.max_contacts.value, params['max_contacts'])
 
         # Test if the other physics engines were not created
@@ -81,26 +90,50 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
 
         # Test ODE default parameters
         self.assertEqual(sdf.ode.solver.type.value, params['ode_solver_type'])
-        self.assertTrue(np.isclose(sdf.ode.solver.min_step_size.value, params['ode_min_step_size']))
+        self.assertTrue(
+            np.isclose(
+                sdf.ode.solver.min_step_size.value,
+                params['ode_min_step_size']))
         self.assertEqual(sdf.ode.solver.iters.value, params['ode_iters'])
-        self.assertEqual(sdf.ode.solver.precon_iters.value, params['ode_precon_iters'])
-        self.assertTrue(np.isclose(sdf.ode.solver.sor.value, params['ode_sor']))
-        self.assertEqual(sdf.ode.solver.use_dynamic_moi_rescaling.value, params['ode_use_dynamic_moi_rescaling'])
-        self.assertEqual(sdf.ode.solver.friction_model.value, params['ode_friction_model'])
+        self.assertEqual(
+            sdf.ode.solver.precon_iters.value,
+            params['ode_precon_iters'])
+        self.assertTrue(
+            np.isclose(
+                sdf.ode.solver.sor.value,
+                params['ode_sor']))
+        self.assertEqual(
+            sdf.ode.solver.use_dynamic_moi_rescaling.value,
+            params['ode_use_dynamic_moi_rescaling'])
+        self.assertEqual(
+            sdf.ode.solver.friction_model.value,
+            params['ode_friction_model'])
 
-        self.assertTrue(np.isclose(sdf.ode.constraints.cfm.value, params['ode_cfm']))
-        self.assertTrue(np.isclose(sdf.ode.constraints.erp.value, params['ode_erp']))
-        self.assertTrue(np.isclose(sdf.ode.constraints.contact_max_correcting_vel.value, params['ode_contact_max_correcting_vel']))
-        self.assertTrue(np.isclose(sdf.ode.constraints.contact_surface_layer.value, params['ode_contact_surface_layer']))
+        self.assertTrue(
+            np.isclose(
+                sdf.ode.constraints.cfm.value,
+                params['ode_cfm']))
+        self.assertTrue(
+            np.isclose(
+                sdf.ode.constraints.erp.value,
+                params['ode_erp']))
+        self.assertTrue(
+            np.isclose(
+                sdf.ode.constraints.contact_max_correcting_vel.value,
+                params['ode_contact_max_correcting_vel']))
+        self.assertTrue(
+            np.isclose(
+                sdf.ode.constraints.contact_surface_layer.value,
+                params['ode_contact_surface_layer']))
 
-    def test_jinja_default_physics(self):        
+    def test_jinja_default_physics(self):
         test_case = 'physics_default'
-        sdf = generate_sdf(test_case, None)            
+        sdf = generate_sdf(test_case, None)
         self.assertIsNotNone(
-            sdf, 
+            sdf,
             'SDF was not generated {} could not be parsed'.format(test_case))
         self.assertEqual(
-            sdf.xml_element_name, 'physics', 
+            sdf.xml_element_name, 'physics',
             'SDF element for file {} should be physics')
 
         # Test general physics properties
@@ -127,15 +160,18 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
 
         self.assertEqual(sdf.ode.constraints.cfm.value, 0.0)
         self.assertEqual(sdf.ode.constraints.erp.value, 0.2)
-        self.assertEqual(sdf.ode.constraints.contact_max_correcting_vel.value, 100)
-        self.assertEqual(sdf.ode.constraints.contact_surface_layer.value, 0.001)
+        self.assertEqual(
+            sdf.ode.constraints.contact_max_correcting_vel.value, 100)
+        self.assertEqual(
+            sdf.ode.constraints.contact_surface_layer.value, 0.001)
 
     def test_jinja_inertia_templates(self):
 
         INPUT_PARAMS = dict(
             inertia_solid_sphere=dict(mass=10, radius=2),
             hollow_sphere_inertia=dict(mass=3, radius=2),
-            ellipsoid_inertia=dict(mass=10, axis_length_x=2, axis_length_y=3, axis_length_z=4),
+            ellipsoid_inertia=dict(
+                mass=10, axis_length_x=2, axis_length_y=3, axis_length_z=4),
             cuboid_inertia=dict(mass=12, length_x=2, length_y=4, length_z=6),
             solid_cylinder_inertia_axis_x=dict(mass=12, radius=10, length=2),
             solid_cylinder_inertia_axis_y=dict(mass=12, radius=10, length=2),
@@ -147,31 +183,37 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
             hollow_sphere_inertia=dict(ixx=8, ixy=0, ixz=0, iyy=8, izz=8),
             ellipsoid_inertia=dict(ixx=50, ixy=0, ixz=0, iyy=40, izz=26),
             cuboid_inertia=dict(ixx=52, ixy=0, ixz=0, iyy=40, izz=20),
-            solid_cylinder_inertia_axis_x=dict(ixx=600, ixy=0, ixz=0, iyy=304, izz=304),
-            solid_cylinder_inertia_axis_y=dict(ixx=304, ixy=0, ixz=0, iyy=600, izz=304),
-            solid_cylinder_inertia_axis_z=dict(ixx=304, ixy=0, ixz=0, iyy=304, izz=600)
+            solid_cylinder_inertia_axis_x=dict(
+                ixx=600, ixy=0, ixz=0, iyy=304, izz=304),
+            solid_cylinder_inertia_axis_y=dict(
+                ixx=304, ixy=0, ixz=0, iyy=600, izz=304),
+            solid_cylinder_inertia_axis_z=dict(
+                ixx=304, ixy=0, ixz=0, iyy=304, izz=600)
         )
 
         for test_case in INPUT_PARAMS:
-            sdf = generate_sdf(test_case, INPUT_PARAMS[test_case])  
+            sdf = generate_sdf(test_case, INPUT_PARAMS[test_case])
 
             self.assertIsNotNone(
-                sdf, 
-                'SDF was not generated {} could not be parsed'.format(test_case))
+                sdf,
+                'SDF was not generated {} could not be '
+                'parsed'.format(test_case))
             self.assertEqual(
-                sdf.xml_element_name, 'inertia', 
+                sdf.xml_element_name, 'inertia',
                 'SDF element for file {} should be inertia')
-            
+
             for param_name in OUTPUT_PARAMS[test_case]:
                 self.assertEqual(
-                    getattr(sdf, param_name).value, 
+                    getattr(sdf, param_name).value,
                     OUTPUT_PARAMS[test_case][param_name],
-                    'Parameter {} for inertia {} is incorrect, returned={}, expected={}'.format(
-                        param_name, 
-                        test_case, 
-                        getattr(sdf, param_name).value, 
+                    'Parameter {} for inertia {} is incorrect, '
+                    'returned={}, expected={}'.format(
+                        param_name,
+                        test_case,
+                        getattr(sdf, param_name).value,
                         OUTPUT_PARAMS[test_case][param_name]
                     ))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from __future__ import print_function
-import os
 import collections
 from time import time, sleep
 from ..log import PCG_ROOT_LOGGER
@@ -34,8 +33,9 @@ try:
 except ImportError:
     ROS_AVAILABLE = False
 
+
 class GazeboProxy(object):
-    
+
     def __init__(self, ros_host='localhost', ros_port=11311,
                  gazebo_host='localhost', gazebo_port=11345, timeout=30,
                  ignore_services=None):
@@ -68,19 +68,21 @@ class GazeboProxy(object):
         )
 
         self._logger = PCG_ROOT_LOGGER
-        
+
         self._ros_config = ROSConfig(
             ros_host=ros_host,
             ros_port=ros_port,
             gazebo_port=gazebo_port,
-            gazebo_host=gazebo_host)        
+            gazebo_host=gazebo_host)
 
         self._ignore_services = list()
         if ignore_services is not None:
             for item in ignore_services:
                 if item not in self._GAZEBO_SERVICES:
-                    self._logger.warning('Ignoring service {}: Service {} does '
-                                        'not exist'.format(item, item))
+                    self._logger.warning(
+                        'Ignoring service {}: Service {} does '
+                        'not exist'.format(
+                            item, item))
                 else:
                     self._ignore_services.append(item)
 
@@ -97,7 +99,7 @@ class GazeboProxy(object):
         from . import is_gazebo_running
         start_time = time()
         while not is_gazebo_running(self._ros_config.ros_master_uri) and \
-              time() - start_time < timeout:
+                time() - start_time < timeout:
             self._logger.info('Waiting for Gazebo')
             sleep(0.5)
 
@@ -206,7 +208,8 @@ class GazeboProxy(object):
 
     def get_link_properties(self, model_name, link_name):
         assert 'get_link_properties' in self._services
-        output = self._services['get_link_properties']('{}::{}'.format(model_name, link_name))
+        output = self._services['get_link_properties'](
+            '{}::{}'.format(model_name, link_name))
         if output.success:
             return output
         else:
@@ -280,7 +283,7 @@ class GazeboProxy(object):
 
         if len(list(rot)) == 3:
             rot = PosePCG.rpy2quat(*rot)
-            
+
         state = ModelState()
 
         state.model_name = model_name
@@ -302,7 +305,8 @@ class GazeboProxy(object):
                           start_time=0, duration=-1, reference_point=[0, 0, 0],
                           reference_frame=None):
         assert 'apply_body_wrench' in self._services
-        assert model_name in self.get_model_names(), 'Model {} does not exist'.format(model_name)
+        assert model_name in self.get_model_names(
+        ), 'Model {} does not exist'.format(model_name)
 
         if reference_frame is None:
             reference_frame = '{}::{}'.format(model_name, link_name)
@@ -330,7 +334,7 @@ class GazeboProxy(object):
         return output.success
 
     def spawn_sdf_model(self, robot_namespace, xml, pos=[0, 0, 0],
-            rot=[0, 0, 0, 1], reference_frame='world'):
+                        rot=[0, 0, 0, 1], reference_frame='world'):
         assert 'spawn_sdf_model' in self._services
         assert isinstance(robot_namespace, str), \
             'Input robot_namespace must be a string'
@@ -349,7 +353,7 @@ class GazeboProxy(object):
 
         if len(list(rot)) == 3:
             rot = PosePCG.rpy2quat(*rot)
-            
+
         pose = Pose()
         pose.position.x = pos[0]
         pose.position.y = pos[1]

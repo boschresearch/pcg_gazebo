@@ -35,7 +35,7 @@ class Accel(XMLBase):
     * `1.4`
 
     > *Source*
-    
+
     * [`<accel>` (SDF 1.4)](http://sdformat.org/spec?elem=sensor&ver=1.4)
     '''
     _NAME = 'accel'
@@ -52,10 +52,10 @@ class Accel(XMLBase):
         '''Class constructor'''
         XMLBase.__init__(self)
         self.reset()
-        
+
     @property
     def mean(self):
-        '''Return the mean value SDF element, to read the value use 
+        '''Return the mean value SDF element, to read the value use
         `obj.mean.value`
         '''
         return self._get_child_element('mean')
@@ -72,7 +72,7 @@ class Accel(XMLBase):
 
     @property
     def stddev(self):
-        '''Return the standard deviation value SDF element, 
+        '''Return the standard deviation value SDF element,
         to read the value use `obj.stddev.value`
         '''
         return self._get_child_element('stddev')
@@ -89,7 +89,7 @@ class Accel(XMLBase):
 
     @property
     def bias_mean(self):
-        '''Return the bias mean value SDF element, 
+        '''Return the bias mean value SDF element,
         to read the value use `obj.bias_mean.value`
         '''
         return self._get_child_element('bias_mean')
@@ -106,7 +106,7 @@ class Accel(XMLBase):
 
     @property
     def bias_stddev(self):
-        '''Return the bias standard deviation value SDF element, 
+        '''Return the bias standard deviation value SDF element,
         to read the value use `obj.bias_stddev.value`
         '''
         return self._get_child_element('bias_stddev')
@@ -120,4 +120,3 @@ class Accel(XMLBase):
         * `value` (type: `BiasStdDev` or `float`)
         '''
         self._add_child_element('bias_stddev', value)
-

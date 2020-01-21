@@ -47,6 +47,6 @@ class Color(XMLBase):
                 'Each vector element must be either a float or an integer'
         output_str = ' '.join(['{}'] * len(value))
         self.attributes['rgba'] = output_str.format(*value)
-        
+
     def to_sdf(self):
         raise NotImplementedError('Color must be converted by material')

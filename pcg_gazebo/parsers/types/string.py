@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from . import XMLBase
+from ...utils import is_string
 
 
 class XMLString(XMLBase):
@@ -26,15 +27,10 @@ class XMLString(XMLBase):
         self._default = default
 
     def _set_value(self, value):
-        import sys
-        if sys.version_info[0] == 2:
-            assert isinstance(value, str) or isinstance(value, unicode), \
-                '[{}] Input value must be string or unicode, received={}, type={}'.format(
-                    self.xml_element_name, value, type(value))
-        else:
-            assert isinstance(value, str), \
-                '[{}] Input value must be string or unicode, received={}, type={}'.format(
-                    self.xml_element_name, value, type(value))
+        assert is_string(value), \
+            '[{}] Input value must be string' \
+            ' or unicode, received={}, type={}'.format(
+                self.xml_element_name, value, type(value))
         self._value = str(value)
 
     def reset(self):

@@ -27,5 +27,6 @@ class Kp(XMLScalar):
         assert self._is_scalar(value), \
             'Input value for {} must be a scalar'.format(self._NAME)
         assert value >= 0, \
-            'Input value for {} must be equal or greater than zero'.format(self._NAME)
+            'Input value for {} must be equal or' \
+            ' greater than zero'.format(self._NAME)
         XMLScalar._set_value(self, value)

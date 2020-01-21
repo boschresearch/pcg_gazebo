@@ -16,7 +16,6 @@
 from __future__ import print_function
 
 import os
-import sys
 import socket
 import time
 import random
@@ -31,7 +30,7 @@ class ROSConfig(object):
 
         self._logger = create_logger('pcg_ros_config')
         assert isinstance(ros_host, str)
-        assert isinstance(gazebo_host, str)        
+        assert isinstance(gazebo_host, str)
 
         if ros_port is None:
             self._ros_port = self._get_random_open_port(15000, 20000)
@@ -51,8 +50,10 @@ class ROSConfig(object):
         self._ros_host = ros_host
 
     def __str__(self):
-        msg = 'ROS_MASTER_URI=http://{}:{}, '.format(self._ros_host, self._ros_port)
-        msg += 'GAZEBO_MASTER_URI=http://{}:{}'.format(self._gazebo_host, self._gazebo_port)
+        msg = 'ROS_MASTER_URI=http://{}:{}, '.format(
+            self._ros_host, self._ros_port)
+        msg += 'GAZEBO_MASTER_URI=http://{}:{}'.format(
+            self._gazebo_host, self._gazebo_port)
         return msg
 
     @property
@@ -89,7 +90,12 @@ class ROSConfig(object):
     def gazebo_master_uri(self):
         return 'http://{}:{}\n'.format(self._gazebo_host, self._gazebo_port)
 
-    def _get_random_open_port(self, start=1000, end=3000, timeout=1, lock=False):
+    def _get_random_open_port(
+            self,
+            start=1000,
+            end=3000,
+            timeout=1,
+            lock=False):
         start_time = time.time()
         while (time.time() - start_time) < timeout:
             port = random.randrange(start, end, 1)
@@ -98,7 +104,9 @@ class ROSConfig(object):
                 self._logger.info('Locking port %d' % port)
                 return self._lock_port(port)
             self._logger.info('Port %d is locked' % port)
-        raise RuntimeError("Could not find any open port from %d to %d for %ds." % (start, end, timeout))
+        raise RuntimeError(
+            "Could not find any open port from %d to %d for %ds." %
+            (start, end, timeout))
 
     def _is_port_open(self, port):
         return_code = 1
@@ -127,17 +135,21 @@ class ROSConfig(object):
     def choose_random_gazebo_port(self):
         self._gazebo_port = self._get_random_open_port(15000, 20000)
 
-    def unlock_port(self, port=None):        
+    def unlock_port(self, port=None):
         if os.path.exists(self._get_port_lock_file(port)):
             os.remove(self._get_port_lock_file(port))
         self._logger.info('Unlocking port %d' % port)
 
     def set_env_variables(self):
-        os.environ['ROS_MASTER_URI'] = 'http://{}:{}'.format(self._ros_host, self._ros_port)
-        os.environ['GAZEBO_MASTER_URI'] = 'http://{}:{}'.format(self._gazebo_host, self._gazebo_port)
+        os.environ['ROS_MASTER_URI'] = 'http://{}:{}'.format(
+            self._ros_host, self._ros_port)
+        os.environ['GAZEBO_MASTER_URI'] = 'http://{}:{}'.format(
+            self._gazebo_host, self._gazebo_port)
 
     def get_env_variables(self):
         env_variables = os.environ.copy()
-        env_variables['ROS_MASTER_URI'] = 'http://{}:{}'.format(self._ros_host, self._ros_port)
-        env_variables['GAZEBO_MASTER_URI'] = 'http://{}:{}'.format(self._gazebo_host, self._gazebo_port)
+        env_variables['ROS_MASTER_URI'] = 'http://{}:{}'.format(
+            self._ros_host, self._ros_port)
+        env_variables['GAZEBO_MASTER_URI'] = 'http://{}:{}'.format(
+            self._gazebo_host, self._gazebo_port)
         return env_variables

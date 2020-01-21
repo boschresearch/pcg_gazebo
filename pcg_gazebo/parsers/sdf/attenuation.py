@@ -23,7 +23,7 @@ from .quadratic import Quadratic
 class AttenuationRange(XMLScalar):
     _NAME = 'range'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=10):
         XMLScalar.__init__(self, default=default)
 

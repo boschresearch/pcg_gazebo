@@ -28,8 +28,10 @@ class Axis(XMLBase):
     _CHILDREN_CREATORS = dict(
         xyz=dict(creator=XYZ, default=[[0, 0, 1]]),
         limit=dict(creator=Limit),
-        initial_position=dict(creator=InitialPosition, default=[0], optional=True),
-        use_parent_model_frame=dict(creator=UseParentModelFrame, default=[False], optional=True),
+        initial_position=dict(
+            creator=InitialPosition, default=[0], optional=True),
+        use_parent_model_frame=dict(
+            creator=UseParentModelFrame, default=[False], optional=True),
         dynamics=dict(creator=Dynamics, optional=True)
     )
 

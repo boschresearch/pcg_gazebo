@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLBase
+from ...utils import is_string
 from .mechanical_reduction import MechanicalReduction
 from .hardware_interface import HardwareInterface
 
@@ -34,14 +35,14 @@ class Actuator(XMLBase):
     def __init__(self):
         XMLBase.__init__(self)
         self.reset()
-        
+
     @property
     def name(self):
         return self.attributes['name']
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str) or isinstance(value, unicode), \
+        assert is_string(value), \
             'Link name should be string or unicode'
         assert len(value) > 0, 'Name string cannot be empty'
         self.attributes['name'] = str(value)

@@ -31,10 +31,12 @@ class JointPhysics(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        simbody=dict(creator=Simbody, default=['joint'], optional=True),
-        ode=dict(creator=ODE, default=['joint'], optional=True),
-        provide_feedback=dict(creator=ProvideFeedback, default=[False], optional=True)
-    )
+        simbody=dict(
+            creator=Simbody, default=['joint'], optional=True),
+        ode=dict(
+            creator=ODE, default=['joint'], optional=True),
+        provide_feedback=dict(
+            creator=ProvideFeedback, default=[False], optional=True))
 
     def __init__(self):
         XMLBase.__init__(self)
@@ -63,7 +65,7 @@ class JointPhysics(XMLBase):
     @provide_feedback.setter
     def provide_feedback(self, value):
         self._add_child_element('provide_feedback', value)
-        
+
 
 class Joint(XMLBase):
     _NAME = 'joint'
@@ -85,7 +87,7 @@ class Joint(XMLBase):
         urdf=dict(creator=URDF, default=['joint'], optional=True)
     )
 
-    _JOINT_OPTIONS = ['revolute', 'revolute2', 'gearbox', 'prismatic', \
+    _JOINT_OPTIONS = ['revolute', 'revolute2', 'gearbox', 'prismatic',
                       'ball', 'screw', 'universal', 'fixed']
 
     def __init__(self):

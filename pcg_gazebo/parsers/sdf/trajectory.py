@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
+from ...utils import is_string
 from .waypoint import Waypoint
 
 
@@ -26,7 +27,7 @@ class Trajectory(XMLBase):
     )
 
     _CHILDREN_CREATORS = dict(
-        waypoint=dict(creator=Waypoint, n_elems='+')        
+        waypoint=dict(creator=Waypoint, n_elems='+')
     )
 
     def __init__(self):
@@ -46,12 +47,13 @@ class Trajectory(XMLBase):
     @property
     def type(self):
         return self.attributes['type']
-    
+
     @type.setter
     def type(self, value):
-        assert isinstance(value, str) or isinstance(value, unicode), \
-            'Type input must be a string or unicode, provided={}, type={}'.format(
-                value, type(value))       
+        assert is_string(value), \
+            'Type input must be a string or unicode,' \
+            ' provided={}, type={}'.format(
+                value, type(value))
         self.attributes['type'] = value
 
     @property

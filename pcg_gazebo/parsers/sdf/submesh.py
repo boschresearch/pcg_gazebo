@@ -21,7 +21,7 @@ from .name import Name
 class SubMesh(XMLBase):
     _NAME = 'submesh'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         center=dict(creator=Center),
         name=dict(creator=Name)

@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLCustom
+from ...utils import is_string
 
 
 class Plugin(XMLCustom):
@@ -53,13 +54,9 @@ class Plugin(XMLCustom):
         self.attributes['filename'] = value
 
     def _add_child_element(self, tag, value):
-        import sys
-        if sys.version_info[0] == 2:
-            assert isinstance(tag, str) or isinstance(tag, unicode), \
-                'Input tag must be string or unicode, received={}, type={}'.format(tag, type(tag))
-        else:
-            assert isinstance(tag, str), \
-                'Input tag must be string or unicode, received={}, type={}'.format(tag, type(tag))
+        assert is_string(tag), 'Input tag' \
+            ' must be string or unicode, received={}, type={}'.format(
+                tag, type(tag))
         self._value[tag] = value
 
     def from_dict(self, sdf_data, ignore_tags=list()):
@@ -77,8 +74,8 @@ class Plugin(XMLCustom):
         params = dict()
         params['robotNamespace'] = robot_namespace
         if control_period is not None:
-            assert isinstance(control_period, float) or isinstance(control_period, int), \
-                'Control period must be numeric'
+            assert isinstance(control_period, float) or isinstance(
+                control_period, int), 'Control period must be numeric'
             assert control_period > 0, \
                 'Control period must be a positive number'
             params['controlPeriod'] = control_period

@@ -21,7 +21,7 @@ from .near import Near
 class Clip(XMLBase):
     _NAME = 'clip'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         far=dict(creator=Far, default=[0.1]),
         near=dict(creator=Near, default=[100])

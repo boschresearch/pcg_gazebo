@@ -14,46 +14,56 @@
 # limitations under the License.
 """This module holds all entities related to task scheduling and stages.
 """
-from .process_manager import ProcessManager
-from .task import Task
-from .server import Server
-from .stage import Stage
-from .task_templates import TASK_ROS_CORE, TASK_GAZEBO_EMPTY_WORLD
-from .simulation_timer import SimulationTimer
 from .gazebo_proxy import GazeboProxy
+from .process_manager import ProcessManager
 from .ros_config import ROSConfig
-from ..log import PCG_ROOT_LOGGER
-
-import os
-import subprocess
+from .server import Server
+from .simulation_timer import SimulationTimer
+from .stage import Stage
+from .task_templates import TASK_GAZEBO_EMPTY_WORLD, TASK_ROS_CORE, \
+    TASK_ROSBAG_RECORD_ALL, TASK_ROSBAG_RECORD_TOPICS, \
+    TASK_RQT, TASK_RVIZ, TASK_SIMULATION_TF_MANAGER, TASK_SIMULATION_TIMER
+from .task import Task
 
 
 def is_roscore_running(ros_master_uri='http://localhost:11311'):
     """Return True if a `roscore` is running for the provided ROS URI
-    
+
     > *Input parameters*
 
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target `roscore` node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target
+      `roscore` node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
-        output = subprocess.check_output(
+        subprocess.check_output(
             ['rostopic', 'list'],
             env=env_variables
         )
         return True
     except subprocess.CalledProcessError as ex:
+        PCG_ROOT_LOGGER.error(
+            'Error testing roscore, message={}'.format(ex))
         return False
 
 
 def is_gazebo_running(ros_master_uri='http://localhost:11311'):
-    """Return True if an instance of Gazebo is running and was initialized are a ROS node.
+    """Return True if an instance of Gazebo is running
+     and was initialized are a ROS node.
 
     > *Input parameters*
 
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -64,6 +74,8 @@ def is_gazebo_running(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8')
         return 'gazebo' in output
     except subprocess.CalledProcessError as ex:
+        PCG_ROOT_LOGGER.error(
+            'Error testing Gazebo server, message={}'.format(ex))
         return False
 
 
@@ -73,8 +85,12 @@ def rosnode_exists(name, ros_master_uri='http://localhost:11311'):
     > *Input parameters*
 
     * `name` (*type:* `str`): Name of the ROS node
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -85,18 +101,24 @@ def rosnode_exists(name, ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8')
         return name in output
     except subprocess.CalledProcessError as ex:
+        PCG_ROOT_LOGGER.error(
+            'Error testing ROS master, message={}'.format(ex))
         return False
 
 
 def get_rosparam_list(ros_master_uri='http://localhost:11311'):
-    """Return the list of ROS parameter names in the parameter 
+    """Return the list of ROS parameter names in the parameter
     server running under the provided URI. If no `roscore` is
     running, return `None` instead.
-    
+
     > *Input parameters*
 
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -107,18 +129,23 @@ def get_rosparam_list(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error('Error getting ROS parameter list, message={}'.format(ex))
+        PCG_ROOT_LOGGER.error(
+            'Error getting ROS parameter list, message={}'.format(ex))
         return None
 
 
 def get_rostopic_list(ros_master_uri='http://localhost:11311'):
-    """Return the list of ROS topic names under the provided URI. 
+    """Return the list of ROS topic names under the provided URI.
     If no `roscore` is running, return `None` instead.
-    
+
     > *Input parameters*
 
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -129,18 +156,23 @@ def get_rostopic_list(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error('Error getting ROS parameter list, message={}'.format(ex))
+        PCG_ROOT_LOGGER.error(
+            'Error getting ROS parameter list, message={}'.format(ex))
         return None
 
 
 def get_rosservice_list(ros_master_uri='http://localhost:11311'):
-    """Return the list of ROS service names under the provided URI. 
+    """Return the list of ROS service names under the provided URI.
     If no `roscore` is running, return `None` instead.
-    
+
     > *Input parameters*
 
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
     try:
@@ -151,7 +183,8 @@ def get_rosservice_list(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error('Error getting ROS parameter list, message={}'.format(ex))
+        PCG_ROOT_LOGGER.error(
+            'Error getting ROS parameter list, message={}'.format(ex))
         return None
 
 
@@ -159,13 +192,17 @@ def set_rosparam(params, ros_master_uri='http://localhost:11311'):
     """Set the parameters from the input dictionary `params` in the ROS
     parameters server running under the provided ROS URI. If no `roscore`
     is running, return `None`.
-    
+
     > *Input parameters*
 
     * `params` (*type:* `dict`): Table of parameters
-    * `ros_master_uri` (*type:* `str`, *default:* (`http://localhost:11311`)): The ROS URI of the target node to be tested
+    * `ros_master_uri` (*type:* `str`, *default:*
+     (`http://localhost:11311`)): The ROS URI of the target node to be tested
     """
     import yaml
+    import os
+    import subprocess
+    from ..log import PCG_ROOT_LOGGER
     assert isinstance(params, dict, 'Parameters must be provided as dict')
     env_variables = os.environ.copy()
     env_variables['ROS_MASTER_URI'] = ros_master_uri
@@ -177,5 +214,30 @@ def set_rosparam(params, ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error('Error setting ROS parameters, message={}'.format(ex))
+        PCG_ROOT_LOGGER.error(
+            'Error setting ROS parameters, message={}'.format(ex))
         return None
+
+
+__all__ = [
+    'GazeboProxy',
+    'ProcessManager',
+    'ROSConfig',
+    'Server',
+    'SimulationTimer',
+    'Stage',
+    'Task',
+    'TASK_GAZEBO_EMPTY_WORLD',
+    'TASK_ROS_CORE',
+    'TASK_ROSBAG_RECORD_ALL',
+    'TASK_ROSBAG_RECORD_TOPICS',
+    'TASK_RQT',
+    'TASK_RVIZ',
+    'TASK_SIMULATION_TF_MANAGER',
+    'TASK_SIMULATION_TIMER',
+    'get_rosparam_list',
+    'get_rosservice_list',
+    'get_rostopic_list',
+    'is_gazebo_running',
+    'is_roscore_running'
+]

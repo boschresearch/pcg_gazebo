@@ -33,30 +33,35 @@ class EngineManager(_CollectionManager):
     @property
     def constraints_manager(self):
         return self._constraints_manager
-    
+
     def add(self, tag, engine_name, models, **kwargs):
         """Add a new model creator engine to the internal engines list.
-        
+
         > *Input arguments*
-        
-        * `engine_name` (*type:* `str`): Name of the engine class to be created
-        * `models` (*type:* list of `str`): Name of the models that will be assets 
-        to the created engine
-        * `kwargs` (*type:* `dict`): Input arguments to the created engine.        
+
+        * `engine_name` (*type:* `str`): Name of the engine class
+        to be created
+        * `models` (*type:* list of `str`): Name of the models
+        that will be assets to the created engine
+        * `kwargs` (*type:* `dict`): Input arguments to the
+        created engine.
         """
         if self.has_element(tag):
-            PCG_ROOT_LOGGER.error('Engine with tag <{}> already exists'.format(tag))
+            PCG_ROOT_LOGGER.error(
+                'Engine with tag <{}> already exists'.format(tag))
             return False
         input_args = kwargs
         input_args['models'] = models
         input_args['assets_manager'] = self._assets_manager
-        input_args['callback_fcn_get_constraint'] = self._constraints_manager.get      
+        input_args['callback_fcn_get_constraint'] = \
+            self._constraints_manager.get
         input_args['collision_checker'] = self._collision_checker
         self._collection[tag] = create_engine(engine_name, **input_args)
-        PCG_ROOT_LOGGER.info('New model creator engine added, type={}, tag={}'.format(
-            engine_name, tag))
+        PCG_ROOT_LOGGER.info(
+            'New model creator engine added, type={}, tag={}'.format(
+                engine_name, tag))
         return True
-        
+
     def from_dict(self, config):
         assert isinstance(config, dict) or isinstance(config, list), \
             'Input must be either a dictionary or a list of dictionaries'
@@ -69,13 +74,13 @@ class EngineManager(_CollectionManager):
                 config['tag'] = generate_random_string(10)
             if not self.add(**config):
                 PCG_ROOT_LOGGER.error('Failed to add engine={}'.format(config))
-            
+
     def from_yaml(self, filename):
         """Load the engines from a YAML file.
 
         > *Input arguments*
-        
-        * `filename` (*type:* `str`): YAML filename.        
+
+        * `filename` (*type:* `str`): YAML filename.
         """
         config = load_yaml(filename)
         self.from_dict(config)

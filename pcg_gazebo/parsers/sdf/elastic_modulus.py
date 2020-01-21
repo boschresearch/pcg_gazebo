@@ -22,5 +22,5 @@ class ElasticModulus(XMLScalar):
     def __init__(self, default=-1):
         XMLScalar.__init__(self, default)
 
-    def _set_value(self, value):        
+    def _set_value(self, value):
         XMLScalar._set_value(self, value)

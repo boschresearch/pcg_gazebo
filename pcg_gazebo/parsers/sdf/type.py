@@ -19,6 +19,6 @@ from ..types import XMLString
 class Type(XMLString):
     _NAME = 'type'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=''):
         XMLString.__init__(self, default)

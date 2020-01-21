@@ -14,18 +14,20 @@
 # limitations under the License.
 import trimesh
 from trimesh.creation import extrude_polygon
-from shapely.geometry import Polygon, Point, MultiPoint, LineString, MultiPolygon
+from shapely.geometry import Polygon, Point, \
+    MultiPoint, MultiPolygon
 from shapely.ops import unary_union
 from ..log import PCG_ROOT_LOGGER
 
 
-def extrude(polygon, height, thickness=0, cap_style='round', 
-    join_style='round', extrude_boundaries=False):
+def extrude(polygon, height, thickness=0, cap_style='round',
+            join_style='round', extrude_boundaries=False):
     assert height > 0, 'Extrude height must be greater than zero'
     if isinstance(polygon, Polygon) and not extrude_boundaries:
         assert polygon.is_valid, 'The input polygon object' \
-            ' is an invalid polygon shape'        
-        PCG_ROOT_LOGGER.info('Extruding a polygon to generate the model\'s mesh')
+            ' is an invalid polygon shape'
+        PCG_ROOT_LOGGER.info(
+            'Extruding a polygon to generate the model\'s mesh')
         processed_polygon = polygon
     elif isinstance(polygon, MultiPolygon) and not extrude_boundaries:
         processed_polygon = unary_union(polygon)
@@ -39,24 +41,24 @@ def extrude(polygon, height, thickness=0, cap_style='round',
         js_indexes = ['round', 'mitre', 'bevel']
         assert join_style in js_indexes, \
             'Invalid join style to dilate the geometry'
-        
+
         # In case the provided polygon are of type Polygon or MultiPolygon,
         # their boundaries will be extracted
-        if isinstance(polygon, Polygon) or isinstance(polygon, MultiPolygon):            
+        if isinstance(polygon, Polygon) or isinstance(polygon, MultiPolygon):
             input_poly = unary_union(polygon.boundary)
         else:
             input_poly = polygon
-            
+
         PCG_ROOT_LOGGER.info(
             'Dilating the input geometry, thickness={}, cap_style={}, '
             'join_style={}'.format(thickness, cap_style, join_style))
         processed_polygon = input_poly.buffer(
-            thickness, 
+            thickness,
             cap_style=cs_indexes.index(cap_style) + 1,
             join_style=js_indexes.index(join_style) + 1)
 
         if isinstance(processed_polygon, MultiPolygon):
-            processed_polygon = unary_union(processed_polygon)            
+            processed_polygon = unary_union(processed_polygon)
         if not hasattr(processed_polygon, 'exterior'):
             PCG_ROOT_LOGGER.warning(
                 'After dilating input polygon, the resulting polygon has no'
@@ -94,29 +96,25 @@ def cylinder(radius, height):
 
 def sphere(radius):
     assert radius > 0, 'Sphere radius must be greater than zero'
-    return trimesh.creation.icosphere(radius=radius) 
+    return trimesh.creation.icosphere(radius=radius)
 
-def room(polygon, wall_height=2, wall_thickness=0.1, single_mesh=False, 
-    add_floor=True, add_ceiling=True, floor_thickness=0.01):
-    from shapely.geometry import Point, MultiPoint, Polygon, MultiPolygon
-    assert not isinstance(polygon, Point) and not isinstance(polygon, MultiPoint), \
+
+def room(polygon, wall_height=2, wall_thickness=0.1, single_mesh=False,
+         add_floor=True, add_ceiling=True, floor_thickness=0.01):
+    assert not isinstance(polygon, Point) and \
+        not isinstance(polygon, MultiPoint), \
         'A room cannot be created from a point or multiple points'
-    assert not isinstance(polygon, MultiPolygon), 'A room cannot be created from a MultiPolygon object'
+    assert not isinstance(
+        polygon, MultiPolygon), 'A room cannot be created' \
+        ' from a MultiPolygon object'
 
     # Build walls
     wall_mesh = extrude(
-        polygon, 
+        polygon,
         height=wall_height,
         thickness=wall_thickness,
         cap_style='square',
         join_style='mitre',
         extrude_boundaries=True)
-
-    if add_floor or add_ceiling:
-
-        plane = extrude(
-            polygon, 
-            height=floor_thickness,
-            )
 
     return wall_mesh

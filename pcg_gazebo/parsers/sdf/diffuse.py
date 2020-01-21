@@ -24,7 +24,7 @@ class Diffuse(XMLVector):
         self._default = default
         self._value = default
 
-    def _set_value(self, value):        
+    def _set_value(self, value):
         assert self._is_numeric_vector(value, [0, 1]), \
             'Diffuse input is not a numeric vector'
         XMLVector._set_value(self, value)

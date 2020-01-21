@@ -16,15 +16,20 @@
 from .sensor import Sensor
 from ..properties import Plugin
 from ...parsers.sdf import create_sdf_element
-from ...log import PCG_ROOT_LOGGER
 
 
 class Contact(Sensor):
-    def __init__(self, name='contact', always_on=True, update_rate=50, 
-        visualize=True, topic='contact', pose=[0, 0, 0, 0, 0, 0], 
-        collision_element_name=''):
-        Sensor.__init__(self, name=name, always_on=always_on, update_rate=update_rate, 
-            visualize=visualize, topic=topic, pose=pose)
+    def __init__(self, name='contact', always_on=True, update_rate=50,
+                 visualize=True, topic='contact', pose=[0, 0, 0, 0, 0, 0],
+                 collision_element_name=''):
+        Sensor.__init__(
+            self,
+            name=name,
+            always_on=always_on,
+            update_rate=update_rate,
+            visualize=visualize,
+            topic=topic,
+            pose=pose)
         self._name = name
         self._collision_element_name = collision_element_name
 
@@ -34,17 +39,22 @@ class Contact(Sensor):
 
     @collision_element_name.setter
     def collision_element_name(self, value):
-        assert isinstance(value, str), 'Collision element name must be a string'
+        assert isinstance(
+            value, str), 'Collision element name must be a string'
         assert len(value) > 0, 'Collision element name string cannot be empty'
         self._collision_element_name = value
 
-    def add_ros_plugin(self, name='bumper', robot_namespace='', topic_name='bumper', 
-        frame_name='world'):
+    def add_ros_plugin(
+            self,
+            name='bumper',
+            robot_namespace='',
+            topic_name='bumper',
+            frame_name='world'):
         self._plugin = Plugin()
         self._plugin.init_gazebo_ros_bumper_plugin(
-            name=name, 
-            robot_namespace=robot_namespace, 
-            topic_name=topic_name, 
+            name=name,
+            robot_namespace=robot_namespace,
+            topic_name=topic_name,
             frame_name=frame_name)
 
     def to_sdf(self):
@@ -53,7 +63,7 @@ class Contact(Sensor):
 
         sensor.contact = create_sdf_element('contact')
         sensor.contact.reset(mode='sensor', with_optional_elements=True)
-        
+
         sensor.contact.topic = self._topic
         sensor.contact.collision = self._collision_element_name
 
@@ -78,8 +88,9 @@ class Contact(Sensor):
 
         sensor.collision_element_name = sdf.contact.collision.value
         sensor.topic = sdf.contact.topic.value
-        
+
         if sdf.plugins is not None:
-            assert len(sdf.plugins) == 1, 'Only one plugin per sensor is supported'            
+            assert len(
+                sdf.plugins) == 1, 'Only one plugin per sensor is supported'
             sensor._plugin = Plugin.from_sdf(sdf.plugins[0])
         return sensor

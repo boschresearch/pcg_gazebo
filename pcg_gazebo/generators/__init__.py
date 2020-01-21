@@ -15,17 +15,20 @@
 """The tools in this modules allow the generation of models and worlds using
 policy rules for object placement and constraints.
 """
-from . import engines
-from . import constraints
-from . import components
+
 from .world_generator import WorldGenerator
 from .collision_checker import SingletonCollisionChecker, CollisionChecker
-from .creators import *
-from .occupancy import *
-from .patterns import *
-from .mesh import *
-from .shapes import *
 from .assets_manager import AssetsManager
 from .engine_manager import EngineManager
 from .constraints_manager import ConstraintsManager
 from .model_group_generator import ModelGroupGenerator
+
+__all__ = [
+    'WorldGenerator',
+    'SingletonCollisionChecker',
+    'CollisionChecker',
+    'AssetsManager',
+    'EngineManager',
+    'ConstraintsManager',
+    'ModelGroupGenerator'
+]

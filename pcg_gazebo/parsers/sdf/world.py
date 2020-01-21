@@ -52,7 +52,7 @@ class World(XMLBase):
         return self.attributes['name']
 
     @name.setter
-    def name(self, value):                
+    def name(self, value):
         assert isinstance(value, str), 'Name should be a string'
         assert len(value) > 0, 'Name cannot be an empty string'
         self.attributes['name'] = value
@@ -60,7 +60,7 @@ class World(XMLBase):
     @property
     def gui(self):
         return self._get_child_element('gui')
-    
+
     @gui.setter
     def gui(self, value):
         self._add_child_element('gui', value)
@@ -68,7 +68,7 @@ class World(XMLBase):
     @property
     def scene(self):
         return self._get_child_element('scene')
-    
+
     @scene.setter
     def scene(self, value):
         self._add_child_element('scene', value)
@@ -109,7 +109,9 @@ class World(XMLBase):
         if self.models is not None:
             for elem in self.models:
                 if elem.name == name:
-                    print('Model element with name {} already exists'.format(name))
+                    print(
+                        'Model element with name {}'
+                        ' already exists'.format(name))
                     return
         if model is not None:
             self._add_child_element('model', model)
@@ -145,7 +147,9 @@ class World(XMLBase):
         if self.lights is not None:
             for elem in self.lights:
                 if elem.name == name:
-                    print('Light element with name {} already exists'.format(name))
+                    print(
+                        'Light element with name {}'
+                        ' already exists'.format(name))
                     return
         if light is not None:
             self._add_child_element('light', light)

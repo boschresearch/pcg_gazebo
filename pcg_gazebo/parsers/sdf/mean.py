@@ -19,7 +19,7 @@ from ..types import XMLScalar
 class Mean(XMLScalar):
     _NAME = 'mean'
     _TYPE = 'sdf'
-    
+
     def __init__(self):
         XMLScalar.__init__(self)
         self._description = dict(

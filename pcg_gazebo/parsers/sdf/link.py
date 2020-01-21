@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import collections
 from ..types import XMLBase
 from ...utils import is_string
 from .gravity import Gravity
@@ -37,7 +36,8 @@ class Link(XMLBase):
     )
 
     _CHILDREN_CREATORS = dict(
-        gravity=dict(creator=Gravity, default=[True], n_elems=1, optional=True),
+        gravity=dict(
+            creator=Gravity, default=[True], n_elems=1, optional=True),
         kinematic=dict(creator=Kinematic, n_elems=1, optional=True),
         inertial=dict(creator=Inertial, n_elems=1, optional=True),
         pose=dict(creator=Pose, n_elems=1, optional=True),
@@ -58,9 +58,10 @@ class Link(XMLBase):
         return self.attributes['name']
 
     @name.setter
-    def name(self, value):        
+    def name(self, value):
         assert is_string(value), \
-            'Name should be a string, received={}, type={}'.format(value, type(value))
+            'Name should be a string, received={},' \
+            ' type={}'.format(value, type(value))
         assert len(value) > 0, \
             'Name string should not be empty'
         self.attributes['name'] = value
@@ -132,7 +133,7 @@ class Link(XMLBase):
         assert self._is_numeric_vector(vec)
         vec = list(vec)
         assert len(vec) == 3
-        
+
         self.children['inertial'].pose.x = vec[0]
         self.children['inertial'].pose.y = vec[1]
         self.children['inertial'].pose.z = vec[2]
@@ -231,7 +232,9 @@ class Link(XMLBase):
         if self.sensors is not None:
             for elem in self.sensors:
                 if elem.name == name:
-                    print('Sensor element with name {} already exists'.format(name))
+                    print(
+                        'Sensor element with name {}'
+                        ' already exists'.format(name))
                     return
         if sensor is not None:
             self._add_child_element('sensor', sensor)
@@ -253,7 +256,9 @@ class Link(XMLBase):
         if self.plugins is not None:
             for elem in self.plugins:
                 if elem.name == name:
-                    print('Plugin element with name {} already exists'.format(name))
+                    print(
+                        'Plugin element with name {}'
+                        ' already exists'.format(name))
                     return
         if plugin is not None:
             self._add_child_element('plugin', plugin)

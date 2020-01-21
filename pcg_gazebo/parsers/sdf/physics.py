@@ -34,7 +34,8 @@ class Physics(XMLBase):
         max_contacts=dict(creator=MaxContacts, default=[20]),
         ode=dict(creator=ODE, mode='ode', optional=True, default=['physics']),
         simbody=dict(creator=Simbody, mode='simbody', optional=True),
-        bullet=dict(creator=Bullet, mode='bullet', optional=True, default=['physics'])
+        bullet=dict(
+            creator=Bullet, mode='bullet', optional=True, default=['physics'])
     )
 
     _ATTRIBUTES = dict(
@@ -66,7 +67,8 @@ class Physics(XMLBase):
     @default.setter
     def default(self, value):
         assert isinstance(value, bool) or value in [0, 1], \
-            'Physics default attribute must be a boolean, provided={}'.format(value)
+            'Physics default attribute must be a' \
+            ' boolean, provided={}'.format(value)
         self.attributes['default'] = '1' if value else '0'
 
     @property
@@ -159,7 +161,9 @@ class Physics(XMLBase):
             print('Physics should have an attribute <type>')
             return False
         if self.attributes['type'] not in ['ode', 'bullet', 'simbody', 'dart']:
-            print('Physics type attribute should be ode, bullet, simbody or dart')
+            print(
+                'Physics type attribute should be ode,'
+                ' bullet, simbody or dart')
             return False
         if len(self.children) < 4:
             print('Physics should have at least 4 child elements')

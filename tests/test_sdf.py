@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 import unittest
 from pcg_gazebo.parsers.sdf import create_sdf_element
 from pcg_gazebo.parsers.urdf import create_urdf_element
@@ -27,7 +28,7 @@ INVALID_INERTIA_VALUES = [
     [1, 1, 1],
     dict(ixx=1, ixy='a', ixz=1, iyy=3, iyz=1, izz=1),
     dict(ixx=None, ixy=1, ixz=1, iyy=3, iyz=1, a=1)
-    ]
+]
 
 VALID_INERTIA_VALUES = [
     dict(ixx=1, ixy=2, ixz=3, iyy=4, iyz=5, izz=6),
@@ -146,7 +147,7 @@ SDF_BASIC_OBJ_NAMES = [
     'emissive',
     'empty',
     'enable_wind',
-    'erp', 
+    'erp',
     'far',
     'fdir1',
     'format',
@@ -173,7 +174,8 @@ VALID_BASIC_VALUES = dict(
     self_collide=[True, False, 0, 1],
     allow_auto_disable=[True, False, 0, 1],
     always_on=[True, False, 0, 1],
-    ambient=[[0 for _ in range(4)], [1 for _ in range(4)], [0.5 for _ in range(4)]],
+    ambient=[[0 for _ in range(4)], [1 for _ in range(4)],
+             [0.5 for _ in range(4)]],
     bias_mean=[0, 0.5, 1, 2.5, 10],
     bias_stddev=[0, 0.5, 1, 2.5, 10],
     cast_shadows=[True, False, 0, 1],
@@ -184,17 +186,20 @@ VALID_BASIC_VALUES = dict(
     contact_max_correcting_vel=[0, 0.1, 0.3, 0.8, 1, 10, 10000],
     contact_surface_layer=[0, 0.1, 0.3, 0.8, 1, 10, 10000],
     damping=[0, 0.1, 0.3, 0.8, 1, 10, 10000],
-    diffuse=[[0 for _ in range(4)], [1 for _ in range(4)], [0.5 for _ in range(4)]],
+    diffuse=[[0 for _ in range(4)], [1 for _ in range(4)],
+             [0.5 for _ in range(4)]],
     dissipation=[0.1, 0.3, 0.8, 1, 10, 10000],
     dynamic_friction=[0, 0.1, 0.3, 0.8, 1, 10, 10000],
     effort=[-1, 0, 0.1, 0.3, 0.8, 1, 10, 10000],
-    emissive=[[0 for _ in range(4)], [1 for _ in range(4)], [0.5 for _ in range(4)]],
+    emissive=[[0 for _ in range(4)], [1 for _ in range(4)],
+              [0.5 for _ in range(4)]],
     empty=[],
     enable_wind=[True, False, 0, 1],
     erp=[0, 0.5, 1, 2.5, 10],
     far=[0, 0.1, 0.3, 0.8, 1, 10, 10000],
     fdir1=[[1, 0, 0], [0, 1, 0], [0, 0, 1]],
-    format=['L8', 'R8G8B8', 'B8G8R8', 'BAYER_RGGB8', 'BAYER_BGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8'],
+    format=['L8', 'R8G8B8', 'B8G8R8', 'BAYER_RGGB8', 'BAYER_BGGR8',
+            'BAYER_GBRG8', 'BAYER_GRBG8'],
     frame=['none', 'test', 'a', ''],
     friction_model=['pyramid_model', 'box_model', 'cone_model'],
     friction2=[0, 1, 0.3, 0.8, 1.0],
@@ -226,8 +231,10 @@ VALID_OUTPUT_STRING = dict(
     cfm=['0.0', '0.5', '1.0', '2.5', '10.0'],
     child=['none', 'test', 'a', ''],
     coefficient=['0.0', '1.0', '0.3', '0.8', '1.0'],
-    contact_max_correcting_vel=['0.0', '0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
-    contact_surface_layer=['0.0', '0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
+    contact_max_correcting_vel=['0.0', '0.1', '0.3', '0.8', '1.0',
+                                '10.0', '10000.0'],
+    contact_surface_layer=['0.0', '0.1', '0.3', '0.8', '1.0',
+                           '10.0', '10000.0'],
     damping=['0.0', '0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
     diffuse=['0 0 0 0', '1 1 1 1', '0.5 0.5 0.5 0.5'],
     dissipation=['0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
@@ -239,14 +246,16 @@ VALID_OUTPUT_STRING = dict(
     erp=['0.0', '0.5', '1.0', '2.5', '10.0'],
     far=['0.0', '0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
     fdir1=['1 0 0', '0 1 0', '0 0 1'],
-    format=['L8', 'R8G8B8', 'B8G8R8', 'BAYER_RGGB8', 'BAYER_BGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8'],
+    format=['L8', 'R8G8B8', 'B8G8R8', 'BAYER_RGGB8', 'BAYER_BGGR8',
+            'BAYER_GBRG8', 'BAYER_GRBG8'],
     frame=['none', 'test', 'a', ''],
     friction_model=['pyramid_model', 'box_model', 'cone_model'],
     friction2=['0.0', '1.0', '0.3', '0.8', '1.0'],
     granularity=['0', '1', '2'],
     height=['0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
     horizontal_fov=['0.0', '0.1', '0.3', '0.8', '1.0', '10.0', '10000.0'],
-    initial_position=['-2.0', '-1.0', '-0.5', '-0.1', '0.0', '0.1', '0.5', '1.0', '2.0'],
+    initial_position=['-2.0', '-1.0', '-0.5', '-0.1', '0.0',
+                      '0.1', '0.5', '1.0', '2.0'],
     iters=['1', '2', '50', '1000'],
     ixx=['0.0', '0.5', '1.0', '2.5', '10.0'],
     ixy=['-2.0', '-1.5', '-0.5', '0.0', '0.5', '1.5', '2.0'],
@@ -263,30 +272,39 @@ INVALID_BASIC_VALUES = dict(
     self_collide=[-1, 2, dict(), None, list(), 'a', [1, 2]],
     allow_auto_disable=[-1, 2, dict(), None, list(), 'a', [1, 2]],
     always_on=[-1, 2, dict(), None, list(), 'a', [1, 2]],
-    ambient=[-1, 2, dict(), None, True, list(), 'a', [1, 2], [True, False, None, 'a']],
+    ambient=[-1, 2, dict(), None, True, list(), 'a',
+             [1, 2], [True, False, None, 'a']],
     bias_mean=[-1, dict(), True, None, list(), 'a', [1, 2]],
     bias_stddev=[-1, dict(), True, None, list(), 'a', [1, 2]],
     cast_shadows=[-1, 2, dict(), None, list(), 'a', [1, 2]],
     center=[-1, 2, dict(), None, list(), 'a', [1, 2, 3]],
     cfm=[-1, dict(), True, None, list(), 'a', [1, 2]],
-    child=[-1, 2, dict(), None, True, list(), [1, 2], [True, False, None, 'a']],
+    child=[-1, 2, dict(), None, True, list(), [1, 2],
+           [True, False, None, 'a']],
     coefficient=[-1, 2, dict(), True, None, list(), 'a', [1, 2]],
     contact_max_correcting_vel=[-1, dict(), True, None, list(), 'a', [1, 2]],
     contact_surface_layer=[-1, dict(), True, None, list(), 'a', [1, 2]],
     damping=[-1, dict(), True, None, list(), 'a', [1, 2]],
-    diffuse=[-1, 2, dict(), None, True, list(), 'a', [1, 2], [True, False, None, 'a']],
+    diffuse=[-1, 2, dict(), None, True, list(), 'a',
+             [1, 2], [True, False, None, 'a']],
     dissipation=[-1, dict(), True, None, list(), 'a', [1, 2]],
     dynamic_friction=[-1, dict(), True, None, list(), 'a', [1, 2]],
     effort=[dict(), True, None, list(), 'a', [1, 2]],
-    emissive=[-1, 2, dict(), None, True, list(), 'a', [1, 2], [True, False, None, 'a']],
-    empty=[-1, 2, dict(), None, True, list(), 'a', [1, 2], [True, False, None, 'a']],
+    emissive=[-1, 2, dict(), None, True, list(), 'a',
+              [1, 2], [True, False, None, 'a']],
+    empty=[-1, 2, dict(), None, True, list(), 'a',
+           [1, 2], [True, False, None, 'a']],
     enable_wind=[-1, 2, dict(), None, list(), 'a', [1, 2]],
     erp=[-1, dict(), True, None, list(), 'a', [1, 2]],
     far=[-1, dict(), True, None, list(), 'a', [1, 2]],
-    fdir1=[-1, 2, dict(), None, True, list(), 'a', [1, 2], [True, False, None, 'a']],
-    format=[-1, 2, dict(), None, True, list(), [1, 2], [True, False, None, 'a']],
-    frame=[-1, 2, dict(), None, True, list(), [1, 2], [True, False, None, 'a']],
-    friction_model=[-1, 2, dict(), None, True, list(), [1, 2], [True, False, None, 'a']],
+    fdir1=[-1, 2, dict(), None, True, list(), 'a',
+           [1, 2], [True, False, None, 'a']],
+    format=[-1, 2, dict(), None, True, list(), [1, 2],
+            [True, False, None, 'a']],
+    frame=[-1, 2, dict(), None, True, list(), [1, 2],
+           [True, False, None, 'a']],
+    friction_model=[-1, 2, dict(), None, True, list(), [1, 2],
+                    [True, False, None, 'a']],
     friction2=[-1, dict(), True, None, list(), 'a', [1, 2]],
     granularity=[-1, dict(), True, None, list(), 'a', [1, 2]],
     height=[-1, dict(), True, None, list(), 'a', [1, 2]],
@@ -352,7 +370,9 @@ class TestSDFParser(unittest.TestCase):
         for sdf_tag in SDF_BASIC_OBJ_NAMES:
             obj = create_sdf_element(sdf_tag)
 
-            self.assertIsNotNone(obj.xml_element_name, '{} is invalid'.format(sdf_tag))
+            self.assertIsNotNone(
+                obj.xml_element_name,
+                '{} is invalid'.format(sdf_tag))
             self.assertEqual(obj.xml_element_name, sdf_tag,
                              '{} has invalid sdf block name'.format(sdf_tag))
             self.assertTrue(obj.has_value(),
@@ -363,30 +383,44 @@ class TestSDFParser(unittest.TestCase):
                              '{} has wrong default value, value={}'.format(
                              sdf_tag, obj.value))
 
-            for value, value_str in zip(VALID_BASIC_VALUES[sdf_tag], VALID_OUTPUT_STRING[sdf_tag]):
+            for value, value_str in zip(
+                    VALID_BASIC_VALUES[sdf_tag], VALID_OUTPUT_STRING[sdf_tag]):
                 obj.value = value
                 self.assertEqual(
                     obj.value, value,
                     'New value for {} was not set, new_value={}'.format(
                         sdf_tag, value))
 
-                self.assertEqual(obj.get_formatted_value_as_str(),
+                self.assertEqual(
+                    obj.get_formatted_value_as_str(),
                     value_str,
-                    'Wrong formatted output string for {}, expected={}, returned={}'.format(
-                        sdf_tag, value_str, obj.get_formatted_value_as_str()))
+                    'Wrong formatted output string for {}, '
+                    'expected={}, returned={}'.format(
+                        sdf_tag,
+                        value_str,
+                        obj.get_formatted_value_as_str()))
 
                 # Test generation of XML block
                 xml_element = obj.to_xml()
-                self.assertEqual(xml_element.tag, sdf_tag,
+                self.assertEqual(
+                    xml_element.tag,
+                    sdf_tag,
                     'Invalid XML element tag for {}'.format(sdf_tag))
-                self.assertEqual(xml_element.text, value_str,
+                self.assertEqual(
+                    xml_element.text,
+                    value_str,
                     'Invalid XML element tag for {}'.format(sdf_tag))
 
                 xml_str = obj.to_xml_as_str()
                 output_str = '<{}>{}</{}>'.format(sdf_tag, value_str, sdf_tag)
-                self.assertEqual(xml_str, output_str,
+                self.assertEqual(
+                    xml_str,
+                    output_str,
                     'Invalid XML dump string for {}, value={}, '
-                    'expected={}'.format(sdf_tag, xml_str, output_str))
+                    'expected={}'.format(
+                        sdf_tag,
+                        xml_str,
+                        output_str))
 
             obj.reset()
             self.assertTrue(obj.is_valid(),
@@ -400,28 +434,29 @@ class TestSDFParser(unittest.TestCase):
                 else:
                     try:
                         obj.value = value
-                    except AssertionError as error:
+                    except AssertionError:
                         pass
                     else:
                         self.fail(
-                            'No assertion error raised while setting {} for {}'.format(
+                            'No assertion error raised'
+                            ' while setting {} for {}'.format(
                                 value, sdf_tag))
-                    
+
     def test_pose(self):
         sdf_obj = create_sdf_element('pose')
 
         self.assertIsNotNone(sdf_obj, 'Invalid pose object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'pose',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, [0 for _ in range(6)],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 1,
-            'Pose should have 1 attributes')
+                         'Pose should have 1 attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Pose should have no children')
+                         'Pose should have no children')
         self.assertEqual(sdf_obj.frame, '',
-            'Pose should empty frame name after reset')
+                         'Pose should empty frame name after reset')
 
         # Test setting valid numbers to the pose object
         sdf_obj.x = 1
@@ -469,33 +504,32 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid pose vector, is_valid should be True')
-
+                        'For valid pose vector, is_valid should be True')
 
         output_str = '0 0 0 0 0 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.x = 1.2
         output_str = '1.2 0 0 0 0 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'pose',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0 0 0 0 0 0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         self.assertEqual(sdf_obj.frame, '',
-            'Pose should empty frame name after reset')
+                         'Pose should empty frame name after reset')
         sdf_obj.frame = 'test'
         self.assertEqual(sdf_obj.frame, 'test',
-            'Pose frame name was not set')
+                         'Pose frame name was not set')
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<pose>0 0 0 0 0 0</pose>',
         #     'Invalid XML dump string, value=' + str(xml_str))
@@ -506,13 +540,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid size object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'size',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, [0 for _ in range(3)],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Size should have no attributes')
+                         'Size should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Size should have no children')
+                         'Size should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.width = 1
@@ -544,26 +578,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid size vector, is_valid should be True')
+                        'For valid size vector, is_valid should be True')
 
         output_str = '0 0 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.width = 1.2
         output_str = '1.2 0 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'size',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0 0 0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<size>0 0 0</size>',
@@ -574,13 +608,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid size object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'size',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, [0 for _ in range(2)],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Size should have no attributes')
+                         'Size should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Size should have no children')
+                         'Size should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.width = 1
@@ -609,26 +643,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid size vector, is_valid should be True')
+                        'For valid size vector, is_valid should be True')
 
         output_str = '0 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.width = 1.2
         output_str = '1.2 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'size',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0 0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<size>0 0</size>',
@@ -640,18 +674,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid box object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'box',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Box should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Box should have no attributes')
+                         'Box should have no attributes')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Box should have 1 child element')
+                         'Box should have 1 child element')
         self.assertTrue(sdf_obj.is_valid(), 'Default values should be valid')
 
-
         self.assertEqual(sdf_obj.size.value, [0 for _ in range(3)],
-            'Invalid initial value {}'.format(sdf_obj.size))
+                         'Invalid initial value {}'.format(sdf_obj.size))
 
         for v in INVALID_SIZE_VALUES:
             with self.assertRaises(AssertionError):
@@ -660,14 +694,14 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.reset()
 
         self.assertEqual(sdf_obj.size.value, [0 for _ in range(3)],
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
 
         for value in VALID_SIZE_VALUES:
             sdf_obj.size = value
             self.assertEqual(sdf_obj.size.value, value, 'Size was not set')
             sdf_obj.reset()
             self.assertEqual(sdf_obj.size.value, [0 for _ in range(3)],
-            'Invalid initial value after reset')
+                             'Invalid initial value after reset')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<box><size>0 0 0</size></box>',
@@ -679,13 +713,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid length object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'length',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Length should have no attributes')
+                         'Length should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Length should have no children')
+                         'Length should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 1
@@ -700,27 +734,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid length, is_valid should be True')
-
+                        'For valid length, is_valid should be True')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'length',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<length>0</length>',
@@ -732,13 +765,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid radius object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'radius',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Radius should have no attributes')
+                         'Radius should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Radius should have no children')
+                         'Radius should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 1
@@ -753,26 +786,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid radius, is_valid should be True')
+                        'For valid radius, is_valid should be True')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'radius',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<radius>0</radius>',
@@ -784,20 +817,21 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid plane object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'plane',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Plane should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Plane should have no attributes')
+                         'Plane should have no attributes')
         self.assertEqual(len(sdf_obj.children), 2,
-            'Plane should have 1 child element')
+                         'Plane should have 1 child element')
         self.assertTrue(sdf_obj.is_valid(),
-            'Plane is not valid')
+                        'Plane is not valid')
 
         self.assertEqual(sdf_obj.size.value, [0, 0],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(sdf_obj.normal.value, [0, 0, 1],
-            'Invalid initial value')
+                         'Invalid initial value')
 
         invalid_values = [None, 'a', '2', -1, [0], [0, 0, 0, 0]]
         for v in invalid_values:
@@ -809,16 +843,19 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.reset()
 
         self.assertEqual(sdf_obj.size.value, [0, 0],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(sdf_obj.normal.value, [0, 0, 1],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertTrue(sdf_obj.is_valid(),
-            'Sphere object is invalid')
+                        'Sphere object is invalid')
 
-        correct_str = '<plane><normal>0 0 1</normal><size>0 0</size></plane>'
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, correct_str,
-        #     'Invalid XML dump string, value=' + str(xml_str))
+        correct_str = '<plane><size>0 0</size>' \
+            '<normal>0 0 1</normal></plane>'
+        xml_str = sdf_obj.to_xml_as_str()
+        self.assertEqual(
+            xml_str,
+            correct_str,
+            'Invalid XML dump string, value=' + str(xml_str))
 
     def test_scale(self):
         sdf_obj = create_sdf_element('scale')
@@ -826,18 +863,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid scale object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'scale',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, [1 for _ in range(3)],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Scale should have no attributes')
+                         'Scale should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Scale should have no children')
+                         'Scale should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = [1, 2, 3]
         self.assertEqual(sdf_obj.value, [1, 2, 3],
-            'Scale vector was not set')
+                         'Scale vector was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, 'a', '2', -1]
@@ -857,26 +894,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid pose vector, is_valid should be True')
+                        'For valid pose vector, is_valid should be True')
 
         output_str = '1 1 1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = [1.2, 1, 1]
         output_str = '1.2 1 1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'scale',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1 1 1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<scale>1 1 1</scale>',
@@ -888,13 +925,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid lighting object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'lighting',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, False,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Lighting should have no attributes')
+                         'Lighting should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Lighting should have no children')
+                         'Lighting should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = True
@@ -909,26 +946,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, False,
-            'For valid lighting, is_valid should be False')
+                         'For valid lighting, is_valid should be False')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = True
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'lighting',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<lighting>0</lighting>',
@@ -940,13 +977,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid kinematic object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'kinematic',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, False,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Kinematic should have no attributes')
+                         'Kinematic should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Kinematic should have no children')
+                         'Kinematic should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = True
@@ -961,26 +998,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, False,
-            'For valid kinematic, is_valid should be False')
+                         'For valid kinematic, is_valid should be False')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = True
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'kinematic',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<kinematic>0</kinematic>',
@@ -992,13 +1029,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid gravity object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'gravity',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, True,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Gravity should have no attributes')
+                         'Gravity should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Gravity should have no children')
+                         'Gravity should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = True
@@ -1013,26 +1050,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.value,
-            'For valid gravity, is_valid should be True')
+                        'For valid gravity, is_valid should be True')
 
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = False
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'gravity',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<gravity>1</gravity>',
@@ -1044,18 +1081,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid name object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'name',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 'none',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Name should have no attributes')
+                         'Name should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Name should have no children')
+                         'Name should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 'none'
         self.assertEqual(sdf_obj.value, 'none',
-            'Name was not set')
+                         'Name was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, False, -1]
@@ -1066,27 +1103,27 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, 'none',
-            'For valid name, is_valid should be an empty string')
+                         'For valid name, is_valid should be an empty string')
 
         output_str = 'none'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 'test'
         output_str = 'test'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         sdf_obj.value = 'test'
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'name',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, 'test',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<name>test</name>',
@@ -1098,18 +1135,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid uri object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'uri',
-            'Invalid SDF block uri')
+                         'Invalid SDF block uri')
         self.assertEqual(sdf_obj.value, '',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'URI should have no attributes')
+                         'URI should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'URI should have no children')
+                         'URI should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 'none'
         self.assertEqual(sdf_obj.value, 'none',
-            'URI was not set')
+                         'URI was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, False, -1]
@@ -1120,27 +1157,27 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, '',
-            'For valid uri, is_valid should be an empty string')
+                         'For valid uri, is_valid should be an empty string')
 
         output_str = ''
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 'test'
         output_str = 'test'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         sdf_obj.value = 'test'
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'uri',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, 'test',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<uri>test</uri>',
@@ -1152,20 +1189,21 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid submesh object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'submesh',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Submesh should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Submesh should have no attributes')
+                         'Submesh should have no attributes')
         self.assertEqual(len(sdf_obj.children), 2,
-            'Submesh should have 2 child elements')
+                         'Submesh should have 2 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Submesh object is invalid')
+                        'Submesh object is invalid')
 
         self.assertEqual(sdf_obj.name.value, 'none',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(sdf_obj.center.value, False,
-            'Invalid initial value')
+                         'Invalid initial value')
 
         invalid_values = [None, 'a', '2', 10, -1]
         for v in invalid_values:
@@ -1179,17 +1217,22 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.reset()
 
         self.assertEqual(sdf_obj.name.value, 'none',
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
         self.assertEqual(sdf_obj.center.value, False,
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
         self.assertTrue(sdf_obj.is_valid(),
-            'SubMesh object is invalid')
+                        'SubMesh object is invalid')
 
         sdf_obj.name = 'test'
-        correct_str = '<submesh><name>test</name><center>0</center></submesh>'
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, correct_str,
-        #     'Invalid XML dump string, value=' + str(xml_str))
+
+        if sys.version_info[0] > 2:
+            correct_str = '<submesh><center>0</center>' \
+                '<name>test</name></submesh>'
+            xml_str = sdf_obj.to_xml_as_str()
+            self.assertEqual(
+                xml_str,
+                correct_str,
+                'Invalid XML dump string, value=' + str(xml_str))
 
     def test_mesh(self):
         sdf_obj = create_sdf_element('mesh')
@@ -1197,20 +1240,21 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid mesh object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'mesh',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Mesh should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Mesh should have no attributes')
+                         'Mesh should have no attributes')
         self.assertEqual(len(sdf_obj.children), 2,
-            'Mesh should have initially 2 child elements')
+                         'Mesh should have initially 2 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Mesh object is invalid')
+                        'Mesh object is invalid')
 
         self.assertEqual(sdf_obj.uri.value, '',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(sdf_obj.scale.value, [1, 1, 1],
-            'Invalid initial value')
+                         'Invalid initial value')
 
         invalid_values = [None, 'a', '2', 10, -1]
         for v in invalid_values:
@@ -1224,9 +1268,9 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.reset()
 
         self.assertEqual(sdf_obj.uri.value, '',
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
         self.assertEqual(sdf_obj.scale.value, [1 for _ in range(3)],
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
 
         sdf_obj.uri = 'test'
         correct_str = '<mesh><scale>1 1 1</scale><uri>test</uri></mesh>'
@@ -1237,23 +1281,26 @@ class TestSDFParser(unittest.TestCase):
         # Add a submesh object
         sdf_obj.submesh = dict(name='submesh_name', center=True)
         self.assertEqual(len(sdf_obj.children), 3,
-            'Mesh should have 3 child elements')
+                         'Mesh should have 3 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Mesh object is invalid')
-
-        correct_str = '<mesh><scale>1 1 1</scale>' \
-            '<uri>test</uri>' \
-            '<submesh><name>submesh_name</name><center>1</center></submesh>' \
-            '</mesh>'
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, correct_str,
-        #     'Invalid XML dump string, value=' + str(xml_str))
+                        'Mesh object is invalid')
+        if sys.version_info[0] > 2:
+            correct_str = '<mesh><uri>test</uri>' \
+                '<scale>1 1 1</scale>' \
+                '<submesh><center>1</center>' \
+                '<name>submesh_name</name></submesh>' \
+                '</mesh>'
+            xml_str = sdf_obj.to_xml_as_str()
+            self.assertEqual(
+                xml_str,
+                correct_str,
+                'Invalid XML dump string, value=' + str(xml_str))
 
         sdf_obj.reset()
         self.assertEqual(len(sdf_obj.children), 2,
-            'Mesh should have 2 child elements')
+                         'Mesh should have 2 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Mesh object is invalid')
+                        'Mesh object is invalid')
 
     def test_cylinder(self):
         sdf_obj = create_sdf_element('cylinder')
@@ -1261,20 +1308,21 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid cylinder object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'cylinder',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Cylinder should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Cylinder should have no attributes')
+                         'Cylinder should have no attributes')
         self.assertEqual(len(sdf_obj.children), 2,
-            'Cylinder should have 2 child elements')
+                         'Cylinder should have 2 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Cylinder object is invalid')
+                        'Cylinder object is invalid')
 
         self.assertEqual(sdf_obj.length.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(sdf_obj.radius.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
 
         invalid_values = [None, 'a', '2', -1]
         for v in invalid_values:
@@ -1286,15 +1334,19 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.reset()
 
         self.assertEqual(sdf_obj.length.value, 0,
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
         self.assertEqual(sdf_obj.radius.value, 0,
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
         self.assertTrue(sdf_obj.is_valid(),
-            'Cylinder object is invalid')
-        # xml_str = sdf_obj.to_xml_as_str()
-        # correct_str = '<cylinder><radius>0</radius><length>0</length></cylinder>'
-        # self.assertEqual(xml_str, correct_str,
-        #     'Invalid XML dump string, value=' + str(xml_str))
+                        'Cylinder object is invalid')
+        xml_str = sdf_obj.to_xml_as_str()
+        if sys.version_info[0] > 2:
+            correct_str = '<cylinder><radius>0</radius><length>' \
+                '0</length></cylinder>'
+            self.assertEqual(
+                xml_str,
+                correct_str,
+                'Invalid XML dump string, value=' + str(xml_str))
 
     def test_sphere(self):
         sdf_obj = create_sdf_element('sphere')
@@ -1302,16 +1354,17 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid sphere object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'sphere',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Sphere should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Sphere should have no attributes')
+                         'Sphere should have no attributes')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Sphere should have 1 child element')
-        
+                         'Sphere should have 1 child element')
+
         self.assertEqual(sdf_obj.radius.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
 
         invalid_values = [None, 'a', '2', -1]
         for v in invalid_values:
@@ -1321,14 +1374,16 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.reset()
 
         self.assertEqual(sdf_obj.radius.value, 0,
-            'Invalid initial value after reset')
+                         'Invalid initial value after reset')
         self.assertTrue(sdf_obj.is_valid(),
-            'Sphere object is invalid')
+                        'Sphere object is invalid')
 
         correct_str = '<sphere><radius>0</radius></sphere>'
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, correct_str,
-        #     'Invalid XML dump string, value=' + str(xml_str))
+        xml_str = sdf_obj.to_xml_as_str()
+        self.assertEqual(
+            xml_str,
+            correct_str,
+            'Invalid XML dump string, value=' + str(xml_str))
 
     def test_threshold(self):
         sdf_obj = create_sdf_element('threshold')
@@ -1336,13 +1391,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid threshold object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'threshold',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Threshold should have no attributes')
+                         'Threshold should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Threshold should have no children')
+                         'Threshold should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 1
@@ -1357,26 +1412,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid threshold, is_valid should be True')
+                        'For valid threshold, is_valid should be True')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'threshold',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<threshold>0</threshold>',
@@ -1388,13 +1443,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid height object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'height',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 1,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Height should have no attributes')
+                         'Height should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Height should have no children')
+                         'Height should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
@@ -1409,26 +1464,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid height, is_valid should be True')
+                        'For valid height, is_valid should be True')
 
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'height',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<height>0</height>',
@@ -1441,13 +1496,13 @@ class TestSDFParser(unittest.TestCase):
 
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'geometry',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Geometry should have no attributes')
+                         'Geometry should have no attributes')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Geometry should have no children')
+                         'Geometry should have no children')
         self.assertIsNotNone(sdf_obj.children['empty'],
-            'Invalid SDF initial block name')
+                             'Invalid SDF initial block name')
 
         valid_test_set = dict(
             empty=dict(),
@@ -1463,7 +1518,11 @@ class TestSDFParser(unittest.TestCase):
             setattr(sdf_obj, test, valid_test_set[test])
             elem = getattr(sdf_obj, test)
             for tag in valid_test_set[test]:
-                self.assertFalse(isinstance(getattr(elem, tag), float), '{} {}'.format(tag, test))
+                self.assertFalse(
+                    isinstance(
+                        getattr(
+                            elem, tag), float), '{} {}'.format(
+                        tag, test))
                 if getattr(elem, tag).has_value():
                     self.assertEqual(
                         getattr(elem, tag).value,
@@ -1477,15 +1536,16 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid inertia object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'inertia',
-            'Invalid SDF block name')
-        self.assertIsNone(sdf_obj.value,
+                         'Invalid SDF block name')
+        self.assertIsNone(
+            sdf_obj.value,
             'Inertia should have no valid field <value>, only children')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Inertia should have no attributes')
+                         'Inertia should have no attributes')
         self.assertEqual(len(sdf_obj.children), 6,
-            'Inertia should have 2 child elements')
+                         'Inertia should have 2 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Inertia object is invalid')
+                        'Inertia object is invalid')
 
         invalid_values = [None, 'a', '2', [5]]
         for value in invalid_values:
@@ -1498,11 +1558,11 @@ class TestSDFParser(unittest.TestCase):
             for t in sdf_obj.children.keys():
                 setattr(getattr(sdf_obj, t), 'value', value)
                 self.assertEqual(getattr(sdf_obj, t).value, value,
-                    '{} was not set, value={}'.format(t, value))
+                                 '{} was not set, value={}'.format(t, value))
 
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'Inertia after reset returned true')
+                        'Inertia after reset returned true')
 
     def test_mass(self):
         sdf_obj = create_sdf_element('mass')
@@ -1510,13 +1570,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid mass object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'mass',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Mass should have no attributes')
+                         'Mass should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Mass should have no children')
+                         'Mass should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 1
@@ -1531,20 +1591,20 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid mass, is_valid should be true')
+                        'For valid mass, is_valid should be true')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'mass',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1.2',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<mass>0</mass>',
@@ -1556,18 +1616,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid mass object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'inertial',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Value should be none')
+                          'Value should be none')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Inertial should have no attributes')
+                         'Inertial should have no attributes')
         self.assertEqual(len(sdf_obj.children), 3,
-            'Inertial should have 3 child elements')
+                         'Inertial should have 3 child elements')
 
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid inertial, is_valid should be true')
+                        'For valid inertial, is_valid should be true')
 
         for value in INVALID_MASSES:
             with self.assertRaises(AssertionError):
@@ -1587,7 +1647,7 @@ class TestSDFParser(unittest.TestCase):
             [-3, None, 0, 0, 0, 0],
             'a',
             '2'
-            ]
+        ]
         for value in invalid_poses:
             with self.assertRaises(AssertionError):
                 sdf_obj.pose = value
@@ -1596,7 +1656,7 @@ class TestSDFParser(unittest.TestCase):
             [0 for _ in range(6)],
             [1 for _ in range(6)],
             [-1, 1, -1, 1, -1, 1]
-            ]
+        ]
         for value in valid_poses:
             sdf_obj.pose = value
             self.assertEqual(sdf_obj.pose.value, value, 'Pose was not set')
@@ -1606,7 +1666,7 @@ class TestSDFParser(unittest.TestCase):
         invalid_inertias = [
             dict(ixx=1, ixy='a', ixz=1, iyy=3, iyz=0, izz=0),
             dict(ixx=None, ixy=1, ixz=1, iyy=3, iyz=0, izz=0)
-            ]
+        ]
         for value in invalid_inertias:
             with self.assertRaises(AssertionError):
                 sdf_obj.inertia = value
@@ -1614,12 +1674,12 @@ class TestSDFParser(unittest.TestCase):
         valid_inertias = [
             dict(ixx=0, ixy=0, ixz=0, iyy=0, iyz=0, izz=0),
             dict(ixx=1, ixy=2, ixz=3, iyy=4, iyz=5, izz=6)
-            ]
+        ]
         for value in valid_inertias:
             sdf_obj.inertia = value
             for item in value:
                 self.assertEqual(getattr(sdf_obj.inertia, item).value,
-                    value[item], 'Inertia was not set')
+                                 value[item], 'Inertia was not set')
             self.assertTrue(sdf_obj.is_valid(), 'Inertial should be valid')
             sdf_obj.reset()
 
@@ -1629,17 +1689,17 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid mass object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'link',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Value should be none')
+                          'Value should be none')
         self.assertEqual(len(sdf_obj.attributes), 1,
-            'Link should have one attribute')
+                         'Link should have one attribute')
         self.assertIn('name', sdf_obj.attributes,
-            'Link should have an attribute <name>')
+                      'Link should have an attribute <name>')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Link should initially have no child elements')
+                         'Link should initially have no child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Link should initially be valid')
+                        'Link should initially be valid')
 
         # Testing attribute name
         invalid_names = [None, 1, '', dict, list]
@@ -1656,7 +1716,7 @@ class TestSDFParser(unittest.TestCase):
         # Reseting object
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'Link should initially be valid')
+                        'Link should initially be valid')
 
         # Testing element pose
         invalid_poses = [
@@ -1666,7 +1726,7 @@ class TestSDFParser(unittest.TestCase):
             [-3, None, 0, 0, 0, 0],
             'a',
             '2'
-            ]
+        ]
         for value in invalid_poses:
             with self.assertRaises(AssertionError):
                 sdf_obj.pose = value
@@ -1675,7 +1735,7 @@ class TestSDFParser(unittest.TestCase):
             [0 for _ in range(6)],
             [1 for _ in range(6)],
             [-1, 1, -1, 1, -1, 1]
-            ]
+        ]
         for value in valid_poses:
             sdf_obj.pose = value
             self.assertEqual(sdf_obj.pose.value, value, 'Pose was not set')
@@ -1696,19 +1756,26 @@ class TestSDFParser(unittest.TestCase):
             for t in sdf_obj.children:
                 if t in ['gravity', 'kinematic']:
                     setattr(sdf_obj, t, value)
-                    self.assertEqual(getattr(sdf_obj, t), value, '{} was not set')
-                    self.assertFalse(sdf_obj.is_valid(), 'Link should not be valid')
+                    self.assertEqual(
+                        getattr(
+                            sdf_obj,
+                            t),
+                        value,
+                        '{} was not set')
+                    self.assertFalse(
+                        sdf_obj.is_valid(),
+                        'Link should not be valid')
                     sdf_obj.name = 'test'
                     self.assertTrue(sdf_obj.is_valid(), 'Link should be valid')
                     sdf_obj.reset()
 
         # Test adding inertial object to link
-        ## Test setting mass
+        # Test setting mass
         sdf_obj.mass = 1
         self.assertIn('inertial', sdf_obj.children, 'Inertial was not created')
         self.assertIsNotNone(sdf_obj.inertial, 'Inertial was not created')
         self.assertIsNotNone(sdf_obj.children['inertial'],
-            'Inertial element is invalid')
+                             'Inertial element is invalid')
         self.assertEqual(sdf_obj.mass.value, 1, 'Mass was not set')
 
         invalid_values = [None, 'a', '2', -1, 0]
@@ -1728,9 +1795,9 @@ class TestSDFParser(unittest.TestCase):
         self.assertIn('inertial', sdf_obj.children, 'Inertial was not created')
         self.assertIsNotNone(sdf_obj.inertial, 'Inertial was not created')
         self.assertIsNotNone(sdf_obj.children['inertial'],
-            'Inertial element is invalid')
+                             'Inertial element is invalid')
         self.assertEqual(sdf_obj.center_of_mass, [0 for _ in range(3)],
-            'Center of mass was not set')
+                         'Center of mass was not set')
 
         invalid_values = [None, 'a', '2', -1, 0, [1], [1, 1]]
         for v in invalid_values:
@@ -1744,14 +1811,14 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid(), 'Link should be valid')
         sdf_obj.reset()
 
-        ## Testing setting inertial tensor
+        # Testing setting inertial tensor
         sdf_obj.inertia = VALID_INERTIA_VALUES[0]
         self.assertIn('inertial', sdf_obj.children, 'Inertial was not created')
         self.assertIsNotNone(sdf_obj.inertial, 'Inertial was not created')
         for tag in VALID_INERTIA_VALUES[0]:
             self.assertEqual(getattr(sdf_obj.inertia, tag).value,
-                VALID_INERTIA_VALUES[0][tag],
-                'Inertial tensor was not set')
+                             VALID_INERTIA_VALUES[0][tag],
+                             'Inertial tensor was not set')
 
         sdf_obj.inertial = create_sdf_element('inertial')
 
@@ -1759,12 +1826,18 @@ class TestSDFParser(unittest.TestCase):
             try:
                 sdf_obj.inertial.inertia = v
                 for i in ['ixx', 'iyy', 'izz', 'ixz', 'iyz', 'ixy']:
-                    self.assertNotEqual(getattr(sdf_obj.inertial.inertia, i).value, 0)
-            except AssertionError as error:
+                    self.assertNotEqual(
+                        getattr(
+                            sdf_obj.inertial.inertia,
+                            i).value,
+                        0)
+            except AssertionError:
                 pass
             else:
-                self.fail('No assertion error raised while setting {} for inertia'.format(v))
-                
+                self.fail(
+                    'No assertion error raised while setting'
+                    ' {} for inertia'.format(v))
+
         self.assertTrue(sdf_obj.is_valid(), 'Link should be valid')
 
         sdf_obj.inertial.inertia = VALID_INERTIA_VALUES[0]
@@ -1778,13 +1851,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid max_contacts object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'max_contacts',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 20,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'MaxContacts should have no attributes')
+                         'MaxContacts should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'MaxContacts should have no children')
+                         'MaxContacts should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 1
@@ -1799,20 +1872,20 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid max_contacts, is_valid should be true')
+                        'For valid max_contacts, is_valid should be true')
 
         sdf_obj.value = 1
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'max_contacts',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<max_contacts>0</max_contacts>',
@@ -1824,17 +1897,17 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid collision object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'collision',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Value should be None')
+                          'Value should be None')
         self.assertEqual(len(sdf_obj.attributes), 1,
-            'Collision should have no attributes')
+                         'Collision should have no attributes')
         self.assertIn('name', sdf_obj.attributes,
-            'Collision must have an attribute <name>')
+                      'Collision must have an attribute <name>')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Collision should have one child element')
+                         'Collision should have one child element')
         self.assertTrue(sdf_obj.is_valid(),
-            'Collision object should initially be valid')
+                        'Collision object should initially be valid')
 
         # Test geometry
         valid_test_set = dict(
@@ -1851,7 +1924,11 @@ class TestSDFParser(unittest.TestCase):
             setattr(sdf_obj.geometry, test, valid_test_set[test])
             elem = getattr(sdf_obj.geometry, test)
             for tag in valid_test_set[test]:
-                self.assertFalse(isinstance(getattr(elem, tag), float), '{} {}'.format(tag, test))
+                self.assertFalse(
+                    isinstance(
+                        getattr(
+                            elem, tag), float), '{} {}'.format(
+                        tag, test))
                 if getattr(elem, tag).has_value():
                     self.assertEqual(
                         getattr(elem, tag).value,
@@ -1860,16 +1937,16 @@ class TestSDFParser(unittest.TestCase):
                         ' was not set'.format(tag, test))
 
             self.assertTrue(sdf_obj.is_valid(),
-                'Collision should still be valid')
+                            'Collision should still be valid')
 
             sdf_obj.geometry.reset()
 
         # Test max contacts
         self.assertIsNone(sdf_obj.max_contacts,
-            'Max. contacts should be optional')
+                          'Max. contacts should be optional')
         sdf_obj.max_contacts = 1
         self.assertEqual(sdf_obj.max_contacts.value, 1,
-            'Max. contacts should be one')
+                         'Max. contacts should be one')
         invalid_max_contact_values = [None, False, dict(), list(), [1, 2], -1]
         for value in invalid_max_contact_values:
             with self.assertRaises(AssertionError):
@@ -1879,10 +1956,10 @@ class TestSDFParser(unittest.TestCase):
 
         # Test set pose
         self.assertIsNone(sdf_obj.pose,
-            'Pose should be optional')
+                          'Pose should be optional')
         sdf_obj.pose = [1 for _ in range(6)]
         self.assertEqual(sdf_obj.pose.value, [1 for _ in range(6)],
-            'Pose was not set')
+                         'Pose was not set')
 
         for v in INVALID_POSE_VALUES:
             with self.assertRaises(AssertionError):
@@ -1896,47 +1973,47 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid scale object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'script',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value, it should be none')
+                          'Invalid initial value, it should be none')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Script should have no attributes')
+                         'Script should have no attributes')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Script should have one child element')
+                         'Script should have one child element')
         self.assertFalse(sdf_obj.is_valid(),
-            'Script object should initially be invalid')
+                         'Script object should initially be invalid')
 
         sdf_obj.name = 'test'
         self.assertEqual(sdf_obj.name.value, 'test',
-            'Script name was not set')
+                         'Script name was not set')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Script should have one child element')
+                         'Script should have one child element')
 
         self.assertFalse(sdf_obj.is_valid(),
-            'Script object should initially be invalid')
+                         'Script object should initially be invalid')
         sdf_obj.reset()
         self.assertEqual(sdf_obj.name.value, 'default', 'Name is invalid')
 
         sdf_obj.name = 'test'
         sdf_obj.add_uri('uri_test_0')
         self.assertEqual(len(sdf_obj.children), 2,
-            'Script should have two children element')
+                         'Script should have two children element')
         self.assertEqual(sdf_obj.uris[0].value, 'uri_test_0',
-            'URI was not set')
+                         'URI was not set')
         self.assertEqual(len(sdf_obj.uris), 1,
-            'Wrong number of URIs')
+                         'Wrong number of URIs')
         self.assertTrue(sdf_obj.is_valid(),
-            'Script should be valid')
+                        'Script should be valid')
 
         sdf_obj.add_uri('uri_test_1')
         self.assertEqual(len(sdf_obj.children), 2,
-            'Script should have two children element')
+                         'Script should have two children element')
         self.assertEqual(sdf_obj.uris[1].value, 'uri_test_1',
-            'URI was not set')
+                         'URI was not set')
         self.assertEqual(len(sdf_obj.uris), 2,
-            'Wrong number of URIs')
+                         'Wrong number of URIs')
         self.assertTrue(sdf_obj.is_valid(),
-            'Script should be valid')
+                        'Script should be valid')
         sdf_obj.reset()
 
     def test_normal_map(self):
@@ -1945,18 +2022,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid name object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'normal_map',
-            'Invalid SDF block normal map')
+                         'Invalid SDF block normal map')
         self.assertEqual(sdf_obj.value, '',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Normal map should have no attributes')
+                         'Normal map should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Normal map should have no children')
+                         'Normal map should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 'none'
         self.assertEqual(sdf_obj.value, 'none',
-            'Normal map was not set')
+                         'Normal map was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, False, -1]
@@ -1967,27 +2044,27 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, '',
-            'For valid name, is_valid should be an empty string')
+                         'For valid name, is_valid should be an empty string')
 
         output_str = ''
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 'test'
         output_str = 'test'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         sdf_obj.value = 'test'
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'normal_map',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, 'test',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<name>test</name>',
@@ -1999,15 +2076,15 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid scale object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'shader',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value, it should be none')
+                          'Invalid initial value, it should be none')
         self.assertEqual(len(sdf_obj.attributes), 1,
-            'Shader should have no attributes')
+                         'Shader should have no attributes')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Shader should have one child element')
+                         'Shader should have one child element')
         self.assertTrue(sdf_obj.is_valid(),
-            'Shader object should initially be valid')
+                        'Shader object should initially be valid')
 
         invalid_values = [None, 'a', '2', -1, [0], [0, 0, 0, 0], 'test']
         for value in invalid_values:
@@ -2015,7 +2092,7 @@ class TestSDFParser(unittest.TestCase):
                 sdf_obj.type = 'value'
 
         self.assertTrue(sdf_obj.is_valid(),
-            'Shader should be valid')
+                        'Shader should be valid')
 
         valid_shader_types = [
             'vertex',
@@ -2026,28 +2103,28 @@ class TestSDFParser(unittest.TestCase):
         for value in valid_shader_types:
             sdf_obj.type = value
             self.assertEqual(sdf_obj.type, value,
-                'Type {} was not set'.format(value))
+                             'Type {} was not set'.format(value))
 
         self.assertTrue(sdf_obj.is_valid(),
-            'Shader should be valid')
+                        'Shader should be valid')
 
         sdf_obj.normal_map = 'test'
         self.assertEqual(sdf_obj.normal_map.value, 'test',
-            'Normal map was not set')
+                         'Normal map was not set')
 
         sdf_obj.reset()
         sdf_obj.type = 'vertex'
         self.assertEqual(sdf_obj.type, 'vertex',
-            'Type was not set')
+                         'Type was not set')
         sdf_obj.normal_map = 'test'
         self.assertEqual(sdf_obj.normal_map.value, 'test',
-            'Normal map was not set')
+                         'Normal map was not set')
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'shader',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.attrib, dict(type='vertex'),
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
     def test_specular(self):
         sdf_obj = create_sdf_element('specular')
@@ -2055,13 +2132,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid specular object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'specular',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, [0.1, 0.1, 0.1, 1],
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Specular should have no attributes')
+                         'Specular should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Specular should have no children')
+                         'Specular should have no children')
 
         # Test setting valid numbers to the pose object
         valid_values = [
@@ -2071,7 +2148,7 @@ class TestSDFParser(unittest.TestCase):
         for v in valid_values:
             sdf_obj.value = v
             self.assertEqual(sdf_obj.value, v,
-                'Specular vector was not set')
+                             'Specular vector was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, 'a', '2', -1, [2, 1, 1, 1]]
@@ -2091,27 +2168,29 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid pose vector, is_valid should be True')
+                        'For valid pose vector, is_valid should be True')
 
         sdf_obj.reset()
         output_str = '0 0 0 0'
-        self.assertEqual(sdf_obj.get_formatted_value_as_str(),
+        self.assertEqual(
+            sdf_obj.get_formatted_value_as_str(),
             output_str,
-            'Wrong formatted output string ' + sdf_obj.get_formatted_value_as_str())
+            'Wrong formatted output string ' +
+            sdf_obj.get_formatted_value_as_str())
 
         sdf_obj.value = [0.2, 1, 1, 0]
         output_str = '0.2 1 1 0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'specular',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0 0 0 0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<specular>0 0 0 0</specular>',
@@ -2123,31 +2202,36 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid emissive object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'material',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value')
+                          'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Emissive should have no attributes')
+                         'Emissive should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Emissive should have no children')
+                         'Emissive should have no children')
 
         for tag in VALID_MATERIAL_PROPS:
             setattr(sdf_obj, tag, VALID_MATERIAL_PROPS[tag])
             if tag == 'shader':
                 self.assertEqual(sdf_obj.shader.normal_map.value,
-                    VALID_MATERIAL_PROPS[tag]['normal_map'])
-                self.assertEqual(sdf_obj.shader.type,
+                                 VALID_MATERIAL_PROPS[tag]['normal_map'])
+                self.assertEqual(
+                    sdf_obj.shader.type,
                     VALID_MATERIAL_PROPS[tag]['attributes']['type'])
             elif tag == 'script':
                 self.assertEqual(getattr(sdf_obj, tag).name.value,
-                    VALID_MATERIAL_PROPS[tag]['name'])
+                                 VALID_MATERIAL_PROPS[tag]['name'])
                 self.assertEqual(getattr(sdf_obj, tag).uris[0].value,
-                    VALID_MATERIAL_PROPS[tag]['uri'])
+                                 VALID_MATERIAL_PROPS[tag]['uri'])
             else:
-                self.assertEqual(getattr(sdf_obj, tag).value, VALID_MATERIAL_PROPS[tag])
+                self.assertEqual(
+                    getattr(
+                        sdf_obj,
+                        tag).value,
+                    VALID_MATERIAL_PROPS[tag])
 
             self.assertTrue(sdf_obj.is_valid(), 'Material should be valid,'
-                                                 ' setting child='+ tag)
+                            ' setting child=' + tag)
 
     def test_transparency(self):
         sdf_obj = create_sdf_element('transparency')
@@ -2155,13 +2239,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid transparency object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'transparency',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Transparency should have no attributes')
+                         'Transparency should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Transparency should have no children')
+                         'Transparency should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 1
@@ -2176,20 +2260,20 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid transparency, is_valid should be true')
+                        'For valid transparency, is_valid should be true')
 
         sdf_obj.value = 0.2
         output_str = '0.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'transparency',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0.2',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<transparency>0</transparency>',
@@ -2201,24 +2285,40 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid visual object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'visual',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value')
+                          'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 1,
-            'Visual should have one attributes')
+                         'Visual should have one attributes')
         self.assertIn('name', sdf_obj.attributes,
-            'Visual should have an attribute name')
+                      'Visual should have an attribute name')
         self.assertEqual(len(sdf_obj.children), 1,
-            'Visual should have one child element initially')
+                         'Visual should have one child element initially')
 
         for tag in VALID_VISUAL_PROPS:
             setattr(sdf_obj, tag, VALID_VISUAL_PROPS[tag])
             if tag in sdf_obj.attributes:
-                self.assertEqual(getattr(sdf_obj, tag), VALID_VISUAL_PROPS[tag],
-                    '{} was not set, value={}'.format(tag, getattr(sdf_obj, tag)))
+                self.assertEqual(
+                    getattr(
+                        sdf_obj,
+                        tag),
+                    VALID_VISUAL_PROPS[tag],
+                    '{} was not set, value={}'.format(
+                        tag,
+                        getattr(
+                            sdf_obj,
+                            tag)))
             else:
-                self.assertEqual(getattr(sdf_obj, tag).value, VALID_VISUAL_PROPS[tag],
-                    '{} was not set, value={}'.format(tag, getattr(sdf_obj, tag).value))
+                self.assertEqual(
+                    getattr(
+                        sdf_obj,
+                        tag).value,
+                    VALID_VISUAL_PROPS[tag],
+                    '{} was not set, value={}'.format(
+                        tag,
+                        getattr(
+                            sdf_obj,
+                            tag).value))
         self.assertTrue(sdf_obj, 'Visual should be valid')
 
         sdf_obj.material = VALID_MATERIAL_PROPS
@@ -2238,7 +2338,11 @@ class TestSDFParser(unittest.TestCase):
             setattr(sdf_obj.geometry, test, valid_test_set[test])
             elem = getattr(sdf_obj.geometry, test)
             for tag in valid_test_set[test]:
-                self.assertFalse(isinstance(getattr(elem, tag), float), '{} {}'.format(tag, test))
+                self.assertFalse(
+                    isinstance(
+                        getattr(
+                            elem, tag), float), '{} {}'.format(
+                        tag, test))
                 if getattr(elem, tag).has_value():
                     self.assertEqual(
                         getattr(elem, tag).value,
@@ -2247,7 +2351,7 @@ class TestSDFParser(unittest.TestCase):
                         ' was not set'.format(tag, test))
 
             self.assertTrue(sdf_obj.is_valid(),
-                'Visual should be valid')
+                            'Visual should be valid')
 
             sdf_obj.geometry.reset()
 
@@ -2257,13 +2361,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid visual object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'include',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value')
+                          'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Include should have no attributes')
+                         'Include should have no attributes')
         self.assertIn('uri', sdf_obj.children,
-            'Visual should have an URI item')
+                      'Visual should have an URI item')
 
         self.assertEqual(sdf_obj.uri.value, '', 'Invalid initial value')
         sdf_obj.uri = 'test'
@@ -2277,7 +2381,9 @@ class TestSDFParser(unittest.TestCase):
                 sdf_obj.pose = v
 
         sdf_obj.pose = [1 for _ in range(6)]
-        self.assertEqual(sdf_obj.pose.value, [1 for _ in range(6)], 'Invalid pose')
+        self.assertEqual(
+            sdf_obj.pose.value, [
+                1 for _ in range(6)], 'Invalid pose')
         self.assertTrue(sdf_obj.is_valid())
 
         for v in INVALID_MASSES:
@@ -2304,13 +2410,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid max_step_size object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'max_step_size',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0.001,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Max. step size should have no attributes')
+                         'Max. step size should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Max. step size should have no children')
+                         'Max. step size should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
@@ -2325,26 +2431,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid max_step_size, is_valid should be True')
+                        'For valid max_step_size, is_valid should be True')
 
         output_str = '0.001'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'max_step_size',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0.001',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<max_step_size>0</max_step_size>',
@@ -2356,18 +2462,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid real_time_factor object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'real_time_factor',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 1,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Real time factor should have no attributes')
+                         'Real time factor should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Real time factor should have no children')
+                         'Real time factor should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
         self.assertEqual(sdf_obj.value, 4,
-            'Real time factor was not set')
+                         'Real time factor was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, 'a', '2', [5]]
@@ -2378,26 +2484,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid real_time_factor, is_valid should be True')
+                        'For valid real_time_factor, is_valid should be True')
 
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'real_time_factor',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<real_time_factor>0</real_time_factor>',
@@ -2409,18 +2515,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid real_time_update_rate object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'real_time_update_rate',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 1,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Real time update rate should have no attributes')
+                         'Real time update rate should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Real time update rate should have no children')
+                         'Real time update rate should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
         self.assertEqual(sdf_obj.value, 4,
-            'Real time update rate was not set')
+                         'Real time update rate was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, 'a', '2', [5]]
@@ -2430,31 +2536,34 @@ class TestSDFParser(unittest.TestCase):
 
         # Test reset function
         sdf_obj.reset()
-        self.assertTrue(sdf_obj.is_valid(),
+        self.assertTrue(
+            sdf_obj.is_valid(),
             'For valid real_time_update_rate, is_valid should be True')
 
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'real_time_update_rate',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, '<real_time_update_rate>0</real_time_update_rate>',
-        #     'Invalid XML dump string, value=' + str(xml_str))
+        xml_str = sdf_obj.to_xml_as_str()
+        self.assertEqual(
+            xml_str,
+            '<real_time_update_rate>1</real_time_update_rate>',
+            'Invalid XML dump string, value=' + str(xml_str))
 
     def test_min_step_size(self):
         sdf_obj = create_sdf_element('min_step_size')
@@ -2462,13 +2571,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid min_step_size object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'min_step_size',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0.0001,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Min. step size should have no attributes')
+                         'Min. step size should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Min. step size should have no children')
+                         'Min. step size should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
@@ -2483,26 +2592,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid min_step_size, is_valid should be True')
+                        'For valid min_step_size, is_valid should be True')
 
         output_str = '0.0001'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1.2
         output_str = '1.2'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'min_step_size',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0.0001',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<min_step_size>0</min_step_size>',
@@ -2514,21 +2623,21 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid physics object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'physics',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Value should be None')
+                          'Value should be None')
         self.assertEqual(len(sdf_obj.attributes), 3,
-            'Physics should have three attributes')
+                         'Physics should have three attributes')
         self.assertIn('name', sdf_obj.attributes,
-            'Physics must have an attribute <name>')
+                      'Physics must have an attribute <name>')
         self.assertIn('default', sdf_obj.attributes,
-            'Physics must have an attribute <default>')
+                      'Physics must have an attribute <default>')
         self.assertIn('type', sdf_obj.attributes,
-            'Physics must have an attribute <type>')
+                      'Physics must have an attribute <type>')
         self.assertEqual(len(sdf_obj.children), 4,
-            'Physics should have 4 child elements')
+                         'Physics should have 4 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Physics object should initially be valid')
+                        'Physics object should initially be valid')
 
         invalid_values = [None, 'a', '2', [5]]
         for v in invalid_values:
@@ -2611,13 +2720,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid split_impulse object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'split_impulse',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, True,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Split impulse should have no attributes')
+                         'Split impulse should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Split impulse should have no children')
+                         'Split impulse should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = False
@@ -2632,26 +2741,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, True,
-            'For valid split_impulse, is_valid should be False')
+                         'For valid split_impulse, is_valid should be False')
 
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = True
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'split_impulse',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<split_impulse>0</split_impulse>',
@@ -2660,17 +2769,25 @@ class TestSDFParser(unittest.TestCase):
     def test_split_impulse_penetration_threshold(self):
         sdf_obj = create_sdf_element('split_impulse_penetration_threshold')
 
-        self.assertIsNotNone(sdf_obj,
-            'Invalid split_impulse_penetration_threshold object')
+        self.assertIsNotNone(
+            sdf_obj, 'Invalid split_impulse_penetration_threshold object')
         # Check default values
-        self.assertEqual(sdf_obj.xml_element_name, 'split_impulse_penetration_threshold',
+        self.assertEqual(
+            sdf_obj.xml_element_name,
+            'split_impulse_penetration_threshold',
             'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, -0.01,
-            'Invalid initial value')
-        self.assertEqual(len(sdf_obj.attributes), 0,
-            'Split impulse penetration threshold should have no attributes')
-        self.assertEqual(len(sdf_obj.children), 0,
-            'Split impulse penetration threshold should have no children')
+                         'Invalid initial value')
+        self.assertEqual(
+            len(sdf_obj.attributes),
+            0,
+            'Split impulse penetration threshold '
+            'should have no attributes')
+        self.assertEqual(
+            len(sdf_obj.children),
+            0,
+            'Split impulse penetration threshold '
+            'should have no children')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, 'a', '2', dict]
@@ -2680,31 +2797,39 @@ class TestSDFParser(unittest.TestCase):
 
         # Test reset function
         sdf_obj.reset()
-        self.assertEqual(sdf_obj.value, -0.01,
-            'For valid split_impulse_penetration_threshold, is_valid should be False')
+        self.assertEqual(
+            sdf_obj.value,
+            -0.01,
+            'For valid split_impulse_penetration_threshold,'
+            ' is_valid should be False')
 
         output_str = '-0.01'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1
         output_str = '1.0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
-        self.assertEqual(xml_element.tag, 'split_impulse_penetration_threshold',
+        self.assertEqual(
+            xml_element.tag,
+            'split_impulse_penetration_threshold',
             'Invalid XML element tag')
         self.assertEqual(xml_element.text, '-0.01',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, '<split_impulse_penetration_threshold>0</split_impulse_penetration_threshold>',
-        #     'Invalid XML dump string, value=' + str(xml_str))
+        xml_str = sdf_obj.to_xml_as_str()
+        self.assertEqual(
+            xml_str,
+            '<split_impulse_penetration_threshold>-0.01'
+            '</split_impulse_penetration_threshold>',
+            'Invalid XML dump string, value=' + str(xml_str))
 
     def test_constraints(self):
         sdf_obj = create_sdf_element('constraints')
@@ -2712,13 +2837,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid constraints object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'constraints',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Value should be None')
+                          'Value should be None')
         self.assertEqual(len(sdf_obj.children), 4,
-            'Constraints should have 4 child elements')
+                         'Constraints should have 4 child elements')
         self.assertTrue(sdf_obj.is_valid(),
-            'Constraints object should initially be valid')
+                        'Constraints object should initially be valid')
 
         with self.assertRaises(AssertionError):
             sdf_obj.reset('test')
@@ -2774,7 +2899,8 @@ class TestSDFParser(unittest.TestCase):
         sdf_obj.split_impulse = False
         self.assertEqual(sdf_obj.split_impulse.value, False)
         sdf_obj.split_impulse_penetration_threshold = 0.1
-        self.assertEqual(sdf_obj.split_impulse_penetration_threshold.value, 0.1)
+        self.assertEqual(
+            sdf_obj.split_impulse_penetration_threshold.value, 0.1)
 
     def test_type(self):
         sdf_obj = create_sdf_element('type')
@@ -2782,18 +2908,18 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid type object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'type',
-            'Invalid SDF block type')
+                         'Invalid SDF block type')
         self.assertEqual(sdf_obj.value, '',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Type should have no attributes')
+                         'Type should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Type should have no children')
+                         'Type should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 'none'
         self.assertEqual(sdf_obj.value, 'none',
-            'Type was not set')
+                         'Type was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, False, -1]
@@ -2804,27 +2930,27 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertEqual(sdf_obj.value, '',
-            'For valid type, is_valid should be an empty string')
+                         'For valid type, is_valid should be an empty string')
 
         output_str = ''
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 'test'
         output_str = 'test'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         sdf_obj.value = 'test'
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'type',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, 'test',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<type>test</type>',
@@ -2836,13 +2962,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid iters object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'iters',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 50,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Iters should have no attributes')
+                         'Iters should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Iters should have no children')
+                         'Iters should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
@@ -2857,26 +2983,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid iters, is_valid should be True')
+                        'For valid iters, is_valid should be True')
 
         output_str = '50'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'iters',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '50',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<iters>0</iters>',
@@ -2888,13 +3014,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid sor object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'sor',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 1.3,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Sor should have no attributes')
+                         'Sor should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Sor should have no children')
+                         'Sor should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
@@ -2909,26 +3035,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid sor, is_valid should be True')
+                        'For valid sor, is_valid should be True')
 
         output_str = '1.3'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1
         output_str = '1.0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'sor',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '1.3',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<sor>0</sor>',
@@ -2940,13 +3066,13 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid precon_iters object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'precon_iters',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, 0,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'PreConIters should have no attributes')
+                         'PreConIters should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'PreConIters should have no children')
+                         'PreConIters should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = 4
@@ -2961,26 +3087,26 @@ class TestSDFParser(unittest.TestCase):
         # Test reset function
         sdf_obj.reset()
         self.assertTrue(sdf_obj.is_valid(),
-            'For valid precon_iters, is_valid should be True')
+                        'For valid precon_iters, is_valid should be True')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = 1
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'precon_iters',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
         self.assertEqual(xml_element.text, '0',
-            'Invalid XML element tag')
+                         'Invalid XML element tag')
 
         # xml_str = sdf_obj.to_xml_as_str()
         # self.assertEqual(xml_str, '<precon_iters>0</precon_iters>',
@@ -2989,21 +3115,22 @@ class TestSDFParser(unittest.TestCase):
     def test_use_dynamic_moi_rescaling(self):
         sdf_obj = create_sdf_element('use_dynamic_moi_rescaling')
 
-        self.assertIsNotNone(sdf_obj, 'Invalid use_dynamic_moi_rescaling object')
+        self.assertIsNotNone(
+            sdf_obj, 'Invalid use_dynamic_moi_rescaling object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'use_dynamic_moi_rescaling',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertEqual(sdf_obj.value, False,
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'UseDynamicMOIRescaling should have no attributes')
+                         'UseDynamicMOIRescaling should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'UseDynamicMOIRescaling should have no children')
+                         'UseDynamicMOIRescaling should have no children')
 
         # Test setting valid numbers to the pose object
         sdf_obj.value = True
         self.assertTrue(sdf_obj.value,
-            'UseDynamicMOIRescaling was not set')
+                        'UseDynamicMOIRescaling was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, 'a', '2', -1]
@@ -3013,31 +3140,37 @@ class TestSDFParser(unittest.TestCase):
 
         # Test reset function
         sdf_obj.reset()
-        self.assertEqual(sdf_obj.value, False,
+        self.assertEqual(
+            sdf_obj.value,
+            False,
             'For valid use_dynamic_moi_rescaling, is_valid should be False')
 
         output_str = '0'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.value = True
         output_str = '1'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
-            output_str,
-            'Wrong formatted output string')
+                         output_str,
+                         'Wrong formatted output string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
         self.assertEqual(xml_element.tag, 'use_dynamic_moi_rescaling',
-            'Invalid XML element tag')
-        self.assertEqual(xml_element.text, '0',
+                         'Invalid XML element tag')
+        self.assertEqual(
+            xml_element.text,
+            '0',
             'Invalid XML element tag')
 
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, '<use_dynamic_moi_rescaling>0</use_dynamic_moi_rescaling>',
-        #     'Invalid XML dump string, value=' + str(xml_str))
+        xml_str = sdf_obj.to_xml_as_str()
+        self.assertEqual(
+            xml_str,
+            '<use_dynamic_moi_rescaling>0</use_dynamic_moi_rescaling>',
+            'Invalid XML dump string, value=' + str(xml_str))
 
     def test_friction_model(self):
         sdf_obj = create_sdf_element('friction_model')
@@ -3045,19 +3178,19 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid friction_model object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'friction_model',
-            'Invalid SDF block friction_model')
+                         'Invalid SDF block friction_model')
         self.assertEqual(sdf_obj.value, 'pyramid_model',
-            'Invalid initial value')
+                         'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Friction model should have no attributes')
+                         'Friction model should have no attributes')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Friction model should have no children')
+                         'Friction model should have no children')
 
         # Test setting valid numbers to the pose object
         for model_name in VALID_ODE_FRICTION_MODEL_OPTIONS:
             sdf_obj.value = model_name
             self.assertEqual(sdf_obj.value, model_name,
-                'Friction model was not set')
+                             'Friction model was not set')
 
         # Test setting invalid inputs to pose object
         invalid_values = [None, False, -1, 'none']
@@ -3067,20 +3200,28 @@ class TestSDFParser(unittest.TestCase):
 
         # Test reset function
         sdf_obj.reset()
-        self.assertEqual(sdf_obj.value, 'pyramid_model',
+        self.assertEqual(
+            sdf_obj.value,
+            'pyramid_model',
             'For valid friction_model, is_valid should be an empty string')
 
         sdf_obj.reset()
         # Test generation of XML block
         xml_element = sdf_obj.to_xml()
-        self.assertEqual(xml_element.tag, 'friction_model',
+        self.assertEqual(
+            xml_element.tag,
+            'friction_model',
             'Invalid XML element tag')
-        self.assertEqual(xml_element.text, 'pyramid_model',
+        self.assertEqual(
+            xml_element.text,
+            'pyramid_model',
             'Invalid XML element tag')
 
-        # xml_str = sdf_obj.to_xml_as_str()
-        # self.assertEqual(xml_str, '<friction_model>pyramid_model</friction_model>',
-        #     'Invalid XML dump string, value=' + str(xml_str))
+        xml_str = sdf_obj.to_xml_as_str()
+        self.assertEqual(
+            xml_str,
+            '<friction_model>pyramid_model</friction_model>',
+            'Invalid XML dump string, value=' + str(xml_str))
 
     def test_solver(self):
         sdf_obj = create_sdf_element('solver')
@@ -3088,19 +3229,26 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid solver object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'solver',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value')
+                          'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
-            'Solver should have no attributes')
+                         'Solver should have no attributes')
         self.assertEqual(len(sdf_obj.children), 7,
-            'Solver should have 7 children for ode solver')
+                         'Solver should have 7 children for ode solver')
         self.assertTrue(sdf_obj.is_valid(), 'Solver should be valid')
 
         for tag in DEFAULT_ODE_SOLVER:
-            self.assertEqual(getattr(sdf_obj, tag).value,
+            self.assertEqual(
+                getattr(
+                    sdf_obj,
+                    tag).value,
                 DEFAULT_ODE_SOLVER[tag],
-                '{} was not set, value={}'.format(tag, getattr(sdf_obj, tag)))
+                '{} was not set, value={}'.format(
+                    tag,
+                    getattr(
+                        sdf_obj,
+                        tag)))
 
         for value in VALID_ODE_FRICTION_MODEL_OPTIONS:
             sdf_obj.friction_model = value
@@ -3111,12 +3259,20 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid(), 'Solver should be valid')
 
         self.assertEqual(len(sdf_obj.children), 4,
-            'Solver should have 4 children for bullet solver')
+                         'Solver should have 4 children for bullet solver')
 
         for tag in DEFAULT_BULLET_SOLVER:
-            self.assertEqual(getattr(sdf_obj, tag).value,
+            self.assertEqual(
+                getattr(
+                    sdf_obj,
+                    tag).value,
                 DEFAULT_BULLET_SOLVER[tag],
-                '{} was not set, value={}, expected={}'.format(tag, getattr(sdf_obj, tag), DEFAULT_BULLET_SOLVER[tag]))
+                '{} was not set, value={}, expected={}'.format(
+                    tag,
+                    getattr(
+                        sdf_obj,
+                        tag),
+                    DEFAULT_BULLET_SOLVER[tag]))
         self.assertTrue(sdf_obj.is_valid(), 'Solver should be valid')
 
         with self.assertRaises(AssertionError):
@@ -3134,15 +3290,15 @@ class TestSDFParser(unittest.TestCase):
         self.assertIsNotNone(sdf_obj, 'Invalid model object')
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'model',
-            'Invalid SDF block name')
+                         'Invalid SDF block name')
         self.assertIsNone(sdf_obj.value,
-            'Invalid initial value')
+                          'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 1,
-            'Model should have no attributes')
+                         'Model should have no attributes')
         self.assertIn('name', sdf_obj.attributes,
-            'Model should have an attribute name')
+                      'Model should have an attribute name')
         self.assertEqual(len(sdf_obj.children), 0,
-            'Model should have no children')
+                         'Model should have no children')
         self.assertTrue(sdf_obj.is_valid(), 'Model should be valid')
 
         # Create a box model
@@ -3160,77 +3316,77 @@ class TestSDFParser(unittest.TestCase):
         link.visuals[0].box = box
 
         self.assertIsNone(sdf_obj.static,
-            'Static option should not be available')
+                          'Static option should not be available')
         sdf_obj.static = False
         self.assertFalse(sdf_obj.static.value, 'Static should be set as false')
 
         self.assertIsNone(sdf_obj.allow_auto_disable,
-            'Allow auto disable option should not be available')
+                          'Allow auto disable option should not be available')
         sdf_obj.allow_auto_disable = False
         self.assertFalse(sdf_obj.allow_auto_disable.value,
-            'Allow auto disable flag should be set as false')
+                         'Allow auto disable flag should be set as false')
 
         self.assertIsNone(sdf_obj.self_collide,
-            'Self collide option should not be available')
+                          'Self collide option should not be available')
         sdf_obj.self_collide = False
         self.assertFalse(sdf_obj.self_collide.value,
-            'Self collide flag should be set as false')
+                         'Self collide flag should be set as false')
 
         self.assertIsNone(sdf_obj.pose,
-            'Pose option should not be available')
+                          'Pose option should not be available')
         sdf_obj.pose = [1 for _ in range(6)]
         self.assertEqual(sdf_obj.pose.value, [1 for _ in range(6)],
-            'Pose was not set')
+                         'Pose was not set')
 
         self.assertIsNone(sdf_obj.links,
-            'There should be no links')
+                          'There should be no links')
         self.assertIsNone(sdf_obj.includes,
-            'There should be no included blocks')
+                          'There should be no included blocks')
 
         sdf_obj.add_link(name='box', link=link)
 
         self.assertEqual(len(sdf_obj.links), 1,
-            'There should be one link')
+                         'There should be one link')
         self.assertEqual(sdf_obj.links[0].name, 'box',
-            'Link should be named box')
+                         'Link should be named box')
 
         sdf_obj.urdf = create_sdf_element('urdf')
 
         t = create_urdf_element('transmission')
-        
+
         sdf_obj.urdf.add_transmission('t1', t)
-        self.assertEqual(len(sdf_obj.urdf.transmissions), 1, 
-            'Number of transmission must be 1')
+        self.assertEqual(len(sdf_obj.urdf.transmissions), 1,
+                         'Number of transmission must be 1')
         sdf_obj.urdf.add_transmission('t1', t)
-        self.assertEqual(len(sdf_obj.urdf.transmissions), 1, 
-            'Number of transmission must still be 1')
-        
+        self.assertEqual(len(sdf_obj.urdf.transmissions), 1,
+                         'Number of transmission must still be 1')
+
         t1 = sdf_obj.urdf.get_transmission_by_name('t1')
         self.assertIsNotNone(t1, 'No transmission t1 found')
 
         sdf_obj.urdf.add_transmission('t2', t)
-        self.assertEqual(len(sdf_obj.urdf.transmissions), 2, 
-            'Number of transmission must be 2')
-        
+        self.assertEqual(len(sdf_obj.urdf.transmissions), 2,
+                         'Number of transmission must be 2')
+
         t2 = sdf_obj.urdf.get_transmission_by_name('t2')
         self.assertIsNotNone(t2, 'No transmission t2 found')
-        
+
         sdf_obj.urdf.add_link('link1')
-        self.assertEqual(len(sdf_obj.urdf.links), 1, \
-            'Number of URDF links must be 1')
+        self.assertEqual(len(sdf_obj.urdf.links), 1,
+                         'Number of URDF links must be 1')
         sdf_obj.urdf.add_link('link1')
-        self.assertEqual(len(sdf_obj.urdf.links), 1, \
-            'Number of URDF links must still be 1')
+        self.assertEqual(len(sdf_obj.urdf.links), 1,
+                         'Number of URDF links must still be 1')
 
         l1 = sdf_obj.urdf.get_link_by_name('link1')
         self.assertIsNotNone(l1, 'No link link1 found')
 
         sdf_obj.urdf.add_link('link2')
-        self.assertEqual(len(sdf_obj.urdf.links), 2, \
-            'Number of URDF links must be 2')
-        
+        self.assertEqual(len(sdf_obj.urdf.links), 2,
+                         'Number of URDF links must be 2')
+
         l2 = sdf_obj.urdf.get_link_by_name('link2')
-        self.assertIsNotNone(l1, 'No link link2 found')
+        self.assertIsNotNone(l2, 'No link link2 found')
 
 
 if __name__ == '__main__':

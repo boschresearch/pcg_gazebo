@@ -41,7 +41,7 @@ class Texture(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('shader')
         obj.normal_map = self.filename
         obj.type = 'pixel'

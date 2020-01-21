@@ -24,13 +24,15 @@ from .cast_shadows import CastShadows
 class Visual(XMLBase):
     _NAME = 'visual'
     _TYPE = 'sdf'
-    
+
     _CHILDREN_CREATORS = dict(
         geometry=dict(creator=Geometry),
         pose=dict(creator=Pose, n_elems=1, optional=True),
         material=dict(creator=Material, n_elems=1, optional=True),
-        transparency=dict(creator=Transparency, default=[False], n_elems=1, optional=True),
-        cast_shadows=dict(creator=CastShadows, default=[True], n_elems=1, optional=True)
+        transparency=dict(
+            creator=Transparency, default=[False], n_elems=1, optional=True),
+        cast_shadows=dict(
+            creator=CastShadows, default=[True], n_elems=1, optional=True)
     )
 
     _ATTRIBUTES = dict(

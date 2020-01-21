@@ -60,8 +60,10 @@ class Simbody(Physics):
         self._properties['static_friction'] = static_friction
         self._properties['dynamic_friction'] = dynamic_friction
         self._properties['viscous_friction'] = viscous_friction
-        self._properties['override_impact_capture_velocity'] = override_impact_capture_velocity
-        self._properties['override_stiction_transition_velocity'] = override_stiction_transition_velocity
+        self._properties['override_impact_capture_velocity'] = \
+            override_impact_capture_velocity
+        self._properties['override_stiction_transition_velocity'] = \
+            override_stiction_transition_velocity
 
         self._description['min_step_size'] = '(Currently not used in ' \
             'simbody) The time duration which advances with each iteration' \
@@ -218,24 +220,41 @@ class Simbody(Physics):
         # Set all global physics parameters
         physics.name = self._properties['name']
         physics.type = self._properties['engine']
-        physics.max_step_size = self._properties['max_step_size']
-        physics.real_time_factor = self._properties['real_time_factor']
-        physics.real_time_update_rate = self._properties['real_time_update_rate']
+        physics.max_step_size = \
+            self._properties['max_step_size']
+        physics.real_time_factor = \
+            self._properties['real_time_factor']
+        physics.real_time_update_rate = \
+            self._properties['real_time_update_rate']
         physics.max_contacts = self._properties['max_contacts']
         # Set Bullet solver parameters
         physics.simbody.min_step_size = self._properties['min_step_size']
         physics.simbody.accuracy = self._properties['accuracy']
-        physics.simbody.max_transient_velocity = self._properties['max_transient_velocity']
+        physics.simbody.max_transient_velocity = \
+            self._properties['max_transient_velocity']
         # Set Bullet constraint parameters
-        physics.simbody.contact.stiffness = self._properties['stiffness']
-        physics.simbody.contact.dissipation = self._properties['dissipation']
-        physics.simbody.contact.plastic_coef_restitution = self._properties['plastic_coef_restitution']
-        physics.simbody.contact.plastic_impact_velocity = self._properties['plastic_impact_velocity']
-        physics.simbody.contact.static_friction = self._properties['static_friction']
-        physics.simbody.contact.dynamic_friction = self._properties['dynamic_friction']
-        physics.simbody.contact.viscous_friction = self._properties['viscous_friction']
-        physics.simbody.contact.override_impact_capture_velocity = self._properties['override_impact_capture_velocity']
-        physics.simbody.contact.override_stiction_transition_velocity = self._properties['override_stiction_transition_velocity']
+        physics.simbody.contact.stiffness = \
+            self._properties['stiffness']
+        physics.simbody.contact.dissipation = \
+            self._properties['dissipation']
+        physics.simbody.contact.plastic_coef_restitution = \
+            self._properties[
+                'plastic_coef_restitution']
+        physics.simbody.contact.plastic_impact_velocity = \
+            self._properties[
+                'plastic_impact_velocity']
+        physics.simbody.contact.static_friction = \
+            self._properties['static_friction']
+        physics.simbody.contact.dynamic_friction = \
+            self._properties['dynamic_friction']
+        physics.simbody.contact.viscous_friction = \
+            self._properties['viscous_friction']
+        physics.simbody.contact.override_impact_capture_velocity = \
+            self._properties[
+                'override_impact_capture_velocity']
+        physics.simbody.contact.override_stiction_transition_velocity = \
+            self._properties[
+                'override_stiction_transition_velocity']
 
         if type == 'physics':
             return physics

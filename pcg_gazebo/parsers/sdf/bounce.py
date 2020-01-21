@@ -22,9 +22,9 @@ class Bounce(XMLBase):
     _NAME = 'bounce'
     _TYPE = 'sdf'
     _CHILDREN_CREATORS = dict(
-        restitution_coefficient=dict(creator=RestitutionCoefficient, default=[0]),
-        threshold=dict(creator=Threshold, default=[100000])
-    )
+        restitution_coefficient=dict(
+            creator=RestitutionCoefficient, default=[0]), threshold=dict(
+            creator=Threshold, default=[100000]))
 
     def __init__(self):
         XMLBase.__init__(self)

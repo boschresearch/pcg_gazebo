@@ -14,14 +14,14 @@
 # limitations under the License.
 
 from ...parsers.sdf import create_sdf_element
+from ...utils import is_scalar
 import collections
 import numpy as np
-from copy import deepcopy
 from .pose import Pose
 
 
 class Inertial(object):
-    def __init__(self, mass=0, ixx=0, iyy=0, izz=0, ixy=0, ixz=0, iyz=0):        
+    def __init__(self, mass=0, ixx=0, iyy=0, izz=0, ixy=0, ixz=0, iyz=0):
         self._mass = mass
         self._pose = Pose()
         self._ixx = ixx
@@ -69,19 +69,21 @@ class Inertial(object):
                 'roll, pitch, yaw) or position and quaternions (x, y, z, ' \
                 'qx, qy, qz, qw)'
             for item in vec:
-                assert isinstance(item, float) or isinstance(item, int), \
-                    'All elements in pose vector must be a float or an integer'        
-            
+                assert is_scalar(item), \
+                    'All elements in pose vector must be a float or an integer'
+
             self._pose = Pose(pos=vec[0:3], rot=vec[3::])
-            
+
     @property
     def ixx(self):
         return self._ixx
 
     @ixx.setter
     def ixx(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
-            'Input value must be a float or an integer, provided={}'.format(type(value))
+        assert is_scalar(value), \
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._ixx = value
 
     @property
@@ -90,9 +92,11 @@ class Inertial(object):
 
     @iyy.setter
     def iyy(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
-            'Input value must be a float or an integer, provided={}'.format(type(value))
-        self._iyy= value
+        assert is_scalar(value), \
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
+        self._iyy = value
 
     @property
     def izz(self):
@@ -100,8 +104,10 @@ class Inertial(object):
 
     @izz.setter
     def izz(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
-            'Input value must be a float or an integer, provided={}'.format(type(value))
+        assert is_scalar(value), 'Input value' \
+            ' must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._izz = value
 
     @property
@@ -110,8 +116,10 @@ class Inertial(object):
 
     @ixy.setter
     def ixy(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
-            'Input value must be a float or an integer, provided={}'.format(type(value))
+        assert is_scalar(value), \
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._ixy = value
 
     @property
@@ -120,8 +128,12 @@ class Inertial(object):
 
     @ixz.setter
     def ixz(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
-            'Input value must be a float or an integer, provided={}'.format(type(value))
+        assert isinstance(
+            value, float) or isinstance(
+            value, int), \
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._ixz = value
 
     @property
@@ -130,8 +142,12 @@ class Inertial(object):
 
     @iyz.setter
     def iyz(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
-            'Input value must be a float or an integer, provided={}'.format(type(value))
+        assert isinstance(
+            value, float) or isinstance(
+            value, int), \
+            'Input value must be a float' \
+            ' or an integer, provided={}'.format(
+                type(value))
         self._iyz = value
 
     @property
@@ -189,7 +205,11 @@ class Inertial(object):
         return inertia
 
     @staticmethod
-    def create_ellipsoid_inertia(mass, axis_length_x, axis_length_y, axis_length_z):
+    def create_ellipsoid_inertia(
+            mass,
+            axis_length_x,
+            axis_length_y,
+            axis_length_z):
         assert mass > 0
         assert axis_length_x > 0
         assert axis_length_y > 0
@@ -251,7 +271,6 @@ class Inertial(object):
         assert axis[0] == 1 or axis[1] == 1 or axis[2] == 1
         inertia = Inertial()
 
-        fac = 1. / 12
         inertia.mass = mass
         i_axis = 0.5 * mass * radius**2
         i_side = 1. / 12 * mass * (3 * radius**2 + length**2)
@@ -272,7 +291,7 @@ class Inertial(object):
     def to_sdf(self):
         sdf = create_sdf_element('inertial')
         sdf.mass = self._mass
-        sdf.pose = self._pose.to_sdf()        
+        sdf.pose = self._pose.to_sdf()
         sdf.inertia.ixx = self._ixx
         sdf.inertia.iyy = self._iyy
         sdf.inertia.izz = self._izz
@@ -283,7 +302,8 @@ class Inertial(object):
 
     @staticmethod
     def from_sdf(sdf):
-        assert sdf._NAME == 'inertial', 'Input SDF element must be of type inertial'
+        assert sdf._NAME == 'inertial', \
+            'Input SDF element must be of type inertial'
         inertial = Inertial()
         inertial.mass = sdf.mass.value
         inertial._pose = Pose.from_sdf(sdf.pose)

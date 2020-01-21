@@ -88,10 +88,10 @@ class Collision(XMLBase):
         if 'gazebo' not in self.children:
             self.children['gazebo'] = Gazebo('none', dict(surface=None))
         self.children['gazebo']._add_child_element('surface', value)
-    
+
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('collision')
         obj.name = self.name
         obj.pose = self.origin.to_sdf()

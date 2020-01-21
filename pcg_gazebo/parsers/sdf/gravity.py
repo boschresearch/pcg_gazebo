@@ -26,7 +26,7 @@ class Gravity(XMLBase):
 
         if isinstance(default, collections.Iterable):
             default = list(default)
-            assert len(default) == 3            
+            assert len(default) == 3
             assert self._is_numeric_vector(default)
         else:
             default = bool(default)
@@ -44,7 +44,7 @@ class Gravity(XMLBase):
                 for elem in value:
                     assert isinstance(elem, float) or isinstance(elem, int)
             self._value = list(value)
-        
+
     def reset(self):
         self._value = self._default
 

@@ -24,7 +24,7 @@ FIXED_ENGINE = dict(
     models=['test_static_model'],
     poses=[
         [0, 0, 0, 0, 0, 0]
-        ]
+    ]
 )
 
 RANDOM_ENGINE = dict(
@@ -52,31 +52,31 @@ RANDOM_ENGINE = dict(
                         args='cool_workspace'
                     )
                 )
-            ]            
+            ]
         )
     ],
     constraints=[
         dict(
             model='test_box',
             constraint='tangent_to_ground_plane'
-        )        
-    ]      
+        )
+    ]
 )
 
 WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict( 
-      type='area',
-      description=dict(
-        points=[
-            [-6, -4, 0],
-            [-3, -4, 0],
-            [-3, 0, 0],
-            [-6, 0, 0]
-        ]         
-      )
+    geometry=dict(
+        type='area',
+        description=dict(
+          points=[
+              [-6, -4, 0],
+              [-3, -4, 0],
+              [-3, 0, 0],
+              [-6, 0, 0]
+          ]
+        )
     ),
     holes=[
         dict(
@@ -85,8 +85,8 @@ WORKSPACE_CONSTRAINT = dict(
                 center=[-5, 0, 0],
                 radius=0.2
             )
-        ) 
-    ]         
+        )
+    ]
 )
 
 TANGENT_CONSTRAINT = dict(
@@ -98,8 +98,8 @@ TANGENT_CONSTRAINT = dict(
         args=dict(
             origin=[0, 0, 0],
             normal=[0, 0, 1]
-        )            
-    )      
+        )
+    )
 )
 
 BOX_MODEL = box_factory(
@@ -122,8 +122,9 @@ BOX_FLOOR_MODEL = box_factory(
 )[0]
 BOX_FLOOR_MODEL.name = 'box_floor'
 
+
 class TestModelGroupGenerator(unittest.TestCase):
-    def test_add_engines_and_constraints_as_obj(self):       
+    def test_add_engines_and_constraints_as_obj(self):
         # Add individually
         generator = ModelGroupGenerator()
         self.assertTrue(generator.add_constraint(**TANGENT_CONSTRAINT))
@@ -141,7 +142,7 @@ class TestModelGroupGenerator(unittest.TestCase):
         # Run all engines and retrieve model group
         group = generator.run('test')
         self.assertIsNotNone(group)
-        self.assertEqual(group.n_models, 3)        
+        self.assertEqual(group.n_models, 3)
 
     def test_add_engines_and_constraints_as_dict(self):
         # Add as configuration
@@ -171,6 +172,7 @@ class TestModelGroupGenerator(unittest.TestCase):
         group = generator.run('test')
         self.assertIsNotNone(group)
         self.assertEqual(group.n_models, 3)
+
 
 if __name__ == '__main__':
     unittest.main()

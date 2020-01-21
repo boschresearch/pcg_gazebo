@@ -41,7 +41,11 @@ class Shader(XMLBase):
     def type(self, value):
         assert isinstance(value, str)
         assert len(value) > 0
-        assert value in ['vertex', 'pixel', 'normal_map_objectspace', 'normal_map_tangentspace']
+        assert value in [
+            'vertex',
+            'pixel',
+            'normal_map_objectspace',
+            'normal_map_tangentspace']
         self.attributes['type'] = value
 
     @property

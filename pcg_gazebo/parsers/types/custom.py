@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from . import XMLBase
-from lxml.etree import ElementTree, Element, SubElement
+from lxml.etree import Element, SubElement
 
 
 class XMLCustom(XMLBase):
@@ -27,8 +27,10 @@ class XMLCustom(XMLBase):
         self._value = default
 
     def _set_value(self, value):
-        assert isinstance(value, dict), \
-            'Input value must be a dict, type={}, input={}'.format(self._NAME, value)
+        assert isinstance(
+            value, dict), 'Input value must be a dict,' \
+            ' type={}, input={}'.format(
+            self._NAME, value)
         self._value = value
 
     def _get_elem_as_xml(self, xml_elem, value):
@@ -54,7 +56,7 @@ class XMLCustom(XMLBase):
         if not isinstance(self._value, dict):
             print('Value must be a dict')
             return False
-        return True    
+        return True
 
     def get_formatted_value_as_str(self):
         assert self.is_valid(), 'Invalid scalar value'
@@ -88,6 +90,7 @@ class XMLCustom(XMLBase):
     def _replace_value_in_dict(data, old_value, new_value):
         for tag in data:
             if isinstance(data[tag], dict):
-                XMLCustom._replace_value_in_dict(data[tag], old_value, new_value)
+                XMLCustom._replace_value_in_dict(
+                    data[tag], old_value, new_value)
             elif data[tag] == old_value:
-                    data[tag] = new_value
+                data[tag] = new_value

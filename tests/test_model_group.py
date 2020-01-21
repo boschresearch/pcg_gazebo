@@ -42,13 +42,13 @@ class TestModelGroup(unittest.TestCase):
 
         for name in invalid_names:
             with self.assertRaises(AssertionError):
-                group = ModelGroup(name=name)        
+                group = ModelGroup(name=name)
 
     def test_group_init_pose(self):
         # Set initial pose with Pose object
         pose = Pose.random()
         group = ModelGroup(pose=pose)
-        
+
         self.assertEqual(numpy.sum(group.pose.position - pose.position), 0)
         self.assertEqual(numpy.sum(group.pose.quat - pose.quat), 0)
 
@@ -87,7 +87,7 @@ class TestModelGroup(unittest.TestCase):
 
         meshes = group.get_meshes()
         self.assertEqual(len(meshes), 4)
-        
+
         group.reset_models()
         self.assertEqual(group.n_models, 0)
 
@@ -118,7 +118,7 @@ class TestModelGroup(unittest.TestCase):
             mass=1,
             use_permutation=True,
             name='box_2'
-        )[0]       
+        )[0]
 
         self.assertTrue(box_2.name, 'box_2')
 
@@ -134,10 +134,15 @@ class TestModelGroup(unittest.TestCase):
 
         bounds = group.get_bounds()
 
-        ref_bounds = numpy.array([
-            [numpy.min([box_1.pose.x, box_2.pose.x]) - 1, numpy.min([box_1.pose.y, box_2.pose.y]) - 1, numpy.min([box_1.pose.z, box_2.pose.z]) - 1],
-            [numpy.max([box_1.pose.x, box_2.pose.x]) + 1, numpy.max([box_1.pose.y, box_2.pose.y]) + 1, numpy.max([box_1.pose.z, box_2.pose.z]) + 1]
-        ])
+        ref_bounds = numpy.array(
+            [
+                [numpy.min([box_1.pose.x, box_2.pose.x]) - 1,
+                 numpy.min([box_1.pose.y, box_2.pose.y]) - 1,
+                 numpy.min([box_1.pose.z, box_2.pose.z]) - 1],
+                [numpy.max([box_1.pose.x, box_2.pose.x]) + 1,
+                 numpy.max([box_1.pose.y, box_2.pose.y]) + 1,
+                 numpy.max([box_1.pose.z, box_2.pose.z]) + 1]
+            ])
 
         self.assertAlmostEqual(numpy.sum(ref_bounds - bounds), 0)
 
@@ -163,11 +168,11 @@ class TestModelGroup(unittest.TestCase):
 
         models = group.get_models()
         self.assertEqual(len(models), 1)
-        
+
         group_model = group.get_model('box')
 
         self.assertIsNotNone(group_model)
-        
+
     def test_add_light(self):
         sdf = """
         <light type="point" name="point_light">
@@ -373,10 +378,12 @@ class TestModelGroup(unittest.TestCase):
 
     def test_load_from_sdf(self):
         lights = [Light(name=generate_random_string(5)) for _ in range(3)]
-        models = [SimulationModel(name=generate_random_string(5)) for _ in range(2)]
+        models = [SimulationModel(name=generate_random_string(5))
+                  for _ in range(2)]
 
         # Test import from a list of SDF elements
-        sdf_elements = [light.to_sdf() for light in lights] + [model.to_sdf() for model in models]
+        sdf_elements = [light.to_sdf() for light in lights] + \
+            [model.to_sdf() for model in models]
         group = ModelGroup.from_sdf(sdf_elements)
         self.assertIsNotNone(group)
         self.assertEqual(group.n_models, len(models))
@@ -395,10 +402,12 @@ class TestModelGroup(unittest.TestCase):
         self.assertEqual(group.n_lights, len(lights))
 
     def test_convert_wrong_model_sdf(self):
-        lights = [Light(name=generate_random_string(5)) for _ in range(3)]        
-        models = [SimulationModel(name=generate_random_string(5)) for _ in range(2)]
-        
-        sdf_elements = [light.to_sdf() for light in lights] + [model.to_sdf() for model in models]
+        lights = [Light(name=generate_random_string(5)) for _ in range(3)]
+        models = [SimulationModel(name=generate_random_string(5))
+                  for _ in range(2)]
+
+        sdf_elements = [light.to_sdf() for light in lights] + \
+            [model.to_sdf() for model in models]
 
         group = ModelGroup.from_sdf(sdf_elements)
         self.assertIsNotNone(group)
@@ -410,25 +419,29 @@ class TestModelGroup(unittest.TestCase):
     def test_convert_lights_models_group_to_sdfs(self):
         lights = [Light(name=generate_random_string(5)) for _ in range(3)]
         light_names = [obj.name for obj in lights]
-        models = [SimulationModel(name=generate_random_string(5)) for _ in range(2)]
+        models = [SimulationModel(name=generate_random_string(5))
+                  for _ in range(2)]
         model_names = [obj.name for obj in models]
 
-        sdf_elements = [light.to_sdf() for light in lights] + [model.to_sdf() for model in models]
+        sdf_elements = [light.to_sdf() for light in lights] + \
+            [model.to_sdf() for model in models]
 
         group = ModelGroup.from_sdf(sdf_elements)
         group.name = generate_random_string(5)
         self.assertIsNotNone(group)
         self.assertEqual(group.n_models, len(models))
         self.assertEqual(group.n_lights, len(lights))
-        
+
         # Convert to separate SDF elements
         sdf_models, sdf_lights, sdf_includes = group.to_sdf()
-        self.assertEqual(len(sdf_models), len(models))        
-        for tag in sdf_models:            
-            self.assertIn(sdf_models[tag].name.replace('{}/'.format(group.name), ''), model_names)
+        self.assertEqual(len(sdf_models), len(models))
+        for tag in sdf_models:
+            self.assertIn(sdf_models[tag].name.replace(
+                '{}/'.format(group.name), ''), model_names)
         self.assertEqual(len(sdf_lights), len(lights))
         for tag in sdf_lights:
-            self.assertIn(sdf_lights[tag].name.replace('{}/'.format(group.name), ''), light_names)
+            self.assertIn(sdf_lights[tag].name.replace(
+                '{}/'.format(group.name), ''), light_names)
         self.assertEqual(len(sdf_includes), 0)
 
         # Convert to world
@@ -438,14 +451,15 @@ class TestModelGroup(unittest.TestCase):
         self.assertIsNotNone(sdf_world.models)
         self.assertEqual(len(sdf_world.models), 1)
         self.assertEqual(len(sdf_world.models[0].models), len(models))
-        for i in range(len(sdf_world.models[0].models)):        
+        for i in range(len(sdf_world.models[0].models)):
             self.assertIn(sdf_world.models[0].models[i].name, model_names)
         self.assertEqual(len(sdf_world.lights), len(lights))
         for i in range(len(sdf_world.lights)):
             self.assertIn(sdf_world.lights[i].name, light_names)
 
     def test_convert_models_group_to_sdf(self):
-        models = [SimulationModel(name=generate_random_string(5)) for _ in range(2)]
+        models = [SimulationModel(name=generate_random_string(5))
+                  for _ in range(2)]
         model_names = [obj.name for obj in models]
         sdf_elements = [model.to_sdf() for model in models]
 
@@ -456,9 +470,10 @@ class TestModelGroup(unittest.TestCase):
 
         # Convert to separate SDF elements
         sdf_models, sdf_lights, sdf_includes = group.to_sdf()
-        self.assertEqual(len(sdf_models), len(models))        
-        for tag in sdf_models:            
-            self.assertIn(sdf_models[tag].name.replace('{}/'.format(group.name), ''), model_names)
+        self.assertEqual(len(sdf_models), len(models))
+        for tag in sdf_models:
+            self.assertIn(sdf_models[tag].name.replace(
+                '{}/'.format(group.name), ''), model_names)
         self.assertEqual(len(sdf_lights), 0)
         self.assertEqual(len(sdf_includes), 0)
 
@@ -469,7 +484,7 @@ class TestModelGroup(unittest.TestCase):
         self.assertIsNotNone(sdf_world.models)
         self.assertEqual(len(sdf_world.models), 1)
         self.assertEqual(len(sdf_world.models[0].models), len(models))
-        for i in range(len(sdf_world.models[0].models)):        
+        for i in range(len(sdf_world.models[0].models)):
             self.assertIn(sdf_world.models[0].models[i].name, model_names)
 
         # Convert to SDF with model group
@@ -479,7 +494,7 @@ class TestModelGroup(unittest.TestCase):
         self.assertIsNotNone(sdf_world.models)
         self.assertEqual(len(sdf_world.models), 1)
         self.assertEqual(len(sdf_world.models[0].models), len(models))
-        for i in range(len(sdf_world.models[0].models)):        
+        for i in range(len(sdf_world.models[0].models)):
             self.assertIn(sdf_world.models[0].models[i].name, model_names)
 
         # Convert to model with nested models
@@ -487,7 +502,7 @@ class TestModelGroup(unittest.TestCase):
         self.assertIsNotNone(sdf_model)
         self.assertIsNotNone(sdf_model.models)
         self.assertEqual(len(sdf_model.models), len(models))
-        for i in range(len(sdf_model.models)):        
+        for i in range(len(sdf_model.models)):
             self.assertIn(sdf_model.models[i].name, model_names)
 
     def test_convert_lights_group_to_sdf(self):
@@ -502,10 +517,11 @@ class TestModelGroup(unittest.TestCase):
 
         # Convert to separate SDF elements
         sdf_models, sdf_lights, sdf_includes = group.to_sdf()
-        self.assertEqual(len(sdf_models), 0)        
+        self.assertEqual(len(sdf_models), 0)
         self.assertEqual(len(sdf_lights), len(lights))
         for tag in sdf_lights:
-            self.assertIn(sdf_lights[tag].name.replace('{}/'.format(group.name), ''), light_names)
+            self.assertIn(sdf_lights[tag].name.replace(
+                '{}/'.format(group.name), ''), light_names)
         self.assertEqual(len(sdf_includes), 0)
 
         # Convert to world
@@ -514,8 +530,8 @@ class TestModelGroup(unittest.TestCase):
         self.assertEqual(sdf_world.xml_element_name, 'world')
         self.assertIsNone(sdf_world.models)
         self.assertIsNotNone(sdf_world.lights)
-        self.assertEqual(len(sdf_world.lights), len(lights))        
-        for i in range(len(sdf_world.lights)):        
+        self.assertEqual(len(sdf_world.lights), len(lights))
+        for i in range(len(sdf_world.lights)):
             self.assertIn(sdf_world.lights[i].name, light_names)
 
         # Convert to SDF with light elements
@@ -524,11 +540,12 @@ class TestModelGroup(unittest.TestCase):
         self.assertEqual(sdf.xml_element_name, 'sdf')
         self.assertIsNotNone(sdf_world.lights)
         self.assertEqual(len(sdf_world.lights), len(lights))
-        for i in range(len(sdf_world.lights)):        
+        for i in range(len(sdf_world.lights)):
             self.assertIn(sdf_world.lights[i].name, light_names)
 
     def test_export_models_to_gazebo_model(self):
-        models = [SimulationModel(name=generate_random_string(5)) for _ in range(2)]
+        models = [SimulationModel(name=generate_random_string(5))
+                  for _ in range(2)]
         model_names = [obj.name for obj in models]
         sdf_elements = [model.to_sdf() for model in models]
 
@@ -541,20 +558,26 @@ class TestModelGroup(unittest.TestCase):
 
         # Convert to separate SDF elements
         sdf_models, sdf_lights, sdf_includes = group.to_sdf()
-        self.assertEqual(len(sdf_models), len(models))        
-        for tag in sdf_models:            
-            self.assertIn(sdf_models[tag].name.replace('{}/'.format(group.name), ''), model_names)
+        self.assertEqual(len(sdf_models), len(models))
+        for tag in sdf_models:
+            self.assertIn(sdf_models[tag].name.replace(
+                '{}/'.format(group.name), ''), model_names)
         self.assertEqual(len(sdf_lights), 0)
         self.assertEqual(len(sdf_includes), 0)
 
         # Convert to default Gazebo model
         self.assertIsNotNone(group.to_gazebo_model())
-        default_dir = os.path.join(os.path.expanduser('~'), '.gazebo', 'models')
+        default_dir = os.path.join(
+            os.path.expanduser('~'), '.gazebo', 'models')
         model_dir = os.path.join(default_dir, group.name)
 
         # Check if all model files were created
         self.assertTrue(os.path.isdir(model_dir))
-        self.assertTrue(os.path.isfile(os.path.join(model_dir, 'model.config')))
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(
+                    model_dir,
+                    'model.config')))
         self.assertTrue(os.path.isfile(os.path.join(model_dir, 'model.sdf')))
 
         # Parse model config file
@@ -567,7 +590,9 @@ class TestModelGroup(unittest.TestCase):
         self.assertEqual(sdf_config.name.value, group.name)
         self.assertEqual(len(sdf_config.authors), 1)
         self.assertEqual(sdf_config.authors[0].name.value, username)
-        self.assertEqual(sdf_config.authors[0].email.value, '{}@email.com'.format(username))
+        self.assertEqual(
+            sdf_config.authors[0].email.value,
+            '{}@email.com'.format(username))
         self.assertEqual(sdf_config.description.value, '')
         self.assertEqual(sdf_config.version.value, '1.6')
         self.assertEqual(len(sdf_config.sdfs), 1)
@@ -579,13 +604,15 @@ class TestModelGroup(unittest.TestCase):
         self.assertIsNotNone(sdf)
         self.assertEqual(sdf.xml_element_name, 'sdf')
         self.assertIsNotNone(sdf.models)
-        self.assertEqual(len(sdf.models), 1)        
+        self.assertEqual(len(sdf.models), 1)
         for i, j in zip(sdf.models[0].pose.value, group.pose.to_sdf().value):
             self.assertTrue(numpy.isclose(i, j))
         self.assertEqual(len(sdf.models[0].models), len(models))
 
         for i in range(len(sdf.models[0].models)):
-            self.assertEqual(sdf.models[0].models[i].pose.value, [0 for _ in range(6)])
+            self.assertEqual(
+                sdf.models[0].models[i].pose.value, [
+                    0 for _ in range(6)])
             self.assertIn(sdf.models[0].models[i].name, model_names)
 
         # Delete generated Gazebo model directory
@@ -593,7 +620,7 @@ class TestModelGroup(unittest.TestCase):
 
         # Rename group
         group.name = generate_random_string(5)
-        
+
         # Export group with individually exported models
         self.assertIsNotNone(group.to_gazebo_model(nested=False))
 
@@ -607,7 +634,7 @@ class TestModelGroup(unittest.TestCase):
         self.assertIsNotNone(sdf)
         self.assertEqual(sdf.xml_element_name, 'sdf')
         self.assertIsNotNone(sdf.models)
-        self.assertEqual(len(sdf.models), 1)        
+        self.assertEqual(len(sdf.models), 1)
 
         self.assertIsNone(sdf.models[0].models)
         self.assertIsNotNone(sdf.models[0].includes)
@@ -617,10 +644,13 @@ class TestModelGroup(unittest.TestCase):
             self.assertTrue(numpy.isclose(i, j))
 
         for i in range(len(sdf.models[0].includes)):
-            self.assertEqual(sdf.models[0].includes[i].pose.value, [0 for _ in range(6)])
+            self.assertEqual(
+                sdf.models[0].includes[i].pose.value, [
+                    0 for _ in range(6)])
             self.assertIn(sdf.models[0].includes[i].name.value, model_names)
-            self.assertEqual(sdf.models[0].includes[i].uri.value, 'model://{}'.format(
-                sdf.models[0].includes[i].name.value))
+            self.assertEqual(
+                sdf.models[0].includes[i].uri.value,
+                'model://{}'.format(sdf.models[0].includes[i].name.value))
 
         shutil.rmtree(os.path.join(default_dir, group.name))
         for name in model_names:

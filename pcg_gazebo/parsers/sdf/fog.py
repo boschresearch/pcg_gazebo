@@ -35,7 +35,7 @@ class Fog(XMLBase):
     def __init__(self, mode=''):
         XMLBase.__init__(self)
         self.reset(mode=mode)
-    
+
     @property
     def color(self):
         return self._get_child_element('color')
@@ -47,7 +47,7 @@ class Fog(XMLBase):
     @property
     def type(self):
         return self._get_child_element('type')
-    
+
     @type.setter
     def type(self, value):
         fog_types = ['constant', 'linear', 'quadratic']
@@ -58,7 +58,7 @@ class Fog(XMLBase):
     @property
     def start(self):
         return self._get_child_element('start')
-    
+
     @start.setter
     def start(self, value):
         self._add_child_element('start', value)
@@ -66,7 +66,7 @@ class Fog(XMLBase):
     @property
     def end(self):
         return self._get_child_element('end')
-    
+
     @end.setter
     def end(self, value):
         self._add_child_element('end', value)
@@ -74,7 +74,7 @@ class Fog(XMLBase):
     @property
     def density(self):
         return self._get_child_element('density')
-    
+
     @density.setter
     def density(self, value):
         self._add_child_element('density', value)

@@ -20,31 +20,41 @@ class FixedPoseEngine(Engine):
     """Engine that just places models on pre-configured fixed poses. This
     engine only accepts one model asset.
 
-    * `callback_fcn_get_constraint` (*type:* `callable`, *default:* `None`): 
-    Handle to a function or a lambda function that returns a 
-    `pcg_gazebo.constraints.Constraint` associated with a tag name.
-    * `models` (*type:* `list`, *default:* `None`): List of models names as `str`
-    relative to the models that the engine will have as assets.
-    * `constraints` (*type:* `list`, *default:* `None`): List of local constraint
-    configurations that will be applied on to the engine's model assets.
-    * `poses` (*type:* `list`): List of 6- (position and Euler angles) or 7 element 
-    (position and quaternion) poses.
+    * `callback_fcn_get_constraint` (*type:* `callable`,
+    *default:* `None`): Handle to a function or a lambda
+    function that returns a `pcg_gazebo.constraints.Constraint`
+    associated with a tag name.
+    * `models` (*type:* `list`, *default:* `None`): List
+    of models names as `str` relative to the models that
+    the engine will have as assets.
+    * `constraints` (*type:* `list`, *default:* `None`):
+    List of local constraint configurations that will be
+    applied on to the engine's model assets.
+    * `poses` (*type:* `list`): List of 6- (position and
+    Euler angles) or 7 element (position and quaternion) poses.
     """
     _LABEL = 'fixed_pose'
 
-    def __init__(self, assets_manager, callback_fcn_get_constraint=None,
-        models=None, poses=None, constraints=None, collision_checker=None):                
+    def __init__(
+            self,
+            assets_manager,
+            callback_fcn_get_constraint=None,
+            models=None,
+            poses=None,
+            constraints=None,
+            collision_checker=None):
         Engine.__init__(
-            self, 
+            self,
             assets_manager=assets_manager,
             callback_fcn_get_constraint=callback_fcn_get_constraint,
             models=models,
             constraints=constraints,
-            collision_checker=collision_checker)      
+            collision_checker=collision_checker)
 
         if models is not None:
-            assert len(models) == 1, 'The fixed pose engine can use only one model'
-            
+            assert len(
+                models) == 1, 'The fixed pose engine can use only one model'
+
             if poses is not None:
                 assert isinstance(poses, list), 'Input poses must be a list'
                 for pose in poses:
@@ -66,27 +76,27 @@ class FixedPoseEngine(Engine):
 
     def add_pose(self, pose):
         """Add pose to the list of fixed-poses.
-        
+
         > *Input arguments*
-        
-        * `pose` (*type:* `list`): 6- (position and Euler angles) or 7 element 
-        (position and quaternion) poses.        
+
+        * `pose` (*type:* `list`): 6- (position and Euler angles) or 7 element
+        (position and quaternion) poses.
         """
         if len(self.models) == 0:
             self._logger.error('No model was provided for fixed pose engine')
             return False
 
         self._add_pose(self._models[0], pose)
-        
+
     def run(self):
-        """Generate instances of the model asset for all 
-        the poses provided. If any local constraints were also provided, 
+        """Generate instances of the model asset for all
+        the poses provided. If any local constraints were also provided,
         they will be applied to the model after its placement.
-                
+
         > *Returns*
-        
+
         List of `pcg_gazebo.simulation.SimulationModel`: Model instances.
-        """        
+        """
         if len(self.models) == 0:
             self._logger.error('No model was provided for fixed pose engine')
             return None
@@ -94,14 +104,16 @@ class FixedPoseEngine(Engine):
         for pose in self._poses[self._models[0]]:
             model = self._get_model(self._models[0])
             if model is None:
-                self._logger.error('Cannot spawn model <{}>'.format(self._models[0]))
+                self._logger.error(
+                    'Cannot spawn model <{}>'.format(
+                        self._models[0]))
                 return None
-            
+
             pose = [float(x) for x in list(pose.position) + list(pose.quat)]
             model.pose = pose
             # Enforce local constraints
             model = self.apply_local_constraints(model)
-            models.append(model)            
+            models.append(model)
             self._logger.info('Adding model {}'.format(model.name))
             self._logger.info('\t {}'.format(model.pose))
 
@@ -109,9 +121,8 @@ class FixedPoseEngine(Engine):
         for model in models:
             if not isinstance(model, Light):
                 self._collision_checker.add_fixed_model(model)
-                self._logger.info('Adding model <{}> as fixed model in the collision checker'.format(
-                    model.name))
+                self._logger.info(
+                    'Adding model <{}> as fixed model '
+                    'in the collision checker'.format(
+                        model.name))
         return models
-
-        
-

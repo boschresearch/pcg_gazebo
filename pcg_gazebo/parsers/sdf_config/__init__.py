@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-import inspect
-
-from ..types import XMLBase
-
 from .author import Author
 from .description import Description
 from .email import EMail
@@ -29,8 +23,12 @@ from .version import Version
 
 
 def get_all_sdf_config_element_classes():
+    import sys
+    import inspect
+    from ..types import XMLBase
+
     output = list()
-    module_name = os.path.dirname(os.path.realpath(__file__))
+
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -40,7 +38,10 @@ def get_all_sdf_config_element_classes():
 
 
 def create_sdf_config_element(tag, *args):
-    module_name = os.path.dirname(os.path.realpath(__file__))
+    import sys
+    import inspect
+    from ..types import XMLBase
+
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -51,7 +52,10 @@ def create_sdf_config_element(tag, *args):
 
 
 def create_sdf_config_type(tag):
-    module_name = os.path.dirname(os.path.realpath(__file__))
+    import sys
+    import inspect
+    from ..types import XMLBase
+
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -62,4 +66,21 @@ def create_sdf_config_type(tag):
 
 
 def is_sdf_config_element(obj):
-    return obj.__class__ in XMLBase.__subclasses__() and obj._TYPE == 'sdf_config'
+    from ..types import XMLBase
+    return obj.__class__ in XMLBase.__subclasses__() and \
+        obj._TYPE == 'sdf_config'
+
+
+__all__ = [
+    'create_sdf_config_element',
+    'create_sdf_config_type',
+    'is_sdf_config_element',
+    'get_all_sdf_config_element_classes',
+    'Author',
+    'Description',
+    'EMail',
+    'Model',
+    'Name',
+    'SDF',
+    'Version'
+]

@@ -15,3 +15,8 @@
 
 from .hinged_door import HingedDoor
 from .walls import Walls
+
+__all__ = [
+    'HingedDoor',
+    'Walls'
+]

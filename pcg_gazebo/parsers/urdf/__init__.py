@@ -13,12 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-import inspect
-
-from ..types import XMLBase
-
 from .actuator import Actuator
 from .axis import Axis
 from .box import Box
@@ -63,8 +57,10 @@ from .visual import Visual
 
 
 def get_all_urdf_element_classes():
+    import sys
+    import inspect
+    from ..types import XMLBase
     output = list()
-    module_name = os.path.dirname(os.path.realpath(__file__))
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -74,7 +70,9 @@ def get_all_urdf_element_classes():
 
 
 def create_urdf_element(tag, *args):
-    module_name = os.path.dirname(os.path.realpath(__file__))
+    import sys
+    import inspect
+    from ..types import XMLBase
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -83,8 +81,11 @@ def create_urdf_element(tag, *args):
                     return obj(*args)
     return None
 
+
 def create_urdf_type(tag):
-    module_name = os.path.dirname(os.path.realpath(__file__))
+    import sys
+    import inspect
+    from ..types import XMLBase
     current_module = sys.modules[__name__]
     for name, obj in inspect.getmembers(current_module):
         if inspect.isclass(obj):
@@ -93,5 +94,57 @@ def create_urdf_type(tag):
                     return obj
     return None
 
+
 def is_urdf_element(obj):
-    return obj.__class__ in types.XMLBase.__subclasses__() and obj._TYPE == 'urdf'
+    from ..types import XMLBase
+    return obj.__class__ in XMLBase.__subclasses__() and \
+        obj._TYPE == 'urdf'
+
+
+__all__ = [
+    'get_all_urdf_element_classes',
+    'create_urdf_element',
+    'create_urdf_type',
+    'is_urdf_element',
+    'Actuator',
+    'Axis',
+    'Box',
+    'Child',
+    'Collision',
+    'Color',
+    'Cylinder',
+    'Dynamics',
+    'Gazebo',
+    'Geometry',
+    'HardwareInterface',
+    'Inertia',
+    'Inertial',
+    'Joint',
+    'Kd',
+    'Kp',
+    'Limit',
+    'Link',
+    'Mass',
+    'Material',
+    'MaxContacts',
+    'MaxVel',
+    'MechanicalReduction',
+    'Mesh',
+    'Mimic',
+    'MinDepth',
+    'Mu1',
+    'Mu2',
+    'Origin',
+    'Parent',
+    'ProvideFeedback',
+    'Robot',
+    'SafetyController',
+    'SelfCollide',
+    'Sphere',
+    'StopCFM',
+    'StopERP',
+    'Texture',
+    'Transmission',
+    'Type',
+    'Visual'
+]

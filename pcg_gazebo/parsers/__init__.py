@@ -12,43 +12,44 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Parsing module to generated and convert SDF, URDF and SDF Configuration formats.
+"""Parsing module to generated and convert SDF,
+URDF and SDF Configuration formats.
 
 > *Sources*
 
 * [SDF format](http://sdformat.org/)
 * [URDF format specifications](https://wiki.ros.org/urdf/XML)
 """
-from ..log import PCG_ROOT_LOGGER
 
 
 def parse_sdf(input_xml):
-    """Parse an XML file in the SDF format and generates 
+    """Parse an XML file in the SDF format and generates
     an `pcg_gazebo` SDF instance.
-    
+
     > *Input arguments*
-    
+
     * `input_xml` (*type:* `str`): Filename of the SDF file or
     SDF XML formatted text.
-    
+
     > *Returns*
-    
+
     `pcg_gazebo.parsers.types.XMLBase` object.
     """
     sdf = parse_xml(input_xml, type='sdf')
     return sdf
 
+
 def parse_urdf(input_xml):
-    """Parse an XML file in the URDF format and generates 
+    """Parse an XML file in the URDF format and generates
     an `pcg_gazebo` URDF instance.
-    
+
     > *Input arguments*
-    
+
     * `input_xml` (*type:* `str`): Filename of the URDF file or
     URDF XML formatted text.
-    
+
     > *Returns*
-    
+
     `pcg_gazebo.parsers.types.XMLBase` object.
     """
     urdf = parse_xml(input_xml, type='urdf')
@@ -58,30 +59,30 @@ def parse_urdf(input_xml):
 
 
 def parse_sdf_config(input_xml):
-    """Parse an XML file in the SDF Configuration format and generates 
+    """Parse an XML file in the SDF Configuration format and generates
     an `pcg_gazebo` SDF Configuration instance.
-    
+
     > *Input arguments*
-    
+
     * `input_xml` (*type:* `str`): Filename of the SDF Configuration file or
     SDF Configuration XML formatted text.
-    
+
     > *Returns*
-    
+
     `pcg_gazebo.parsers.types.XMLBase` object.
     """
     sdf_config = parse_xml(input_xml, type='sdf_config')
     return sdf_config
-    
+
 
 def parse_xacro(input_xml, output_type='urdf'):
     import os
     import subprocess
-    
+
     assert os.path.isfile(input_xml), \
         'Input {} is not a valid xacro file'.format(input_xml)
 
-    cmd = 'xacro {}'.format(input_xml)    
+    cmd = 'xacro {}'.format(input_xml)
     output = subprocess.check_output(cmd.split())
     xml = output.decode()
 
@@ -99,32 +100,29 @@ def parse_xacro(input_xml, output_type='urdf'):
 
 def parse_xml(input_xml, type='sdf'):
     """Parse an XML file into an `collections.OrderedDict`.
-    
+
     > *Input arguments*
-    
+
     * `input_xml` (*type:* `str`): Filename of the XML file or
     XML formatted text.
     * `type` (*type:* `str`): Type of XML format used in the input
     file, options are `sdf`, `urdf` or `sdf_config`.
-    
+
     > *Returns*
-    
+
     `collections.OrderedDict`: Dictionary where the XML tags are the keys.
     """
     import os
-    import sys
+    from ..utils import is_string
+    from ..log import PCG_ROOT_LOGGER
 
-    if sys.version_info[0] == 3:
-        if not isinstance(input_xml, str):        
-            msg = 'Input XML must be either a filename or a string, received={}'.format(input_xml)
-            PCG_ROOT_LOGGER.error(msg)
-            raise Exception(msg)
-    else:
-        if not isinstance(input_xml, str) and not isinstance(input_xml, unicode):        
-            msg = 'Input XML must be either a filename or a string, received={}'.format(input_xml)
-            PCG_ROOT_LOGGER.error(msg)
-            raise Exception(msg)
-    
+    if not is_string(input_xml):
+        msg = 'Input XML must be either a' \
+            ' filename or a string, received={}'.format(
+                input_xml)
+        PCG_ROOT_LOGGER.error(msg)
+        raise Exception(msg)
+
     if os.path.isfile(input_xml):
         filename = input_xml
         assert os.path.isfile(filename), 'File does not exist'
@@ -134,25 +132,25 @@ def parse_xml(input_xml, type='sdf'):
                 output += line
     else:
         output = input_xml
-    
+
     return parse_xml_str(output, type)
 
 
 def parse_xml_str(xml_str, type='sdf'):
-    """Parse an XML formatted string into an 
+    """Parse an XML formatted string into an
     `collections.OrderedDict`.
-    
+
     > *Input arguments*
-    
+
     * `input_xml` (*type:* `str`): XML formatted text.
     * `type` (*type:* `str`): Type of XML format used in the input
     file, options are `sdf`, `urdf` or `sdf_config`.
-    
+
     > *Returns*
-    
+
     `collections.OrderedDict`: Dictionary where the XML tags are the keys.
     """
-    import xmltodict    
+    import xmltodict
     parsed_xml = xmltodict.parse(xml_str)
     return parse_xml_dict(parsed_xml, type)
 
@@ -160,15 +158,15 @@ def parse_xml_str(xml_str, type='sdf'):
 def parse_xml_dict(xml_dict, type='sdf'):
     """Converts an `collections.OrderedDict` created from a XML file
     and return an SDF, URDF or SDF Configuration `pcg_gazebo` element.
-    
+
     > *Input arguments*
-    
+
     * `xml_dict` (*type:* `collections.OrderedDict`): XML contents.
     * `type` (*type:* `str`): Type of XML format used in the input
     file, options are `sdf`, `urdf` or `sdf_config`.
-    
+
     > *Returns*
-    
+
     `pcg_gazebo.parsers.types.XMLBase` object.
     """
     from .sdf import create_sdf_element
@@ -176,7 +174,7 @@ def parse_xml_dict(xml_dict, type='sdf'):
     from .sdf_config import create_sdf_config_element
 
     data = convert_to_dict(xml_dict)
-        
+
     name = list(xml_dict.keys())[0]
     if type == 'sdf':
         obj = create_sdf_element(name)
@@ -187,13 +185,14 @@ def parse_xml_dict(xml_dict, type='sdf'):
     else:
         raise TypeError('File type {} is invalid'.format(type))
     assert obj is not None, 'Element {} does not exist'.format(name)
-        
-    obj.from_dict(data[name])        
+
+    obj.from_dict(data[name])
     return obj
+
 
 def convert_custom(xml_dict):
     import collections
-    
+
     if isinstance(xml_dict, list):
         output = list()
         for elem in xml_dict:
@@ -205,29 +204,31 @@ def convert_custom(xml_dict):
             if '@' in tag:
                 if 'attributes' not in output:
                     output['attributes'] = dict()
-                output['attributes'][tag.replace('@', '')] = convert_from_string(xml_dict[tag])                        
+                output['attributes'][tag.replace(
+                    '@', '')] = convert_from_string(xml_dict[tag])
             elif '#' in tag:
                 if 'value' not in output:
                     output['value'] = dict()
                 output['value'] = convert_from_string(xml_dict[tag])
             elif isinstance(xml_dict[tag], dict) or \
-                isinstance(xml_dict[tag], collections.OrderedDict):
+                    isinstance(xml_dict[tag], collections.OrderedDict):
                 output[tag] = convert_custom(xml_dict[tag])
             else:
                 output[tag] = convert_from_string(xml_dict[tag])
-    return output 
+    return output
+
 
 def convert_to_dict(xml_dict):
     """Convert the `xmltodict` output into a dictionary that can be
     parsed into a `pcg_gazebo.parsers.types.XMLBase`.
-    
+
     > *Input arguments*
-    
-    * `xml_dict` (*type:* `collections.OrderedDict`): XML content in 
+
+    * `xml_dict` (*type:* `collections.OrderedDict`): XML content in
     dictionary form.
-    
+
     > *Returns*
-    
+
     `dict`: Formatted XML dictionary.
     """
     import collections
@@ -243,39 +244,40 @@ def convert_to_dict(xml_dict):
         elif '@' in tag:
             if 'attributes' not in output:
                 output['attributes'] = dict()
-            output['attributes'][tag.replace('@', '')] = convert_from_string(xml_dict[tag])                        
+            output['attributes'][tag.replace(
+                '@', '')] = convert_from_string(xml_dict[tag])
         elif '#' in tag:
             if 'value' not in output:
                 output['value'] = dict()
             output['value'] = convert_from_string(xml_dict[tag])
         elif isinstance(xml_dict[tag], list):
             if tag not in output:
-                output[tag] = list()            
+                output[tag] = list()
             for elem in xml_dict[tag]:
                 subelem_dict = dict()
                 subelem_dict[tag] = elem
                 if isinstance(subelem_dict[tag], dict) or \
-                    isinstance(subelem_dict[tag], collections.OrderedDict):
+                        isinstance(subelem_dict[tag], collections.OrderedDict):
                     output[tag].append(convert_to_dict(subelem_dict[tag]))
                 else:
-                    output[tag].append(convert_from_string(subelem_dict[tag]))             
-        elif isinstance(xml_dict[tag], dict):  
-            output[tag] = convert_to_dict(xml_dict[tag])                
+                    output[tag].append(convert_from_string(subelem_dict[tag]))
+        elif isinstance(xml_dict[tag], dict):
+            output[tag] = convert_to_dict(xml_dict[tag])
         else:
-            output[tag] = dict(value=convert_from_string(xml_dict[tag]))            
+            output[tag] = dict(value=convert_from_string(xml_dict[tag]))
 
     return output
 
 
 def convert_from_string(str_input_xml):
     """Convert a string into a Python data structure type.
-    
+
     > *Input arguments*
-    
+
     * `str_input_xml` (*type:* `str`): Input string
-    
+
     > *Returns*
-    
+
     `bool`, `int`, `float`, list of `float` or `str`.
     """
     import string
@@ -284,7 +286,7 @@ def convert_from_string(str_input_xml):
     value = None
 
     def is_hex(s):
-        
+
         if len(s) < 2:
             return False
         if '0x' != s[0:2]:
@@ -294,7 +296,7 @@ def convert_from_string(str_input_xml):
                 return False
         try:
             int(s, 16)
-        except:
+        except BaseException:
             return False
         return len(s) % 2 == 0
 
@@ -306,29 +308,29 @@ def convert_from_string(str_input_xml):
             return s.isdigit()
 
     if is_hex(str_input_xml):
-        value = int(str_input_xml, 0)        
-    elif isinstance(str_input_xml, list):        
+        value = int(str_input_xml, 0)
+    elif isinstance(str_input_xml, list):
         value = str_input_xml
-    elif is_numeric(str_input_xml):        
+    elif is_numeric(str_input_xml):
         value = int(str_input_xml)
-    elif str_input_xml in ['true', 'false', 'True', 'False']:        
+    elif str_input_xml in ['true', 'false', 'True', 'False']:
         value = True if str_input_xml in ['true', 'True'] else False
-    elif ' ' in str_input_xml:                
+    elif ' ' in str_input_xml:
         # Check if this a string with whitespaces
-        is_numeric = True 
+        is_numeric = True
         for c in str_input_xml.split():
             try:
                 float(c)
-            except:
+            except BaseException:
                 is_numeric = False
                 break
-        
+
         if is_numeric:
             value = list()
             for item in str_input_xml.split():
                 value.append(float(item))
     else:
-        try:            
+        try:
             value = float(str_input_xml)
         except ValueError:
             value = str(str_input_xml)
@@ -337,11 +339,8 @@ def convert_from_string(str_input_xml):
 
 
 def expand_nested_models(sdf):
-    from ..simulation.properties import Pose
-    from ..simulation import get_gazebo_model_sdf
     from ..simulation import SimulationModel
-    from copy import deepcopy
-    
+
     if sdf.xml_element_name == 'model':
         if sdf.includes is None and sdf.models is None:
             return sdf
@@ -350,100 +349,108 @@ def expand_nested_models(sdf):
             assert sdf.models is not None, \
                 'No models found in included provided SDF'
         assert len(sdf.models) == 1, 'Only one model per SDF will be parsed'
-        return expand_nested_models(sdf.models[0])        
-        
+        return expand_nested_models(sdf.models[0])
+
     if (sdf.models is not None and len(sdf.models) > 0) or \
-        (sdf.includes is not None and len(sdf.includes) > 0):
-        model = SimulationModel.from_sdf(sdf).merge_nested_models()    
+            (sdf.includes is not None and len(sdf.includes) > 0):
+        model = SimulationModel.from_sdf(sdf).merge_nested_models()
         return model.to_sdf(type='model')
     else:
         return None
-        
+
 
 def sdf2urdf(sdf):
-    """Recursively convert a SDF `pcg_gazebo` element and its child elements 
+    """Recursively convert a SDF `pcg_gazebo` element and its child elements
     into an URDF `pcg_gazebo` element.
-    
+
     > *Input arguments*
-    
+
     * `sdf` (*type:* `pcg_gazebo.parsers.types.XMLBase`): Valid SDF element
-    
+
     > *Returns*
-    
+
     `pcg_gazebo.parsers.types.XMLBase` as an URDF element.
     """
-    from .sdf import create_sdf_element
     from .urdf import create_urdf_element
     from ..simulation.properties import Pose
     from ..path import Path
     import numpy as np
-    
+    from ..log import PCG_ROOT_LOGGER
+
     assert sdf is not None, 'Input SDF is invalid'
     SDF2URDF_OPT = dict(
         model='robot',
         link='link',
         joint='joint',
         inertial='inertial',
-        inertia='inertia', 
+        inertia='inertia',
         mass='mass',
         visual='visual',
         collision='collision',
         box='box',
-        cylinder='cylinder', 
+        cylinder='cylinder',
         sphere='sphere',
         mesh='mesh',
-        geometry='geometry', 
+        geometry='geometry',
         material='material',
         pose='origin',
         child='child',
         parent='parent',
         limit='limit',
         dynamics='dynamics')
-        
+
     assert sdf._NAME in SDF2URDF_OPT.keys(), \
-        'SDF element of type <{}> not available for conversion to URDF'.format(sdf._NAME)
+        'SDF element of type <{}> not ' \
+        'available for conversion to URDF'.format(sdf._NAME)
 
     urdf = create_urdf_element(SDF2URDF_OPT[sdf._NAME])
 
-    if sdf._NAME == 'model':        
+    if sdf._NAME == 'model':
         from copy import deepcopy
-        model_sdf = expand_nested_models(deepcopy(sdf))        
-        # For the URDF file the frames must be positioned in 
+        model_sdf = expand_nested_models(deepcopy(sdf))
+        # For the URDF file the frames must be positioned in
         # the joint blocks instead of the links
-        if model_sdf.joints:            
+        if model_sdf.joints:
             # TODO Check relative link position to previous link frame
             for i in range(len(model_sdf.joints)):
                 joint = model_sdf.joints[i]
                 if joint.parent.value != 'world':
-                    parent_link = model_sdf.get_link_by_name(joint.parent.value)
+                    parent_link = model_sdf.get_link_by_name(
+                        joint.parent.value)
                     if parent_link is None:
-                        msg = 'Parent link <{}> for joint <{}> does not exist!'.format(
-                            joint.parent.value, joint.name)
-                        PCG_ROOT_LOGGER.error(msg)                    
+                        msg = 'Parent link <{}> for joint' \
+                            ' <{}> does not exist!'.format(
+                                joint.parent.value, joint.name)
+                        PCG_ROOT_LOGGER.error(msg)
                         raise ValueError(msg)
                     if parent_link.pose is not None:
-                        parent_pose = Pose(parent_link.pose.value[0:3], parent_link.pose.value[3::])
-                    else:                        
+                        parent_pose = Pose(
+                            parent_link.pose.value[0:3],
+                            parent_link.pose.value[3::])
+                    else:
                         parent_pose = Pose()
                 else:
                     parent_pose = Pose()
 
-                child_link = model_sdf.get_link_by_name(joint.child.value)   
+                child_link = model_sdf.get_link_by_name(joint.child.value)
                 if child_link is None:
-                    msg = 'Child link <{}> for joint <{}> does not exist!'.format(
-                        joint.child.value, joint.name)
-                    PCG_ROOT_LOGGER.error(msg)                    
+                    msg = 'Child link <{}> for joint ' \
+                        '<{}> does not exist!'.format(
+                            joint.child.value, joint.name)
+                    PCG_ROOT_LOGGER.error(msg)
                     raise ValueError(msg)
-                
-                if child_link.pose is not None:                
-                    child_pose = Pose(child_link.pose.value[0:3], child_link.pose.value[3::])
+
+                if child_link.pose is not None:
+                    child_pose = Pose(
+                        child_link.pose.value[0:3], child_link.pose.value[3::])
                 else:
                     child_pose = Pose()
 
-                # Calculate relative pose of the joint regarding the parent's pose
+                # Calculate relative pose of the joint regarding the parent's
+                # pose
                 pose_diff = Pose(
                     pos=np.dot(
-                        parent_pose.rotation_matrix[0:3, 0:3].T, 
+                        parent_pose.rotation_matrix[0:3, 0:3].T,
                         child_pose.position - parent_pose.position),
                     rot=Pose.get_transform(parent_pose.quat, child_pose.quat)
                 )
@@ -487,7 +494,7 @@ def sdf2urdf(sdf):
         urdf.radius = sdf.radius.value
     elif sdf._NAME == 'sphere':
         urdf.radius = sdf.radius.value
-    elif sdf._NAME == 'mesh':        
+    elif sdf._NAME == 'mesh':
         uri = Path(sdf.uri.value)
         if uri.package_uri is not None:
             urdf.filename = uri.package_uri
@@ -496,8 +503,8 @@ def sdf2urdf(sdf):
     elif sdf._NAME == 'pose':
         urdf.xyz = sdf.value[0:3]
         urdf.rpy = sdf.value[3::]
-    elif sdf._NAME == 'geometry':        
-        if sdf.box:            
+    elif sdf._NAME == 'geometry':
+        if sdf.box:
             urdf.box = sdf2urdf(sdf.box)
         elif sdf.cylinder:
             urdf.cylinder = sdf2urdf(sdf.cylinder)
@@ -541,7 +548,7 @@ def sdf2urdf(sdf):
                 urdf.dynamics = sdf2urdf(sdf.axis.dynamics)
         if sdf.pose:
             urdf.origin = sdf2urdf(sdf.pose)
-        
+
         if sdf.urdf is not None:
             if sdf.urdf.mimic is not None:
                 urdf.mimic = sdf.urdf.mimic
@@ -570,9 +577,9 @@ def sdf2urdf(sdf):
             urdf.color = create_urdf_element('color')
             urdf.color.rgba = sdf.diffuse.value
         elif sdf.shader:
-            urdf.texture.filename = sdf.shader.normal_map               
+            urdf.texture.filename = sdf.shader.normal_map
     elif sdf._NAME == 'link':
-        urdf.name = sdf.name        
+        urdf.name = sdf.name
         if sdf.inertial:
             urdf.inertial = sdf2urdf(sdf.inertial)
 
@@ -587,18 +594,18 @@ def sdf2urdf(sdf):
                 urdf.add_collision(urdf_collision.name, urdf_collision)
 
     return urdf
-        
+
 
 def urdf2sdf(urdf):
-    """Recursively convert an URDF `pcg_gazebo` element and its child elements 
+    """Recursively convert an URDF `pcg_gazebo` element and its child elements
     into a SDF `pcg_gazebo` element.
-    
+
     > *Input arguments*
-    
+
     * `urdf` (*type:* `pcg_gazebo.parsers.types.XMLBase`): Valid URDF element
-    
+
     > *Returns*
-    
+
     `pcg_gazebo.parsers.types.XMLBase` as a SDF element.
     """
     from .sdf import create_sdf_element
@@ -618,10 +625,10 @@ def urdf2sdf(urdf):
         mass='mass',
         origin='pose',
         box='box',
-        cylinder='cylinder', 
+        cylinder='cylinder',
         sphere='sphere',
         mesh='mesh',
-        geometry='geometry', 
+        geometry='geometry',
         material='material',
         pose='origin',
         child='child',
@@ -631,7 +638,8 @@ def urdf2sdf(urdf):
     )
 
     assert urdf._NAME in URDF2SDF_OPT.keys(), \
-        'URDF element of type <{}> not available for conversion to SDF'.format(urdf._NAME)
+        'URDF element of type <{}> not available' \
+        ' for conversion to SDF'.format(urdf._NAME)
 
     sdf = create_sdf_element(URDF2SDF_OPT[urdf._NAME])
 
@@ -640,8 +648,10 @@ def urdf2sdf(urdf):
         if urdf.gazebos is not None:
             for gazebo in urdf.gazebos:
                 if gazebo.reference is not None:
-                    # In case the Gazebo block is referenced to a link or joint,
-                    # copy child elements to the respective link or joint
+                    # In case the Gazebo block is
+                    # referenced to a link or joint,
+                    # copy child elements to the
+                    # respective link or joint
                     if urdf.get_link_by_name(gazebo.reference):
                         for link in urdf.links:
                             if link.name == gazebo.reference:
@@ -655,7 +665,9 @@ def urdf2sdf(urdf):
                 else:
                     # Add all model specific Gazebo elements
                     for tag in gazebo.children:
-                        if isinstance(gazebo.children[tag], collections.Iterable):
+                        if isinstance(
+                                gazebo.children[tag],
+                                collections.Iterable):
                             for elem in gazebo.children[tag]:
                                 if elem._TYPE != 'sdf':
                                     continue
@@ -679,7 +691,7 @@ def urdf2sdf(urdf):
                     if urdf.gazebo.children[tag]._TYPE != 'sdf':
                         continue
                     sdf._add_child_element(tag, urdf.gazebo.children[tag])
-                
+
     if urdf._NAME == 'mass':
         sdf.value = urdf.value
     elif urdf._NAME == 'inertia':
@@ -688,7 +700,7 @@ def urdf2sdf(urdf):
         sdf.izz.value = urdf.izz
         sdf.ixy.value = urdf.ixy
         sdf.ixz.value = urdf.ixz
-        sdf.iyz.value = urdf.iyz         
+        sdf.iyz.value = urdf.iyz
     elif urdf._NAME == 'box':
         sdf.size.value = urdf.size
     elif urdf._NAME == 'cylinder':
@@ -696,7 +708,7 @@ def urdf2sdf(urdf):
         sdf.radius.value = urdf.radius
     elif urdf._NAME == 'sphere':
         sdf.radius.value = urdf.radius
-    elif urdf._NAME == 'mesh':        
+    elif urdf._NAME == 'mesh':
         uri = Path(urdf.filename)
         if uri.model_uri is not None:
             sdf.uri = uri.model_uri
@@ -705,14 +717,14 @@ def urdf2sdf(urdf):
         sdf.scale = urdf.scale
     elif urdf._NAME == 'origin':
         sdf.value = urdf.xyz + urdf.rpy
-    elif urdf._NAME == 'geometry':        
+    elif urdf._NAME == 'geometry':
         if urdf.box is not None:
             sdf.box = urdf2sdf(urdf.box)
         elif urdf.cylinder is not None:
             sdf.cylinder = urdf2sdf(urdf.cylinder)
         elif urdf.sphere is not None:
             sdf.sphere = urdf2sdf(urdf.sphere)
-        elif urdf.mesh is not None:            
+        elif urdf.mesh is not None:
             sdf.mesh = urdf2sdf(urdf.mesh)
     elif urdf._NAME == 'visual':
         assert urdf.geometry is not None, \
@@ -730,13 +742,13 @@ def urdf2sdf(urdf):
         sdf.geometry = urdf2sdf(urdf.geometry)
         if urdf.origin:
             sdf.pose = urdf2sdf(urdf.origin)
-    elif urdf._NAME == 'inertial':        
+    elif urdf._NAME == 'inertial':
         sdf.mass = urdf2sdf(urdf.mass)
         sdf.inertia = urdf2sdf(urdf.inertia)
         if urdf.origin is not None:
-            sdf.pose = urdf2sdf(urdf.origin)        
+            sdf.pose = urdf2sdf(urdf.origin)
     elif urdf._NAME == 'joint':
-        sdf.name = urdf.name        
+        sdf.name = urdf.name
 
         if urdf.type == 'continuous':
             sdf.type = 'revolute'
@@ -782,14 +794,14 @@ def urdf2sdf(urdf):
         elif urdf.texture:
             sdf.shader = create_sdf_element('shader')
             sdf.shader.normal_map = urdf.texture.filename
-            sdf.type = 'pixel'  
+            sdf.type = 'pixel'
     elif urdf._NAME == 'link':
         sdf.name = urdf.name
         if urdf.inertial:
             sdf.inertial = urdf2sdf(urdf.inertial)
 
         if urdf.gazebo is not None:
-            if urdf.gazebo.selfCollide: 
+            if urdf.gazebo.selfCollide:
                 sdf.self_collide = urdf.gazebo.selfCollide.value
 
         if urdf.visuals is not None:
@@ -799,139 +811,177 @@ def urdf2sdf(urdf):
 
         if urdf.collisions is not None:
             for collision in urdf.collisions:
-                sdf_collision = urdf2sdf(collision)                
+                sdf_collision = urdf2sdf(collision)
 
                 if urdf.gazebo is not None:
                     if urdf.gazebo.maxContacts:
-                        sdf_collision.max_contacts = urdf.gazebo.maxContacts.value
-                    if urdf.gazebo.mu1: 
+                        sdf_collision.max_contacts = \
+                            urdf.gazebo.maxContacts.value
+                    if urdf.gazebo.mu1:
                         if not sdf_collision.surface:
-                            sdf_collision.surface = create_sdf_element('surface')
+                            sdf_collision.surface = create_sdf_element(
+                                'surface')
                         if not sdf_collision.surface.friction:
-                            sdf_collision.surface.friction = create_sdf_element('friction')
-                            sdf_collision.surface.friction.reset(with_optional_elements=True)
+                            sdf_collision.surface.friction = \
+                                create_sdf_element(
+                                    'friction')
+                            sdf_collision.surface.friction.reset(
+                                with_optional_elements=True)
 
-                        sdf_collision.surface.friction.ode.mu = urdf.gazebo.mu1.value
-                        sdf_collision.surface.friction.bullet.friction = urdf.gazebo.mu1.value
-                    if urdf.gazebo.mu2: 
+                        sdf_collision.surface.friction.ode.mu = \
+                            urdf.gazebo.mu1.value
+                        sdf_collision.surface.friction.bullet.friction = \
+                            urdf.gazebo.mu1.value
+                    if urdf.gazebo.mu2:
                         if not sdf_collision.surface:
-                            sdf_collision.surface = create_sdf_element('surface')
+                            sdf_collision.surface = create_sdf_element(
+                                'surface')
                         if not sdf_collision.surface.friction:
-                            sdf_collision.surface.friction = create_sdf_element('friction')
-                            sdf_collision.surface.friction.reset(with_optional_elements=True)
-                        
-                        sdf_collision.surface.friction.ode.mu2 = urdf.gazebo.mu2.value
-                        sdf_collision.surface.friction.bullet.friction2 = urdf.gazebo.mu2.value
-                    if urdf.gazebo.kp: 
+                            sdf_collision.surface.friction = \
+                                create_sdf_element(
+                                    'friction')
+                            sdf_collision.surface.friction.reset(
+                                with_optional_elements=True)
+
+                        sdf_collision.surface.friction.ode.mu2 = \
+                            urdf.gazebo.mu2.value
+                        sdf_collision.surface.friction.bullet.friction2 = \
+                            urdf.gazebo.mu2.value
+                    if urdf.gazebo.kp:
                         if not sdf_collision.surface:
-                            sdf_collision.surface = create_sdf_element('surface')
+                            sdf_collision.surface = create_sdf_element(
+                                'surface')
                         if not sdf_collision.surface.contact:
-                            sdf_collision.surface.contact = create_sdf_element('contact')
-                            sdf_collision.surface.contact.reset(
-                                mode='collision', with_optional_elements=True)
-                            
-                        sdf_collision.surface.contact.ode.kp = urdf.gazebo.kp.value
-                        sdf_collision.surface.contact.bullet.kp = urdf.gazebo.kp.value
-                    if urdf.gazebo.kd: 
-                        if not sdf_collision.surface:
-                            sdf_collision.surface = create_sdf_element('surface')
-                        if not sdf_collision.surface.contact:
-                            sdf_collision.surface.contact = create_sdf_element('contact')
+                            sdf_collision.surface.contact = create_sdf_element(
+                                'contact')
                             sdf_collision.surface.contact.reset(
                                 mode='collision', with_optional_elements=True)
 
-                        sdf_collision.surface.contact.ode.kd = urdf.gazebo.kd.value
-                        sdf_collision.surface.contact.bullet.kd = urdf.gazebo.kd.value
-                    if urdf.gazebo.minDepth: 
+                        sdf_collision.surface.contact.ode.kp = \
+                            urdf.gazebo.kp.value
+                        sdf_collision.surface.contact.bullet.kp = \
+                            urdf.gazebo.kp.value
+                    if urdf.gazebo.kd:
                         if not sdf_collision.surface:
-                            sdf_collision.surface = create_sdf_element('surface')
+                            sdf_collision.surface = create_sdf_element(
+                                'surface')
                         if not sdf_collision.surface.contact:
-                            sdf_collision.surface.contact = create_sdf_element('contact')
-                            sdf_collision.surface.contact.reset(
-                                mode='collision', with_optional_elements=True)
-                        
-                        sdf_collision.surface.contact.ode.min_depth = urdf.gazebo.minDepth.value
-                    if urdf.gazebo.maxVel: 
-                        if not sdf_collision.surface:
-                            sdf_collision.surface = create_sdf_element('surface')
-                        if not sdf_collision.surface.contact:
-                            sdf_collision.surface.contact = create_sdf_element('contact')
+                            sdf_collision.surface.contact = create_sdf_element(
+                                'contact')
                             sdf_collision.surface.contact.reset(
                                 mode='collision', with_optional_elements=True)
 
-                        sdf_collision.surface.contact.ode.max_vel = urdf.gazebo.maxVel.value                    
-                    
+                        sdf_collision.surface.contact.ode.kd = \
+                            urdf.gazebo.kd.value
+                        sdf_collision.surface.contact.bullet.kd = \
+                            urdf.gazebo.kd.value
+                    if urdf.gazebo.minDepth:
+                        if not sdf_collision.surface:
+                            sdf_collision.surface = create_sdf_element(
+                                'surface')
+                        if not sdf_collision.surface.contact:
+                            sdf_collision.surface.contact = create_sdf_element(
+                                'contact')
+                            sdf_collision.surface.contact.reset(
+                                mode='collision', with_optional_elements=True)
+
+                        sdf_collision.surface.contact.ode.min_depth = \
+                            urdf.gazebo.minDepth.value
+                    if urdf.gazebo.maxVel:
+                        if not sdf_collision.surface:
+                            sdf_collision.surface = create_sdf_element(
+                                'surface')
+                        if not sdf_collision.surface.contact:
+                            sdf_collision.surface.contact = create_sdf_element(
+                                'contact')
+                            sdf_collision.surface.contact.reset(
+                                mode='collision', with_optional_elements=True)
+
+                        sdf_collision.surface.contact.ode.max_vel = \
+                            urdf.gazebo.maxVel.value
+
                 sdf.add_collision(sdf_collision.name, sdf_collision)
 
     elif urdf._NAME == 'robot':
         import networkx
-        import sys
-        from ..simulation.properties import Pose
-        sdf.name = urdf.name 
+        sdf.name = urdf.name
 
-        # Create a graph to find the connections between 
+        # Create a graph to find the connections between
         # links and compute the relative pose between them
         robot_graph = networkx.DiGraph()
 
         if urdf.links is not None:
-            for link in urdf.links:                
+            for link in urdf.links:
                 # Add link as a node
-                robot_graph.add_node(link.name)                
-        
+                robot_graph.add_node(link.name)
+
         if urdf.joints is not None:
             for joint in urdf.joints:
                 # Add connection between links as an edge
                 robot_graph.add_edge(
                     joint.parent.link, joint.child.link, label=joint.name)
-                                    
+
         # Test if the robot graph is connected
         for n in robot_graph.nodes():
             if robot_graph.out_degree(n) + robot_graph.in_degree(n) == 0:
-                raise ValueError('Link <{}> is not connected by any joint'.format(n))
-        
-        start_nodes = [n for n in robot_graph.nodes() \
-            if robot_graph.out_degree(n) > 0 and robot_graph.in_degree(n) == 0] 
-        end_nodes = [n for n in robot_graph.nodes() \
-            if robot_graph.out_degree(n) == 0 and robot_graph.in_degree(n) > 0]
+                raise ValueError(
+                    'Link <{}> is not connected by any joint'.format(n))
+
+        start_nodes = list()
+        end_nodes = list()
+        for n in robot_graph.nodes():
+            if robot_graph.out_degree(n) > 0 and \
+                    robot_graph.in_degree(n) == 0:
+                start_nodes.append(n)
+            if robot_graph.out_degree(n) == 0 and \
+                    robot_graph.in_degree(n) > 0:
+                end_nodes.append(n)
 
         assert len(start_nodes) == 1, \
             'The URDF structure should have only one start node' \
-                ', n_start_nodes={}'.format(len(start_nodes))
+            ', n_start_nodes={}'.format(len(start_nodes))
 
         if urdf.links is not None:
-            for link in urdf.links:                
+            for link in urdf.links:
                 sdf_link = urdf2sdf(link)
                 sdf.add_link(sdf_link.name, sdf_link)
-                                    
+
         if urdf.joints is not None:
             for joint in urdf.joints:
                 sdf_joint = urdf2sdf(joint)
                 sdf_joint.rm_child('pose')
                 sdf.add_joint(sdf_joint.name, sdf_joint)
-                
-            # Find the paths from start node to end nodes and 
-            # compute the link poses in between            
+
+            # Find the paths from start node to end nodes and
+            # compute the link poses in between
             for e in end_nodes:
-                for path in networkx.all_simple_paths(robot_graph, source=start_nodes[0], target=e):                    
+                for path in networkx.all_simple_paths(
+                        robot_graph, source=start_nodes[0], target=e):
                     for i in range(len(path)):
                         if path[i] == start_nodes[0]:
                             continue
                         for joint in urdf.joints:
-                            if joint.parent.link == path[i - 1] and joint.child.link == path[i]:
-                                parent_link = sdf.get_link_by_name(joint.parent.link)
-                                child_link = sdf.get_link_by_name(joint.child.link)                                
+                            if joint.parent.link == path[i - 1] and \
+                                    joint.child.link == path[i]:
+                                parent_link = sdf.get_link_by_name(
+                                    joint.parent.link)
+                                child_link = sdf.get_link_by_name(
+                                    joint.child.link)
                                 if parent_link.pose is not None:
-                                    pose = Pose.from_sdf(parent_link.pose) + Pose.from_urdf(joint.origin)
+                                    pose = Pose.from_sdf(
+                                        parent_link.pose) + \
+                                        Pose.from_urdf(joint.origin)
                                 else:
-                                    pose = Pose.from_urdf(joint.origin)                                 
+                                    pose = Pose.from_urdf(joint.origin)
                                 child_link.pose = pose.to_sdf()
-                                
+
         sdf = merge_massless_links(sdf)
     return sdf
 
 
 def merge_massless_links(sdf):
     from copy import deepcopy
+    from ..log import PCG_ROOT_LOGGER
     if sdf.joints is None:
         return sdf
 
@@ -940,17 +990,21 @@ def merge_massless_links(sdf):
         if output_sdf.joints is not None:
             merged_link = None
             joint_name = None
-            for joint in output_sdf.joints:         
+            for joint in output_sdf.joints:
                 if joint.type == 'fixed':
-                    parent_link = output_sdf.get_link_by_name(joint.parent.value)
+                    parent_link = output_sdf.get_link_by_name(
+                        joint.parent.value)
                     child_link = output_sdf.get_link_by_name(joint.child.value)
-                    
-                    if parent_link.inertial is None or child_link.inertial is None:                    
-                        merged_link = merge_links(parent_link, child_link)                        
+
+                    if parent_link.inertial is None or \
+                            child_link.inertial is None:
+                        merged_link = merge_links(parent_link, child_link)
                         joint_name = joint.name
                         break
             if joint_name is None:
-                PCG_ROOT_LOGGER.info('No fixed joints found for this model <{}>'.format(sdf.name))
+                PCG_ROOT_LOGGER.info(
+                    'No fixed joints found for this model <{}>'.format(
+                        sdf.name))
                 break
 
             joint = output_sdf.get_joint_by_name(joint_name)
@@ -965,16 +1019,16 @@ def merge_massless_links(sdf):
             for joint in output_sdf.joints:
                 if joint.parent.value == child_name:
                     joint.parent = parent_name
-                    
+
             # Remove link
-            output_sdf.remove_link_by_name(child_name)         
+            output_sdf.remove_link_by_name(child_name)
 
             # Replace old parent link with merged link
             for i in range(len(output_sdf.links)):
                 if output_sdf.links[i].name == parent_name:
                     output_sdf.links[i] = merged_link
-                    break    
-            
+                    break
+
             # Refactor plugin inputs with the old link's name
             if output_sdf.plugins is not None:
                 for i in range(len(output_sdf.plugins)):
@@ -983,73 +1037,86 @@ def merge_massless_links(sdf):
 
     return output_sdf
 
+
 def merge_links(parent, child):
     from copy import deepcopy
-    import numpy as np
     from ..simulation.properties import Pose
+    from ..log import PCG_ROOT_LOGGER
 
-    if parent.inertial is not None and child.inertial is not None:
+    if parent.inertial is not None and \
+            child.inertial is not None:
         return None
-    
-    parent_to_child = True
-    if parent.inertial is not None and child.inertial is None:
-        new_link = deepcopy(parent)        
+
+    if parent.inertial is not None and \
+            child.inertial is None:
+        new_link = deepcopy(parent)
         merged_link = deepcopy(child)
-    elif child.inertial is not None and parent.inertial is None:        
-        parent_to_child = False
+    elif child.inertial is not None and \
+            parent.inertial is None:
         new_link = deepcopy(child)
         merged_link = deepcopy(parent)
     else:
-        PCG_ROOT_LOGGER.warning('Links cannot be merged, parent={}, child={}'.format(
-        parent.name, child.name))
-        return None    
+        PCG_ROOT_LOGGER.warning(
+            'Links cannot be merged, parent={}, child={}'.format(
+                parent.name, child.name))
+        return None
 
     PCG_ROOT_LOGGER.info('Merging link <{}> into link <{}>'.format(
         merged_link.name, new_link.name))
 
     def compute_new_pose(ml, obj, nl):
         pose = Pose.from_sdf(ml.pose) - Pose.from_sdf(nl.pose)
-                        
+
         if obj.pose is not None:
             pose = pose + Pose.from_sdf(obj.pose)
-                            
+
         return pose
-    
+
     visual_name_refactors = dict()
     if merged_link.visuals is not None:
         PCG_ROOT_LOGGER.info('Merged link <{}> has {} visual blocks'.format(
             merged_link.name, len(merged_link.visuals)))
         for visual in merged_link.visuals:
             pose = compute_new_pose(merged_link, visual, new_link)
-            
+
             new_visual_name = '{}_{}'.format(merged_link.name, visual.name)
             visual_name_refactors[visual.name] = new_visual_name
             new_link.add_visual(
                 name=new_visual_name,
                 visual=visual)
             new_link.visuals[-1].pose = pose.to_sdf()
-            PCG_ROOT_LOGGER.info('Adding visual <{}> to parent link <{}>'.format(
-                new_link.visuals[-1].name, new_link.name))
+            PCG_ROOT_LOGGER.info(
+                'Adding visual <{}> to parent link <{}>'.format(
+                    new_link.visuals[-1].name, new_link.name))
     else:
-        PCG_ROOT_LOGGER.info('Merged link <{}> has no visual blocks'.format(merged_link.name))
-    
+        PCG_ROOT_LOGGER.info(
+            'Merged link <{}> has no visual blocks'.format(
+                merged_link.name))
+
     collision_name_refactors = dict()
     if merged_link.collisions is not None:
         PCG_ROOT_LOGGER.info('Merged link <{}> has {} collision blocks'.format(
             merged_link.name, len(merged_link.collisions)))
         for collision in merged_link.collisions:
             pose = compute_new_pose(merged_link, collision, new_link)
-                
-            new_collision_name = '{}_{}'.format(merged_link.name, collision.name)
+
+            new_collision_name = '{}_{}'.format(
+                merged_link.name, collision.name)
             collision_name_refactors[collision.name] = new_collision_name
             new_link.add_collision(
                 name=new_collision_name,
                 collision=collision)
             new_link.collisions[-1].pose = pose.to_sdf()
-            PCG_ROOT_LOGGER.info('Adding collision <{}> to parent link <{}> from merged link <{}>'.format(
-                new_link.collisions[-1].name, parent.name, merged_link.name))
+            PCG_ROOT_LOGGER.info(
+                'Adding collision <{}> to parent'
+                ' link <{}> from merged link <{}>'.format(
+                    new_link.collisions[-1].name,
+                    parent.name,
+                    merged_link.name))
     else:
-        PCG_ROOT_LOGGER.info('Merged link <{}> has no collision blocks'.format(merged_link.name))
+        PCG_ROOT_LOGGER.info(
+            'Merged link <{}> has no collision blocks'.format(
+                merged_link.name))
 
     if merged_link.sensors is not None:
         PCG_ROOT_LOGGER.info('Merged link <{}> has {} sensor blocks'.format(
@@ -1064,36 +1131,52 @@ def merge_links(parent, child):
 
             # Refactor sensors for changes in visual and collision elements
             if new_link.sensors[-1].type == 'contact':
+                old_collision_name = \
+                    new_link.sensors[-1].contact.collision.value
                 try:
                     # Replacing the name of the collision body in the sensor
                     # if the collision body name changed
-                    old_collision_name = new_link.sensors[-1].contact.collision.value
                     if old_collision_name in collision_name_refactors:
-                        new_link.sensors[-1].contact.collision.value = collision_name_refactors[old_collision_name]
+                        new_link.sensors[-1].contact.collision.value = \
+                            collision_name_refactors[old_collision_name]
                 except AttributeError as ex:
-                    PCG_ROOT_LOGGER.error('Could not refactor collision body name <{}>'.format())
-            PCG_ROOT_LOGGER.info('Adding sensor <{}> to parent link <{}> from merged link <{}>'.format(
-                new_link.sensors[-1].name, parent.name, merged_link.name))
+                    PCG_ROOT_LOGGER.error(
+                        'Could not refactor collision body name <{}>, '
+                        'message={}'.format(old_collision_name, str(ex)))
+            PCG_ROOT_LOGGER.info(
+                'Adding sensor <{}> to parent'
+                ' link <{}> from merged link <{}>'.format(
+                    new_link.sensors[-1].name,
+                    parent.name,
+                    merged_link.name))
     else:
-        PCG_ROOT_LOGGER.info('Merged link <{}> has no sensor blocks'.format(merged_link.name))
-    
+        PCG_ROOT_LOGGER.info(
+            'Merged link <{}> has no sensor blocks'.format(
+                merged_link.name))
+
     if merged_link.plugins is not None:
-        PCG_ROOT_LOGGER.info('Merged link <{}> has {} plugin blocks'.format(
-            merged_link.name, len(merged_link.plugins)))        
+        PCG_ROOT_LOGGER.info(
+            'Merged link <{}> has {}'
+            ' plugin blocks'.format(
+                merged_link.name, len(merged_link.plugins)))
         for plugin in merged_link.plugins:
             new_link.add_plugin(plugin.name, plugin)
-            PCG_ROOT_LOGGER.info('Adding plugin <{}> to parent link <{}> from child link <{}>'.format(
-                plugin.name, new_link.name, merged_link.name))
+            PCG_ROOT_LOGGER.info(
+                'Adding plugin <{}> to parent link'
+                ' <{}> from child link <{}>'.format(
+                    plugin.name, new_link.name, merged_link.name))
     else:
-        PCG_ROOT_LOGGER.info('Merged link <{}> has no plugin blocks'.format(merged_link.name))
+        PCG_ROOT_LOGGER.info(
+            'Merged link <{}> has no plugin blocks'.format(
+                merged_link.name))
 
     # If the child link is the one with inertial tensor, handle the name
     # of the new link
-    if child.inertial is not None and parent.inertial is None:        
+    if child.inertial is not None and parent.inertial is None:
         new_link.name = parent.name
         if new_link.plugins is not None:
             for plugin in new_link.plugins:
                 for tag in plugin.find_values(child.name):
-                    plugin.value[tag] = parent.name        
-    
+                    plugin.value[tag] = parent.name
+
     return new_link

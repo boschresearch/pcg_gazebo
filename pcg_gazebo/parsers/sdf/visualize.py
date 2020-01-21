@@ -19,6 +19,6 @@ from ..types import XMLBoolean
 class Visualize(XMLBoolean):
     _NAME = 'visualize'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=False):
         XMLBoolean.__init__(self, default)

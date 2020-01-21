@@ -28,7 +28,7 @@ class Mu(XMLScalar):
     """
     _NAME = 'mu'
     _TYPE = 'sdf'
-    
+
     def __init__(self, default=1):
         XMLScalar.__init__(self, default)
         self._description = dict(

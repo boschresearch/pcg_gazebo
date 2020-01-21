@@ -69,12 +69,12 @@ class Geometry(XMLBase):
 
     @mesh.setter
     def mesh(self, value):
-        self.reset(mode='mesh')        
+        self.reset(mode='mesh')
         self._add_child_element('mesh', value)
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('geometry')
         obj.reset(self._mode)
         if self._get_child_element('box') is not None:

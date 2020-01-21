@@ -46,7 +46,7 @@ class Box(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('box')
         obj.size = self.size
         return obj

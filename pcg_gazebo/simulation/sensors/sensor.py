@@ -18,8 +18,8 @@ from ...parsers.sdf import create_sdf_element
 
 
 class Sensor(object):
-    def __init__(self, name='sensor', always_on=True, update_rate=50, 
-        visualize=False, topic=None, pose=[0, 0, 0, 0, 0, 0]):
+    def __init__(self, name='sensor', always_on=True, update_rate=50,
+                 visualize=False, topic=None, pose=[0, 0, 0, 0, 0, 0]):
         assert isinstance(always_on, bool) or always_on in [0, 1], \
             'Always on flag must be a boolean'
         assert isinstance(visualize, bool) or always_on in [0, 1], \
@@ -74,7 +74,7 @@ class Sensor(object):
             for item in vec:
                 assert isinstance(item, float) or isinstance(item, int), \
                     'Each pose element must be either a float or an integer'
-            
+
             self._pose = Pose(pos=vec[0:3], rot=vec[3::])
 
     @property
@@ -115,7 +115,7 @@ class Sensor(object):
     def set_plugin(self, name='', filename='', plugin=None, **kwargs):
         if plugin is None:
             self._plugin = Plugin(
-                name=name, 
+                name=name,
                 filename=filename)
             self._plugin.params = kwargs.copy()
         else:
@@ -125,16 +125,16 @@ class Sensor(object):
         sensor = create_sdf_element('sensor')
         sensor.always_on = self._always_on
         sensor.visualize = self._visualize
-        
+
         sensor.pose = self._pose.to_sdf()
 
         if self._topic is not None:
             sensor.topic = self._topic
         sensor.update_rate = self._update_rate
 
-        if self._plugin is not None:            
+        if self._plugin is not None:
             sensor.add_plugin(self._plugin.name, self._plugin.to_sdf())
-            
+
         return sensor
 
     @staticmethod
@@ -145,18 +145,19 @@ class Sensor(object):
         from .camera import Camera
 
         if sdf.type == 'contact':
-            sensor = Contact.from_sdf(sdf)            
+            sensor = Contact.from_sdf(sdf)
         elif sdf.type == 'ray':
             sensor = Ray.from_sdf(sdf)
         elif sdf.type == 'imu':
             sensor = IMU.from_sdf(sdf)
         elif sdf.type in ['camera', 'depth']:
             sensor = Camera.from_sdf(sdf)
-        else:            
+        else:
             raise NotImplementedError(sdf.name + ' ' + sdf.type)
 
         if sdf.plugins is not None:
-            assert len(sdf.plugins) == 1, 'Only one plugin per sensor is supported'            
+            assert len(
+                sdf.plugins) == 1, 'Only one plugin per sensor is supported'
             sensor._plugin = Plugin.from_sdf(sdf.plugins[0])
 
         return sensor

@@ -25,7 +25,7 @@ class ProvideFeedback(XMLBoolean):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('provide_feedback')
         obj.value = self.value
         return obj

@@ -41,7 +41,7 @@ class Scene(XMLBase):
     @property
     def sky(self):
         return self._get_child_element('sky')
-    
+
     @sky.setter
     def sky(self, value):
         self._add_child_element('sky', value)
@@ -49,23 +49,23 @@ class Scene(XMLBase):
     @property
     def ambient(self):
         return self._get_child_element('ambient')
-    
+
     @ambient.setter
     def ambient(self, value):
         self._add_child_element('ambient', value)
-    
+
     @property
     def background(self):
         return self._get_child_element('background')
-    
+
     @background.setter
     def background(self, value):
-        self._add_child_element('background', value)    
+        self._add_child_element('background', value)
 
     @property
     def shadows(self):
         return self._get_child_element('shadows')
-    
+
     @shadows.setter
     def shadows(self, value):
         self._add_child_element('shadows', value)
@@ -73,7 +73,7 @@ class Scene(XMLBase):
     @property
     def grid(self):
         return self._get_child_element('grid')
-    
+
     @grid.setter
     def grid(self, value):
         self._add_child_element('grid', value)
@@ -81,7 +81,7 @@ class Scene(XMLBase):
     @property
     def origin_visual(self):
         return self._get_child_element('origin_visual')
-    
+
     @origin_visual.setter
     def origin_visual(self, value):
         self._add_child_element('origin_visual', value)

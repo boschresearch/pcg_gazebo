@@ -1,21 +1,34 @@
-language: generic
-sudo: required
-dist: bionic
+language: python
+dist: xenial
 
+cache:
+  directories:
+    - ~/.cache/pip
+# Some dependencies, like python-fcl are only available 
+# for 2.7 and 3.6
 matrix:
   include:    
-    - env: PYTHON_VERSION=3.6
-    - env: PYTHON_VERSION=3.8
+    - python: "2.7"
+    - python: "3.6"
 
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install python3-pip python3-setuptools libspatialindex-dev pybind11-dev -y -qq
+- sudo apt-get install libspatialindex-dev libgeos-dev blender -y
+- pip install setuptools
+- pip install flake8 autopep8
 
 install:
-- pip3 install -e .
+- python -c "import sys; print(sys.version)"
+- pip install -e .[all] 
 
 script: 
-- pip3 install pytest
-- python3 -c "import pcg_gazebo"
-- pip3 install -e .[test]
+# Check code style to the PEP 8 style guide
+- autopep8 --recursive --aggressive --diff --exit-code pcg_gazebo
+- autopep8 --recursive --aggressive --diff --exit-code tests
+- flake8 pcg_gazebo
+- flake8 tests
+# Test importing the package
+- set -e; python -c "import pcg_gazebo"; set +e;
+# Install test dependencies and run tests
+- pip install -e .[test]
 - pytest -x tests

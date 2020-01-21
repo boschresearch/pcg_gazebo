@@ -14,34 +14,33 @@
 # limitations under the License.
 import collections
 from ..parsers.sdf import Joint as JointSDF
-from ..parsers.sdf import create_sdf_element
 from .properties import Axis, Pose
 from ..log import PCG_ROOT_LOGGER
 
 
 class Joint(object):
-    def __init__(self, 
-        name='joint', 
-        parent=None, 
-        child=None, 
-        pose=[0, 0, 0, 0, 0, 0],
-        joint_type='fixed',
-        axis_xyz=[0, 0, 1],
-        damping=0, 
-        friction=0, 
-        spring_reference=0, 
-        spring_stiffness=0,
-        lower=-1e16, 
-        upper=1e16, 
-        velocity=-1, 
-        effort=-1,
-        use_parent_model_frame=False):        
+    def __init__(self,
+                 name='joint',
+                 parent=None,
+                 child=None,
+                 pose=[0, 0, 0, 0, 0, 0],
+                 joint_type='fixed',
+                 axis_xyz=[0, 0, 1],
+                 damping=0,
+                 friction=0,
+                 spring_reference=0,
+                 spring_stiffness=0,
+                 lower=-1e16,
+                 upper=1e16,
+                 velocity=-1,
+                 effort=-1,
+                 use_parent_model_frame=False):
         assert isinstance(name, str), 'Name must be a string'
         assert len(name) > 0, 'Name cannot be an empty string'
         self._name = name
 
         self._pose = Pose()
-        
+
         assert isinstance(parent, str), \
             'Parent must be a string, received={}'.format(type(parent))
         assert len(parent) > 0, 'Parent cannot be an empty string'
@@ -57,7 +56,7 @@ class Joint(object):
         self._type = joint_type
 
         if self._type != 'fixed':
-            self._axis = [Axis()]            
+            self._axis = [Axis()]
         elif self._type in ['universal', 'revolute2']:
             self._axis = [Axis(), Axis()]
         else:
@@ -65,7 +64,7 @@ class Joint(object):
 
         self.set_axis_xyz(axis_xyz)
         self.set_axis_dynamics(
-            damping=damping, 
+            damping=damping,
             friction=friction,
             spring_reference=spring_reference,
             spring_stiffness=spring_stiffness
@@ -78,7 +77,7 @@ class Joint(object):
         )
         self.set_use_parent_model_frame(use_parent_model_frame)
         self.pose = pose
-        
+
     @property
     def name(self):
         return self._name
@@ -136,9 +135,9 @@ class Joint(object):
             for item in vec:
                 assert isinstance(item, float) or isinstance(item, int), \
                     'Each pose element must be either a float or an integer'
-            
+
             self._pose = Pose(pos=vec[0:3], rot=vec[3::])
-        
+
     @property
     def axes(self):
         return self._axis
@@ -150,27 +149,36 @@ class Joint(object):
         self._axis[index].set_axis(xyz)
         return True
 
-    def set_axis_limits(self, lower=0, upper=0, velocity=-1, effort=-1, index=0):
+    def set_axis_limits(
+            self,
+            lower=0,
+            upper=0,
+            velocity=-1,
+            effort=-1,
+            index=0):
         if self._type == 'fixed':
             PCG_ROOT_LOGGER.warning('Fixed joints have no limits')
             return False
         if index != 0 and self._type not in ['universal', 'revolute2']:
-            PCG_ROOT_LOGGER.warning('Only joints of types universal and revolute2')
+            PCG_ROOT_LOGGER.warning(
+                'Only joints of types universal and revolute2')
             return False
 
         self._axis[index].set_limits(lower, upper, velocity, effort)
         return True
 
-    def set_axis_dynamics(self, damping=0, friction=0, spring_reference=0, 
-        spring_stiffness=0, index=0):
+    def set_axis_dynamics(self, damping=0, friction=0, spring_reference=0,
+                          spring_stiffness=0, index=0):
         if self._type == 'fixed':
             PCG_ROOT_LOGGER.warning('Fixed joints have no limits')
             return False
         if index != 0 and self._type not in ['universal', 'revolute2']:
-            PCG_ROOT_LOGGER.warning('Only joints of types universal and revolute2')
+            PCG_ROOT_LOGGER.warning(
+                'Only joints of types universal and revolute2')
             return False
-        
-        self._axis[index].set_dynamics(damping, friction, spring_reference, spring_stiffness)
+
+        self._axis[index].set_dynamics(
+            damping, friction, spring_reference, spring_stiffness)
         return True
 
     def set_use_parent_model_frame(self, flag, index=0):
@@ -185,7 +193,7 @@ class Joint(object):
         joint_sdf.child = self._child
         joint_sdf.type = self._type
         joint_sdf.pose = self.pose.to_sdf()
-        
+
         if len(self._axis) > 0 and self._type != 'fixed':
             joint_sdf.axis = self._axis[0].to_sdf()
             if len(self._axis) == 2:
@@ -196,8 +204,8 @@ class Joint(object):
     def from_sdf(sdf):
         assert sdf._NAME == 'joint', 'Input SDF element must be of type joint'
         joint = Joint(
-            name=sdf.name, 
-            parent=sdf.parent.value, 
+            name=sdf.name,
+            parent=sdf.parent.value,
             child=sdf.child.value,
             joint_type=sdf.type)
 
@@ -209,6 +217,6 @@ class Joint(object):
             if sdf.axis is not None:
                 joint._axis[0] = Axis.from_sdf(sdf.axis)
             if sdf.axis2 is not None:
-                joint._axis[1] = Axis.from_sdf(sdf.axis2)        
-            
+                joint._axis[1] = Axis.from_sdf(sdf.axis2)
+
         return joint

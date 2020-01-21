@@ -25,7 +25,8 @@ from .soft_erp import SoftERP
 from .kp import Kp
 from .kd import Kd
 from .split_impulse import SplitImpulse
-from .split_impulse_penetration_threshold import SplitImpulsePenetrationThreshold
+from .split_impulse_penetration_threshold import \
+    SplitImpulsePenetrationThreshold
 
 
 class FrictionBullet(XMLScalar):
@@ -54,18 +55,32 @@ class Bullet(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        solver=dict(creator=Solver, default=['bullet'], mode='physics'),
-        constraints=dict(creator=Constraints, default=['bullet'], mode='physics'),
-        friction=dict(creator=FrictionBullet, default=[1], mode='collision'),
-        friction2=dict(creator=Friction2, default=[1], mode='collision'),
-        rolling_friction=dict(creator=RollingFriction, default=[1], mode='collision'),
-        fdir1=dict(creator=FDir1, default=[[0, 0, 0]], mode='collision'),
-        soft_cfm=dict(creator=SoftCFM, default=[0], mode='contact', optional=True),
-        soft_erp=dict(creator=SoftERP, default=[0.2], mode='contact', optional=True),
-        kp=dict(creator=Kp, default=[1e12], mode='contact', optional=True),
-        kd=dict(creator=Kd, default=[1], mode='contact', optional=True),
-        split_impulse=dict(creator=SplitImpulse, default=[True], mode='contact'),
-        split_impulse_penetration_threshold=dict(creator=SplitImpulsePenetrationThreshold, default=[-0.01], mode='contact')
+        solver=dict(
+            creator=Solver, default=['bullet'], mode='physics'),
+        constraints=dict(
+            creator=Constraints, default=['bullet'], mode='physics'),
+        friction=dict(
+            creator=FrictionBullet, default=[1], mode='collision'),
+        friction2=dict(
+            creator=Friction2, default=[1], mode='collision'),
+        rolling_friction=dict(
+            creator=RollingFriction, default=[1], mode='collision'),
+        fdir1=dict(
+            creator=FDir1, default=[[0, 0, 0]], mode='collision'),
+        soft_cfm=dict(
+            creator=SoftCFM, default=[0], mode='contact', optional=True),
+        soft_erp=dict(
+            creator=SoftERP, default=[0.2], mode='contact', optional=True),
+        kp=dict(
+            creator=Kp, default=[1e12], mode='contact', optional=True),
+        kd=dict(
+            creator=Kd, default=[1], mode='contact', optional=True),
+        split_impulse=dict(
+            creator=SplitImpulse, default=[True], mode='contact'),
+        split_impulse_penetration_threshold=dict(
+            creator=SplitImpulsePenetrationThreshold,
+            default=[-0.01],
+            mode='contact')
     )
 
     _MODES = ['physics', 'collision', 'contact']

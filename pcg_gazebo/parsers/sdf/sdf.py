@@ -47,7 +47,9 @@ class SDF(XMLBase):
 
     @version.setter
     def version(self, value):
-        assert str(value) in self._VERSIONS, '{} not a valid XML version, versions={}'.format(value, self._VERSIONS)
+        assert str(value) in self._VERSIONS, '{} not a' \
+            ' valid XML version, versions={}'.format(
+                value, self._VERSIONS)
         self.attributes['version'] = str(value)
 
     @property
@@ -67,15 +69,15 @@ class SDF(XMLBase):
         return self._get_child_element('light')
 
     def add_model(self, name=None, model=None):
-        if model is None:            
+        if model is None:
             model = Model()
         self._add_child_element('model', model)
         if name is not None:
             self.children['model'][-1].name = name
 
     def add_light(self, name=None, light=None):
-        if light is None:            
+        if light is None:
             light = Light()
         self._add_child_element('light', light)
         if name is not None:
-            self.children['light'][-1].name = name        
+            self.children['light'][-1].name = name

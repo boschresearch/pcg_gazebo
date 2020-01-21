@@ -59,32 +59,36 @@ class Dynamics(XMLBase):
     @property
     def spring_reference(self):
         if 'gazebo' in self.children:
-            return self.children['gazebo']._get_child_element('spring_reference')
+            return self.children['gazebo']._get_child_element(
+                'spring_reference')
         else:
             return None
 
     @spring_reference.setter
     def spring_reference(self, value):
         if 'gazebo' not in self.children:
-            self.children['gazebo'] = Gazebo(*self._CHILDREN_CREATORS['gazebo']['default'])
+            self.children['gazebo'] = Gazebo(
+                *self._CHILDREN_CREATORS['gazebo']['default'])
         self.children['gazebo'].children['spring_reference'].value = value
 
     @property
     def spring_stiffness(self):
         if 'gazebo' in self.children:
-            return self.children['gazebo']._get_child_element('spring_stiffness')
+            return self.children['gazebo']._get_child_element(
+                'spring_stiffness')
         else:
             return None
 
     @spring_stiffness.setter
     def spring_stiffness(self, value):
         if 'gazebo' not in self.children:
-            self.children['gazebo'] = Gazebo(*self._CHILDREN_CREATORS['gazebo']['default'])
+            self.children['gazebo'] = Gazebo(
+                *self._CHILDREN_CREATORS['gazebo']['default'])
         self.children['gazebo'].children['spring_stiffness'].value = value
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('dynamics')
         obj.damping = self.damping
         obj.friction = self.friction

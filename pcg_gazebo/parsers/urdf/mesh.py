@@ -14,6 +14,7 @@
 # limitations under the License.
 import sys
 from ..types import XMLBase
+from ...utils import is_string
 
 
 class Mesh(XMLBase):
@@ -36,7 +37,7 @@ class Mesh(XMLBase):
     @filename.setter
     def filename(self, value):
         if sys.version_info[0] == 2:
-            assert isinstance(value, str) or isinstance(value, unicode), \
+            assert is_string(value), \
                 'Filename must be a string or unicode'
         else:
             assert isinstance(value, str), \
@@ -61,7 +62,7 @@ class Mesh(XMLBase):
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
-        
+
         obj = create_sdf_element('mesh')
         obj.uri = self.filename
         obj.scale = self.scale

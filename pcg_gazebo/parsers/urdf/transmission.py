@@ -14,6 +14,7 @@
 # limitations under the License.
 
 from ..types import XMLBase
+from ...utils import is_string
 from .type import Type
 from .actuator import Actuator
 from .hardware_interface import HardwareInterface
@@ -28,21 +29,21 @@ class JointTransmission(XMLBase):
     )
 
     _CHILDREN_CREATORS = dict(
-        hardwareInterface=dict(creator=HardwareInterface, default=['EffortJointInterface'])
-    )
+        hardwareInterface=dict(
+            creator=HardwareInterface,
+            default=['EffortJointInterface']))
 
     def __init__(self):
         XMLBase.__init__(self)
         self.reset()
 
-    
     @property
     def name(self):
         return self.attributes['name']
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str) or isinstance(value, unicode), \
+        assert is_string(value), \
             'Link name should be string or unicode'
         assert len(value) > 0, 'Name string cannot be empty'
         self.attributes['name'] = str(value)
@@ -53,7 +54,7 @@ class JointTransmission(XMLBase):
 
     @hardwareInterface.setter
     def hardwareInterface(self, value):
-        self._add_child_element('hardwareInterface')    
+        self._add_child_element('hardwareInterface')
 
 
 class Transmission(XMLBase):
@@ -65,22 +66,25 @@ class Transmission(XMLBase):
     )
 
     _CHILDREN_CREATORS = dict(
-        type=dict(creator=Type, default=['transmission_interface/SimpleTransmission']),
-        actuator=dict(creator=Actuator),
-        joint=dict(creator=JointTransmission)
-    )
+        type=dict(
+            creator=Type,
+            default=['transmission_interface/SimpleTransmission']),
+        actuator=dict(
+            creator=Actuator),
+        joint=dict(
+            creator=JointTransmission))
 
     def __init__(self):
         XMLBase.__init__(self)
         self.reset()
-        
+
     @property
     def name(self):
         return self.attributes['name']
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str) or isinstance(value, unicode), \
+        assert is_string(value), \
             'Link name should be string or unicode'
         assert len(value) > 0, 'Name string cannot be empty'
         self.attributes['name'] = str(value)

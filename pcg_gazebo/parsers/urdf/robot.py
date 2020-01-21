@@ -75,7 +75,9 @@ class Robot(XMLBase):
         if self.links is not None:
             for elem in self.links:
                 if elem.name == name:
-                    print('Link element with name {} already exists'.format(name))
+                    print(
+                        'Link element with name {}'
+                        ' already exists'.format(name))
                     return
         if link is not None:
             self._add_child_element('link', link)
@@ -98,7 +100,9 @@ class Robot(XMLBase):
         if self.joints is not None:
             for elem in self.joints:
                 if elem.name == name:
-                    print('Joint element with name {} already exists'.format(name))
+                    print(
+                        'Joint element with name {}'
+                        ' already exists'.format(name))
                     return
         if joint is not None:
             self._add_child_element('joint', joint)
@@ -122,14 +126,16 @@ class Robot(XMLBase):
         else:
             gazebo = Gazebo()
             self._add_child_element('gazebo', gazebo)
-        if reference != None:
+        if reference is not None:
             self.children['gazebo'][-1].reference = reference
 
     def add_transmission(self, name, transmission=None):
         if self.transmissions is not None:
             for elem in self.transmissions:
                 if elem.name == name:
-                    print('Transmission element with name {} already exists'.format(name))
+                    print(
+                        'Transmission element with name {}'
+                        ' already exists'.format(name))
                     return
         if transmission is not None:
             self._add_child_element('transmission', transmission)
@@ -151,7 +157,9 @@ class Robot(XMLBase):
         if self.materials is not None:
             for elem in self.materials:
                 if elem.name == name:
-                    print('Materials element with name {} already exists'.format(name))
+                    print(
+                        'Materials element with name {}'
+                        ' already exists'.format(name))
                     return
         if material is not None:
             self._add_child_element('material', material)
@@ -180,5 +188,5 @@ class Robot(XMLBase):
                     if visual.material is not None:
                         mat = self.get_material_by_name(visual.material.name)
                         if mat is not None:
-                            if visual.material.color is not None: 
-                                visual.material.color = mat.color                  
+                            if visual.material.color is not None:
+                                visual.material.color = mat.color

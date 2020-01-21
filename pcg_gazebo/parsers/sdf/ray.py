@@ -56,5 +56,3 @@ class Ray(XMLBase):
     @scan.setter
     def scan(self, value):
         self._add_child_element('scan', value)
-
-    

@@ -29,7 +29,7 @@ class X(XMLBase):
         XMLBase.__init__(self)
         self.reset()
 
-    @property 
+    @property
     def noise(self):
         return self._get_child_element('noise')
 
