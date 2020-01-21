@@ -119,9 +119,9 @@ class Path(object):
                 msg = 'File {} does not exist'.format(filename)
                 PCG_ROOT_LOGGER.error(msg)
                 if sys.version_info[0] == 2:
-                    raise IOError(msg)
+                    raise IOError(msg)  # noqa: F821
                 else:
-                    raise FileNotFoundError(msg)
+                    raise FileNotFoundError(msg)  # noqa: F821
         elif 'model://' in uri:
             self._gazebo_model = uri.replace('model://', '').split('/')[0]
             model_path = get_gazebo_model_path(self._gazebo_model)
