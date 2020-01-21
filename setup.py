@@ -23,7 +23,7 @@ version_file = os.path.join(os.path.dirname(__file__), 'pcg_gazebo/version.py')
 with open(version_file, 'r') as f:
     __version__ = eval(f.read().strip().split('=')[-1])
 
-requirements_required = [
+requirements_required = set([
     'lxml',
     'numpy',
     'psutil',
@@ -35,15 +35,31 @@ requirements_required = [
     'matplotlib',
     'descartes',
     'PyYAML',
-    'trimesh[all]',
+    'trimesh[easy]',
     'networkx',
     'pycollada==0.6',
-    'rospkg',
-]
+    'triangle',
+    'python-fcl',
+    'jsonschema',
+    'scikit-image'
+])
 
-requirements_ros = ['rospkg']
+requirements_ros = requirements_required.union(set(['rospkg']))
 
-requirements_test = ['pytest']
+requirements_test = requirements_required.union(set(['pytest']))
+
+requirements_all = requirements_required.union(requirements_ros)
+
+# `python setup.py --list-all > requirements.txt`
+if '--list-all' in sys.argv:  
+    print('\n'.join(requirements_all))
+    exit()
+elif '--list-ros' in sys.argv:
+    print('\n'.join(requirements_ros))
+    exit()
+elif '--list-easy' in sys.argv:
+    print('\n'.join(requirements_test))
+    exit()
 
 setup(
     name='pcg_gazebo',
@@ -62,8 +78,10 @@ setup(
     package_data={
         '': ['*.sdf.jinja']
     },
-    install_requires=requirements_required,
+    install_requires=list(requirements_required),
     extras_require=dict(
-        test=requirements_test
+        all=list(requirements_all),
+        ros=list(requirements_ros),
+        test=list(requirements_test)
     )
 )
