@@ -5,8 +5,7 @@ RUN apt-get update && \
     apt-get install \
     python3-pip \
     libspatialindex-dev \
-    libgeos-c1v5 \
-    pybind11-dev -y
+    libgeos-c1v5 -y
 
 RUN pip3 install flake8 autopep8
     
