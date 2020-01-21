@@ -11,15 +11,15 @@ matrix:
     - python: "3.8"
 
 before_install:
-- apt-get -qq update
-- apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
-- pip install pip --upgrade
-- pip install setuptools
-- pip install flake8 autopep8
+- sudo apt-get -qq update
+- sudo apt-get install python3-pip libspatialindex-dev pybind11-dev -y -qq
+- sudo pip install pip --upgrade
+- sudo pip install setuptools
+- sudo pip install flake8 autopep8
 
 install:
 - python -c "import os,sys;assert '{}.{}'.format(*sys.version_info[:2])==os.environ['PYTHON_VERSION']"
-- pip install -e .[all] 
+- sudo pip install -e .[all] 
 
 script: 
 # Check code style to the PEP 8 style guide
@@ -28,5 +28,5 @@ script:
 - flake8 pcg_gazebo
 - flake8 tests
 - python -c "import pcg_gazebo"
-- pip install -e .[test]
+- sudo pip install -e .[test]
 - pytest -x tests
