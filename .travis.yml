@@ -11,9 +11,9 @@ matrix:
     - python: "3.8"
 
 before_install:
-- apt-get -qq update
-- apt-get install python3-pip libspatialindex-dev -y
-- pip install pip --upgrade
+- sudo apt-get -qq update
+- sudo apt-get install libspatialindex-dev -y
+- pip install --upgrade pip
 - pip install setuptools
 - pip install flake8 autopep8
 
