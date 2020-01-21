@@ -18,7 +18,7 @@ before_install:
 - sudo pip install flake8 autopep8
 
 install:
-- python -c "import os,sys;assert '{}.{}'.format(*sys.version_info[:2])==os.environ['PYTHON_VERSION']"
+- python -c "import sys; print(sys.version)"
 - sudo pip install -e .[all] 
 
 script: 
