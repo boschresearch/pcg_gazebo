@@ -15,6 +15,7 @@
 import os
 import re
 import rospkg
+import sys
 from .log import PCG_ROOT_LOGGER
 from .utils import is_string
 
@@ -117,7 +118,10 @@ class Path(object):
             else:
                 msg = 'File {} does not exist'.format(filename)
                 PCG_ROOT_LOGGER.error(msg)
-                raise FileNotFoundError(msg)
+                if sys.version_info[0] == 2:
+                    raise IOError(msg)
+                else:
+                    raise FileNotFoundError(msg)
         elif 'model://' in uri:
             self._gazebo_model = uri.replace('model://', '').split('/')[0]
             model_path = get_gazebo_model_path(self._gazebo_model)
