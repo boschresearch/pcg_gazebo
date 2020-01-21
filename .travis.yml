@@ -10,8 +10,6 @@ matrix:
   include:    
     - python: "2.7"
     - python: "3.6"
-    - python: "pypy"
-    - python: "pypy3"
 
 before_install:
 - sudo apt-get -qq update
