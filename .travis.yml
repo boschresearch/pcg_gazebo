@@ -13,7 +13,6 @@ matrix:
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get install libspatialindex-dev -y
-- pip install --upgrade pip
 - pip install setuptools
 - pip install flake8 autopep8
 
