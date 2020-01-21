@@ -19,7 +19,7 @@ RUN autopep8 --recursive --aggressive --diff --exit-code /tmp/pcg_gazebo/tests
 RUN flake8 /tmp/pcg_gazebo/pcg_gazebo
 RUN flake8 /tmp/pcg_gazebo/tests
 
-RUN pip3 install -e .
+RUN pip3 install -e .[all]
 
 RUN python3 -c "import pcg_gazebo"
 
