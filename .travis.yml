@@ -1,18 +1,18 @@
 language: python
 dist: xenial
 
+# Some dependencies, like python-fcl are only available 
+# for 2.7 and 3.6
 matrix:
   include:    
     - python: "2.7"
-    # - python: "3.4"
-    - python: "3.5"
     - python: "3.6"
-    - python: "3.7"
-    - python: "3.8"
+    - python: "pypy"
+    - python: "pypy3"
 
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install libspatialindex-dev -y
+- sudo apt-get install libspatialindex-dev libgeos-dev blender -y
 - pip install setuptools
 - pip install flake8 autopep8
 
@@ -26,6 +26,8 @@ script:
 - autopep8 --recursive --aggressive --diff --exit-code tests
 - flake8 pcg_gazebo
 - flake8 tests
+# Test importing the package
 - set -e; python -c "import pcg_gazebo"; set +e;
+# Install test dependencies and run tests
 - pip install -e .[test]
 - pytest -x tests
