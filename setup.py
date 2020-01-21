@@ -73,7 +73,21 @@ setup(
     url='https://github.com/boschresearch/pcg_gazebo',
     keywords='gazebo ros simulation robotics',
     packages=[
-        'pcg_gazebo'
+        'pcg_gazebo',
+        'pcg_gazebo.generators',
+        'pcg_gazebo.generators.components',
+        'pcg_gazebo.generators.constraints',
+        'pcg_gazebo.generators.engines',
+        'pcg_gazebo.parsers',
+        'pcg_gazebo.parsers.sdf',
+        'pcg_gazebo.parsers.urdf',
+        'pcg_gazebo.parsers.types',
+        'pcg_gazebo.parsers.urdf',
+        'pcg_gazebo.simulation',
+        'pcg_gazebo.simulation.physics',
+        'pcg_gazebo.simulation.properties',
+        'pcg_gazebo.simulation.sensors',
+        'pcg_gazebo.task_manager',        
     ],
     package_data={
         '': ['*.sdf.jinja']
