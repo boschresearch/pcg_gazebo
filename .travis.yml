@@ -1,6 +1,5 @@
 language: python
 dist: xenial
-cache: pip
 
 matrix:
   include:    
@@ -12,15 +11,15 @@ matrix:
     - python: "3.8"
 
 before_install:
-- sudo apt-get -qq update
-- sudo apt-get install python3-pip libspatialindex-dev -y
-- sudo pip install pip --upgrade
-- sudo pip install setuptools
-- sudo pip install flake8 autopep8
+- apt-get -qq update
+- apt-get install python3-pip libspatialindex-dev -y
+- pip install pip --upgrade
+- pip install setuptools
+- pip install flake8 autopep8
 
 install:
 - python -c "import sys; print(sys.version)"
-- sudo pip install -e .[all] 
+- pip install -e .[all] 
 
 script: 
 # Check code style to the PEP 8 style guide
@@ -29,5 +28,5 @@ script:
 - flake8 pcg_gazebo
 - flake8 tests
 - set -e; python -c "import pcg_gazebo"; set +e;
-- sudo pip install -e .[test]
+- pip install -e .[test]
 - pytest -x tests
