@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
         matrix:      
-          python-version: [3.6, 3.7, 3.8]
+          python-version: [2.7, 3.3, 3.4, 3.6, 3.7, 3.8]
 
     steps:
     - uses: actions/checkout@v1
@@ -34,10 +34,9 @@ jobs:
     - name: Install package
       run: |
         python -m pip install --upgrade pip
-        sudo pip install -e .
+        pip install -e .[all]
         python -c "import pcg_gazebo"
     - name: Test with pytest
       run: |
-        pip install pytest
-        sudo pip install -e .[test]
+        pip install -e .[test]
         pytest
