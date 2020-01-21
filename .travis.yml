@@ -28,5 +28,5 @@ script:
 - flake8 pcg_gazebo
 - flake8 tests
 - python -c "import pcg_gazebo"
-- sudo pip install --user -e .[test]
+- sudo pip install -e .[test]
 - pytest -x tests
