@@ -1,5 +1,6 @@
 # `pcg_gazebo`: A Python package for rapid-prototyping and scripting of simulations for Gazebo
 
+[![Build Status](https://travis-ci.org/boschresearch/pcg_gazebo.svg?branch=master)](https://travis-ci.org/boschresearch/pcg_gazebo)
 [![GitHub issues](https://img.shields.io/github/issues/boschresearch/pcg_gazebo_pkgs.svg)](https://github.com/boschresearch/pcg_gazebo/issues)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE)
 
