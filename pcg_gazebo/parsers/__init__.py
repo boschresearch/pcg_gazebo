@@ -496,10 +496,14 @@ def sdf2urdf(sdf):
         urdf.radius = sdf.radius.value
     elif sdf._NAME == 'mesh':
         uri = Path(sdf.uri.value)
-        if uri.package_uri is not None:
-            urdf.filename = uri.package_uri
+        if uri.is_valid:
+            if uri.package_uri is not None:
+                urdf.filename = uri.package_uri
+            else:
+                urdf.filename = uri.file_uri
         else:
-            urdf.filename = uri.file_uri
+            urdf.filename = sdf.uri.value
+        urdf.scale = sdf.scale.value
     elif sdf._NAME == 'pose':
         urdf.xyz = sdf.value[0:3]
         urdf.rpy = sdf.value[3::]
@@ -710,10 +714,13 @@ def urdf2sdf(urdf):
         sdf.radius.value = urdf.radius
     elif urdf._NAME == 'mesh':
         uri = Path(urdf.filename)
-        if uri.model_uri is not None:
-            sdf.uri = uri.model_uri
+        if uri.is_valid:
+            if uri.model_uri is not None:
+                sdf.uri = uri.model_uri
+            else:
+                sdf.uri = uri.file_uri
         else:
-            sdf.uri = uri.file_uri
+            sdf.uri = urdf.filename
         sdf.scale = urdf.scale
     elif urdf._NAME == 'origin':
         sdf.value = urdf.xyz + urdf.rpy
