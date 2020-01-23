@@ -28,7 +28,7 @@ standards (e.g. ISO 26262).
 First install some non-Python dependencies
 
 ```
-sudo apt install install libspatialindex-dev pybind11-dev libgeos-dev
+sudo apt install libspatialindex-dev pybind11-dev libgeos-dev
 ```
 
 Then clone the repository and install it using `pip`
