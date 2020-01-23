@@ -14,7 +14,7 @@
 # limitations under the License.
 
 from . import XMLBase
-from ...utils import is_string
+from ...utils import is_string, generate_random_string
 
 
 class XMLString(XMLBase):
@@ -46,3 +46,6 @@ class XMLString(XMLBase):
     def get_formatted_value_as_str(self):
         assert self.is_valid(), 'Invalid string'
         return '{}'.format(str(self._value))
+
+    def random(self):
+        self._set_value(generate_random_string(5))

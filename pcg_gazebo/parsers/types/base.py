@@ -21,6 +21,7 @@ import sys
 from lxml import etree
 from lxml.etree import Element, SubElement
 from ...log import PCG_ROOT_LOGGER
+from .. import convert_from_string
 
 if sys.version_info[2]:
     # Importing a io.open compatible with Python 3.x
@@ -80,7 +81,15 @@ class XMLBase(object):
         for tag in self._attributes:
             if tag not in other.attributes:
                 return False
-            if self._attributes[tag] != other.attributes[tag]:
+            v_this = convert_from_string(self._attributes[tag])
+            v_other = convert_from_string(other.attributes[tag])
+            if self._is_scalar(v_this):
+                if not np.isclose(v_this, v_other):
+                    return False
+            elif self._is_numeric_vector(v_this):
+                if not np.isclose(v_this, v_other).all():
+                    return False
+            elif self._attributes[tag] != other.attributes[tag]:
                 return False
 
         if self._value is not None and other._value is not None:
@@ -727,3 +736,11 @@ class XMLBase(object):
     def to_sdf(self):
         raise NotImplementedError(
             '{} has no implementation of to_sdf method'.format(self._NAME))
+
+    def random(self):
+        if len(self.children) > 0:
+            try:
+                for tag in self.children:
+                    self.children[tag].random()
+            except Exception:
+                pass

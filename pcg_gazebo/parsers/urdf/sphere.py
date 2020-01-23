@@ -12,8 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import random
 from ..types import XMLBase
+from ...utils import is_scalar
 
 
 class Sphere(XMLBase):
@@ -34,7 +35,7 @@ class Sphere(XMLBase):
 
     @radius.setter
     def radius(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
+        assert is_scalar(value), 'Radius must be a positive scalar'
         self.attributes['radius'] = '{}'.format(value)
 
     def to_sdf(self):
@@ -43,3 +44,6 @@ class Sphere(XMLBase):
         obj = create_sdf_element('sphere')
         obj.radius = self.radius
         return obj
+
+    def random(self):
+        self.radius = random.random()

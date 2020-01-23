@@ -12,8 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import random
 from ..types import XMLBase
+from ...utils import is_scalar
 
 
 class Cylinder(XMLBase):
@@ -35,8 +36,8 @@ class Cylinder(XMLBase):
 
     @radius.setter
     def radius(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
-        assert value > 0
+        assert is_scalar(value), 'Input radius is not a scalar'
+        assert value >= 0, 'Radius must be a positive scalar'
         self.attributes['radius'] = '{}'.format(value)
 
     @property
@@ -45,8 +46,8 @@ class Cylinder(XMLBase):
 
     @length.setter
     def length(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
-        assert value > 0
+        assert is_scalar(value), 'Input length is not a scalar'
+        assert value >= 0, 'Length must be a positive scalar'
         self.attributes['length'] = '{}'.format(value)
 
     def to_sdf(self):
@@ -56,3 +57,7 @@ class Cylinder(XMLBase):
         obj.radius = self.radius
         obj.length = self.length
         return obj
+
+    def random(self):
+        self.length = random.random()
+        self.radius = random.random()

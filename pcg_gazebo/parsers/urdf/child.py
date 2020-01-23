@@ -12,8 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLBase
+from ...utils import generate_random_string
 
 
 class Child(XMLBase):
@@ -44,3 +44,6 @@ class Child(XMLBase):
         obj = create_sdf_element('child')
         obj.value = self.link
         return obj
+
+    def random(self):
+        self.link = generate_random_string(5)

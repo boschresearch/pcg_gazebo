@@ -41,21 +41,15 @@ requirements_required = set([
     'triangle',
     'python-fcl',
     'jsonschema',
-    'scikit-image'
+    'scikit-image',
+    'rospkg'
 ])
 
-requirements_ros = requirements_required.union(set(['rospkg']))
-
-requirements_test = requirements_required.union(set(['pytest']))
-
-requirements_all = requirements_required.union(requirements_ros)
+requirements_test = requirements_required.union(set(['pytest', 'pytest-console-scripts']))
 
 # `python setup.py --list-all > requirements.txt`
 if '--list-all' in sys.argv:  
-    print('\n'.join(requirements_all))
-    exit()
-elif '--list-ros' in sys.argv:
-    print('\n'.join(requirements_ros))
+    print('\n'.join(requirements_required))
     exit()
 elif '--list-easy' in sys.argv:
     print('\n'.join(requirements_test))
@@ -80,6 +74,7 @@ setup(
         'pcg_gazebo.generators.engines',
         'pcg_gazebo.parsers',
         'pcg_gazebo.parsers.sdf',
+        'pcg_gazebo.parsers.sdf_config',
         'pcg_gazebo.parsers.urdf',
         'pcg_gazebo.parsers.types',
         'pcg_gazebo.parsers.urdf',
@@ -90,12 +85,15 @@ setup(
         'pcg_gazebo.task_manager',        
     ],
     package_data={
-        '': ['*.sdf.jinja']
+        '': ['templates/*.sdf.jinja']
     },
+    scripts=[
+        'scripts/sdf2urdf',        
+        'scripts/urdf2sdf'
+    ],
     install_requires=list(requirements_required),
     extras_require=dict(
-        all=list(requirements_all),
-        ros=list(requirements_ros),
+        all=list(requirements_required),
         test=list(requirements_test)
     )
 )

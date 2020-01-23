@@ -86,3 +86,8 @@ class Geometry(XMLBase):
         elif self._get_child_element('mesh') is not None:
             obj.mesh = self.mesh.to_sdf()
         return obj
+
+    def random(self):
+        for tag in self._MODES:
+            if self._get_child_element(tag) is not None:
+                getattr(self, tag).random()

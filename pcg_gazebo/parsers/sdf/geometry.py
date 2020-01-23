@@ -50,9 +50,9 @@ class Geometry(XMLBase):
         'mesh',
         'polyline']
 
-    def __init__(self):
+    def __init__(self, mode='empty'):
         XMLBase.__init__(self)
-        self.reset('empty')
+        self.reset(mode=mode)
 
     @property
     def empty(self):
@@ -125,3 +125,9 @@ class Geometry(XMLBase):
     def polyline(self, value):
         self.reset(mode='polyline')
         self._add_child_element('polyline', value)
+
+    def random(self):
+        try:
+            getattr(self, self._mode).random()
+        except NotImplementedError:
+            pass

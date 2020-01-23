@@ -27,5 +27,6 @@ class Ambient(XMLVector):
 
     def _set_value(self, value):
         assert self._is_array(value) and self._is_numeric_vector(
-            value, [0, 1]), 'Invalid ambient vector'
+            value, [0, 1]), 'Invalid ambient vector, value={}'.format(
+                value)
         XMLVector._set_value(self, value)

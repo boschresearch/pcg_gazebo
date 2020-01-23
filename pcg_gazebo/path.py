@@ -15,7 +15,6 @@
 import os
 import re
 import rospkg
-import sys
 from .log import PCG_ROOT_LOGGER
 from .utils import is_string
 
@@ -30,16 +29,31 @@ class Path(object):
         self._absolute_uri = self.resolve_uri(uri)
         if self._absolute_uri is None:
             msg = 'URI could not be resolved, uri={}'.format(uri)
-            PCG_ROOT_LOGGER.error(msg)
-            raise ValueError(uri)
+            PCG_ROOT_LOGGER.warning(msg)
+        else:
+            PCG_ROOT_LOGGER.info(
+                'URI {} resolved={}'.format(
+                    uri, self.absolute_uri))
 
-        PCG_ROOT_LOGGER.info(
-            'URI {} resolved={}'.format(
-                uri, self.absolute_uri))
+    @property
+    def is_valid(self):
+        return self._absolute_uri is not None
 
     @property
     def original_uri(self):
         return self._original_uri
+
+    @original_uri.setter
+    def original_uri(self, value):
+        assert is_string(value), 'Input URI must be a string'
+        self._original_uri = value
+        self._gazebo_model = None
+        self._ros_pkg = None
+        self._absolute_uri = self.resolve_uri(value)
+        if self._absolute_uri is None:
+            msg = 'URI could not be resolved, uri={}'.format(value)
+            PCG_ROOT_LOGGER.warning(msg)
+            raise ValueError(value)
 
     @property
     def absolute_uri(self):
@@ -117,17 +131,14 @@ class Path(object):
                 return filename
             else:
                 msg = 'File {} does not exist'.format(filename)
-                PCG_ROOT_LOGGER.error(msg)
-                if sys.version_info[0] == 2:
-                    raise IOError(msg)  # noqa: F821
-                else:
-                    raise FileNotFoundError(msg)  # noqa: F821
+                PCG_ROOT_LOGGER.warning(msg)
+                return None
         elif 'model://' in uri:
             self._gazebo_model = uri.replace('model://', '').split('/')[0]
             model_path = get_gazebo_model_path(self._gazebo_model)
             if model_path is None:
                 msg = 'URI for Gazebo model is invalid, uri={}'.format(uri)
-                PCG_ROOT_LOGGER.error(msg)
+                PCG_ROOT_LOGGER.warning(msg)
                 raise ValueError(msg)
             self._ros_pkg = get_gazebo_model_ros_pkg(self._gazebo_model)
             filename = uri.replace(
@@ -139,15 +150,15 @@ class Path(object):
             if len(result) != 1:
                 msg = 'Invalid package path for provided mesh uri {}'.format(
                     uri)
-                PCG_ROOT_LOGGER.error(msg)
+                PCG_ROOT_LOGGER.warning(msg)
                 raise ValueError(msg)
             self._ros_pkg = result[0].replace(
                 'package://', '').replace('/', '')
             if self._ros_pkg not in rospkg.RosPack().list():
                 msg = 'Package {} was not found, uri={}'.format(
                     self._ros_pkg, uri)
-                PCG_ROOT_LOGGER.error(msg)
-                raise rospkg.ResourceNotFound(msg)
+                PCG_ROOT_LOGGER.warning(msg)
+                return None
             pkg_path = rospkg.RosPack().get_path(self._ros_pkg)
             return uri.replace(result[0], pkg_path + '/')
         elif '$(find' in uri:
@@ -156,7 +167,7 @@ class Path(object):
             if len(result) == 0:
                 msg = 'Invalid package path for provided mesh uri {}'.format(
                     uri)
-                PCG_ROOT_LOGGER.error(msg)
+                PCG_ROOT_LOGGER.warning(msg)
                 raise ValueError(msg)
 
             self._ros_pkg = result[0].split()[1]
@@ -164,8 +175,8 @@ class Path(object):
             if self._ros_pkg not in rospkg.RosPack().list():
                 msg = 'Package {} was not found, uri={}'.format(
                     self._ros_pkg, uri)
-                PCG_ROOT_LOGGER.error(msg)
-                raise rospkg.ResourceNotFound(msg)
+                PCG_ROOT_LOGGER.warning(msg)
+                return None
             pkg_path = rospkg.RosPack().get_path(self._ros_pkg)
             return uri_temp.replace(
                 '(find {})'.format(

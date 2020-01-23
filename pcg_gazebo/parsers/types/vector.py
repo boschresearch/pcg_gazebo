@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import random
 from . import XMLBase
 import collections
 
@@ -79,3 +79,6 @@ class XMLVector(XMLBase):
         assert self.is_valid(), 'Invalid vector'
         output_str = ' '.join(['{}'] * self._size)
         return output_str.format(*[format(x, 'n') for x in self._value])
+
+    def random(self):
+        self._set_value([random.random() for _ in range(self._size)])

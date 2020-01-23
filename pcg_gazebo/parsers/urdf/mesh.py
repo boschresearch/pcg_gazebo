@@ -12,9 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import sys
+import random
 from ..types import XMLBase
-from ...utils import is_string
+from ...utils import is_string, generate_random_string
 
 
 class Mesh(XMLBase):
@@ -36,12 +36,8 @@ class Mesh(XMLBase):
 
     @filename.setter
     def filename(self, value):
-        if sys.version_info[0] == 2:
-            assert is_string(value), \
-                'Filename must be a string or unicode'
-        else:
-            assert isinstance(value, str), \
-                'Filename must be a string'
+        assert is_string(value), \
+            'Filename must be a string'
         self.attributes['filename'] = value
 
     @property
@@ -67,3 +63,7 @@ class Mesh(XMLBase):
         obj.uri = self.filename
         obj.scale = self.scale
         return obj
+
+    def random(self):
+        self.scale = [random.random() for _ in range(3)]
+        self.filename = generate_random_string(5)

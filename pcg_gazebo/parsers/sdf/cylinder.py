@@ -46,3 +46,7 @@ class Cylinder(XMLBase):
     @length.setter
     def length(self, value):
         self._add_child_element('length', value)
+
+    def random(self):
+        self.radius.random()
+        self.length.random()

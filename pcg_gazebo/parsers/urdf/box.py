@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import random
 from ..types import XMLBase
 
 
@@ -37,10 +37,8 @@ class Box(XMLBase):
 
     @size.setter
     def size(self, value):
-        assert isinstance(value, list)
-        assert len(value) == 3
-        for elem in value:
-            assert isinstance(elem, float) or isinstance(elem, int)
+        assert self._is_numeric_vector(value, [0, 1e16]), \
+            'Invalid size vector'
         self.attributes['size'] = ' '.join(['{}'] * len(value))
         self.attributes['size'] = self.attributes['size'].format(*value)
 
@@ -50,3 +48,6 @@ class Box(XMLBase):
         obj = create_sdf_element('box')
         obj.size = self.size
         return obj
+
+    def random(self):
+        self.size = [random.random() for _ in range(3)]

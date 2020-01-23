@@ -49,3 +49,7 @@ class XMLBoolean(XMLBase):
     def get_formatted_value_as_str(self):
         assert self.is_valid(), 'Invalid boolean'
         return '{}'.format(int(self._value))
+
+    def random(self):
+        import random
+        self._set_value(random.choice([True, False]))

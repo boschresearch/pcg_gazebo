@@ -12,8 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from ...utils import is_scalar
 from ..types import XMLBase
+import random
 
 
 class Mass(XMLBase):
@@ -34,7 +35,8 @@ class Mass(XMLBase):
 
     @value.setter
     def value(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
+        assert is_scalar(value), 'Input mass value must be a scalar'
+        assert value >= 0, 'Mass must be positive'
         self.attributes['value'] = '{}'.format(value)
 
     def to_sdf(self):
@@ -43,3 +45,6 @@ class Mass(XMLBase):
         obj = create_sdf_element('mass')
         obj.value = self.value
         return obj
+
+    def random(self):
+        self.value = random.random()
