@@ -15,9 +15,11 @@ COPY . /tmp/pcg_gazebo
 WORKDIR /tmp/pcg_gazebo
 
 RUN autopep8 --recursive --aggressive --diff --exit-code /tmp/pcg_gazebo/pcg_gazebo
+RUN autopep8 --recursive --aggressive --diff --exit-code /tmp/pcg_gazebo/scripts
 RUN autopep8 --recursive --aggressive --diff --exit-code /tmp/pcg_gazebo/tests
 
 RUN flake8 /tmp/pcg_gazebo/pcg_gazebo
+RUN flake8 /tmp/pcg_gazebo/scripts
 RUN flake8 /tmp/pcg_gazebo/tests
 
 RUN pip3 install -e .[all]
