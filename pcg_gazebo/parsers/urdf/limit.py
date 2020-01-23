@@ -12,9 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ..types import XMLBase
+import random
 from .gazebo import Gazebo
+from ..types import XMLBase
+from ...utils import is_scalar
 
 
 class Limit(XMLBase):
@@ -46,7 +47,7 @@ class Limit(XMLBase):
 
     @lower.setter
     def lower(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
+        assert is_scalar(value), 'Lower value must be a scalar'
         self.attributes['lower'] = '{}'.format(value)
 
     @property
@@ -55,7 +56,7 @@ class Limit(XMLBase):
 
     @upper.setter
     def upper(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
+        assert is_scalar(value), 'Upper value must be a scalar'
         self.attributes['upper'] = '{}'.format(value)
 
     @property
@@ -64,7 +65,7 @@ class Limit(XMLBase):
 
     @effort.setter
     def effort(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
+        assert is_scalar(value), 'Effort value must be a scalar'
         self.attributes['effort'] = '{}'.format(value)
 
     @property
@@ -73,7 +74,7 @@ class Limit(XMLBase):
 
     @velocity.setter
     def velocity(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
+        assert is_scalar(value), 'Velocity value must be a scalar'
         self.attributes['velocity'] = '{}'.format(value)
 
     @property
@@ -117,3 +118,9 @@ class Limit(XMLBase):
         if self.dissipation is not None:
             obj.dissipation = self.dissipation
         return obj
+
+    def random(self):
+        self.lower = random.random()
+        self.upper = self.lower + 1
+        self.velocity = random.random()
+        self.effort = random.random()

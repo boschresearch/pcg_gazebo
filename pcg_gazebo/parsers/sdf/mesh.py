@@ -79,3 +79,7 @@ class Mesh(XMLBase):
                 return False
 
         return XMLBase.is_valid(self)
+
+    def random(self):
+        self.uri.random()
+        self.scale.random()

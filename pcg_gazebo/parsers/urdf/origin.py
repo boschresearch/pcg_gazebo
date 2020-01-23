@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import random
 from ..types import XMLBase
 
 
@@ -67,3 +67,7 @@ class Origin(XMLBase):
         obj = create_sdf_element('pose')
         obj.pose = self.xyz + self.rpy
         return obj
+
+    def random(self):
+        self.xyz = [random.random() for _ in range(3)]
+        self.rpy = [random.random() for _ in range(3)]
