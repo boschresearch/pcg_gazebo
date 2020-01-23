@@ -88,8 +88,10 @@ setup(
         '': ['templates/*.sdf.jinja']
     },
     scripts=[
-        'scripts/sdf2urdf',        
-        'scripts/urdf2sdf'
+        'scripts/sdf2urdf',
+        'scripts/sdflint',
+        'scripts/urdf2sdf',
+        'scripts/urdflint'
     ],
     install_requires=list(requirements_required),
     extras_require=dict(
