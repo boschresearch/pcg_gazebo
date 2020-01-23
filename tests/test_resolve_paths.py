@@ -115,8 +115,8 @@ class TestResolvePaths(unittest.TestCase):
         ]
 
         for uri in invalid_path_names:
-            with self.assertRaises(ValueError):
-                Path(uri)
+            p = Path(uri)
+            self.assertFalse(p.is_valid)
 
 
 if __name__ == '__main__':
