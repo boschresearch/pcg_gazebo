@@ -22,6 +22,21 @@ standards (e.g. ISO 26262).
 
 ## Installation
 
+### From source
+
+First install some non-Python dependencies
+
+```
+sudo apt install install libspatialindex-dev pybind11-dev libgeos-dev
+```
+
+Then clone the repository and install it using `pip`
+
+```
+git clone https://github.com/boschresearch/pcg_gazebo.git
+pip install .
+```
+
 ## License
 
 Procedural Generation for Gazebo is open-sourced under the Apache-2.0 license. See the [LICENSE](https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE) file for details.
