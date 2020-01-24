@@ -57,14 +57,19 @@ elif '--list-easy' in sys.argv:
 
 # Set the README.md page as long description
 README = ''
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'README.md')) as f:
-    README = f.read()
+try:
+    import pypandoc
+    README = pypandoc.convert('README.md', 'rst')    
+except (IOError, ImportError):
+    with open('README.md') as f:
+        README = f.read()
 
 setup(
     name='pcg_gazebo',
     version=__version__,
     description='A Python package for rapid-prototyping and scripting of simulations for Gazebo',
     long_description=README,
+    long_description_content_type='text/x-rst',
     author='Musa Morena Marcusso Manhaes',
     author_email='musa.marcusso@de.bosch.com',
     maintainer='Musa Morena Marcusso Manhaes',
@@ -76,7 +81,7 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     url='https://github.com/boschresearch/pcg_gazebo',
-    keywords='gazebo ros simulation robotics',
+    keywords='gazebo ros simulation robotics sdf urdf robot',
     packages=[
         'pcg_gazebo',
         'pcg_gazebo.generators',

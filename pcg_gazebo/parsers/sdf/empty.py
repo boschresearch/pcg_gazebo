@@ -24,4 +24,4 @@ class Empty(XMLString):
         XMLString.__init__(self, '')
 
     def _set_value(self, value):
-        raise NotImplementedError()
+        pass
