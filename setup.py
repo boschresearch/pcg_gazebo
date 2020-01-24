@@ -55,10 +55,17 @@ elif '--list-easy' in sys.argv:
     print('\n'.join(requirements_test))
     exit()
 
+# Set README as the long description
+README = ''
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'README.md')) as f:
+    README = f.read()
+
 setup(
     name='pcg_gazebo',
     version=__version__,
     description='A Python package for rapid-prototyping and scripting of simulations for Gazebo',
+    long_description=README,
+    long_description_content_type='text/markdown',
     author='Musa Morena Marcusso Manhaes',
     author_email='musa.marcusso@de.bosch.com',
     maintainer='Musa Morena Marcusso Manhaes',
