@@ -1,0 +1,88 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import print_function
+import argparse
+import os
+from pcg_gazebo.parsers import parse_sdf, parse_xacro
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Linter for SDF file')
+    parser.add_argument(
+        '--param', '-p', type=str,
+        help='ROS parameter where the SDF robot description is stored')
+    parser.add_argument(
+        '--filename', '-f', type=str,
+        help='Filename name to the SDF robot description or XACRO filename to generate it')
+    parser.add_argument(
+        '--xml', '-x', type=str,
+        help='XML text input with the SDF robot description')
+    parser.add_argument(
+        '--print', action='store_true',
+        help='Print the file')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true',
+        help='Run on verbose mode')
+
+    args = parser.parse_args()
+
+    if args.param is not None:
+        try:
+            import rospy
+        except ImportError as ex:
+            print('rospy could not be imported')
+            exit()
+        if args.verbose:
+            print('Verifying errors in SDF from ROS parameter: {}'.format(
+                args.param))
+        rospy.init_node('sdflint', anonymous=True)
+
+        assert rospy.has_param(args.param), \
+            'ROS parameter {} not found'.format(args.param)
+
+        xml = rospy.get_param(args.param)
+        sdf = parse_sdf(xml)
+        assert sdf is not None, \
+            'SDF file could not be parsed from ROS' \
+            ' parameter input, input={}'.format(args.param)
+    elif args.filename is not None:
+        if args.verbose:
+            print('Verifying errors in SDF file: {}'.format(args.filename))
+
+        assert os.path.isfile(args.filename), \
+            'Invalid SDF filename, file={}'.format(
+                args.filename)
+        if '.xacro' in args.filename:
+            sdf = parse_xacro(args.filename, output_type='sdf')
+        else:
+            sdf = parse_sdf(args.filename)
+        assert sdf is not None, \
+            'SDF file could not be parsed from file' \
+            ' filename={}'.format(args.filename)
+    elif args.xml is not None:
+        if args.verbose:
+            print('Verifying errors in SDF input: {}'.format(args.xml))
+        sdf = parse_sdf(args.xml)
+        assert sdf is not None, \
+            'SDF file could not be parsed from XML input' \
+            ' xml={}'.format(args.xml)
+    else:
+        raise ValueError('Not valid input for SDF source was provided')
+
+    print('SDF file: OK')
+
+    if args.print:
+        print(sdf)

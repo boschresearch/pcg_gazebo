@@ -14,20 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import print_function
-import subprocess
 import pytest
 from pcg_gazebo.parsers.urdf import create_urdf_element
 from pcg_gazebo.parsers import sdf2urdf, parse_sdf
-
-
-def _to_print(obj):
-    return subprocess.check_output(
-        ['urdf2sdf', '--xml',
-         obj.to_xml_as_str(), '--print']).decode('utf-8')
-
-
-def _to_file(obj):
-    pass
 
 
 @pytest.mark.script_launch_mode('subprocess')
@@ -51,9 +40,12 @@ def test_xml_input_random(script_runner):
         obj = create_urdf_element(urdf_name)
         assert obj is not None
         obj.random()
-        output = _to_print(obj)
+        output = script_runner.run(
+            'urdf2sdf', '--xml', obj.to_xml_as_str(),
+            '--print')
+        assert output.success
 
-        urdf = parse_sdf(output)
+        urdf = parse_sdf(output.stdout)
         assert urdf is not None
 
         response_urdf = sdf2urdf(urdf)
@@ -81,9 +73,11 @@ def test_xml_input_visual_collision(script_runner):
             obj.geometry.reset(mode=geo_name)
             obj.geometry.random()
 
-            output = _to_print(obj)
-
-            urdf = parse_sdf(output)
+            output = script_runner.run(
+                'urdf2sdf', '--xml', obj.to_xml_as_str(),
+                '--print')
+            assert output.success
+            urdf = parse_sdf(output.stdout)
             assert urdf is not None
 
             response_urdf = sdf2urdf(urdf)

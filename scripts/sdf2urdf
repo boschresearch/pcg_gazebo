@@ -60,8 +60,8 @@ if __name__ == '__main__':
         '--print', action='store_true',
         help='Print the file')
     parser.add_argument(
-        '--debug', action='store_true',
-        help='Print the file')
+        '--verbose', '-v', action='store_true',
+        help='Run on verbose mode')
 
     args = parser.parse_args()
 
@@ -81,7 +81,7 @@ if __name__ == '__main__':
         rospy.init_node('sdf2urdf', anonymous=True)
 
     if args.param:
-        if args.debug:
+        if args.verbose:
             print('Parsing from ROS parameter, param={}'.format(
                 args.param))
         assert rospy.has_param(args.param), \
@@ -90,18 +90,18 @@ if __name__ == '__main__':
         xml = rospy.get_param(args.param)
         sdf = parse_sdf(xml)
     elif args.filename:
-        if args.debug:
+        if args.verbose:
             print('Parsing from file, filename={}'.format(args.filename))
         assert os.path.isfile(args.filename), \
             'Invalid file, filename={}'.format(args.filename)
 
         sdf = parse_sdf(args.filename)
     elif args.xml:
-        if args.debug:
+        if args.verbose:
             print('Parsing from input string')
         sdf = parse_sdf(args.xml)
     elif args.input_topic:
-        if args.debug:
+        if args.verbose:
             print('Waiting for SDF through topic: {}'.format(
                 args.input_topic))
         if rospy.is_shutdown():
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
         topic_xml = rospy.wait_for_message(
             args.input_topic, String, timeout=100)
-        if args.debug:
+        if args.verbose:
             print('SDF received through topic {}'.format(
                 args.input_topic))
         sdf = parse_sdf(topic_xml.data)
