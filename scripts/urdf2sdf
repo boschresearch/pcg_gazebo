@@ -76,6 +76,9 @@ if __name__ == '__main__':
         '--sdf-version',
         type=str, default='1.6',
         help='Version of the SDF file being generated')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true',
+        help='Run on verbose mode')
 
     args = parser.parse_args()
 
@@ -161,9 +164,10 @@ if __name__ == '__main__':
         model_dir = args.output_gazebo_model_path
         assert os.path.isdir(model_dir), \
             'Invalid directory={}'.format(model_dir)
-        print(
-            'Creating static Gazebo model <{}> at: {}'.format(
-                args.model_name, model_dir))
+        if args.verbose:
+            print(
+                'Creating static Gazebo model <{}> at: {}'.format(
+                    args.model_name, model_dir))
 
         model = SimulationModel.from_sdf(sdf)
         model_dir = model.to_gazebo_model(
@@ -171,10 +175,12 @@ if __name__ == '__main__':
             overwrite=True,
             copy_resources=False)
 
-        print(
-            'Gazebo model <{}> generated from stored in {}'.format(
-                args.model_name, model_dir))
+        if args.verbose:
+            print(
+                'Gazebo model <{}> generated from stored in {}'.format(
+                    args.model_name, model_dir))
         urdf.export_xml(os.path.join(model_dir, args.model_name + '.urdf'))
-        print(
-            'URDF file exported to {}'.format(
-                os.path.join(model_dir, args.model_name + '.urdf')))
+        if args.verbose:
+            print(
+                'URDF file exported to {}'.format(
+                    os.path.join(model_dir, args.model_name + '.urdf')))

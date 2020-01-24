@@ -55,7 +55,7 @@ elif '--list-easy' in sys.argv:
     print('\n'.join(requirements_test))
     exit()
 
-# Set README as the long description
+# Set the README.md page as long description
 README = ''
 with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'README.md')) as f:
     README = f.read()
@@ -71,6 +71,11 @@ setup(
     maintainer='Musa Morena Marcusso Manhaes',
     maintainer_email='musa.marcusso@de.bosch.com',
     license='Apache-2.0',
+    classifiers=[
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6'
+    ],
     url='https://github.com/boschresearch/pcg_gazebo',
     keywords='gazebo ros simulation robotics',
     packages=[
@@ -95,8 +100,10 @@ setup(
         '': ['templates/*.sdf.jinja']
     },
     scripts=[
-        'scripts/sdf2urdf',        
-        'scripts/urdf2sdf'
+        'scripts/sdf2urdf',
+        'scripts/sdflint',
+        'scripts/urdf2sdf',
+        'scripts/urdflint'
     ],
     install_requires=list(requirements_required),
     extras_require=dict(

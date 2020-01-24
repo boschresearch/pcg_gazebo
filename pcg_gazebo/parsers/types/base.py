@@ -741,6 +741,7 @@ class XMLBase(object):
         if len(self.children) > 0:
             try:
                 for tag in self.children:
-                    self.children[tag].random()
+                    if tag != 'empty':
+                        self.children[tag].random()
             except Exception:
                 pass
