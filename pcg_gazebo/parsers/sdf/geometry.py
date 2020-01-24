@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import random
 from ..types import XMLBase
 from .box import Box
 from .empty import Empty
@@ -128,6 +128,7 @@ class Geometry(XMLBase):
 
     def random(self):
         try:
+            self.reset(mode=random.choice(self._MODES))
             getattr(self, self._mode).random()
         except NotImplementedError:
             pass
