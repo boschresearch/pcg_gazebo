@@ -77,7 +77,7 @@ setup(
         'Programming Language :: Python :: 3.6'
     ],
     url='https://github.com/boschresearch/pcg_gazebo',
-    keywords='gazebo ros simulation robotics',
+    keywords='gazebo ros simulation robotics sdf urdf robot',
     packages=[
         'pcg_gazebo',
         'pcg_gazebo.generators',
