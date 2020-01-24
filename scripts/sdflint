@@ -33,6 +33,9 @@ if __name__ == '__main__':
     parser.add_argument(
         '--print', action='store_true',
         help='Print the file')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true',
+        help='Run on verbose mode')
 
     args = parser.parse_args()
 
@@ -42,7 +45,9 @@ if __name__ == '__main__':
         except ImportError as ex:
             print('rospy could not be imported')
             exit()
-        print('Verifying errors in SDF from ROS parameter: {}'.format(args.param))
+        if args.verbose:
+            print('Verifying errors in SDF from ROS parameter: {}'.format(
+                args.param))
         rospy.init_node('sdflint', anonymous=True)
 
         assert rospy.has_param(args.param), \
@@ -54,7 +59,8 @@ if __name__ == '__main__':
             'SDF file could not be parsed from ROS' \
             ' parameter input, input={}'.format(args.param)
     elif args.filename is not None:
-        print('Verifying errors in SDF file: {}'.format(args.filename))
+        if args.verbose:
+            print('Verifying errors in SDF file: {}'.format(args.filename))
 
         assert os.path.isfile(args.filename), \
             'Invalid SDF filename, file={}'.format(
@@ -67,7 +73,8 @@ if __name__ == '__main__':
             'SDF file could not be parsed from file' \
             ' filename={}'.format(args.filename)
     elif args.xml is not None:
-        print('Verifying errors in SDF input: {}'.format(args.xml))
+        if args.verbose:
+            print('Verifying errors in SDF input: {}'.format(args.xml))
         sdf = parse_sdf(args.xml)
         assert sdf is not None, \
             'SDF file could not be parsed from XML input' \

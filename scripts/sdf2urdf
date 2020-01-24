@@ -60,7 +60,7 @@ if __name__ == '__main__':
         '--print', action='store_true',
         help='Print the file')
     parser.add_argument(
-        '--verbose', action='store_true',
+        '--verbose', '-v', action='store_true',
         help='Run on verbose mode')
 
     args = parser.parse_args()
