@@ -145,7 +145,6 @@ SDF_BASIC_OBJ_NAMES = [
     'dynamic_friction',
     'effort',
     'emissive',
-    'empty',
     'enable_wind',
     'erp',
     'far',
@@ -292,8 +291,6 @@ INVALID_BASIC_VALUES = dict(
     effort=[dict(), True, None, list(), 'a', [1, 2]],
     emissive=[-1, 2, dict(), None, True, list(), 'a',
               [1, 2], [True, False, None, 'a']],
-    empty=[-1, 2, dict(), None, True, list(), 'a',
-           [1, 2], [True, False, None, 'a']],
     enable_wind=[-1, 2, dict(), None, list(), 'a', [1, 2]],
     erp=[-1, dict(), True, None, list(), 'a', [1, 2]],
     far=[-1, dict(), True, None, list(), 'a', [1, 2]],
@@ -343,7 +340,6 @@ DEFAULT_BASIC_VALUES = dict(
     dynamic_friction=0.9,
     effort=-1,
     emissive=[0, 0, 0, 1],
-    empty='',
     enable_wind=False,
     far=0,
     fdir1=[0, 0, 0],
@@ -428,19 +424,15 @@ class TestSDFParser(unittest.TestCase):
                                 sdf_tag))
 
             for value in INVALID_BASIC_VALUES[sdf_tag]:
-                if sdf_tag == 'empty':
-                    with self.assertRaises(NotImplementedError):
-                        obj.value = value
+                try:
+                    obj.value = value
+                except AssertionError:
+                    pass
                 else:
-                    try:
-                        obj.value = value
-                    except AssertionError:
-                        pass
-                    else:
-                        self.fail(
-                            'No assertion error raised'
-                            ' while setting {} for {}'.format(
-                                value, sdf_tag))
+                    self.fail(
+                        'No assertion error raised'
+                        ' while setting {} for {}'.format(
+                            value, sdf_tag))
 
     def test_pose(self):
         sdf_obj = create_sdf_element('pose')
