@@ -2,8 +2,16 @@
 *.pyc
 __pycache__
 .ipynb_checkpoints
-venv
 .vscode/c_cpp_properties.json
 .vscode/settings.json
 .vscode/launch.json
-docs/site
+docs/site/
+
+# Packaging files
+build/
+dist/
+*.egg
+*.egg-info/
+
+# Test files
+venv/
