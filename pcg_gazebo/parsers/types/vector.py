@@ -32,6 +32,8 @@ class XMLVector(XMLBase):
         self._value = [0 for _ in range(self._size)]
 
     def _set_value(self, value, min_value=None, max_value=None):
+        if self._size == 1 and self._is_scalar(value):
+            value = [value]
         assert isinstance(value, collections.Iterable), \
             'Input must be iterable, element={}, received={}, type={}'.format(
                 self._NAME, value, type(value))
