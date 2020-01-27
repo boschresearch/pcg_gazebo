@@ -1,9 +1,7 @@
 import os
-import sys
 import json
 import inspect
 import subprocess
-import numpy as np
 import pytest
 
 # current working directory
@@ -167,6 +165,7 @@ def test_notebooks(script_runner):
             with open(filename, 'r') as file_obj:
                 script = load_notebook(file_obj)
             exec(script, globals())
+            print(filename)
         elif filename.lower().endswith('.py'):
             output = script_runner.run('python', filename)
             assert output.success
