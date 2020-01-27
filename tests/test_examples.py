@@ -35,7 +35,7 @@ def load_notebook(file_obj):
             for line in cell['source']:
                 if '#' == line[0]:
                     continue
-                lines.append(line)       
+                lines.append(line)
     script = exclude_calls(lines)
     return script
 
