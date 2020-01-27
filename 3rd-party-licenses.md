@@ -8,15 +8,17 @@ such Third Party IP, are set forth below.
 
 - [Third Party Licenses](#third-party-licenses)
   - [Overview](#overview)
-  - [License information](#license-information)
-    - [XKCD RGB colors](#xkcd-rgb-colors)
+  - [<a name="license-information">License information</a>](#license-information)
+    - [<a name="xkcd-rgb-colors">XKCD RGB colors</a>](#xkcd-rgb-colors)
       - [License](#license)
-    - [tf.transformations](#tftransformations)
+    - [<a name="tftransformations">tf.transformations</a>](#tftransformations)
       - [License](#license-1)
-    - [YAML loader with include constructor (Python 3)](#yaml-loader-with-include-constructor-python-3)
+    - [<a name="yaml-loader-with-include-constructor-python-3">YAML loader with include constructor (Python 3)</a>](#yaml-loader-with-include-constructor-python-3)
       - [License](#license-2)
-    - [OrangeDoors (meshes only)](#orangedoors-meshes-only)
+    - [<a name="orangedoors-meshes-only">`OrangeDoors` (meshes only)</a>](#orangedoors-meshes-only)
       - [License](#license-3)
+    - [<a name="jupyter-notebook-test-script">`Jupyter notebook test script`</a>](#jupyter-notebook-test-script)
+      - [License](#license-4)
 
 ## <a name="license-information">License information</a>
 
@@ -177,4 +179,40 @@ of the work, to the fullest extent permitted by applicable law.
 
 When using or citing the work, you should not imply endorsement by the author 
 or the affirmer.
+```
+
+### <a name="jupyter-notebook-test-script">`Jupyter notebook test script`</a>
+
+| Name | Data |
+| --- | --- |
+| Project name / Source | `trimesh` |
+| Version | 3.5.15 |
+| URL | https://github.com/mikedh/trimesh/tree/master/trimesh |
+| License | MIT License |
+| Copyright | Copyright (c) 2019 Michael Dawson-Haggerty |
+
+#### License
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2019 Michael Dawson-Haggerty
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 ```
