@@ -1,0 +1,470 @@
+site_name: Procedural Generation for Gazebo
+repo_name: boschresearch/pcg_gazebo
+repo_url: https://github.com/boschresearch/pcg_gazebo
+
+generate:
+- reference/utils.md:
+  - pcg_gazebo.utils++
+- reference/visualization.md:
+  - pcg_gazebo.visualization++
+- reference/log.md:
+  - pcg_gazebo.log++
+- reference/path.md:
+  - pcg_gazebo.path++
+- reference/simulation.md:
+  - pcg_gazebo.simulation++
+  - pcg_gazebo.simulation.Box++
+  - pcg_gazebo.simulation.Cylinder++
+  - pcg_gazebo.simulation.Joint++
+  - pcg_gazebo.simulation.Light++
+  - pcg_gazebo.simulation.Link++
+  - pcg_gazebo.simulation.ModelGroup++
+  - pcg_gazebo.simulation.Plane++
+  - pcg_gazebo.simulation.Polyline++
+  - pcg_gazebo.simulation.SimulationModel++
+  - pcg_gazebo.simulation.Sphere++
+  - pcg_gazebo.simulation.World++
+- reference/simulation_physics.md:  
+  - pcg_gazebo.simulation.physics++
+  - pcg_gazebo.simulation.physics.Bullet++
+  - pcg_gazebo.simulation.physics.ODE++
+  - pcg_gazebo.simulation.physics.Physics++
+  - pcg_gazebo.simulation.physics.Simbody++
+- reference/simulation_properties.md:
+  - pcg_gazebo.simulation.properties++
+  - pcg_gazebo.simulation.properties.Axis++
+  - pcg_gazebo.simulation.properties.BoundingBox++
+  - pcg_gazebo.simulation.properties.Collision++
+  - pcg_gazebo.simulation.properties.Footprint++
+  - pcg_gazebo.simulation.properties.Geometry++
+  - pcg_gazebo.simulation.properties.Inertial++
+  - pcg_gazebo.simulation.properties.Material++
+  - pcg_gazebo.simulation.properties.Mesh++
+  - pcg_gazebo.simulation.properties.Noise++
+  - pcg_gazebo.simulation.properties.Plugin++
+  - pcg_gazebo.simulation.properties.Pose++
+  - pcg_gazebo.simulation.properties.Visual++
+- reference/simulation_sensors.md:
+  - pcg_gazebo.simulation.sensors++
+  - pcg_gazebo.simulation.sensors.Camera++
+  - pcg_gazebo.simulation.sensors.Contact++
+  - pcg_gazebo.simulation.sensors.IMU++
+  - pcg_gazebo.simulation.sensors.Ray++
+  - pcg_gazebo.simulation.sensors.Sensor++
+- reference/parsers_sdf.md:
+  - pcg_gazebo.parsers.sdf++
+  - pcg_gazebo.parsers.sdf.Accel++
+  - pcg_gazebo.parsers.sdf.Accuracy++
+  - pcg_gazebo.parsers.sdf.Actor++
+  - pcg_gazebo.parsers.sdf.AllowAutoDisable++
+  - pcg_gazebo.parsers.sdf.Altimeter++
+  - pcg_gazebo.parsers.sdf.AlwaysOn++
+  - pcg_gazebo.parsers.sdf.Ambient++
+  - pcg_gazebo.parsers.sdf.AngularVelocity++
+  - pcg_gazebo.parsers.sdf.Animation++
+  - pcg_gazebo.parsers.sdf.Attenuation++
+  - pcg_gazebo.parsers.sdf.AutoStart++
+  - pcg_gazebo.parsers.sdf.Axis++
+  - pcg_gazebo.parsers.sdf.Axis2++
+  - pcg_gazebo.parsers.sdf.Background++
+  - pcg_gazebo.parsers.sdf.BiasMean++
+  - pcg_gazebo.parsers.sdf.BiasStdDev++
+  - pcg_gazebo.parsers.sdf.Bounce++
+  - pcg_gazebo.parsers.sdf.Box++
+  - pcg_gazebo.parsers.sdf.Bullet++
+  - pcg_gazebo.parsers.sdf.CFM++
+  - pcg_gazebo.parsers.sdf.Camera++
+  - pcg_gazebo.parsers.sdf.CastShadows++
+  - pcg_gazebo.parsers.sdf.CategoryBitmask++
+  - pcg_gazebo.parsers.sdf.Center++
+  - pcg_gazebo.parsers.sdf.Child++
+  - pcg_gazebo.parsers.sdf.Clip++
+  - pcg_gazebo.parsers.sdf.Clouds++
+  - pcg_gazebo.parsers.sdf.Coefficient++
+  - pcg_gazebo.parsers.sdf.CollideBitmask++
+  - pcg_gazebo.parsers.sdf.CollideWithoutContact++
+  - pcg_gazebo.parsers.sdf.CollideWithoutContactBitmask++
+  - pcg_gazebo.parsers.sdf.Collision++
+  - pcg_gazebo.parsers.sdf.Color++
+  - pcg_gazebo.parsers.sdf.Constant++
+  - pcg_gazebo.parsers.sdf.Constraints++
+  - pcg_gazebo.parsers.sdf.Contact++
+  - pcg_gazebo.parsers.sdf.ContactMaxCorrectingVel++
+  - pcg_gazebo.parsers.sdf.ContactSurfaceLayer++
+  - pcg_gazebo.parsers.sdf.Cylinder++
+  - pcg_gazebo.parsers.sdf.Damping++
+  - pcg_gazebo.parsers.sdf.DelayStart++
+  - pcg_gazebo.parsers.sdf.Density++
+  - pcg_gazebo.parsers.sdf.DepthCamera++
+  - pcg_gazebo.parsers.sdf.Diffuse++
+  - pcg_gazebo.parsers.sdf.Direction++
+  - pcg_gazebo.parsers.sdf.Dissipation++
+  - pcg_gazebo.parsers.sdf.Distortion++
+  - pcg_gazebo.parsers.sdf.DynamicFriction++
+  - pcg_gazebo.parsers.sdf.Dynamics++
+  - pcg_gazebo.parsers.sdf.ERP++
+  - pcg_gazebo.parsers.sdf.Effort++
+  - pcg_gazebo.parsers.sdf.ElasticModulus++
+  - pcg_gazebo.parsers.sdf.Emissive++
+  - pcg_gazebo.parsers.sdf.Empty++
+  - pcg_gazebo.parsers.sdf.EnableWind++
+  - pcg_gazebo.parsers.sdf.End++
+  - pcg_gazebo.parsers.sdf.FDir1++
+  - pcg_gazebo.parsers.sdf.FallOff++
+  - pcg_gazebo.parsers.sdf.Far++
+  - pcg_gazebo.parsers.sdf.Filename++
+  - pcg_gazebo.parsers.sdf.Fog++
+  - pcg_gazebo.parsers.sdf.ForceTorque++
+  - pcg_gazebo.parsers.sdf.Format++
+  - pcg_gazebo.parsers.sdf.Frame++
+  - pcg_gazebo.parsers.sdf.Friction++
+  - pcg_gazebo.parsers.sdf.Friction2++
+  - pcg_gazebo.parsers.sdf.FrictionModel++
+  - pcg_gazebo.parsers.sdf.GUI++
+  - pcg_gazebo.parsers.sdf.Geometry++
+  - pcg_gazebo.parsers.sdf.Granularity++
+  - pcg_gazebo.parsers.sdf.Gravity++
+  - pcg_gazebo.parsers.sdf.Grid++
+  - pcg_gazebo.parsers.sdf.Height++
+  - pcg_gazebo.parsers.sdf.Horizontal++
+  - pcg_gazebo.parsers.sdf.HorizontalFOV++
+  - pcg_gazebo.parsers.sdf.Humidity++
+  - pcg_gazebo.parsers.sdf.IMU++
+  - pcg_gazebo.parsers.sdf.IXX++
+  - pcg_gazebo.parsers.sdf.IXY++
+  - pcg_gazebo.parsers.sdf.IXZ++
+  - pcg_gazebo.parsers.sdf.IYY++
+  - pcg_gazebo.parsers.sdf.IYZ++
+  - pcg_gazebo.parsers.sdf.IZZ++
+  - pcg_gazebo.parsers.sdf.Image++
+  - pcg_gazebo.parsers.sdf.Include++
+  - pcg_gazebo.parsers.sdf.Inertia++
+  - pcg_gazebo.parsers.sdf.Inertial++
+  - pcg_gazebo.parsers.sdf.InheritYaw++
+  - pcg_gazebo.parsers.sdf.InitialPosition++
+  - pcg_gazebo.parsers.sdf.InnerAngle++
+  - pcg_gazebo.parsers.sdf.InterpolateX++
+  - pcg_gazebo.parsers.sdf.Iters++
+  - pcg_gazebo.parsers.sdf.Joint++
+  - pcg_gazebo.parsers.sdf.K1++
+  - pcg_gazebo.parsers.sdf.K2++
+  - pcg_gazebo.parsers.sdf.K3++
+  - pcg_gazebo.parsers.sdf.Kd++
+  - pcg_gazebo.parsers.sdf.Kinematic++
+  - pcg_gazebo.parsers.sdf.Kp++
+  - pcg_gazebo.parsers.sdf.LaserRetro++
+  - pcg_gazebo.parsers.sdf.Length++
+  - pcg_gazebo.parsers.sdf.Light++
+  - pcg_gazebo.parsers.sdf.Lighting++
+  - pcg_gazebo.parsers.sdf.Limit++
+  - pcg_gazebo.parsers.sdf.Linear++
+  - pcg_gazebo.parsers.sdf.LinearAcceleration++
+  - pcg_gazebo.parsers.sdf.Link++
+  - pcg_gazebo.parsers.sdf.Localization++
+  - pcg_gazebo.parsers.sdf.Loop++
+  - pcg_gazebo.parsers.sdf.Lower++
+  - pcg_gazebo.parsers.sdf.Mass++
+  - pcg_gazebo.parsers.sdf.Material++
+  - pcg_gazebo.parsers.sdf.Max++
+  - pcg_gazebo.parsers.sdf.MaxAngle++
+  - pcg_gazebo.parsers.sdf.MaxContacts++
+  - pcg_gazebo.parsers.sdf.MaxDist++
+  - pcg_gazebo.parsers.sdf.MaxStepSize++
+  - pcg_gazebo.parsers.sdf.MaxTransientVelocity++
+  - pcg_gazebo.parsers.sdf.MaxVel++
+  - pcg_gazebo.parsers.sdf.Mean++
+  - pcg_gazebo.parsers.sdf.MeanSize++
+  - pcg_gazebo.parsers.sdf.MeasureDirection++
+  - pcg_gazebo.parsers.sdf.Mesh++
+  - pcg_gazebo.parsers.sdf.Min++
+  - pcg_gazebo.parsers.sdf.MinAngle++
+  - pcg_gazebo.parsers.sdf.MinDepth++
+  - pcg_gazebo.parsers.sdf.MinDist++
+  - pcg_gazebo.parsers.sdf.MinStepSize++
+  - pcg_gazebo.parsers.sdf.Model++
+  - pcg_gazebo.parsers.sdf.Mu++
+  - pcg_gazebo.parsers.sdf.Mu2++
+  - pcg_gazebo.parsers.sdf.MustBeLoopJoint++
+  - pcg_gazebo.parsers.sdf.Name++
+  - pcg_gazebo.parsers.sdf.Near++
+  - pcg_gazebo.parsers.sdf.Noise++
+  - pcg_gazebo.parsers.sdf.Normal++
+  - pcg_gazebo.parsers.sdf.NormalMap++
+  - pcg_gazebo.parsers.sdf.ODE++
+  - pcg_gazebo.parsers.sdf.OrientationReferenceFrame++
+  - pcg_gazebo.parsers.sdf.OriginVisual++
+  - pcg_gazebo.parsers.sdf.OuterAngle++
+  - pcg_gazebo.parsers.sdf.Output++
+  - pcg_gazebo.parsers.sdf.OverrideImpactCaptureVelocity++
+  - pcg_gazebo.parsers.sdf.OverrideStictionTransitionVelocity++
+  - pcg_gazebo.parsers.sdf.P1++
+  - pcg_gazebo.parsers.sdf.P2++
+  - pcg_gazebo.parsers.sdf.Parent++
+  - pcg_gazebo.parsers.sdf.PatchRadius++
+  - pcg_gazebo.parsers.sdf.Path++
+  - pcg_gazebo.parsers.sdf.Physics++
+  - pcg_gazebo.parsers.sdf.Plane++
+  - pcg_gazebo.parsers.sdf.PlasticCoefRestitution++
+  - pcg_gazebo.parsers.sdf.PlasticImpactVelocity++
+  - pcg_gazebo.parsers.sdf.Plugin++
+  - pcg_gazebo.parsers.sdf.Point++
+  - pcg_gazebo.parsers.sdf.PoissonsRatio++
+  - pcg_gazebo.parsers.sdf.Polyline++
+  - pcg_gazebo.parsers.sdf.Pose++
+  - pcg_gazebo.parsers.sdf.PreConIters++
+  - pcg_gazebo.parsers.sdf.Precision++
+  - pcg_gazebo.parsers.sdf.ProvideFeedback++
+  - pcg_gazebo.parsers.sdf.Quadratic++
+  - pcg_gazebo.parsers.sdf.Radius++
+  - pcg_gazebo.parsers.sdf.Range++
+  - pcg_gazebo.parsers.sdf.Rate++
+  - pcg_gazebo.parsers.sdf.Ray++
+  - pcg_gazebo.parsers.sdf.RealTimeFactor++
+  - pcg_gazebo.parsers.sdf.RealTimeUpdateRate++
+  - pcg_gazebo.parsers.sdf.Resolution++
+  - pcg_gazebo.parsers.sdf.RestitutionCoefficient++
+  - pcg_gazebo.parsers.sdf.RollingFriction++
+  - pcg_gazebo.parsers.sdf.SDF++
+  - pcg_gazebo.parsers.sdf.Samples++
+  - pcg_gazebo.parsers.sdf.Save++
+  - pcg_gazebo.parsers.sdf.Scale++
+  - pcg_gazebo.parsers.sdf.Scan++
+  - pcg_gazebo.parsers.sdf.Scene++
+  - pcg_gazebo.parsers.sdf.Script++
+  - pcg_gazebo.parsers.sdf.SelfCollide++
+  - pcg_gazebo.parsers.sdf.Sensor++
+  - pcg_gazebo.parsers.sdf.Shader++
+  - pcg_gazebo.parsers.sdf.Shadows++
+  - pcg_gazebo.parsers.sdf.Simbody++
+  - pcg_gazebo.parsers.sdf.Size++
+  - pcg_gazebo.parsers.sdf.Skin++
+  - pcg_gazebo.parsers.sdf.Sky++
+  - pcg_gazebo.parsers.sdf.Slip++
+  - pcg_gazebo.parsers.sdf.Slip1++
+  - pcg_gazebo.parsers.sdf.Slip2++
+  - pcg_gazebo.parsers.sdf.SoftCFM++
+  - pcg_gazebo.parsers.sdf.SoftERP++
+  - pcg_gazebo.parsers.sdf.Solver++
+  - pcg_gazebo.parsers.sdf.Sor++
+  - pcg_gazebo.parsers.sdf.Specular++
+  - pcg_gazebo.parsers.sdf.Speed++
+  - pcg_gazebo.parsers.sdf.Sphere++
+  - pcg_gazebo.parsers.sdf.SplitImpulse++
+  - pcg_gazebo.parsers.sdf.SplitImpulsePenetrationThreshold++
+  - pcg_gazebo.parsers.sdf.Spot++
+  - pcg_gazebo.parsers.sdf.SpringReference++
+  - pcg_gazebo.parsers.sdf.SpringStiffness++
+  - pcg_gazebo.parsers.sdf.Start++
+  - pcg_gazebo.parsers.sdf.Static++
+  - pcg_gazebo.parsers.sdf.StaticFriction++
+  - pcg_gazebo.parsers.sdf.StdDev++
+  - pcg_gazebo.parsers.sdf.Stiffness++
+  - pcg_gazebo.parsers.sdf.SubMesh++
+  - pcg_gazebo.parsers.sdf.Sunrise++
+  - pcg_gazebo.parsers.sdf.Sunset++
+  - pcg_gazebo.parsers.sdf.Surface++
+  - pcg_gazebo.parsers.sdf.SurfaceRadius++
+  - pcg_gazebo.parsers.sdf.Threshold++
+  - pcg_gazebo.parsers.sdf.Time++
+  - pcg_gazebo.parsers.sdf.Topic++
+  - pcg_gazebo.parsers.sdf.Torsional++
+  - pcg_gazebo.parsers.sdf.TrackVisual++
+  - pcg_gazebo.parsers.sdf.Trajectory++
+  - pcg_gazebo.parsers.sdf.Transparency++
+  - pcg_gazebo.parsers.sdf.Type++
+  - pcg_gazebo.parsers.sdf.URDF++
+  - pcg_gazebo.parsers.sdf.URI++
+  - pcg_gazebo.parsers.sdf.UpdateRate++
+  - pcg_gazebo.parsers.sdf.Upper++
+  - pcg_gazebo.parsers.sdf.UseDynamicMOIRescaling++
+  - pcg_gazebo.parsers.sdf.UseModelFrame++
+  - pcg_gazebo.parsers.sdf.UseParentModelFrame++
+  - pcg_gazebo.parsers.sdf.UsePatchRadius++
+  - pcg_gazebo.parsers.sdf.Velocity++
+  - pcg_gazebo.parsers.sdf.Vertical++
+  - pcg_gazebo.parsers.sdf.VerticalPosition++
+  - pcg_gazebo.parsers.sdf.VerticalVelocity++
+  - pcg_gazebo.parsers.sdf.ViewController++
+  - pcg_gazebo.parsers.sdf.ViscousFriction++
+  - pcg_gazebo.parsers.sdf.Visual++
+  - pcg_gazebo.parsers.sdf.Visualize++
+  - pcg_gazebo.parsers.sdf.Waypoint++
+  - pcg_gazebo.parsers.sdf.Width++
+  - pcg_gazebo.parsers.sdf.World++
+  - pcg_gazebo.parsers.sdf.X++
+  - pcg_gazebo.parsers.sdf.XYZ++
+  - pcg_gazebo.parsers.sdf.Y++
+  - pcg_gazebo.parsers.sdf.Z++
+- reference/parsers_sdf_config.md:
+  - pcg_gazebo.parsers.sdf_config++
+  - pcg_gazebo.parsers.sdf_config.Author++
+  - pcg_gazebo.parsers.sdf_config.Description++
+  - pcg_gazebo.parsers.sdf_config.EMail++
+  - pcg_gazebo.parsers.sdf_config.Model++
+  - pcg_gazebo.parsers.sdf_config.Name++
+  - pcg_gazebo.parsers.sdf_config.SDF++
+  - pcg_gazebo.parsers.sdf_config.Version++
+- reference/parsers_types.md:
+  - pcg_gazebo.parsers.types++
+  - pcg_gazebo.parsers.types.XMLBase++
+  - pcg_gazebo.parsers.types.XMLBoolean++
+  - pcg_gazebo.parsers.types.XMLCustom++
+  - pcg_gazebo.parsers.types.XMLInteger++
+  - pcg_gazebo.parsers.types.XMLScalar++
+  - pcg_gazebo.parsers.types.XMLString++
+  - pcg_gazebo.parsers.types.XMLVector++
+- reference/parsers_urdf.md:
+  - pcg_gazebo.parsers.urdf++
+  - pcg_gazebo.parsers.urdf.Actuator++
+  - pcg_gazebo.parsers.urdf.Axis++
+  - pcg_gazebo.parsers.urdf.Box++
+  - pcg_gazebo.parsers.urdf.Child++
+  - pcg_gazebo.parsers.urdf.Collision++
+  - pcg_gazebo.parsers.urdf.Color++
+  - pcg_gazebo.parsers.urdf.Cylinder++
+  - pcg_gazebo.parsers.urdf.Dynamics++
+  - pcg_gazebo.parsers.urdf.Gazebo++
+  - pcg_gazebo.parsers.urdf.Geometry++
+  - pcg_gazebo.parsers.urdf.HardwareInterface++
+  - pcg_gazebo.parsers.urdf.Inertia++
+  - pcg_gazebo.parsers.urdf.Inertial++
+  - pcg_gazebo.parsers.urdf.Joint++
+  - pcg_gazebo.parsers.urdf.Kd++
+  - pcg_gazebo.parsers.urdf.Kp++
+  - pcg_gazebo.parsers.urdf.Limit++
+  - pcg_gazebo.parsers.urdf.Link++
+  - pcg_gazebo.parsers.urdf.Mass++
+  - pcg_gazebo.parsers.urdf.Material++
+  - pcg_gazebo.parsers.urdf.MaxContacts++
+  - pcg_gazebo.parsers.urdf.MaxVel++
+  - pcg_gazebo.parsers.urdf.MechanicalReduction++
+  - pcg_gazebo.parsers.urdf.Mesh++
+  - pcg_gazebo.parsers.urdf.Mimic++
+  - pcg_gazebo.parsers.urdf.MinDepth++
+  - pcg_gazebo.parsers.urdf.Mu1++
+  - pcg_gazebo.parsers.urdf.Mu2++
+  - pcg_gazebo.parsers.urdf.Origin++
+  - pcg_gazebo.parsers.urdf.Parent++
+  - pcg_gazebo.parsers.urdf.ProvideFeedback++
+  - pcg_gazebo.parsers.urdf.Robot++
+  - pcg_gazebo.parsers.urdf.SafetyController++
+  - pcg_gazebo.parsers.urdf.SelfCollide++
+  - pcg_gazebo.parsers.urdf.Sphere++
+  - pcg_gazebo.parsers.urdf.StopCFM++
+  - pcg_gazebo.parsers.urdf.StopERP++
+  - pcg_gazebo.parsers.urdf.Texture++
+  - pcg_gazebo.parsers.urdf.Transmission++
+  - pcg_gazebo.parsers.urdf.Type++
+  - pcg_gazebo.parsers.urdf.Visual++
+- reference/task_manager.md:
+  - pcg_gazebo.task_manager++
+  - pcg_gazebo.task_manager.GazeboProxy++
+  - pcg_gazebo.task_manager.ProcessManager++
+  - pcg_gazebo.task_manager.ROSConfig++
+  - pcg_gazebo.task_manager.Server++
+  - pcg_gazebo.task_manager.SimulationTimer++
+  - pcg_gazebo.task_manager.Stage++
+  - pcg_gazebo.task_manager.Task++
+- reference/generators.md:
+  - pcg_gazebo.generators++
+  - pcg_gazebo.generators.AssetsManager++
+  - pcg_gazebo.generators.CollisionChecker++
+  - pcg_gazebo.generators.ConstraintsManager++
+  - pcg_gazebo.generators.EngineManager++
+  - pcg_gazebo.generators.ModelGroupGenerator++
+  - pcg_gazebo.generators.SingletonCollisionChecker++
+  - pcg_gazebo.generators.WorldGenerator++
+- reference/generators_components.md:
+  - pcg_gazebo.generators.components++
+  - pcg_gazebo.generators.components.HingedDoor++
+  - pcg_gazebo.generators.components.Walls++
+- reference/generators_constraints.md:
+  - pcg_gazebo.generators.constraints++
+  - pcg_gazebo.generators.constraints.Constraint++
+  - pcg_gazebo.generators.constraints.TangentConstraint++
+  - pcg_gazebo.generators.constraints.WorkspaceConstraint++
+- reference/generators_engines.md:
+  - pcg_gazebo.generators.engines++
+  - pcg_gazebo.generators.engines.Engine++
+  - pcg_gazebo.generators.engines.FixedPoseEngine++
+  - pcg_gazebo.generators.engines.PatternEngine++
+  - pcg_gazebo.generators.engines.RandomPoseEngine++
+  
+pages:
+- Home: index.md << README.md
+- API Documentation:
+  - pcg_gazebo.log: reference/log.md
+  - pcg_gazebo.path: reference/path.md
+  - pcg_gazebo.utils: reference/utils.md
+  - pcg_gazebo.visualization: reference/visualization.md
+  - pcg_gazebo.simulation:
+    - pcg_gazebo.simulation: reference/simulation.md
+    - pcg_gazebo.simulation.physics: reference/simulation_physics.md
+    - pcg_gazebo.simulation.properties: reference/simulation_properties.md
+    - pcg_gazebo.simulation.sensors: reference/simulation_sensors.md
+  - pcg_gazebo.parsers:
+    - pcg_gazebo.parsers.sdf: reference/parsers_sdf.md
+    - pcg_gazebo.parsers.sdf_config: reference/parsers_sdf_config.md
+    - pcg_gazebo.parsers.types: reference/parsers_types.md
+    - pcg_gazebo.parsers.urdf: reference/parsers_urdf.md
+  - pcg_gazebo.task_manager: reference/task_manager.md
+  - pcg_gazebo.generators:
+    - pcg_gazebo.generators: reference/generators.md
+    - pcg_gazebo.generators.components: reference/generators_components.md
+    - pcg_gazebo.generators.constraints: reference/generators_constraints.md
+    - pcg_gazebo.generators.engines: reference/generators_engines.md
+
+plugins:
+  - search
+  - awesome-pages
+
+theme:
+  name: "material"
+  feature:
+    tabs: false
+
+headers: markdown
+
+markdown_extensions:
+  - codehilite:
+      guess_lang: false
+  - pymdownx.superfences
+  - codehilite
+  - markdown.extensions.admonition
+  - markdown.extensions.codehilite:
+      guess_lang: false
+  - markdown.extensions.def_list
+  - markdown.extensions.footnotes
+  - markdown.extensions.meta
+  - markdown.extensions.toc:
+      permalink: true
+      baselevel: 4
+  - pymdownx.arithmatex
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.critic
+  - pymdownx.details
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+extra_javascript:
+- 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML'
+
+extra:
+  social:
+    - type: 'github'
+      link: 'https://github.com/boschresearch'
+
+gens_dir: _pydocmd     # This will end up as the MkDocs 'docs_dir'
+site_dir: docs

@@ -20,6 +20,20 @@ from .utils import is_string
 
 
 class Path(object):
+    """Path resolver for ROS and Gazebo model paths.
+    The paths can be resolved if provided as:
+
+    * Absolute path
+    * `$(find ros_pkg)`
+    * `package://`
+    * `model://`
+    * `file://`
+
+    > *Input arguments*
+
+    * `uri` (*type:* `str`): Input path to be resolved.
+    """
+
     def __init__(self, uri):
         assert is_string(uri), 'Input URI must be a string'
 
@@ -37,10 +51,12 @@ class Path(object):
 
     @property
     def is_valid(self):
+        """ `bool`: `True` if the absolute URI exists."""
         return self._absolute_uri is not None
 
     @property
     def original_uri(self):
+        """ `str`: Original URI provided."""
         return self._original_uri
 
     @original_uri.setter

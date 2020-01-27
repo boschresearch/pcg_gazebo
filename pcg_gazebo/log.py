@@ -12,6 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Global logging methods.
+"""
 import logging
 import os
 import sys
@@ -19,9 +22,11 @@ import datetime
 import random
 import string
 
+
+# Output root directory for log file
 PCG_LOG_DIR_ROOT = os.path.join(os.path.expanduser('~'), '.pcg', 'logs')
 
-
+# Output directory for this instance of the PCG engine
 PCG_LOG_DIR = os.path.join(
     PCG_LOG_DIR_ROOT,
     datetime.datetime.now().isoformat().replace(':', '_') + '_{}'.format(
@@ -29,6 +34,13 @@ PCG_LOG_DIR = os.path.join(
 
 
 def update_log_dir(add_timestamp=True):
+    """Update the output folder for log files.
+
+    > *Input arguments*
+
+    * `add_timestamp` (*type:* `bool`, *default:* `True`): Add timestamp to
+    folder name.
+    """
     global PCG_LOG_DIR
     if add_timestamp:
         PCG_LOG_DIR = os.path.join(
@@ -45,6 +57,16 @@ def update_log_dir(add_timestamp=True):
 
 
 def change_log_root_dir(root_dir, update_log_dir=False, add_timestamp=True):
+    """Change the directory for the output log files.
+
+    > *Input arguments*
+
+    * `root_dir` (*type:* `str`): New output log directory.
+    * `update_log_dir` (*type:* `bool`, *default:* `False`):
+    Update current global path for log directory.
+    * `add_timestamp` (*type:* `bool`, *default:* `True`): Add timestamp
+    to the directory folder name.
+    """
     global PCG_LOG_DIR_ROOT
     PCG_LOG_DIR_ROOT = root_dir
     if update_log_dir:
@@ -52,11 +74,27 @@ def change_log_root_dir(root_dir, update_log_dir=False, add_timestamp=True):
 
 
 def get_log_dir():
+    """Return the current output log directory."""
     return PCG_LOG_DIR
 
 
 def create_logger(name, log_filename=None, output_dir=None,
                   log_level=logging.ERROR):
+    """Create new instance of the logger.
+
+    > *Input arguments*
+
+    * `name` (*type:* `str`): Name of the instance.
+    * `log_filename` (*type:* `str`, *default:* `None`): Name of
+    the log filename, if `None` use `name` as filename.
+    * `output_dir` (*type:* `str`, *default:* `data`): Output log directory.
+    If `None` is provided, use the current log directory `PCG_LOG_DIR`.
+    * `log_level` (*type:* `int`, *default:* `logging.ERROR`): Log level.
+
+    > *Returns*
+
+    Logger object.
+    """
     logger = logging.getLogger(name)
     if len(logger.handlers) == 0:
         out_hdlr = logging.StreamHandler(sys.stdout)

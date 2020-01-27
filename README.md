@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/boschresearch/pcg_gazebo.svg?branch=master)](https://travis-ci.org/boschresearch/pcg_gazebo)
 [![GitHub issues](https://img.shields.io/github/issues/boschresearch/pcg_gazebo_pkgs.svg)](https://github.com/boschresearch/pcg_gazebo/issues)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE)
+![PyPI](https://img.shields.io/pypi/v/pcg-gazebo)
 
 The `pcg_gazebo` Python package is an Open Source
 Project extending the simulation capabilities of the robotics simulator [Gazebo](http://gazebosim.org/)
@@ -23,6 +24,25 @@ standards (e.g. ISO 26262).
 
 ## Installation
 
+### Using `pip`
+
+You can install the `pcg-gazebo` package using `pip` as follows
+
+```bash
+pip install pcg-gazebo
+```
+
+you still might need to install some extra dependencies that cannot
+be handled by `pip` as
+
+```
+sudo apt install libspatialindex-dev pybind11-dev libgeos-dev
+```
+
+> The default installation does not include `rospy` dependencies that
+> are not available as a `pip` package. They have to be installed 
+> separately for certain submodules to work, such as `pcg_gazebo.task_manager`.
+
 ### From source
 
 First install some non-Python dependencies
@@ -36,6 +56,22 @@ Then clone the repository and install it using `pip`
 ```
 git clone https://github.com/boschresearch/pcg_gazebo.git
 pip install .
+```
+
+### Using the package with ROS and Gazebo
+
+Certain functionalities as the Gazebo proxy, task manager and model spawning 
+are only available if `rospy` is installed.
+The lack of Gazebo and `rospy` only restricts functionalities related to 
+interaction with the simulation in runtime and the creation of ROS-related 
+tasks.
+
+At the moment, ROS 2 is **not** supported for this purpose. 
+To install ROS `melodic`, follow these [installation instructions](https://wiki.ros.org/melodic/Installation/Ubuntu) and install `ros-melodic-desktop-full`
+or separately install Gazebo and its ROS bindings as
+
+```
+sudo apt install gazebo9 libgazebo9-dev ros-melodic-gazebo-*
 ```
 
 ## License

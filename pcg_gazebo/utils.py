@@ -12,6 +12,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""
+Useful functions for Jinja file processing and YAML file parser extensions.
+"""
 from __future__ import print_function
 import random
 import string
@@ -49,8 +52,10 @@ class _PCGYAMLLoader(yaml.SafeLoader, object):
     # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
     # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-    """YAML Loader with `!include` constructor."""
+    """
+    YAML Loader with `!include` parser to find and resolve
+    absolute paths.
+    """
 
     def __init__(self, stream):
         """Initialise Loader."""
@@ -96,6 +101,10 @@ def yaml_include_constructor(loader, node):
 
 
 def yaml_find_ros_package(loader, node):
+    """Parser for YAML processor to resolve ROS package paths
+    using the `!find` function.
+    """
+
     import rospkg
     input_str = loader.construct_scalar(node)
     assert '/' in input_str, \
@@ -121,6 +130,16 @@ yaml.add_constructor('!find', yaml_find_ros_package, _PCGYAMLLoader)
 
 
 def load_yaml(input_yaml):
+    """Load YAML file using internal path resolvers.
+
+    > *Input arguments*
+
+    * `input_yaml` (*type:* `str`): Filename or file content as string.
+
+    > *Returns*
+
+    `dict` parsed from the YAML file.
+    """
     if os.path.isfile(input_yaml):
         extension = os.path.splitext(input_yaml)[1].lstrip('.')
         assert extension in ['yaml', 'yml'], \
@@ -276,10 +295,18 @@ def get_template_path(filename):
     else:
         return None
 
-# Methods for testing types
-
 
 def is_string(obj):
+    """Test if input object is a string.
+
+    > *Input arguments*
+
+    * `obj`: Input variable.
+
+    > *Returns*
+
+    `True`, if `obj` is a string.
+    """
     import sys
     if sys.version_info.major == 2:
         return isinstance(obj, (str, unicode))  # noqa: F821
