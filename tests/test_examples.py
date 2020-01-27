@@ -35,7 +35,7 @@ def load_notebook(file_obj):
             for line in cell['source']:
                 if '#' == line[0]:
                     continue
-                lines.append(line)            
+                lines.append(line)       
     script = exclude_calls(lines)
     return script
 
@@ -148,27 +148,27 @@ def render_examples(out_dir, in_dir=None, ext='ipynb'):
                                  '.'.join(split[:-1]) + '.html')
         render_notebook(nb_path, html_path)
 
+
 @pytest.mark.script_launch_mode('subprocess')
 def test_notebooks(script_runner):
-    
     examples_dir = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         '..',
         'examples'
     )
 
-    for item in os.listdir(examples_dir): 
+    for item in os.listdir(examples_dir):
         filename = os.path.join(examples_dir, item)
-        
+
         if not os.path.exists(filename):
             return
 
-        if filename.lower().endswith('.ipynb'):               
+        if filename.lower().endswith('.ipynb'):
             with open(filename, 'r') as file_obj:
-                script = load_notebook(file_obj)      
+                script = load_notebook(file_obj)
             exec(script, globals())
         elif filename.lower().endswith('.py'):
             output = script_runner.run('python', filename)
             assert output.success
         else:
-            continue        
+            continue
