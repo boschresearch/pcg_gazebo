@@ -45,11 +45,16 @@ requirements_required = set([
     'rospkg'
 ])
 
-requirements_test = requirements_required.union(set(['pytest', 'pytest-console-scripts']))
+requirements_examples = requirements_required.union(['jupyterlab'])
+
+requirements_test = requirements_required.union(set(['nbconvert', 'pytest', 'pytest-console-scripts']))
 
 # `python setup.py --list-all > requirements.txt`
-if '--list-all' in sys.argv:  
+if '--list-all' in sys.argv:
     print('\n'.join(requirements_required))
+    exit()
+elif '--list-examples' in sys.argv:
+    print('\n'.join(requirements_examples))
     exit()
 elif '--list-easy' in sys.argv:
     print('\n'.join(requirements_test))
@@ -113,6 +118,7 @@ setup(
     install_requires=list(requirements_required),
     extras_require=dict(
         all=list(requirements_required),
+        examples=list(requirements_examples),
         test=list(requirements_test)
     )
 )
