@@ -5,7 +5,6 @@ __pycache__
 .vscode/c_cpp_properties.json
 .vscode/settings.json
 .vscode/launch.json
-docs/site/
 
 # Packaging files
 build/
@@ -15,3 +14,7 @@ dist/
 
 # Test files
 venv/
+
+# Documentation files
+site/
+_pydocmd
