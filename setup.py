@@ -101,7 +101,8 @@ setup(
         'pcg_gazebo.task_manager',        
     ],
     package_data={
-        '': ['templates/*.sdf.jinja']
+        '': ['templates/*.sdf.jinja'],
+        'pcg_gazebo': ['simulation/properties/resources/xkcd_rgb.txt']
     },
     scripts=[
         'scripts/sdf2urdf',
