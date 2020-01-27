@@ -1,15 +1,45 @@
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import os
 import json
-import inspect
-import subprocess
 import pytest
-
-# current working directory
-cwd = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
 
 
 def load_notebook(file_obj):
+    # The MIT License (MIT)
+    #
+    # Copyright (c) 2019 Michael Dawson-Haggerty
+    #
+    # Permission is hereby granted, free of charge, to any person
+    # obtaining a copy of this software and associated documentation
+    # files (the "Software"), to deal in the Software without restriction,
+    # including without limitation the rights to use, copy, modify, merge,
+    # publish, distribute, sublicense, and/or sell copies of the Software,
+    # and to permit persons to whom the Software is furnished to do so,
+    # subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be
+    # included in all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    # IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     """
     Load an ipynb file into a cleaned and stripped string that can
     be ran with `exec`
@@ -46,6 +76,28 @@ def exclude_calls(
                  'plt',
                  'save_image',
                  '?']):
+    # The MIT License (MIT)
+    #
+    # Copyright (c) 2019 Michael Dawson-Haggerty
+    #
+    # Permission is hereby granted, free of charge, to any person
+    # obtaining a copy of this software and associated documentation
+    # files (the "Software"), to deal in the Software without restriction,
+    # including without limitation the rights to use, copy, modify, merge,
+    # publish, distribute, sublicense, and/or sell copies of the Software,
+    # and to permit persons to whom the Software is furnished to do so,
+    # subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be
+    # included in all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    # IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     """
     Exclude certain calls based on substrings, replacing
     them with pass statements.
@@ -87,6 +139,28 @@ def exclude_calls(
 
 
 def to_pass(line):
+    # The MIT License (MIT)
+    #
+    # Copyright (c) 2019 Michael Dawson-Haggerty
+    #
+    # Permission is hereby granted, free of charge, to any person
+    # obtaining a copy of this software and associated documentation
+    # files (the "Software"), to deal in the Software without restriction,
+    # including without limitation the rights to use, copy, modify, merge,
+    # publish, distribute, sublicense, and/or sell copies of the Software,
+    # and to permit persons to whom the Software is furnished to do so,
+    # subject to the following conditions:
+    #
+    # The above copyright notice and this permission notice shall be
+    # included in all copies or substantial portions of the Software.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    # EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+    # OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+    # IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+    # CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+    # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+    # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     """
     Replace a line of code with a pass statement, with
     the correct number of leading spaces
@@ -105,46 +179,6 @@ def to_pass(line):
     # replace statement with pass and correct leading spaces
     passed = (' ' * spaces) + 'pass'
     return passed
-
-
-def render_notebook(file_name, out_name, nbconvert='jupyter'):
-    """
-    Render an IPython notebook to an HTML file.
-    """
-    out_name = os.path.abspath(out_name)
-    file_name = os.path.abspath(file_name)
-
-    command = [nbconvert,
-               'nbconvert',
-               '--to',
-               'html',
-               file_name,
-               '--output',
-               out_name]
-
-    subprocess.check_call(command)
-
-
-def render_examples(out_dir, in_dir=None, ext='ipynb'):
-    """
-    Render all IPython notebooks in a directory to HTML.
-    """
-    # replace with relative path
-    if in_dir is None:
-        in_dir = os.path.abspath(
-            os.path.join(cwd, '../examples'))
-
-    for file_name in os.listdir(in_dir):
-        # check extension
-        split = file_name.split('.')
-        if split[-1] != ext:
-            continue
-        # full path of file
-        nb_path = os.path.join(in_dir, file_name)
-
-        html_path = os.path.join(out_dir,
-                                 '.'.join(split[:-1]) + '.html')
-        render_notebook(nb_path, html_path)
 
 
 @pytest.mark.script_launch_mode('subprocess')
