@@ -57,6 +57,7 @@ from .visual import Visual
 
 
 def get_all_urdf_element_classes():
+    """Get list of all URDF element classes."""
     import sys
     import inspect
     from ..types import XMLBase
@@ -70,6 +71,18 @@ def get_all_urdf_element_classes():
 
 
 def create_urdf_element(tag, *args):
+    """URDF element factory.
+
+    > *Input arguments*
+
+    * `tag` (*type:* `str`): Name of the URDF element.
+    * `args`: Extra arguments for URDF element constructor.
+
+    > *Returns*
+
+    URDF element if `tag` refers to a valid URDF element.
+    `None`, otherwise.
+    """
     import sys
     import inspect
     from ..types import XMLBase
@@ -83,6 +96,16 @@ def create_urdf_element(tag, *args):
 
 
 def create_urdf_type(tag):
+    """Return handle of the URDF element type.
+
+    > *Input arguments*
+
+    * `tag` (*type:* `str`): Name of the URDF element.
+
+    > *Returns*
+
+    URDF element type if `tag` is valid, `None` otherwise`.
+    """
     import sys
     import inspect
     from ..types import XMLBase
@@ -96,6 +119,7 @@ def create_urdf_type(tag):
 
 
 def is_urdf_element(obj):
+    """Test if XML element is an URDF element."""
     from ..types import XMLBase
     return obj.__class__ in XMLBase.__subclasses__() and \
         obj._TYPE == 'urdf'
