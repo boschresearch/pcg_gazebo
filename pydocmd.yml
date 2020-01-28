@@ -72,6 +72,7 @@ generate:
   - pcg_gazebo.parsers.sdf.Bounce++
   - pcg_gazebo.parsers.sdf.Box++
   - pcg_gazebo.parsers.sdf.Bullet++
+  - pcg_gazebo.parsers.sdf.CFMDamping++
   - pcg_gazebo.parsers.sdf.CFM++
   - pcg_gazebo.parsers.sdf.Camera++
   - pcg_gazebo.parsers.sdf.CastShadows++
