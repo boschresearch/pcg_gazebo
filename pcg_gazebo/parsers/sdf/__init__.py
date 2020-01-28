@@ -36,6 +36,7 @@ from .camera import Camera
 from .cast_shadows import CastShadows
 from .category_bitmask import CategoryBitmask
 from .center import Center
+from .cfm_damping import CFMDamping
 from .cfm import CFM
 from .child import Child
 from .clip import Clip
@@ -336,6 +337,7 @@ __all__ = [
     'CastShadows',
     'CategoryBitmask',
     'Center',
+    'CFMDamping',
     'CFM',
     'Child',
     'Clip',
