@@ -1,0 +1,1947 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>pcg_gazebo.parsers.sdf - Procedural Generation for Gazebo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Procedural Generation for Gazebo
+            </span>
+            <span class="md-header-nav__topic">
+              
+                pcg_gazebo.parsers.sdf
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/boschresearch/pcg_gazebo/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../log/" class="md-tabs__link md-tabs__link--active">
+          API Documentation
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Procedural Generation for Gazebo" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Procedural Generation for Gazebo
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/boschresearch/pcg_gazebo/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      API Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        API Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../log/" title="pcg_gazebo.log" class="md-nav__link">
+      pcg_gazebo.log
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../path/" title="pcg_gazebo.path" class="md-nav__link">
+      pcg_gazebo.path
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../visualization/" title="pcg_gazebo.visualization" class="md-nav__link">
+      pcg_gazebo.visualization
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4">
+    
+    <label class="md-nav__link" for="nav-2-4">
+      pcg_gazebo.simulation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        pcg_gazebo.simulation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation/" title="pcg_gazebo.simulation" class="md-nav__link">
+      pcg_gazebo.simulation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation_physics/" title="pcg_gazebo.simulation.physics" class="md-nav__link">
+      pcg_gazebo.simulation.physics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation_properties/" title="pcg_gazebo.simulation.properties" class="md-nav__link">
+      pcg_gazebo.simulation.properties
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation_sensors/" title="pcg_gazebo.simulation.sensors" class="md-nav__link">
+      pcg_gazebo.simulation.sensors
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5" checked>
+    
+    <label class="md-nav__link" for="nav-2-5">
+      pcg_gazebo.parsers
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-5">
+        pcg_gazebo.parsers
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers/" title="pcg_gazebo.parsers" class="md-nav__link">
+      pcg_gazebo.parsers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="pcg_gazebo.parsers.sdf" class="md-nav__link md-nav__link--active">
+      pcg_gazebo.parsers.sdf
+    </a>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_sdf_config/" title="pcg_gazebo.parsers.sdf_config" class="md-nav__link">
+      pcg_gazebo.parsers.sdf_config
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_types/" title="pcg_gazebo.parsers.types" class="md-nav__link">
+      pcg_gazebo.parsers.types
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_urdf/" title="pcg_gazebo.parsers.urdf" class="md-nav__link">
+      pcg_gazebo.parsers.urdf
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../task_manager/" title="pcg_gazebo.task_manager" class="md-nav__link">
+      pcg_gazebo.task_manager
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+    
+    <label class="md-nav__link" for="nav-2-7">
+      pcg_gazebo.generators
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-7">
+        pcg_gazebo.generators
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators/" title="pcg_gazebo.generators" class="md-nav__link">
+      pcg_gazebo.generators
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_components/" title="pcg_gazebo.generators.components" class="md-nav__link">
+      pcg_gazebo.generators.components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_constraints/" title="pcg_gazebo.generators.constraints" class="md-nav__link">
+      pcg_gazebo.generators.constraints
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_engines/" title="pcg_gazebo.generators.engines" class="md-nav__link">
+      pcg_gazebo.generators.engines
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/boschresearch/pcg_gazebo/edit/master/docs/reference/parsers_sdf.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="pcg_gazebo.parsers.sdf">pcg_gazebo.parsers.sdf</h1>
+
+<h1 id="pcg_gazebo.parsers.sdf.Accel">Accel</h1>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Accel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Noise parameters for linear accelerations.</p>
+<blockquote>
+<p><em>Child elements</em></p>
+</blockquote>
+<ul>
+<li><code>mean</code></li>
+<li><code>stddev</code></li>
+<li><code>bias_mean</code></li>
+<li><code>bias_stddev</code></li>
+</ul>
+<blockquote>
+<p>SDF versions</p>
+</blockquote>
+<ul>
+<li><code>1.4</code></li>
+</ul>
+<blockquote>
+<p><em>Source</em></p>
+</blockquote>
+<ul>
+<li><a href="http://sdformat.org/spec?elem=sensor&amp;ver=1.4"><code>&lt;accel&gt;</code> (SDF 1.4)</a></li>
+</ul>
+<h2 id="pcg_gazebo.parsers.sdf.Accel.bias_mean">bias_mean</h2>
+
+<p>Return the bias mean value SDF element,
+to read the value use <code>obj.bias_mean.value</code></p>
+<h2 id="pcg_gazebo.parsers.sdf.Accel.bias_stddev">bias_stddev</h2>
+
+<p>Return the bias standard deviation value SDF element,
+to read the value use <code>obj.bias_stddev.value</code></p>
+<h2 id="pcg_gazebo.parsers.sdf.Accel.mean">mean</h2>
+
+<p>Return the mean value SDF element, to read the value use
+<code>obj.mean.value</code></p>
+<h2 id="pcg_gazebo.parsers.sdf.Accel.stddev">stddev</h2>
+
+<p>Return the standard deviation value SDF element,
+to read the value use <code>obj.stddev.value</code></p>
+<h1 id="pcg_gazebo.parsers.sdf.Accuracy">Accuracy</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Accuracy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Actor">Actor</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Actor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.AllowAutoDisable">AllowAutoDisable</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">AllowAutoDisable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Altimeter">Altimeter</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Altimeter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.AlwaysOn">AlwaysOn</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">AlwaysOn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Ambient">Ambient</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Ambient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.AngularVelocity">AngularVelocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">AngularVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Animation">Animation</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Animation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Attenuation">Attenuation</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Attenuation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.AutoStart">AutoStart</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">AutoStart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Axis">Axis</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Axis</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Axis2">Axis2</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Axis2</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Background">Background</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.BiasMean">BiasMean</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">BiasMean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.BiasStdDev">BiasStdDev</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">BiasStdDev</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Bounce">Bounce</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Bounce</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Box">Box</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Box</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Bullet">Bullet</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Bullet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;physics&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CFMDamping">CFMDamping</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CFMDamping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CFM">CFM</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CFM</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Camera">Camera</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Camera</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;sensor&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CastShadows">CastShadows</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CastShadows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CategoryBitmask">CategoryBitmask</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CategoryBitmask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">65535</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Center">Center</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Center</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Child">Child</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Child</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Clip">Clip</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Clip</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Clouds">Clouds</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Clouds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Coefficient">Coefficient</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Coefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CollideBitmask">CollideBitmask</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CollideBitmask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">65535</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CollideWithoutContact">CollideWithoutContact</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CollideWithoutContact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.CollideWithoutContactBitmask">CollideWithoutContactBitmask</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">CollideWithoutContactBitmask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Collision">Collision</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Color">Color</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Constant">Constant</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Constant</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Constraints">Constraints</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;ode&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Contact">Contact</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Contact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;simbody&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ContactMaxCorrectingVel">ContactMaxCorrectingVel</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ContactMaxCorrectingVel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ContactSurfaceLayer">ContactSurfaceLayer</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ContactSurfaceLayer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Cylinder">Cylinder</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Cylinder</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Damping">Damping</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Damping</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.DelayStart">DelayStart</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">DelayStart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Density">Density</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.DepthCamera">DepthCamera</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">DepthCamera</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Diffuse">Diffuse</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Diffuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Direction">Direction</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Direction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Dissipation">Dissipation</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Dissipation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Distortion">Distortion</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Distortion</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.DynamicFriction">DynamicFriction</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">DynamicFriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Dynamics">Dynamics</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Dynamics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ERP">ERP</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ERP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Effort">Effort</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Effort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ElasticModulus">ElasticModulus</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ElasticModulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Emissive">Emissive</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Emissive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Empty">Empty</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.EnableWind">EnableWind</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">EnableWind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.End">End</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">End</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.FDir1">FDir1</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">FDir1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+</pre></div>
+
+<p>3-tuple specifying direction of mu1 in the collision local reference frame</p>
+<p>Args:
+    default (list): Direction unit vector</p>
+<p>Attributes:
+    value (list): Stored direction unit vector</p>
+<h1 id="pcg_gazebo.parsers.sdf.FallOff">FallOff</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">FallOff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Far">Far</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Far</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Filename">Filename</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Fog">Fog</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Fog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ForceTorque">ForceTorque</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ForceTorque</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Format">Format</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;R8G8B8&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Frame">Frame</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Friction">Friction</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Friction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<p>Configuration of the collision friction parameters.</p>
+<p>Args:
+    default (float): Coefficient of friction</p>
+<p>Attributes:
+    value (float): Stored coefficient of friction</p>
+<h1 id="pcg_gazebo.parsers.sdf.Friction2">Friction2</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Friction2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.FrictionModel">FrictionModel</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">FrictionModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.GUI">GUI</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">GUI</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Geometry">Geometry</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;empty&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Granularity">Granularity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Granularity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Gravity">Gravity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Gravity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Grid">Grid</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Height">Height</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Horizontal">Horizontal</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Horizontal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.HorizontalFOV">HorizontalFOV</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">HorizontalFOV</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.047</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Humidity">Humidity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Humidity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IMU">IMU</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IMU</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IXX">IXX</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IXX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IXY">IXY</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IXY</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IXZ">IXZ</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IXZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IYY">IYY</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IYY</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IYZ">IYZ</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IYZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.IZZ">IZZ</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">IZZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Image">Image</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;geometry&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Include">Include</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Include</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Inertia">Inertia</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Inertia</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Inertial">Inertial</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.InheritYaw">InheritYaw</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">InheritYaw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.InitialPosition">InitialPosition</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">InitialPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.InnerAngle">InnerAngle</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">InnerAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.InterpolateX">InterpolateX</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">InterpolateX</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Iters">Iters</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Iters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Joint">Joint</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Joint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.K1">K1</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">K1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.K2">K2</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">K2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.K3">K3</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">K3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Kd">Kd</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Kd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Kinematic">Kinematic</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Kinematic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Kp">Kp</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Kp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1000000000000.0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.LaserRetro">LaserRetro</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">LaserRetro</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Length">Length</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Light">Light</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Light</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Lighting">Lighting</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Lighting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Limit">Limit</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Limit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;axis&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Linear">Linear</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.LinearAcceleration">LinearAcceleration</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">LinearAcceleration</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Link">Link</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Link</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Localization">Localization</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Localization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;CUSTOM&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Loop">Loop</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Loop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Lower">Lower</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Lower</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mf">1e+16</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Mass">Mass</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Material">Material</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Material</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Max">Max</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MaxAngle">MaxAngle</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MaxAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MaxContacts">MaxContacts</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MaxContacts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MaxDist">MaxDist</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MaxDist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MaxStepSize">MaxStepSize</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MaxStepSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MaxTransientVelocity">MaxTransientVelocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MaxTransientVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MaxVel">MaxVel</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MaxVel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Mean">Mean</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MeanSize">MeanSize</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MeanSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MeasureDirection">MeasureDirection</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MeasureDirection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;child_to_parent&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Mesh">Mesh</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Mesh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Min">Min</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MinAngle">MinAngle</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MinAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MinDepth">MinDepth</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MinDepth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MinDist">MinDist</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MinDist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.MinStepSize">MinStepSize</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MinStepSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Model">Model</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Mu">Mu</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Mu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<p>Coefficient of friction in the range of [0, 1]</p>
+<p>Args:
+    default (float): Coefficient of friction</p>
+<p>Attributes:
+    value (float): Stored coefficient of friction</p>
+<h1 id="pcg_gazebo.parsers.sdf.Mu2">Mu2</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Mu2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<p>Second coefficient of friction in the range of [0, 1]</p>
+<p>Args:
+    default (float): Coefficient of friction</p>
+<p>Attributes:
+    value (float): Stored coefficient of friction</p>
+<h1 id="pcg_gazebo.parsers.sdf.MustBeLoopJoint">MustBeLoopJoint</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">MustBeLoopJoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Name">Name</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Near">Near</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Near</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Noise">Noise</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Normal">Normal</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Normal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.NormalMap">NormalMap</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">NormalMap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ODE">ODE</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ODE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;physics&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.OrientationReferenceFrame">OrientationReferenceFrame</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">OrientationReferenceFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.OriginVisual">OriginVisual</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">OriginVisual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.OuterAngle">OuterAngle</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">OuterAngle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Output">Output</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;depths&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.OverrideImpactCaptureVelocity">OverrideImpactCaptureVelocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">OverrideImpactCaptureVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.OverrideStictionTransitionVelocity">OverrideStictionTransitionVelocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">OverrideStictionTransitionVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.P1">P1</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">P1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.P2">P2</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">P2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Parent">Parent</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;parent&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.PatchRadius">PatchRadius</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">PatchRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Path">Path</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;__default__&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Physics">Physics</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Physics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;ode&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Plane">Plane</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Plane</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.PlasticCoefRestitution">PlasticCoefRestitution</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">PlasticCoefRestitution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.PlasticImpactVelocity">PlasticImpactVelocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">PlasticImpactVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Plugin">Plugin</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">{})</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Point">Point</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vec_length</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.PoissonsRatio">PoissonsRatio</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">PoissonsRatio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Polyline">Polyline</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Pose">Pose</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.PreConIters">PreConIters</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">PreConIters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Precision">Precision</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Precision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ProvideFeedback">ProvideFeedback</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ProvideFeedback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Quadratic">Quadratic</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Quadratic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Radius">Radius</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Radius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Range">Range</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Range</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Rate">Rate</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Ray">Ray</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Ray</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.RealTimeFactor">RealTimeFactor</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">RealTimeFactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.RealTimeUpdateRate">RealTimeUpdateRate</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">RealTimeUpdateRate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Resolution">Resolution</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Resolution</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.RestitutionCoefficient">RestitutionCoefficient</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">RestitutionCoefficient</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.RollingFriction">RollingFriction</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">RollingFriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SDF">SDF</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Samples">Samples</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">640</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Save">Save</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Scale">Scale</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Scan">Scan</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Scan</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Scene">Scene</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Scene</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Script">Script</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;material&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SelfCollide">SelfCollide</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SelfCollide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Sensor">Sensor</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Sensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;altimeter&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Shader">Shader</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Shader</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Shadows">Shadows</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Shadows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Simbody">Simbody</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Simbody</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;physics&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Size">Size</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vec_length</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Skin">Skin</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Skin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Sky">Sky</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Sky</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Slip">Slip</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Slip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<p>Force dependent slip direction 1 in collision local frame, between the
+range of [0,1].</p>
+<p>Args:
+    default (float): Slip coefficient</p>
+<p>Attributes:
+    value (float): Stored slip coefficient</p>
+<h1 id="pcg_gazebo.parsers.sdf.Slip1">Slip1</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Slip1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<p>Force dependent slip direction 1 in collision local frame, between the
+range of [0,1].</p>
+<p>Args:
+    default (float): Slip coefficient</p>
+<p>Attributes:
+    value (float): Stored slip coefficient</p>
+<h1 id="pcg_gazebo.parsers.sdf.Slip2">Slip2</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Slip2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<p>Force dependent slip direction 1 in collision local frame, between the
+range of [0,1].</p>
+<p>Args:
+    default (float): Slip coefficient</p>
+<p>Attributes:
+    value (float): Stored slip coefficient</p>
+<h1 id="pcg_gazebo.parsers.sdf.SoftCFM">SoftCFM</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SoftCFM</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SoftERP">SoftERP</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SoftERP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Solver">Solver</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Solver</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;ode&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Sor">Sor</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Sor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.3</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Specular">Specular</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Specular</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Speed">Speed</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Speed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Sphere">Sphere</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SplitImpulse">SplitImpulse</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SplitImpulse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SplitImpulsePenetrationThreshold">SplitImpulsePenetrationThreshold</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SplitImpulsePenetrationThreshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Spot">Spot</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Spot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SpringReference">SpringReference</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SpringReference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SpringStiffness">SpringStiffness</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SpringStiffness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Start">Start</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Static">Static</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Static</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.StaticFriction">StaticFriction</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">StaticFriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.StdDev">StdDev</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">StdDev</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Stiffness">Stiffness</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Stiffness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">100000000.0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SubMesh">SubMesh</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SubMesh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Sunrise">Sunrise</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Sunrise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Sunset">Sunset</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Sunset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Surface">Surface</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Surface</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.SurfaceRadius">SurfaceRadius</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SurfaceRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Threshold">Threshold</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Time">Time</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Topic">Topic</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Topic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Torsional">Torsional</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Torsional</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.TrackVisual">TrackVisual</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">TrackVisual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Trajectory">Trajectory</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Transparency">Transparency</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Transparency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Type">Type</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.URDF">URDF</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">URDF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.URI">URI</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">URI</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.UpdateRate">UpdateRate</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">UpdateRate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Upper">Upper</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Upper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1e+16</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.UseDynamicMOIRescaling">UseDynamicMOIRescaling</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">UseDynamicMOIRescaling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.UseModelFrame">UseModelFrame</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">UseModelFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.UseParentModelFrame">UseParentModelFrame</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">UseParentModelFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.UsePatchRadius">UsePatchRadius</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">UsePatchRadius</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Velocity">Velocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Velocity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Vertical">Vertical</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Vertical</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.VerticalPosition">VerticalPosition</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">VerticalPosition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.VerticalVelocity">VerticalVelocity</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">VerticalVelocity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ViewController">ViewController</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ViewController</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;orbit&#39;</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.ViscousFriction">ViscousFriction</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ViscousFriction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Visual">Visual</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Visualize">Visualize</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Visualize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Waypoint">Waypoint</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Waypoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Width">Width</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">320</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.World">World</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">World</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.X">X</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">X</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.XYZ">XYZ</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">XYZ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Y">Y</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.parsers.sdf.Z">Z</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Z</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../parsers/" title="pcg_gazebo.parsers" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                pcg_gazebo.parsers
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../parsers_sdf_config/" title="pcg_gazebo.parsers.sdf_config" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                pcg_gazebo.parsers.sdf_config
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>
