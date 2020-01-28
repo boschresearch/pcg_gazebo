@@ -32,6 +32,7 @@ from .cfm import CFM
 from .erp import ERP
 from .limit import Limit
 from .slip import Slip
+from .cfm_damping import CFMDamping
 
 
 class ODE(XMLBase):
@@ -65,14 +66,25 @@ class ODE(XMLBase):
         erp=dict(creator=ERP, default=[0.2], mode='joint', optional=True),
         limit=dict(
             creator=Limit, default=['joint'], mode='joint', optional=True),
-        slip=dict(creator=Slip, default=[0], mode='torsional', optional=True)
+        slip=dict(creator=Slip, default=[0], mode='torsional', optional=True),
+        cfm_damping=dict(creator=CFMDamping, default=[False], optional=True, mode='joint')
     )
 
     _MODES = ['physics', 'collision', 'contact', 'joint', 'torsional']
 
-    def __init__(self, mode):
+    def __init__(self, mode='physics'):
         XMLBase.__init__(self)
         self.reset(mode)
+
+    @property
+    def cfm_damping(self):
+        return self._get_child_element('cfm_damping')
+    
+    @cfm_damping.setter
+    def cfm_damping(self, value):
+        if self._mode != 'joint':
+            self.reset(mode='joint')
+        self._add_child_element('cfm_damping', value)
 
     @property
     def solver(self):
