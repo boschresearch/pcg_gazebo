@@ -49,6 +49,8 @@ requirements_examples = requirements_required.union(['jupyterlab'])
 
 requirements_test = requirements_required.union(set(['nbconvert', 'pytest', 'pytest-console-scripts']))
 
+requirements_docs = requirements_required.union(set(['nbconvert', 'pydoc-markdown', 'pypandoc', 'mkdocs-material']))
+
 # `python setup.py --list-all > requirements.txt`
 if '--list-all' in sys.argv:
     print('\n'.join(requirements_required))
@@ -119,6 +121,7 @@ setup(
     extras_require=dict(
         all=list(requirements_required),
         examples=list(requirements_examples),
-        test=list(requirements_test)
+        test=list(requirements_test),
+        docs=list(requirements_docs)
     )
 )
