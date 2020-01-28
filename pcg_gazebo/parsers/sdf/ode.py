@@ -67,7 +67,8 @@ class ODE(XMLBase):
         limit=dict(
             creator=Limit, default=['joint'], mode='joint', optional=True),
         slip=dict(creator=Slip, default=[0], mode='torsional', optional=True),
-        cfm_damping=dict(creator=CFMDamping, default=[False], optional=True, mode='joint')
+        cfm_damping=dict(
+            creator=CFMDamping, default=[False], optional=True, mode='joint')
     )
 
     _MODES = ['physics', 'collision', 'contact', 'joint', 'torsional']
@@ -79,7 +80,7 @@ class ODE(XMLBase):
     @property
     def cfm_damping(self):
         return self._get_child_element('cfm_damping')
-    
+
     @cfm_damping.setter
     def cfm_damping(self, value):
         if self._mode != 'joint':

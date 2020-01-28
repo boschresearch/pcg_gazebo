@@ -337,6 +337,7 @@ __all__ = [
     'CastShadows',
     'CategoryBitmask',
     'Center',
+    'CFMDamping',
     'CFM',
     'Child',
     'Clip',
