@@ -1,0 +1,217 @@
+name: random_workspaces
+assets:
+  ground_plane:
+  - ground_plane
+  assets:
+  - tag: ball
+    description:
+      type: sphere
+      args:
+        radius: "max(0.1, __import__('numpy').random.random())"
+        name: sphere
+        mass: "max(0.1, __import__('numpy').random.random())"
+        color: xkcd
+  - tag: cuboid
+    description:
+      type: box
+      args:
+        size: "__import__('numpy').random.random(3)"
+        name: cuboid
+        mass: "max(0.1, __import__('numpy').random.random())"
+        color: xkcd
+  - tag: cylinder
+    description:
+      type: cylinder
+      args:
+        length: "max(0.1, __import__('numpy').random.random())"
+        radius: "max(0.1, __import__('numpy').random.random())"
+        name: cuboid
+        mass: "max(0.1, __import__('numpy').random.random())"
+        color: xkcd
+engines: 
+- engine_name: fixed_pose
+  models:
+  - ground_plane
+  poses:
+  - [0, 0, 0, 0, 0, 0]
+- engine_name: fixed_pose
+  models:
+  - sun
+  poses:
+  - [0, 0, 10, 0, 0, 0]
+- engine_name: random_pose
+  models:
+  - ball
+  max_num:
+    ball: 15
+  model_picker: random
+  no_collision: true
+  policies:
+  - models:
+    - ball
+    config:
+    - dofs:
+      - x
+      - y
+      policy:
+        name: workspace
+        args: spheres
+    - dofs:
+      - z
+      policy:
+        name: choice
+        args:
+          values: [1, 2, 4]  
+- engine_name: random_pose
+  models:
+  - cuboid
+  max_num:
+    cuboid: 15
+  model_picker: random
+  no_collision: true
+  policies:
+  - models:
+    - cuboid
+    config:
+    - dofs:
+      - x
+      - y
+      policy:
+        name: workspace
+        args: boxes
+    - dofs:
+      - roll
+      - pitch
+      - yaw
+      policy:
+        name: uniform
+        args:
+          mean: 0
+          min: -3.141592653589793
+          max: 3.141592653589793
+  constraints:
+  - model: cuboid
+    constraint: tangent_to_ground_plane
+- engine_name: random_pose
+  models:
+  - cylinder
+  max_num:
+    cylinder: 15
+  model_picker: random
+  no_collision: true
+  policies:
+  - models:
+    - cylinder
+    config:
+    - dofs:
+      - x
+      - y
+      policy:
+        name: workspace
+        args: cylinders
+    - dofs:
+      - roll
+      - pitch      
+      policy:
+        name: uniform
+        args:
+          mean: 0
+          min: -3.141592653589793
+          max: 3.141592653589793
+  constraints:
+  - model: cylinder
+    constraint: tangent_to_ground_plane
+- engine_name: random_pose
+  models:
+  - cylinder
+  - cuboid
+  - ball
+  max_num:
+    cylinder: 4
+    cuboid: 4
+    ball: 4
+  model_picker: random
+  no_collision: true
+  policies:
+  - models:
+    - cylinder
+    - cuboid
+    - ball
+    config:
+    - dofs:
+      - x
+      - y
+      policy:
+        name: workspace
+        args: mixed
+    - dofs:
+      - roll
+      - pitch
+      - yaw
+      policy:
+        name: uniform
+        args:
+          mean: 0
+          min: -3.141592653589793
+          max: 3.141592653589793
+  constraints:
+  - model: cylinder
+    constraint: tangent_to_ground_plane
+  - model: cuboid
+    constraint: tangent_to_ground_plane
+  - model: ball
+    constraint: tangent_to_ground_plane
+physics: !include ../physics/default_ode.yml
+constraints:
+- name: cylinders
+  type: workspace
+  frame: world
+  geometry: 
+    type: area
+    description:
+      points: 
+      - [-15, -15, 0]
+      - [-15, -5, 0]
+      - [-5, -5, 0]
+      - [-5, -15, 0]
+- name: spheres
+  type: workspace
+  frame: world
+  geometry: 
+    type: area
+    description:
+      points: 
+      - [5, -15, 0]
+      - [5, -5, 0]
+      - [15, -5, 0]
+      - [15, -15, 0]
+- name: boxes
+  type: workspace
+  frame: world
+  geometry: 
+    type: area
+    description:
+      points: 
+      - [-5, 5, 0]
+      - [-5, 15, 0]
+      - [5, 15, 0]
+      - [5, 5, 0]
+- name: mixed
+  type: workspace
+  frame: world
+  geometry: 
+    type: area
+    description:
+      points: 
+      - [-5, -5, 0]
+      - [-5, 5, 0]
+      - [5, 5, 0]
+      - [5, -5, 0]
+- name: tangent_to_ground_plane
+  type: tangent
+  frame: world
+  reference:
+    type: plane
+    args:
+        origin: [0, 0, 0]
+        normal: [0, 0, 1]

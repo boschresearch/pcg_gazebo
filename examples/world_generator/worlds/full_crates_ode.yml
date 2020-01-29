@@ -1,0 +1,27 @@
+name: full_crates_ode
+assets:
+  ground_plane:
+  - ground_plane
+  assets:
+  - tag: full_crate
+    type: model_generator
+    description: !include ../../model_generators/full_crate.yml
+engines: 
+- engine_name: fixed_pose
+  models:
+  - ground_plane
+  poses:
+  - [0, 0, 0, 0, 0, 0]
+- engine_name: fixed_pose
+  models:
+  - sun
+  poses:
+  - [0, 0, 10, 0, 0, 0]
+- engine_name: fixed_pose
+  models:
+  - full_crate
+  poses:
+  - [1.5, 0, 0, 0, 0, 0]
+  - [0, 0, 0, 0, 0, 0]
+  - [-1.5, 0, 0, 0, 0, 0]
+physics: ../physics/default_ode.yml
