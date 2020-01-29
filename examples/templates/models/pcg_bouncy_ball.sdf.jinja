@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+{% import 'inertias'|find_sdf_template as inertias %}
+{% import 'physics'|find_sdf_template as physics %}
+
+{% set mass = mass|default(1, true) %}
+{% set radius = radius|default(0.5, true) %}
+{% set restitution = restitution|default(1, true) %}
+{% set threshold = threshold|default(0, true) %}
+{% set max_vel = max_vel|default(10, true) %}
+{% set color = color|default([1, 0, 0, 1], true) %}
+
+<sdf version="1.6">
+    <model name="bouncy_ball">
+        <pose>0 0 {{ radius }} 0 0 0</pose>
+        <link name="link">
+            <inertial>
+                <mass>{{ mass }}</mass>
+                {{ inertias.solid_sphere_inertia(mass, radius) }}
+            </inertial>
+
+            <visual name="visual">
+                <geometry>
+                    <sphere>
+                        <radius>{{ radius }}</radius>
+                    </sphere>
+                </geometry>
+
+                <material>
+                    <ambient>{{ color|join(' ') }}</ambient>
+                    <diffuse>{{ color|join(' ') }}</diffuse>
+                </material>
+            </visual>
+
+            <collision name="collision">
+                <geometry>
+                    <sphere>
+                        <radius>{{ radius }}</radius>
+                    </sphere>
+                </geometry> 
+
+                <surface>
+                    {{ physics.collision_friction_properties() }}
+
+                    {{ physics.collision_contact_properties(
+                        max_vel=max_vel) }}
+
+                    {{ physics.bounce_properties(
+                        restitution=restitution,
+                        threshold=threshold) }}
+                </surface>
+            </collision>
+        </link>
+    </model>    
+</sdf>

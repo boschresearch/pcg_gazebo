@@ -1,0 +1,183 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import print_function
+import argparse
+import yaml
+import os
+import sys
+from time import time, sleep
+from pcg_gazebo.generators import WorldGenerator
+from pcg_gazebo.visualization import plot_footprints
+
+
+# Add a run_simulation method to test the generated world
+def run_simulation(world_filename, ros_host='localhost', ros_port=11311,
+                   gazebo_host='localhost', gazebo_port=11345,
+                   anonymous=False, output_log_dir=None, physics='ode'):
+    from pcg_gazebo.task_manager import Server
+    name = 'gazebo_sim'
+    server = Server()
+    print('Create simulation=', name)
+    server.create_simulation(
+        name,
+        ros_host,
+        ros_port,
+        gazebo_host,
+        gazebo_port,
+        anonymous,
+        output_log_dir)
+
+    simulation = server.get_simulation(name)
+    simulation.create_gazebo_task(
+        name='gazebo',
+        world=world_filename,
+        gui=True,
+        physics=physics,
+        paused=False,
+        required=True)
+    print('Created Gazebo task')
+    simulation.run_all_tasks()
+    print('Running all tasks!')
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        'Generate the world using the PCG model placement engines')
+    parser.add_argument(
+        '--config-file',
+        type=str,
+        help='Configuration file (YAML format) with the'
+        ' PCG engines specification and assets lists')
+    parser.add_argument(
+        '--output-world-file',
+        type=str,
+        default='/tmp/pcg.world',
+        help='Output SDF world file')
+    parser.add_argument(
+        '--verbose',
+        action='store_true',
+        help='Set the output of the world generator as verbose')
+    parser.add_argument(
+        '--plot',
+        action='store_true',
+        help='Create bokeh plot of the object and workspace footprints')
+    parser.add_argument(
+        '--plot-width',
+        type=int,
+        default=1400,
+        help='Width of the plot')
+    parser.add_argument(
+        '--plot-height',
+        type=int,
+        default=1200,
+        help='Height of the plot')
+    parser.add_argument(
+        '--output-topic', type=str,
+        help='Optional output topic to publish the resulting XML')
+    parser.add_argument(
+        '--with-sun',
+        action='store_true',
+        help='Add default sun model to world')
+    parser.add_argument(
+        '--with-ground-plane',
+        action='store_true',
+        help='Add default ground_plane model to world')
+    parser.add_argument(
+        '--run',
+        action='store_true',
+        help='Run Gazebo with the generated world')
+    parser.add_argument(
+        '--physics',
+        type=str,
+        default='ode',
+        help='Physics engine to start with Gazebo')
+
+    args = parser.parse_args()
+
+    try:
+        import rospy
+        from std_msgs.msg import String
+        ROS_AVAILABLE = True
+    except ImportError:
+        ROS_AVAILABLE = False
+
+    # Create world generator
+    world_generator = WorldGenerator()
+    node_initialized = False
+    if args.config_file:
+        assert os.path.isfile(args.config_file), \
+            'Invalid input file, value={}'.format(args.config_file)
+
+        # Obtain the file with the poses of the original world configuration
+        print('Parsing configuration file={}'.format(args.config_file))
+        world_generator.from_yaml(args.config_file)
+    else:
+        assert ROS_AVAILABLE, 'rospy is not available, cannot start node'
+        if rospy.is_shutdown():
+            raise rospy.ROSInitException('ROS master is not running!')
+
+        rospy.init_node('generate_pcg_world', anonymous=True)
+        node_initialized = True
+        if rospy.has_param('~world'):
+            world_config = rospy.get_param('~world')
+            print('Reading world configuration from ROS parameters ~world')
+            world_generator.from_dict(world_config)
+        else:
+            raise rospy.ROSException('Not input found for world configuration')
+
+    world_generator.run_engines()
+
+    world_filename = world_generator.export_world(
+        output_dir=os.path.dirname(args.output_world_file),
+        filename=os.path.basename(args.output_world_file),
+        with_default_ground_plane=args.with_ground_plane,
+        with_default_sun=args.with_sun)
+
+    if args.output_topic:
+        assert ROS_AVAILABLE, 'rospy is not available, cannot publish topic'
+        print('Publishing the world into the topic {}'.format(args.output_topic))
+        if rospy.is_shutdown():
+            raise rospy.ROSInitException('ROS master is not running!')
+        if not node_initialized:
+            rospy.init_node('generate_pcg_world', anonymous=True)
+
+        pub = rospy.Publisher(args.output_topic, String, queue_size=1)
+
+        start_time = time()
+        while pub.get_num_connections() == 0 and time() - start_time < 30:
+            sleep(0.1)
+
+        pub.publish(world_filename)
+
+    if args.run:
+        print('Run Gazebo with world generated in file: {}'.format(
+            world_filename))
+        run_simulation(
+            world_filename,
+            physics=args.physics)
+
+    if args.plot:
+        assert args.plot_width > 0 and args.plot_height > 0, \
+            'Plot width and height must be greater than zero'
+        # Plot footprints
+        fig = plot_footprints(
+            models=world_generator.world.models,
+            fig_width=args.plot_width,
+            fig_height=args.plot_height,
+            mesh_type='collision',
+            engine='bokeh')
+        output_file('/tmp/pcg_world.html')
+        show(fig, browser='firefox')

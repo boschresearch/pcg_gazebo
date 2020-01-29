@@ -1,0 +1,66 @@
+name: empty_world_ode
+assets:
+  ground_plane:
+  - ground_plane
+  assets:
+  - tag: ball
+    description:
+      type: sphere
+      args:
+        radius: "__import__('numpy').random.random()"
+        name: sphere
+        mass: "__import__('numpy').random.random()"
+        color: xkcd
+        collision_parameters:
+          restitution_coefficient: 1
+          threshold: 0
+          max_vel: 10
+engines: 
+- engine_name: fixed_pose
+  models:
+  - ground_plane
+  poses:
+  - [0, 0, 0, 0, 0, 0]
+- engine_name: fixed_pose
+  models:
+  - sun
+  poses:
+  - [0, 0, 10, 0, 0, 0]
+- engine_name: random_pose
+  models:
+  - ball
+  max_num:
+    ball: 40
+  model_picker: random
+  no_collision: true
+  policies:
+  - models:
+    - ball
+    config:
+    - dofs:
+      - x
+      - y
+      policy:
+        name: workspace
+        args: workspace
+    - dofs:
+      - z
+      policy:
+        name: uniform
+        args: 
+          min: 10
+          max: 15
+physics: !include ../physics/default_ode.yml
+constraints:
+- name: workspace
+  type: workspace
+  frame: world
+  geometry: 
+    type: area
+    description:
+      points: 
+      - [-5, -5, 0]
+      - [-5, 5, 0]
+      - [5, 5, 0]
+      - [5, -5, 0]
+

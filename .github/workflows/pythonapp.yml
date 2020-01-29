@@ -28,8 +28,10 @@ jobs:
         pip install flake8 autopep8
         # stop the build if there are Python syntax errors or undefined names
         flake8 pcg_gazebo
+        flake8 scripts
         flake8 tests
         autopep8 --recursive --aggressive --diff --exit-code pcg_gazebo
+        autopep8 --recursive --aggressive --diff --exit-code scripts
         autopep8 --recursive --aggressive --diff --exit-code tests        
     - name: Install package
       run: |

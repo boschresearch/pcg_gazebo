@@ -27,6 +27,9 @@ from jinja2 import FileSystemLoader, Environment, \
 from .log import PCG_ROOT_LOGGER
 
 PCG_RESOURCES_ROOT_DIR = os.path.join(os.path.expanduser('~'), '.pcg')
+PCG_TEMPLATE_FOLDER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'templates')
 
 
 class _PCGYAMLLoader(yaml.SafeLoader, object):
@@ -125,8 +128,18 @@ def yaml_find_ros_package(loader, node):
         return yaml.load(f, _PCGYAMLLoader)
 
 
+def yaml_resolve_path(loader, node):
+    filename = os.path.abspath(os.path.join(
+        loader._root,
+        loader.construct_scalar(node)))
+    assert os.path.exists(filename), \
+        'File does not exist, filename={}'.format(filename)
+    return filename
+
+
 yaml.add_constructor('!include', yaml_include_constructor, _PCGYAMLLoader)
 yaml.add_constructor('!find', yaml_find_ros_package, _PCGYAMLLoader)
+yaml.add_constructor('!file', yaml_resolve_path, _PCGYAMLLoader)
 
 
 def load_yaml(input_yaml):
@@ -253,7 +266,25 @@ def process_jinja_template(template, parameters=None, include_dir=None):
         return None
 
     PCG_ROOT_LOGGER.info('Input template: {}'.format(template))
-    if os.path.isfile(template):
+    if template.startswith('${PCG}/') or \
+            template.startswith('$PCG/') or \
+            template.startswith('$(PCG)/'):
+        if template.startswith('${PCG}/'):
+            template = template.replace('${PCG}/', '')
+        elif template.startswith('$PCG/'):
+            template = template.replace('$PCG/', '')
+        else:
+            template = template.replace('$(PCG)/', '')
+
+        if os.path.exists(os.path.join(PCG_TEMPLATE_FOLDER, template)):
+            template = os.path.join(PCG_TEMPLATE_FOLDER, template)
+            base_loader = FileSystemLoader(PCG_TEMPLATE_FOLDER)
+        else:
+            PCG_ROOT_LOGGER.error(
+                'Input template {} not found in the default '
+                'templates folder {}'.format(template, PCG_TEMPLATE_FOLDER))
+            return None
+    elif os.path.isfile(template):
         PCG_ROOT_LOGGER.info('Input template is a file, {}'.format(template))
         templates_dir = os.path.dirname(template)
         base_loader = FileSystemLoader(templates_dir)

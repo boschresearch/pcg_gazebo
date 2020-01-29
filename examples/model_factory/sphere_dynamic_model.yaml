@@ -1,0 +1,6 @@
+- type: sphere
+  args:
+    radius: 3
+    name: pcg_sphere_dynamic
+    mass: 10
+    pose: [0, 0, 1.5, 0, 0, 0]

@@ -1,0 +1,143 @@
+This folder contains a number of examples demonstrating the features
+of the `pcg_gazebo` package.
+To run the Jupyter notebooks, be sure to install it as
+
+```
+pip install jupyterlab
+```
+
+# Model generation
+
+## Generating models from a YAML configuration file
+
+This examples shows how to define a simulation model as a YAML file
+and generate static Gazebo models to be stored in your local `$HOME/.pcg/models`
+folder.
+This example requires you to run the script in the `examples` folder
+
+```
+./gen_model_from_factory_config.sh CONFIG_NAME
+``` 
+ 
+where `CONFIG_NAME` refers to the name of one the files (without the `.yaml` 
+extension) in the `examples/model_factory` folder.
+For example, by running
+
+```
+./gen_model_from_factory_config.sh box_dynamic_model
+```
+
+will generate a box model with mass and moments of inertia and store it in
+the folder `$HOME/.pcg/models/pcg_box_dynamic`, including `model.config` and 
+`model.sdf` files.
+
+Some YAML files include a batch of model descriptions and therefore will
+produce multiple Gazebo models in the `$HOME/.pcg/models` folder.
+
+This example runs the chosen YAML file with the [`run_model_factory`](https://github.com/boschresearch/pcg_gazebo/blob/master/scripts/run_model_factory) script,
+that feeds the data into the model factory functions found in the [model factory module](https://github.com/boschresearch/pcg_gazebo/blob/master/pcg_gazebo/generators/creators.py).
+
+To find out more about how to run the model factory from script, run
+
+```
+run_model_factory -h
+```
+
+To generate the model from the YAML file configuration and spawn it into 
+Gazebo, first start Gazebo as
+
+```
+roslaunch gazebo_ros empty_world.launch
+```
+
+and then use the same `CONFIG_NAME` to run the script
+
+```
+./spawn_model_from_factory_config.sh CONFIG_NAME
+```
+
+## Generating models from template Jinja files
+
+This examples shows how generate an SDF file for a Gazebo model
+from a Jinja template and store static Gazebo models in your local 
+`$HOME/.pcg/models` folder.
+This example requires you to run the script in the `examples` folder
+
+```
+./gen_model_from_template.sh TEMPLATE_NAME
+``` 
+ 
+where `TEMPLATE_NAME` refers to the name of one the files (without the `.yaml` 
+extension) in the `examples/templates/models` folder.
+For example, by running
+
+```
+./gen_model_from_template.sh pcg_bouncy_ball
+```
+
+will generate single-link spherical model with the necessary settings to allow
+it to bounce when colliding with another object.
+The model is per default stored in the folder `$HOME/.pcg/models/pcg_bouncy_ball`, including `model.config` and `model.sdf` files.
+
+To find out more about how to run the Jinja processor from script, run
+
+```
+process_jinja_template -h
+```
+
+# World generation
+
+## Dynamically generating worlds from YAML configuration file
+
+The `pcg_gazebo` package includes not only model creators but also engines
+that allow creating and placing objects in the world according to pre-defined
+policies and respecting certain constraints.
+
+The sample configurations that allow worlds to be dynamically created can be found
+in `examples/world_generator/worlds` and by running 
+
+```
+./launch_pcg_world.sh WORLD_CONFIG_NAME
+```
+
+`WORLD_CONFIG_NAME` being the name of the world configuration file (without the `.yaml` extension) in the `examples/world_generator/worlds` folder.
+The resulting world file will be stored in `$HOME/.pcg/worlds` folder.
+
+For example, by calling
+
+```
+./launch_pcg_world.sh bouncing_balls_ode
+```
+
+generates an environment of 40 spheres placed randomly in the 3D world, all 
+of them with the bounce settings enabled so that they will bounce against
+the ground and each other.
+
+# Parsers
+
+## SDF parsers
+
+The examples for the `sdf` parser is available as Jupyter notebooks.
+The list can be seen below.
+
+* [Parsing `<collision>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_collisions.ipynb)
+* [Importing SDF file](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_convert_from_sdf_file.ipynb)
+* [Parsing `<geometry>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_geometries.ipynb)
+* [Parsing `<link>`, `<joint>` and `<sensor>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_links_joints_sensors.ipynb)
+* [Parsing `<materials>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_materials.ipynb)
+* [Parsing `<model>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_models.ipynb)
+* [Parsing `<physics>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_physics_engines.ipynb)
+* [Parsing `<plugin>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_plugins.ipynb)
+* [Parsing `<visual>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_visuals.ipynb)
+* [Parsing `<world>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_world.ipynb)
+
+## URDF parsers
+
+The examples for the `urdf` parser is available as Jupyter notebooks.
+The list can be seen below.
+
+* [Parsing `<collision>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_collision.ipynb)
+* [Parsing `<geometry>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_geometries.ipynb)
+* [Parsing `<link>`, `<joint>` and `<sensor>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_links_joints_sensors.ipynb)
+* [Parsing `<robot>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_robots.ipynb)
+* [Parsing `<visual>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_visual.ipynb)

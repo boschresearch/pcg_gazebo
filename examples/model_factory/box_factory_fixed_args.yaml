@@ -1,0 +1,26 @@
+- type: box_factory
+  args:
+    size: 
+        - [0.1, 0.4, 0.5]
+        - [1, 2, 3]
+    name: pcg_box_static_var_size
+    use_permutation: true
+    color: xkcd
+- type: box_factory
+  args:
+    size: 
+        - [0.1, 0.4, 0.5]
+        - [1, 2, 3]
+    mass: 12
+    name: pcg_box_dynamic_var_size
+    use_permutation: true
+    color: xkcd
+- type: box_factory
+  args:    
+    size: 
+        - [0.2, 0.4, 0.7]
+        - [1.2, 0.25, 0.3]
+    mass: [5, 2]
+    name: pcg_box_dynamic_permutate_size_mass
+    use_permutation: true
+    color: xkcd

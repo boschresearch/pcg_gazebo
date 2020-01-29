@@ -1,0 +1,13 @@
+name: empty_world_ode
+engines: 
+- engine_name: fixed_pose
+  models:
+  - ground_plane
+  poses:
+  - [0, 0, 0, 0, 0, 0]
+- engine_name: fixed_pose
+  models:
+  - sun
+  poses:
+  - [0, 0, 10, 0, 0, 0]
+physics: !include ../physics/default_ode.yml
