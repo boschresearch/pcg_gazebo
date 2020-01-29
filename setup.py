@@ -108,10 +108,13 @@ setup(
         'pcg_gazebo.task_manager',        
     ],
     package_data={
-        '': ['templates/*.sdf.jinja'],
+        '': ['templates/*.jinja'],
         'pcg_gazebo': ['simulation/properties/resources/xkcd_rgb.txt']
     },
     scripts=[
+        'scripts/generate_pcg_world',
+        'scripts/process_jinja_template',
+        'scripts/run_model_factory',
         'scripts/sdf2urdf',
         'scripts/sdflint',
         'scripts/urdf2sdf',
