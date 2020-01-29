@@ -1,0 +1,107 @@
+name: full_crate
+assets:
+  assets:
+  - tag: crate
+    description:
+      type: mesh
+      args:
+        visual_mesh: !file ../meshes/crate.stl
+        visual_mesh_scale: [1, 1, 1]
+        use_approximated_collision: false
+        name: crate
+        color: xkcd
+  - tag: ball
+    description:
+      type: sphere
+      args:
+        radius: "max(0.05, 0.3 * __import__('numpy').random.random())"
+        name: sphere
+        mass: "max(0.1, __import__('numpy').random.random())"
+        color: xkcd
+  - tag: cuboid
+    description:
+      type: box
+      args:
+        size: "0.5 * __import__('numpy').random.random(3)"
+        name: cuboid
+        mass: "max(0.01, __import__('numpy').random.random())"
+        color: xkcd
+  - tag: cylinder
+    description:
+      type: cylinder
+      args:
+        length: "max(0.05, 0.2 *__import__('numpy').random.random())"
+        radius: "max(0.05, 0.2 *__import__('numpy').random.random())"
+        name: cuboid
+        mass: "max(0.01, __import__('numpy').random.random())"
+        color: xkcd
+engines:
+- engine_name: fixed_pose
+  models:
+  - crate
+  poses:
+  - [0, 0, 0, 0, 0, 0]
+  constraints:
+  - model: crate
+    constraint: tangent_to_ground_plane
+- engine_name: random_pose
+  models:
+  - ball
+  - cuboid
+  - cylinder
+  max_num:
+    cylinder: 5
+    cuboid: 5
+    ball: 5
+  model_picker: random
+  no_collision: true
+  policies:
+  - models:
+    - cylinder
+    - cuboid
+    - ball
+    config:
+    - dofs:
+      - x
+      - y
+      policy:
+        name: workspace
+        args: crate_base
+    - dofs:
+      - z
+      policy:
+        name: uniform
+        args:
+          mean: 0.5
+          min: 0.0
+          max: 3.0
+    - dofs:
+      - roll
+      - pitch
+      - yaw
+      policy:
+        name: uniform
+        args:
+          mean: 0
+          min: -3.141592653589793
+          max: 3.141592653589793
+constraints:
+- name: tangent_to_ground_plane
+  type: tangent
+  frame: world
+  reference:
+    type: plane
+    args:
+        origin: [0, 0, 0]
+        normal: [0, 0, 1]
+- name: crate_base
+  type: workspace
+  frame: world
+  geometry: 
+    type: area
+    description:
+      points: 
+      - [-0.5, -0.4, 0]
+      - [-0.5, 0.4, 0]
+      - [0.5, 0.4, 0]
+      - [0.5, -0.4, 0]
