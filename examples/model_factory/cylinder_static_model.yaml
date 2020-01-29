@@ -1,0 +1,6 @@
+- type: cylinder
+  args:
+    radius: 3
+    length: 2
+    name: pcg_cylinder_static
+    pose: [0, 0, 1, 0, 0, 0]

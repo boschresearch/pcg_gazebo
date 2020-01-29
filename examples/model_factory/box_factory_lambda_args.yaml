@@ -1,0 +1,13 @@
+- type: box_factory
+  args:
+    size: "__import__('numpy').random.random((2, 3))"
+    use_permutation: true
+    name: pcg_box_static_lambdas
+    color: xkcd
+- type: box_factory
+  args:
+    size: "__import__('numpy').random.random((4, 3))"
+    mass: "__import__('numpy').arange(1, 10, 4)"
+    use_permutation: true
+    name: pcg_box_dynamic_lambdas
+    color: xkcd

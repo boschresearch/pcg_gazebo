@@ -1,0 +1,7 @@
+- type: cylinder
+  args:
+    radius: 3
+    length: 2
+    mass: 10
+    name: pcg_cylinder_dynamic
+    pose: [0, 0, 1, 0, 0, 0]

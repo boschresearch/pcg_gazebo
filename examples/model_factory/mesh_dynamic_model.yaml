@@ -1,0 +1,92 @@
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: false
+    name: pcg_monkey_dynamic_no_approx_collision
+    mass: 10
+    color: xkcd
+    use_approximated_inertia: false
+    inertia: 
+        ixx: 0.1
+        iyy: 0.1
+        izz: 0.1
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: box
+    name: pcg_monkey_dynamic_with_approx_collision_box
+    mass: 10
+    color: xkcd
+    use_approximated_inertia: true
+    approximated_inertia_model: box
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: cylinder
+    name: pcg_monkey_dynamic_with_approx_collision_cylinder
+    mass: 10    
+    color: xkcd
+    use_approximated_inertia: true
+    approximated_inertia_model: cylinder
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: sphere
+    name: pcg_monkey_dynamic_with_approx_collision_sphere
+    mass: 10
+    color: xkcd
+    use_approximated_inertia: true
+    approximated_inertia_model: sphere
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: false
+    name: pcg_monkey_offset_dynamic_no_approx_collision
+    mass: 10
+    color: xkcd
+    use_approximated_inertia: false
+    inertia: 
+        ixx: 0.1
+        iyy: 0.1
+        izz: 0.1
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: box
+    name: pcg_monkey_offset_dynamic_with_approx_collision_box
+    mass: 10
+    color: xkcd
+    use_approximated_inertia: true
+    approximated_inertia_model: box
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: cylinder
+    name: pcg_monkey_offset_dynamic_with_approx_collision_cylinder
+    mass: 10    
+    color: xkcd
+    use_approximated_inertia: true
+    approximated_inertia_model: cylinder
+- type: mesh
+  args: 
+    visual_mesh: !file ../meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: sphere
+    name: pcg_monkey_offset_dynamic_with_approx_collision_sphere
+    mass: 10
+    color: xkcd
+    use_approximated_inertia: true
+    approximated_inertia_model: sphere

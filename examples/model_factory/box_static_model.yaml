@@ -1,0 +1,7 @@
+- type: box
+  args:
+    size: [1, 1, 1]    
+    name: box
+    pose: [0, 0, 1, 0, 0, 0]    
+    color: xkcd
+    name: pcg_box_static

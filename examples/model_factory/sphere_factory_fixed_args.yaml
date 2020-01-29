@@ -1,0 +1,20 @@
+- type: sphere_factory
+  args:
+    radius: [0.1, 0.4, 0.5]
+    name: pcg_sphere_static_var_radius
+    use_permutation: true
+    color: xkcd
+- type: sphere_factory
+  args:
+    radius: [0.1, 0.4, 0.5]
+    mass: 15
+    name: pcg_sphere_dynamic_var_radius
+    use_permutation: true
+    color: xkcd
+- type: sphere_factory
+  args:    
+    radius: [0.2, 0.4]
+    mass: [5, 2]
+    name: pcg_sphere_dynamic_permutate_radius_mass
+    use_permutation: true
+    color: xkcd

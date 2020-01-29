@@ -1,0 +1,62 @@
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: false
+    name: pcg_monkey_static_no_approx_collision
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: box
+    name: pcg_monkey_static_with_approx_collision_box
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: cylinder
+    name: pcg_monkey_static_with_approx_collision_cylinder
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: sphere
+    name: pcg_monkey_static_with_approx_collision_sphere
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: false
+    name: pcg_monkey_offset_static_no_approx_collision
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: box
+    name: pcg_monkey_offset_static_with_approx_collision_box
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: cylinder
+    name: pcg_monkey_offset_static_with_approx_collision_cylinder
+    color: xkcd
+- type: mesh
+  args: 
+    visual_mesh: package://pcg_examples/meshes/monkey_offset.stl
+    visual_mesh_scale: [1, 1, 1]
+    use_approximated_collision: true
+    approximated_collision_model: sphere
+    name: pcg_monkey_offset_static_with_approx_collision_sphere
+    color: xkcd

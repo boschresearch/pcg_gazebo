@@ -1,0 +1,56 @@
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: LH
+    with_frame: true
+    name: pcg_door_LH_from_mesh_with_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: RH
+    with_frame: true
+    name: pcg_door_RH_from_mesh_with_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: LHR
+    with_frame: true
+    name: pcg_door_LHR_from_mesh_with_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: RHR
+    with_frame: true
+    name: pcg_door_RHR_from_mesh_with_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: LH
+    with_frame: false
+    name: pcg_door_LH_from_mesh_no_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: RH
+    with_frame: false
+    name: pcg_door_RH_from_mesh_no_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: LHR
+    with_frame: false
+    name: pcg_door_LHR_from_mesh_no_frame
+- type: hinged_door
+  args:
+    door_mesh_filename: !file ../meshes/door.obj
+    mass: 10
+    hand_convention: RHR
+    with_frame: false
+    name: pcg_door_RHR_from_mesh_no_frame

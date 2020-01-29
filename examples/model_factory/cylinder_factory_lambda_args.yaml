@@ -1,0 +1,15 @@
+- type: cylinder_factory
+  args:
+    length: "__import__('numpy').linspace(0.1, 10, 3)"
+    radius: "__import__('numpy').random.random(3)"
+    use_permutation: true
+    name: pcg_cylinder_static_lambdas
+    color: xkcd
+- type: cylinder_factory
+  args:
+    length: "__import__('numpy').random.random(2)"
+    radius: "__import__('numpy').random.random(2)"
+    mass: "__import__('numpy').arange(1, 4, 1)"
+    use_permutation: true
+    name: pcg_cylinder_dynamic_lambdas
+    color: xkcd
