@@ -31,21 +31,21 @@
       
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
-      <link rel="shortcut icon" href="assets/images/favicon.png">
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
-        <title>Procedural Generation for Gazebo</title>
+        <title>Examples - Procedural Generation for Gazebo</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
       
       
     
     
-      <script src="assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
@@ -54,7 +54,7 @@
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
-    <link rel="stylesheet" href="assets/fonts/material-icons.css">
+    <link rel="stylesheet" href="../assets/fonts/material-icons.css">
     
     
     
@@ -77,7 +77,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#pcg_gazebo-a-python-package-for-rapid-prototyping-and-scripting-of-simulations-for-gazebo" tabindex="1" class="md-skip">
+      <a href="#model-generation" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -86,7 +86,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="." title="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
+        <a href=".." title="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -103,7 +103,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Home
+                Examples
               
             </span>
           
@@ -171,14 +171,16 @@
       
         
 
-<nav class="md-tabs" data-md-component="tabs">
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
   <div class="md-tabs__inner md-grid">
     <ul class="md-tabs__list">
       
         
   <li class="md-tabs__item">
     
-      <a href="." class="md-tabs__link md-tabs__link--active">
+      <a href=".." class="md-tabs__link">
         Home
       </a>
     
@@ -190,7 +192,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="examples/" class="md-tabs__link">
+        <a href="./" class="md-tabs__link md-tabs__link--active">
           Tutorials
         </a>
       
@@ -203,7 +205,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="reference/log/" class="md-tabs__link">
+        <a href="../reference/log/" class="md-tabs__link">
           API Documentation
         </a>
       
@@ -224,7 +226,7 @@
                   <div class="md-sidebar__inner">
                     <nav class="md-nav md-nav--primary" data-md-level="0">
   <label class="md-nav__title md-nav__title--site" for="__drawer">
-    <a href="." title="Procedural Generation for Gazebo" class="md-nav__button md-logo">
+    <a href=".." title="Procedural Generation for Gazebo" class="md-nav__button md-logo">
       
         <i class="md-icon"></i>
       
@@ -258,6 +260,39 @@
       
       
 
+
+  <li class="md-nav__item">
+    <a href=".." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      Tutorials
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        Tutorials
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
   
 
 
@@ -267,11 +302,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Home
+        Examples
       </label>
     
-    <a href="." title="Home" class="md-nav__link md-nav__link--active">
-      Home
+    <a href="./" title="Examples" class="md-nav__link md-nav__link--active">
+      Examples
     </a>
     
       
@@ -283,45 +318,23 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pcg_gazebo-a-python-package-for-rapid-prototyping-and-scripting-of-simulations-for-gazebo" class="md-nav__link">
-    pcg_gazebo: A Python package for rapid-prototyping and scripting of simulations for Gazebo
+  <a href="#model-generation" class="md-nav__link">
+    Model generation
   </a>
   
     <nav class="md-nav">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#purpose-of-the-project" class="md-nav__link">
-    Purpose of the project
+  <a href="#generating-models-from-a-yaml-configuration-file" class="md-nav__link">
+    Generating models from a YAML configuration file
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-pip" class="md-nav__link">
-    Using pip
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-source" class="md-nav__link">
-    From source
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-the-package-with-ros-and-gazebo" class="md-nav__link">
-    Using the package with ROS and Gazebo
+  <a href="#generating-models-from-template-jinja-files" class="md-nav__link">
+    Generating models from template Jinja files
   </a>
   
 </li>
@@ -330,10 +343,45 @@
     </nav>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#world-generation" class="md-nav__link">
+    World generation
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    License
+  <a href="#dynamically-generating-worlds-from-yaml-configuration-file" class="md-nav__link">
+    Dynamically generating worlds from YAML configuration file
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parsers" class="md-nav__link">
+    Parsers
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sdf-parsers" class="md-nav__link">
+    SDF parsers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#urdf-parsers" class="md-nav__link">
+    URDF parsers
   </a>
   
 </li>
@@ -351,37 +399,6 @@
   
 </nav>
     
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item md-nav__item--nested">
-    
-      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2">
-    
-    <label class="md-nav__link" for="nav-2">
-      Tutorials
-    </label>
-    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
-      <label class="md-nav__title" for="nav-2">
-        Tutorials
-      </label>
-      <ul class="md-nav__list" data-md-scrollfix>
-        
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
-    <a href="examples/" title="Examples" class="md-nav__link">
-      Examples
-    </a>
   </li>
 
         
@@ -415,7 +432,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/log/" title="pcg_gazebo.log" class="md-nav__link">
+    <a href="../reference/log/" title="pcg_gazebo.log" class="md-nav__link">
       pcg_gazebo.log
     </a>
   </li>
@@ -427,7 +444,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/path/" title="pcg_gazebo.path" class="md-nav__link">
+    <a href="../reference/path/" title="pcg_gazebo.path" class="md-nav__link">
       pcg_gazebo.path
     </a>
   </li>
@@ -439,7 +456,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/visualization/" title="pcg_gazebo.visualization" class="md-nav__link">
+    <a href="../reference/visualization/" title="pcg_gazebo.visualization" class="md-nav__link">
       pcg_gazebo.visualization
     </a>
   </li>
@@ -470,7 +487,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/simulation/" title="pcg_gazebo.simulation" class="md-nav__link">
+    <a href="../reference/simulation/" title="pcg_gazebo.simulation" class="md-nav__link">
       pcg_gazebo.simulation
     </a>
   </li>
@@ -482,7 +499,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/simulation_physics/" title="pcg_gazebo.simulation.physics" class="md-nav__link">
+    <a href="../reference/simulation_physics/" title="pcg_gazebo.simulation.physics" class="md-nav__link">
       pcg_gazebo.simulation.physics
     </a>
   </li>
@@ -494,7 +511,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/simulation_properties/" title="pcg_gazebo.simulation.properties" class="md-nav__link">
+    <a href="../reference/simulation_properties/" title="pcg_gazebo.simulation.properties" class="md-nav__link">
       pcg_gazebo.simulation.properties
     </a>
   </li>
@@ -506,7 +523,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/simulation_sensors/" title="pcg_gazebo.simulation.sensors" class="md-nav__link">
+    <a href="../reference/simulation_sensors/" title="pcg_gazebo.simulation.sensors" class="md-nav__link">
       pcg_gazebo.simulation.sensors
     </a>
   </li>
@@ -542,7 +559,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/parsers/" title="pcg_gazebo.parsers" class="md-nav__link">
+    <a href="../reference/parsers/" title="pcg_gazebo.parsers" class="md-nav__link">
       pcg_gazebo.parsers
     </a>
   </li>
@@ -554,7 +571,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/parsers_sdf/" title="pcg_gazebo.parsers.sdf" class="md-nav__link">
+    <a href="../reference/parsers_sdf/" title="pcg_gazebo.parsers.sdf" class="md-nav__link">
       pcg_gazebo.parsers.sdf
     </a>
   </li>
@@ -566,7 +583,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/parsers_sdf_config/" title="pcg_gazebo.parsers.sdf_config" class="md-nav__link">
+    <a href="../reference/parsers_sdf_config/" title="pcg_gazebo.parsers.sdf_config" class="md-nav__link">
       pcg_gazebo.parsers.sdf_config
     </a>
   </li>
@@ -578,7 +595,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/parsers_types/" title="pcg_gazebo.parsers.types" class="md-nav__link">
+    <a href="../reference/parsers_types/" title="pcg_gazebo.parsers.types" class="md-nav__link">
       pcg_gazebo.parsers.types
     </a>
   </li>
@@ -590,7 +607,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/parsers_urdf/" title="pcg_gazebo.parsers.urdf" class="md-nav__link">
+    <a href="../reference/parsers_urdf/" title="pcg_gazebo.parsers.urdf" class="md-nav__link">
       pcg_gazebo.parsers.urdf
     </a>
   </li>
@@ -607,7 +624,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/task_manager/" title="pcg_gazebo.task_manager" class="md-nav__link">
+    <a href="../reference/task_manager/" title="pcg_gazebo.task_manager" class="md-nav__link">
       pcg_gazebo.task_manager
     </a>
   </li>
@@ -638,7 +655,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/generators/" title="pcg_gazebo.generators" class="md-nav__link">
+    <a href="../reference/generators/" title="pcg_gazebo.generators" class="md-nav__link">
       pcg_gazebo.generators
     </a>
   </li>
@@ -650,7 +667,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/generators_components/" title="pcg_gazebo.generators.components" class="md-nav__link">
+    <a href="../reference/generators_components/" title="pcg_gazebo.generators.components" class="md-nav__link">
       pcg_gazebo.generators.components
     </a>
   </li>
@@ -662,7 +679,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/generators_constraints/" title="pcg_gazebo.generators.constraints" class="md-nav__link">
+    <a href="../reference/generators_constraints/" title="pcg_gazebo.generators.constraints" class="md-nav__link">
       pcg_gazebo.generators.constraints
     </a>
   </li>
@@ -674,7 +691,7 @@
 
 
   <li class="md-nav__item">
-    <a href="reference/generators_engines/" title="pcg_gazebo.generators.engines" class="md-nav__link">
+    <a href="../reference/generators_engines/" title="pcg_gazebo.generators.engines" class="md-nav__link">
       pcg_gazebo.generators.engines
     </a>
   </li>
@@ -709,45 +726,23 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pcg_gazebo-a-python-package-for-rapid-prototyping-and-scripting-of-simulations-for-gazebo" class="md-nav__link">
-    pcg_gazebo: A Python package for rapid-prototyping and scripting of simulations for Gazebo
+  <a href="#model-generation" class="md-nav__link">
+    Model generation
   </a>
   
     <nav class="md-nav">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#purpose-of-the-project" class="md-nav__link">
-    Purpose of the project
+  <a href="#generating-models-from-a-yaml-configuration-file" class="md-nav__link">
+    Generating models from a YAML configuration file
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-pip" class="md-nav__link">
-    Using pip
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#from-source" class="md-nav__link">
-    From source
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-the-package-with-ros-and-gazebo" class="md-nav__link">
-    Using the package with ROS and Gazebo
+  <a href="#generating-models-from-template-jinja-files" class="md-nav__link">
+    Generating models from template Jinja files
   </a>
   
 </li>
@@ -756,10 +751,45 @@
     </nav>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#world-generation" class="md-nav__link">
+    World generation
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#license" class="md-nav__link">
-    License
+  <a href="#dynamically-generating-worlds-from-yaml-configuration-file" class="md-nav__link">
+    Dynamically generating worlds from YAML configuration file
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#parsers" class="md-nav__link">
+    Parsers
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sdf-parsers" class="md-nav__link">
+    SDF parsers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#urdf-parsers" class="md-nav__link">
+    URDF parsers
   </a>
   
 </li>
@@ -785,70 +815,118 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/boschresearch/pcg_gazebo/edit/master/docs/index.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                  <a href="https://github.com/boschresearch/pcg_gazebo/edit/master/docs/examples.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>Home</h1>
+                  <h1>Examples</h1>
                 
-                <h4 id="pcg_gazebo-a-python-package-for-rapid-prototyping-and-scripting-of-simulations-for-gazebo"><code>pcg_gazebo</code>: A Python package for rapid-prototyping and scripting of simulations for Gazebo<a class="headerlink" href="#pcg_gazebo-a-python-package-for-rapid-prototyping-and-scripting-of-simulations-for-gazebo" title="Permanent link">&para;</a></h4>
-<p><a href="https://travis-ci.org/boschresearch/pcg_gazebo"><img alt="Build Status" src="https://travis-ci.org/boschresearch/pcg_gazebo.svg?branch=master" /></a>
-<a href="https://github.com/boschresearch/pcg_gazebo/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/boschresearch/pcg_gazebo_pkgs.svg" /></a>
-<a href="https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache%202-blue.svg" /></a>
-<img alt="PyPI" src="https://img.shields.io/pypi/v/pcg-gazebo" />
-<img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/pcg-gazebo" /></p>
-<p>The <code>pcg_gazebo</code> Python package is an Open Source
-Project extending the simulation capabilities of the robotics simulator <a href="http://gazebosim.org/">Gazebo</a>
-for automation and scripting of Gazebo simulations.</p>
-<p>Visit the <a href="https://boschresearch.github.io/pcg_gazebo_pkgs/">documentation page</a> for more information.</p>
-<h5 id="purpose-of-the-project">Purpose of the project<a class="headerlink" href="#purpose-of-the-project" title="Permanent link">&para;</a></h5>
-<p>This software is a research prototype.</p>
-<p>The software is not ready for production use. It has neither been developed nor
-tested for a specific use case. However, the license conditions of the
-applicable Open Source licenses allow you to adapt the software to your needs.
-Before using it in a safety relevant setting, make sure that the software
-fulfills your requirements and adjust it according to any applicable safety
-standards (e.g. ISO 26262).</p>
-<h5 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h5>
-<h6 id="using-pip">Using <code>pip</code><a class="headerlink" href="#using-pip" title="Permanent link">&para;</a></h6>
-<p>You can install the <code>pcg-gazebo</code> package using <code>pip</code> as follows</p>
-<div class="codehilite"><pre><span></span>pip install pcg-gazebo
+                <p>This folder contains a number of examples demonstrating the features
+of the <code>pcg_gazebo</code> package.
+To run the Jupyter notebooks, be sure to install it as</p>
+<div class="codehilite"><pre><span></span>pip install jupyterlab
 </pre></div>
 
-<p>you still might need to install some extra dependencies that cannot
-be handled by <code>pip</code> as</p>
-<div class="codehilite"><pre><span></span>sudo apt install libspatialindex-dev pybind11-dev libgeos-dev
+<h4 id="model-generation">Model generation<a class="headerlink" href="#model-generation" title="Permanent link">&para;</a></h4>
+<h5 id="generating-models-from-a-yaml-configuration-file">Generating models from a YAML configuration file<a class="headerlink" href="#generating-models-from-a-yaml-configuration-file" title="Permanent link">&para;</a></h5>
+<p>This examples shows how to define a simulation model as a YAML file
+and generate static Gazebo models to be stored in your local <code>$HOME/.pcg/models</code>
+folder.
+This example requires you to run the script in the <code>examples</code> folder</p>
+<div class="codehilite"><pre><span></span>./gen_model_from_factory_config.sh CONFIG_NAME
 </pre></div>
 
-<blockquote>
-<p>The default installation does not include <code>rospy</code> dependencies that
-are not available as a <code>pip</code> package. They have to be installed 
-separately for certain submodules to work, such as <code>pcg_gazebo.task_manager</code>.</p>
-</blockquote>
-<h6 id="from-source">From source<a class="headerlink" href="#from-source" title="Permanent link">&para;</a></h6>
-<p>First install some non-Python dependencies</p>
-<div class="codehilite"><pre><span></span>sudo apt install libspatialindex-dev pybind11-dev libgeos-dev
+<p>where <code>CONFIG_NAME</code> refers to the name of one the files (without the <code>.yaml</code> 
+extension) in the <code>examples/model_factory</code> folder.
+For example, by running</p>
+<div class="codehilite"><pre><span></span>./gen_model_from_factory_config.sh box_dynamic_model
 </pre></div>
 
-<p>Then clone the repository and install it using <code>pip</code></p>
-<div class="codehilite"><pre><span></span>git clone https://github.com/boschresearch/pcg_gazebo.git
-pip install .
+<p>will generate a box model with mass and moments of inertia and store it in
+the folder <code>$HOME/.pcg/models/pcg_box_dynamic</code>, including <code>model.config</code> and 
+<code>model.sdf</code> files.</p>
+<p>Some YAML files include a batch of model descriptions and therefore will
+produce multiple Gazebo models in the <code>$HOME/.pcg/models</code> folder.</p>
+<p>This example runs the chosen YAML file with the <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/scripts/run_model_factory"><code>run_model_factory</code></a> script,
+that feeds the data into the model factory functions found in the <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/pcg_gazebo/generators/creators.py">model factory module</a>.</p>
+<p>To find out more about how to run the model factory from script, run</p>
+<div class="codehilite"><pre><span></span>run_model_factory -h
 </pre></div>
 
-<h6 id="using-the-package-with-ros-and-gazebo">Using the package with ROS and Gazebo<a class="headerlink" href="#using-the-package-with-ros-and-gazebo" title="Permanent link">&para;</a></h6>
-<p>Certain functionalities as the Gazebo proxy, task manager and model spawning 
-are only available if <code>rospy</code> is installed.
-The lack of Gazebo and <code>rospy</code> only restricts functionalities related to 
-interaction with the simulation in runtime and the creation of ROS-related 
-tasks.</p>
-<p>At the moment, ROS 2 is <strong>not</strong> supported for this purpose. 
-To install ROS <code>melodic</code>, follow these <a href="https://wiki.ros.org/melodic/Installation/Ubuntu">installation instructions</a> and install <code>ros-melodic-desktop-full</code>
-or separately install Gazebo and its ROS bindings as</p>
-<div class="codehilite"><pre><span></span>sudo apt install gazebo9 libgazebo9-dev ros-melodic-gazebo-*
+<p>To generate the model from the YAML file configuration and spawn it into 
+Gazebo, first start Gazebo as</p>
+<div class="codehilite"><pre><span></span>roslaunch gazebo_ros empty_world.launch
 </pre></div>
 
-<h5 id="license">License<a class="headerlink" href="#license" title="Permanent link">&para;</a></h5>
-<p>Procedural Generation for Gazebo is open-sourced under the Apache-2.0 license. See the <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE">LICENSE</a> file for details.</p>
-<p>For a list of other open source components included in Procedural Generation for Gazebo package, see the file <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/3rd-party-licenses.md">3<sup>rd</sup>-party-licenses</a>.</p>
+<p>and then use the same <code>CONFIG_NAME</code> to run the script</p>
+<div class="codehilite"><pre><span></span>./spawn_model_from_factory_config.sh CONFIG_NAME
+</pre></div>
+
+<h5 id="generating-models-from-template-jinja-files">Generating models from template Jinja files<a class="headerlink" href="#generating-models-from-template-jinja-files" title="Permanent link">&para;</a></h5>
+<p>This examples shows how generate an SDF file for a Gazebo model
+from a Jinja template and store static Gazebo models in your local 
+<code>$HOME/.pcg/models</code> folder.
+This example requires you to run the script in the <code>examples</code> folder</p>
+<div class="codehilite"><pre><span></span>./gen_model_from_template.sh TEMPLATE_NAME
+</pre></div>
+
+<p>where <code>TEMPLATE_NAME</code> refers to the name of one the files (without the <code>.yaml</code> 
+extension) in the <code>examples/templates/models</code> folder.
+For example, by running</p>
+<div class="codehilite"><pre><span></span>./gen_model_from_template.sh pcg_bouncy_ball
+</pre></div>
+
+<p>will generate single-link spherical model with the necessary settings to allow
+it to bounce when colliding with another object.
+The model is per default stored in the folder <code>$HOME/.pcg/models/pcg_bouncy_ball</code>, including <code>model.config</code> and <code>model.sdf</code> files.</p>
+<p>To find out more about how to run the Jinja processor from script, run</p>
+<div class="codehilite"><pre><span></span>process_jinja_template -h
+</pre></div>
+
+<h4 id="world-generation">World generation<a class="headerlink" href="#world-generation" title="Permanent link">&para;</a></h4>
+<h5 id="dynamically-generating-worlds-from-yaml-configuration-file">Dynamically generating worlds from YAML configuration file<a class="headerlink" href="#dynamically-generating-worlds-from-yaml-configuration-file" title="Permanent link">&para;</a></h5>
+<p>The <code>pcg_gazebo</code> package includes not only model creators but also engines
+that allow creating and placing objects in the world according to pre-defined
+policies and respecting certain constraints.</p>
+<p>The sample configurations that allow worlds to be dynamically created can be found
+in <code>examples/world_generator/worlds</code> and by running </p>
+<div class="codehilite"><pre><span></span>./launch_pcg_world.sh WORLD_CONFIG_NAME
+</pre></div>
+
+<p><code>WORLD_CONFIG_NAME</code> being the name of the world configuration file (without the <code>.yaml</code> extension) in the <code>examples/world_generator/worlds</code> folder.
+The resulting world file will be stored in <code>$HOME/.pcg/worlds</code> folder.</p>
+<p>For example, by calling</p>
+<div class="codehilite"><pre><span></span>./launch_pcg_world.sh bouncing_balls_ode
+</pre></div>
+
+<p>generates an environment of 40 spheres placed randomly in the 3D world, all 
+of them with the bounce settings enabled so that they will bounce against
+the ground and each other.</p>
+<h4 id="parsers">Parsers<a class="headerlink" href="#parsers" title="Permanent link">&para;</a></h4>
+<h5 id="sdf-parsers">SDF parsers<a class="headerlink" href="#sdf-parsers" title="Permanent link">&para;</a></h5>
+<p>The examples for the <code>sdf</code> parser is available as Jupyter notebooks.
+The list can be seen below.</p>
+<ul>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_collisions.ipynb">Parsing <code>&lt;collision&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_convert_from_sdf_file.ipynb">Importing SDF file</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_geometries.ipynb">Parsing <code>&lt;geometry&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_links_joints_sensors.ipynb">Parsing <code>&lt;link&gt;</code>, <code>&lt;joint&gt;</code> and <code>&lt;sensor&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_materials.ipynb">Parsing <code>&lt;materials&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_models.ipynb">Parsing <code>&lt;model&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_physics_engines.ipynb">Parsing <code>&lt;physics&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_plugins.ipynb">Parsing <code>&lt;plugin&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_visuals.ipynb">Parsing <code>&lt;visual&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sdf_parser_world.ipynb">Parsing <code>&lt;world&gt;</code> elements</a></li>
+</ul>
+<h5 id="urdf-parsers">URDF parsers<a class="headerlink" href="#urdf-parsers" title="Permanent link">&para;</a></h5>
+<p>The examples for the <code>urdf</code> parser is available as Jupyter notebooks.
+The list can be seen below.</p>
+<ul>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_collision.ipynb">Parsing <code>&lt;collision&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_geometries.ipynb">Parsing <code>&lt;geometry&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_links_joints_sensors.ipynb">Parsing <code>&lt;link&gt;</code>, <code>&lt;joint&gt;</code> and <code>&lt;sensor&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_robots.ipynb">Parsing <code>&lt;robot&gt;</code> elements</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_visual.ipynb">Parsing <code>&lt;visual&gt;</code> elements</a></li>
+</ul>
                 
                   
                 
@@ -870,14 +948,28 @@ or separately install Gazebo and its ROS bindings as</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
         
+          <a href=".." title="Home" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Home
+              </span>
+            </div>
+          </a>
         
-          <a href="examples/" title="Examples" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+        
+          <a href="../reference/log/" title="pcg_gazebo.log" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
               <span class="md-flex__ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Examples
+                pcg_gazebo.log
               </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink">
@@ -905,9 +997,9 @@ or separately install Gazebo and its ROS bindings as</p>
       
     </div>
     
-      <script src="assets/javascripts/application.808e90bb.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"."}})</script>
+      <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       
     
   </body>
