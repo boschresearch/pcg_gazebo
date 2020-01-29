@@ -395,6 +395,8 @@ generate:
   
 pages:
 - Home: index.md << README.md
+- Tutorials:
+    - Examples: examples.md << examples/README.md
 - API Documentation:
   - pcg_gazebo.log: reference/log.md
   - pcg_gazebo.path: reference/path.md
