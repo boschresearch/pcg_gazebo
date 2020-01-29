@@ -3,8 +3,8 @@ repo_name: boschresearch/pcg_gazebo
 repo_url: https://github.com/boschresearch/pcg_gazebo
 
 generate:
-- reference/utils.md:
-  - pcg_gazebo.utils++
+# - reference/utils.md:
+#   - pcg_gazebo.utils
 - reference/visualization.md:
   - pcg_gazebo.visualization++
 - reference/log.md:
@@ -51,6 +51,8 @@ generate:
   - pcg_gazebo.simulation.sensors.IMU++
   - pcg_gazebo.simulation.sensors.Ray++
   - pcg_gazebo.simulation.sensors.Sensor++
+- reference/parsers.md:
+  - pcg_gazebo.parsers++
 - reference/parsers_sdf.md:
   - pcg_gazebo.parsers.sdf++
   - pcg_gazebo.parsers.sdf.Accel++
@@ -396,7 +398,7 @@ pages:
 - API Documentation:
   - pcg_gazebo.log: reference/log.md
   - pcg_gazebo.path: reference/path.md
-  - pcg_gazebo.utils: reference/utils.md
+  # - pcg_gazebo.utils: reference/utils.md
   - pcg_gazebo.visualization: reference/visualization.md
   - pcg_gazebo.simulation:
     - pcg_gazebo.simulation: reference/simulation.md
@@ -404,6 +406,7 @@ pages:
     - pcg_gazebo.simulation.properties: reference/simulation_properties.md
     - pcg_gazebo.simulation.sensors: reference/simulation_sensors.md
   - pcg_gazebo.parsers:
+    - pcg_gazebo.parsers: reference/parsers.md
     - pcg_gazebo.parsers.sdf: reference/parsers_sdf.md
     - pcg_gazebo.parsers.sdf_config: reference/parsers_sdf_config.md
     - pcg_gazebo.parsers.types: reference/parsers_types.md
@@ -422,7 +425,7 @@ plugins:
 theme:
   name: "material"
   feature:
-    tabs: false
+    tabs: true
 
 headers: markdown
 

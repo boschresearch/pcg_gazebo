@@ -1,0 +1,1963 @@
+
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta http-equiv="x-ua-compatible" content="ie=edge">
+      
+      
+      
+      
+        <meta name="lang:clipboard.copy" content="Copy to clipboard">
+      
+        <meta name="lang:clipboard.copied" content="Copied to clipboard">
+      
+        <meta name="lang:search.language" content="en">
+      
+        <meta name="lang:search.pipeline.stopwords" content="True">
+      
+        <meta name="lang:search.pipeline.trimmer" content="True">
+      
+        <meta name="lang:search.result.none" content="No matching documents">
+      
+        <meta name="lang:search.result.one" content="1 matching document">
+      
+        <meta name="lang:search.result.other" content="# matching documents">
+      
+        <meta name="lang:search.tokenizer" content="[\s\-]+">
+      
+      <link rel="shortcut icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+    
+    
+      
+        <title>pcg_gazebo.simulation - Procedural Generation for Gazebo</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      
+      
+    
+    
+      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
+      
+    
+    <link rel="stylesheet" href="../../assets/fonts/material-icons.css">
+    
+    
+    
+      
+    
+    
+  </head>
+  
+    <body dir="ltr">
+  
+    <svg class="md-svg">
+      <defs>
+        
+        
+          <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+        
+      </defs>
+    </svg>
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+    
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../.." title="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
+          
+            <i class="md-icon"></i>
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          
+            <span class="md-header-nav__topic">
+              Procedural Generation for Gazebo
+            </span>
+            <span class="md-header-nav__topic">
+              
+                pcg_gazebo.simulation
+              
+            </span>
+          
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        
+          <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+          
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            
+
+
+  
+
+<a href="https://github.com/boschresearch/pcg_gazebo/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+          </div>
+        </div>
+      
+    </div>
+  </nav>
+</header>
+    
+    <div class="md-container">
+      
+        
+      
+      
+        
+
+  
+
+<nav class="md-tabs md-tabs--active" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  <li class="md-tabs__item">
+    
+      <a href="../.." class="md-tabs__link">
+        Home
+      </a>
+    
+  </li>
+
+      
+        
+  
+  
+    <li class="md-tabs__item">
+      
+        <a href="../log/" class="md-tabs__link md-tabs__link--active">
+          API Documentation
+        </a>
+      
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+      
+      <main class="md-main" role="main">
+        <div class="md-main__inner md-grid" data-md-component="container">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../.." title="Procedural Generation for Gazebo" class="md-nav__button md-logo">
+      
+        <i class="md-icon"></i>
+      
+    </a>
+    Procedural Generation for Gazebo
+  </label>
+  
+    <div class="md-nav__source">
+      
+
+
+  
+
+<a href="https://github.com/boschresearch/pcg_gazebo/" title="Go to repository" class="md-source" data-md-source="github">
+  
+    <div class="md-source__icon">
+      <svg viewBox="0 0 24 24" width="24" height="24">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href="../.." title="Home" class="md-nav__link">
+      Home
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2" type="checkbox" id="nav-2" checked>
+    
+    <label class="md-nav__link" for="nav-2">
+      API Documentation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="1">
+      <label class="md-nav__title" for="nav-2">
+        API Documentation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../log/" title="pcg_gazebo.log" class="md-nav__link">
+      pcg_gazebo.log
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../path/" title="pcg_gazebo.path" class="md-nav__link">
+      pcg_gazebo.path
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../visualization/" title="pcg_gazebo.visualization" class="md-nav__link">
+      pcg_gazebo.visualization
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-4" type="checkbox" id="nav-2-4" checked>
+    
+    <label class="md-nav__link" for="nav-2-4">
+      pcg_gazebo.simulation
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-4">
+        pcg_gazebo.simulation
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+    
+    <a href="./" title="pcg_gazebo.simulation" class="md-nav__link md-nav__link--active">
+      pcg_gazebo.simulation
+    </a>
+    
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation_physics/" title="pcg_gazebo.simulation.physics" class="md-nav__link">
+      pcg_gazebo.simulation.physics
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation_properties/" title="pcg_gazebo.simulation.properties" class="md-nav__link">
+      pcg_gazebo.simulation.properties
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../simulation_sensors/" title="pcg_gazebo.simulation.sensors" class="md-nav__link">
+      pcg_gazebo.simulation.sensors
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-5" type="checkbox" id="nav-2-5">
+    
+    <label class="md-nav__link" for="nav-2-5">
+      pcg_gazebo.parsers
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-5">
+        pcg_gazebo.parsers
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers/" title="pcg_gazebo.parsers" class="md-nav__link">
+      pcg_gazebo.parsers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_sdf/" title="pcg_gazebo.parsers.sdf" class="md-nav__link">
+      pcg_gazebo.parsers.sdf
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_sdf_config/" title="pcg_gazebo.parsers.sdf_config" class="md-nav__link">
+      pcg_gazebo.parsers.sdf_config
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_types/" title="pcg_gazebo.parsers.types" class="md-nav__link">
+      pcg_gazebo.parsers.types
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../parsers_urdf/" title="pcg_gazebo.parsers.urdf" class="md-nav__link">
+      pcg_gazebo.parsers.urdf
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../task_manager/" title="pcg_gazebo.task_manager" class="md-nav__link">
+      pcg_gazebo.task_manager
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-toggle md-nav__toggle" data-md-toggle="nav-2-7" type="checkbox" id="nav-2-7">
+    
+    <label class="md-nav__link" for="nav-2-7">
+      pcg_gazebo.generators
+    </label>
+    <nav class="md-nav" data-md-component="collapsible" data-md-level="2">
+      <label class="md-nav__title" for="nav-2-7">
+        pcg_gazebo.generators
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators/" title="pcg_gazebo.generators" class="md-nav__link">
+      pcg_gazebo.generators
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_components/" title="pcg_gazebo.generators.components" class="md-nav__link">
+      pcg_gazebo.generators.components
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_constraints/" title="pcg_gazebo.generators.constraints" class="md-nav__link">
+      pcg_gazebo.generators.constraints
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_engines/" title="pcg_gazebo.generators.engines" class="md-nav__link">
+      pcg_gazebo.generators.engines
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/boschresearch/pcg_gazebo/edit/master/docs/reference/simulation.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
+                
+                
+                <h1 id="pcg_gazebo.simulation">pcg_gazebo.simulation</h1>
+
+<p>Simulation interface module, with abstraction classes for all relevant
+entities that form a simulation in Gazebo.</p>
+<h2 id="pcg_gazebo.simulation.create_object">create_object</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">create_object</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+Factory method for <code>Link</code> subclasses.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Name identifier of the object class</li>
+<li><code>kwargs</code> (<em>type:</em> <code>dict</code>): Input arguments for the object class</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>Link</code>: Subclass instance.</p>
+<h2 id="pcg_gazebo.simulation.get_gazebo_model_folders">get_gazebo_model_folders</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">get_gazebo_model_folders</span><span class="p">(</span><span class="n">dir_path</span><span class="p">)</span>
+</pre></div>
+Return the paths to all Gazebo model folders under the
+directory <code>dir_path</code>.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>dir_path</code> (<em>type:</em> <code>str</code>): Path to the search directory.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>dict</code>: Gazebo model paths ordered according to the
+Gazebo model names.</p>
+<h2 id="pcg_gazebo.simulation.load_gazebo_models">load_gazebo_models</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">load_gazebo_models</span><span class="p">()</span>
+</pre></div>
+Search for Gazebo models in the local <code>.gazebo/models</code> folder
+and in the ROS paths.</p>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>dict</code>: Information of all Gazebo models found</p>
+<h2 id="pcg_gazebo.simulation.get_gazebo_models">get_gazebo_models</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">get_gazebo_models</span><span class="p">()</span>
+</pre></div>
+Return the information of all Gazebo models found in the
+local <code>.gazebo/models</code> folder and in the catkin workspace as
+a dictionary.</p>
+<h2 id="pcg_gazebo.simulation.get_gazebo_model_names">get_gazebo_model_names</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">get_gazebo_model_names</span><span class="p">()</span>
+</pre></div>
+Return the names of all Gazebo models that can be found
+is the local <code>.gazebo/models</code> folders and catkin workspace.</p>
+<h2 id="pcg_gazebo.simulation.get_gazebo_model_ros_pkg">get_gazebo_model_ros_pkg</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">get_gazebo_model_ros_pkg</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+Return name of the ROS package where the Gazebo model is
+located, None if it was found in .gazebo/models.</p>
+<h2 id="pcg_gazebo.simulation.is_gazebo_model">is_gazebo_model</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">is_gazebo_model</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+Test if a model with the identifier <code>name</code> is a Gazebo
+model that is found in the resources path.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>): Name identifier of the model</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>True</code> if <code>name</code> refers to a Gazebo model.</p>
+<h2 id="pcg_gazebo.simulation.get_gazebo_model_path">get_gazebo_model_path</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">get_gazebo_model_path</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+</pre></div>
+Return the path of the Gazebo model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>model_name</code> (<em>type:</em> <code>str</code>): Name of the Gazebo model</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>str</code>: Path of the Gazebo model folder</p>
+<h2 id="pcg_gazebo.simulation.get_gazebo_model_sdf">get_gazebo_model_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">get_gazebo_model_sdf</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">sdf_file</span><span class="o">=</span><span class="s1">&#39;model.sdf&#39;</span><span class="p">)</span>
+</pre></div>
+Parse the Gazebo model's SDF file into a <code>pcg_gazebo</code>
+SDF instance.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>model_name</code> (<em>type:</em> <code>str</code>): Name of the Gazebo model.</li>
+<li><code>sdf_file</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>model.sdf</code>): Name
+of the SDF file to be parsed.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.types.XMLBase</code> instance as an SDF element.</p>
+<h1 id="pcg_gazebo.simulation.Box">Box</h1>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+Class derived from <code>pcg_gazebo.simulation.Link</code> to
+describe a box-shaped link or single-link model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>box</code>): Name of the object</li>
+<li><code>size</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>[1, 1, 1]</code>): Vector with
+width, length and height of the box,</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Box.collision">collision</h2>
+
+<p><code>pcg_gazebo.simulation.properties.Collision</code>:
+Return single box-shaped collision model.</p>
+<h2 id="pcg_gazebo.simulation.Box.size">size</h2>
+
+<p>List of <code>float</code>: Size of the box as <code>[width, length, height]</code>
+<h2 id="pcg_gazebo.simulation.Box.visual">visual</h2></p>
+<p><code>pcg_gazebo.simulation.properties.Visual</code>:
+Return single box-shaped visual model.</p>
+<h2 id="pcg_gazebo.simulation.Box.to_sdf">to_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Box</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">,</span> <span class="n">resource_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy_resources</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+Convert object to an SDF element. The object can be converted
+to different SDF elements according to the <code>type</code> input</p>
+<ul>
+<li><code>box</code>: SDF box element</li>
+<li><code>geometry</code>: SDF geometry element with nested element</li>
+<li><code>collision</code>: SDF collision element</li>
+<li><code>visual</code>: SDF visual element</li>
+<li><code>link</code>: SDF link element with collision and visual properties</li>
+<li><code>model</code>: single-link SDF model element</li>
+<li><code>sdf</code>: SDF file format with a nested model element.</li>
+</ul>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>type</code> (<em>type:</em> <code>str</code>): Type of output SDF element, options are
+<code>collision</code>, <code>visual</code>, <code>link</code>, <code>model</code>, <code>sdf</code>.</li>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>model</code>): Name of the output object</li>
+<li><code>sdf_version</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>1.6</code>): Version
+of the output SDF element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.types.XMLBase</code>: SDF element instance.</p>
+<h2 id="pcg_gazebo.simulation.Box.add_inertial">add_inertial</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Box</span><span class="o">.</span><span class="n">add_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="p">)</span>
+</pre></div>
+Initialize mass and moments of inertia for box model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mass</code> (<em>type:</em> <code>float</code>): Mass in kilograms</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Box.update_inertial">update_inertial</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Box</span><span class="o">.</span><span class="n">update_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Update mass and moments of inertia for box model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mass</code> (<em>type:</em> <code>float</code>): Mass in kilograms</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Box.update_collision">update_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Box</span><span class="o">.</span><span class="n">update_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Update collision model according to the current
+<code>size</code>.</p>
+<h2 id="pcg_gazebo.simulation.Box.update_visual">update_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Box</span><span class="o">.</span><span class="n">update_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Update visual model according to the current
+<code>size</code>.</p>
+<h1 id="pcg_gazebo.simulation.Cylinder">Cylinder</h1>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Cylinder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cylinder&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+Class derived from <code>pcg_gazebo.simulation.Link</code> to
+describe a cylinder-shaped link or single-link model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>cylinder</code>): Name of the object.</li>
+<li><code>length</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>1</code>): Length of the
+cylinder in meters.</li>
+<li><code>radius</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>1</code>): Radius of the
+cylinder in meters.</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Cylinder.collision">collision</h2>
+
+<p><code>pcg_gazebo.simulation.properties.Collision</code>:
+Return single cylinder-shaped collision model.</p>
+<h2 id="pcg_gazebo.simulation.Cylinder.length">length</h2>
+
+<p><code>float</code>: Length of the cylinder in meters
+<h2 id="pcg_gazebo.simulation.Cylinder.radius">radius</h2></p>
+<p><code>float</code>: Radius of the cylinder in meters
+<h2 id="pcg_gazebo.simulation.Cylinder.visual">visual</h2></p>
+<p><code>pcg_gazebo.simulation.properties.Visual</code>:
+Return single cylinder-shaped visual model.</p>
+<h2 id="pcg_gazebo.simulation.Cylinder.to_sdf">to_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Cylinder</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;cylinder&#39;</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">,</span> <span class="n">resource_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy_resources</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+Convert object to an SDF element. The object can be converted
+to different SDF elements according to the <code>type</code> input</p>
+<ul>
+<li><code>cylinder</code>: SDF cylinder element</li>
+<li><code>geometry</code>: SDF geometry element with nested element</li>
+<li><code>collision</code>: SDF collision element</li>
+<li><code>visual</code>: SDF visual element</li>
+<li><code>link</code>: SDF link element with collision and visual properties</li>
+<li><code>model</code>: single-link SDF model element</li>
+<li><code>sdf</code>: SDF file format with a nested model element.</li>
+</ul>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>type</code> (<em>type:</em> <code>str</code>): Type of output SDF element, options are
+<code>collision</code>, <code>visual</code>, <code>link</code>, <code>model</code>, <code>sdf</code>.</li>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>model</code>): Name of the output object</li>
+<li><code>sdf_version</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>1.6</code>): Version of
+the output SDF element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.types.XMLBase</code>: SDF element instance.</p>
+<h2 id="pcg_gazebo.simulation.Cylinder.update_inertial">update_inertial</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Cylinder</span><span class="o">.</span><span class="n">update_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Initialize mass and moments of inertia for cylinder model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mass</code> (<em>type:</em> <code>float</code>): Mass in kilograms</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Cylinder.update_collision">update_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Cylinder</span><span class="o">.</span><span class="n">update_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Update collision model according to the current
+<code>length</code> and <code>radius</code>.</p>
+<h2 id="pcg_gazebo.simulation.Cylinder.update_visual">update_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Cylinder</span><span class="o">.</span><span class="n">update_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Update visual model according to the current
+<code>length</code> and <code>radius</code>.</p>
+<h1 id="pcg_gazebo.simulation.Joint">Joint</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Joint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;joint&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">child</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">joint_type</span><span class="o">=</span><span class="s1">&#39;fixed&#39;</span><span class="p">,</span> <span class="n">axis_xyz</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">damping</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">friction</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">spring_reference</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">spring_stiffness</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mf">1e+16</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1e+16</span><span class="p">,</span> <span class="n">velocity</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">effort</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">use_parent_model_frame</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.simulation.Light">Light</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;point&#39;</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">cast_shadows</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inner_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outer_angle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">falloff</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.simulation.Link">Link</h1>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">,</span> <span class="n">creation_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">life_timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">inertial</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">static</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">self_collide</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">kinematic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">visuals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">collisions</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Representation of a simulated <code>link</code> or a single-link <code>model</code>.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>value:</em> <code>object</code>): Name of the object.</li>
+<li><code>creation_time</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>None</code>): Timestamp
+of the creation of the object in Gazebo.</li>
+<li><code>life_timeout</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>None</code>): Timeout in which
+to remove the object from the simulation (<strong>not implemented</strong>).</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Link.collisions">collisions</h2>
+
+<p>List of <code>pcg_gazebo.simulation.properties.Collision</code>:
+List of collision models</p>
+<h2 id="pcg_gazebo.simulation.Link.creation_time">creation_time</h2>
+
+<p><code>float</code>: Time of creation of this object, if
+it represents a single-link model.</p>
+<h2 id="pcg_gazebo.simulation.Link.inertial">inertial</h2>
+
+<p><code>pcg_gazebo.simulation.properties.Inertial</code>:
+Description of the object's moments of inertia.</p>
+<h2 id="pcg_gazebo.simulation.Link.kinematic">kinematic</h2>
+
+<p><code>bool</code>: Flag to indicate if the model is purely kinematic
+<h2 id="pcg_gazebo.simulation.Link.life_timeout">life_timeout</h2></p>
+<p><code>float</code>: Life timeout timestamp for this object,
+if it represents a single-link model</p>
+<h2 id="pcg_gazebo.simulation.Link.name">name</h2>
+
+<p><code>str</code>: Object name
+<h2 id="pcg_gazebo.simulation.Link.pose">pose</h2></p>
+<p><code>pcg_gazebo.simulation.properties.Pose</code>: Pose of the object
+<h2 id="pcg_gazebo.simulation.Link.self_collide">self_collide</h2></p>
+<p><code>bool</code>: Self-collision flag
+<h2 id="pcg_gazebo.simulation.Link.static">static</h2></p>
+<p><code>bool</code>: Flag to indicate if object is static
+<h2 id="pcg_gazebo.simulation.Link.visuals">visuals</h2></p>
+<p>List of <code>pcg_gazebo.simulation.properties.Visual</code>:
+List of visual models</p>
+<h2 id="pcg_gazebo.simulation.Link.create_link_from_mesh">create_link_from_mesh</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">create_link_from_mesh</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;link&#39;</span><span class="p">,</span> <span class="n">visual_mesh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">collision_mesh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_approximated_collision</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">approximated_collision_model</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">visual_mesh_scale</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">collision_mesh_scale</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inertia</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_approximated_inertia</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">approximated_inertia_model</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">,</span> <span class="n">visual_parameters</span><span class="o">=</span><span class="p">{},</span> <span class="n">collision_parameters</span><span class="o">=</span><span class="p">{})</span>
+</pre></div>
+Factory method to build a link or single-link model from a mesh.
+This method allows not only assigning a mesh as a visual and collision
+geometry, but also using geometrical approximations of the input mesh
+to create, for example, a collision mesh, or computing the moments of
+inertia.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>link</code>): Name of the link.</li>
+<li><code>visual_mesh</code> (<em>type:</em> <code>str</code> or <code>trimesh.Trimesh</code>,
+<em>default:</em> <code>None</code>): Filename to the visual mesh file or a mesh object.</li>
+<li><code>collision_mesh</code> (<em>type:</em> <code>str</code> or <code>trimesh.Trimesh</code>,
+<em>default:</em> <code>None</code>): Filename to the collision mesh file. If the
+input is <code>None</code> and <code>use_approximated_collision</code> is
+<code>False</code>, the visual mesh will be also set as collision mesh.</li>
+<li><code>use_approximated_collision</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>False</code>):
+If <code>True</code>, the collision geometry will be approximated from the
+visual mesh geometry into a model given by the
+<code>approximated_collision_model</code> input.</li>
+<li><code>approximated_collision_model</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>box</code>):
+Name of the geometry to which the visual geometry will be approximated
+to generated the collision mesh, options are <code>box</code>, <code>cylinder</code> or
+<code>sphere</code>.</li>
+<li><code>visual_mesh_scale</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>[1, 1, 1]</code>):
+Scaling factors for the visual mesh in X, Y and Z directions.</li>
+<li><code>collision_mesh_scale</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>[1, 1, 1]</code>):
+Scaling factors for the collision mesh in X, Y and Z directions.</li>
+<li><code>pose</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>[0, 0, 0, 0, 0, 0]</code>): Link's pose
+with respect to the model frame.</li>
+<li><code>color</code> (<em>type:</em> <code>list</code> or <code>str</code>, <em>default:</em> <code>None</code>): Color
+set to the visual mesh. If <code>None</code> is provided, no color is set
+and the mesh will inherit the material of the mesh file. If the
+input is <code>random</code>, a random RGB color is generated. This input
+can also be set as <code>xkcd</code> for a random
+<a href="https://xkcd.com/color/rgb/"><code>xkcd</code> color</a> name, or a string
+with the name of a specific <code>xkcd</code> color (e.g., <code>teal</code>).
+Otherwise, the input can be an RGB vector as a <code>list</code>.</li>
+<li><code>mass</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>0</code>): Mass of the link
+in kilograms. If the mass is not greater than zero, the link will
+be set as static.</li>
+<li><code>inertia</code> (<em>type:</em> <code>dict</code>, <em>default:</em> <code>None</code>): Moments of
+inertia of the link. This input can be either a dictionary
+defined as <code>dict(ixx=0, iyy=0, izz=0, ixy=0, ixz=0, iyz=0)</code> or
+<code>None</code>. If <code>None</code> is provided, <code>use_approximated_inertia</code> is
+<code>True</code> and <code>mass</code> is greater than zero, the moments of inertia
+will be computed from an approximated visual mesh geometry
+given by the input <code>approximated_inertia_model</code>.</li>
+<li><code>use_approximated_inertia</code> (<em>type:</em> <code>bool</code>, <em>default:</em>
+<code>True</code>): If <code>True</code> and <code>mass</code> is greater tha zero, the moments
+of inertia of the link will be computed from a approximated
+visual mesh model described by <code>approximated_inertia_model</code>.</li>
+<li><code>approximated_inertia_model</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>box</code>):
+Type of geometry approximation to be applied to the visual geometry.
+The dimensions of the geometry will then be used to compute the
+moments of inertia. Options are <code>box</code>, <code>cylinder</code> or <code>sphere</code>.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.simulation.Link</code> instance.</p>
+<h2 id="pcg_gazebo.simulation.Link.enable_collision">enable_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">enable_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Enable the inclusion of the collision models
+in the exported SDF description.</p>
+<h2 id="pcg_gazebo.simulation.Link.disable_collision">disable_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">disable_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Disable the inclusion of the collision models
+in the exported SDF description.</p>
+<h2 id="pcg_gazebo.simulation.Link.enable_visual">enable_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">enable_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Enable the inclusion of the visual models
+in the exported SDF description.</p>
+<h2 id="pcg_gazebo.simulation.Link.disable_visual">disable_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">disable_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Disable the inclusion of the collision models
+in the exported SDF description.</p>
+<h2 id="pcg_gazebo.simulation.Link.get_collision_by_name">get_collision_by_name</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">get_collision_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+Return the collision model associated with the input
+name identifier.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the collision model.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.simulation.properties.Collision</code>, or <code>None</code>
+if not collision with the given name is found.</p>
+<h2 id="pcg_gazebo.simulation.Link.has_collision">has_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">has_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+Test if a collision with the input name exists.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the collision model</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if a collision model exists, `False, otherwise.</p>
+<h2 id="pcg_gazebo.simulation.Link.get_visual_by_name">get_visual_by_name</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">get_visual_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+Return the visual model associated with the input
+name identifier.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the visual model.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.simulation.properties.Visual</code>, or <code>None</code>
+if not visual with the given name is found.</p>
+<h2 id="pcg_gazebo.simulation.Link.has_visual">has_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">has_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+Test if a visual with the input name exists.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the visual model</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if a visual model exists, `False, otherwise.</p>
+<h2 id="pcg_gazebo.simulation.Link.add_empty_visual">add_empty_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">add_empty_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;visual&#39;</span><span class="p">)</span>
+</pre></div>
+Create an empty visual model and add it to the object.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>visual</code>): Name of the visual
+model.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code> if visual model could be created
+and added to the object.
+<code>False</code> if another visual with the same name already exists.</p>
+<h2 id="pcg_gazebo.simulation.Link.add_visual">add_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">add_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visual</span><span class="p">)</span>
+</pre></div>
+Add visual model to the object. If a visual element
+with the same name already exists, a suffix will be added
+to the name in the format <code>_i</code>, <code>i</code> being an integer.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>visual</code> (<em>type:</em> <code>pcg_gazebo.simulation.properties.Visual</code>):
+Visual element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if visual element could be added to object.</p>
+<h2 id="pcg_gazebo.simulation.Link.add_empty_collision">add_empty_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">add_empty_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">)</span>
+</pre></div>
+Create an empty collision model and add it to the object.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>collision</code>): Name of the collision
+model.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code> if collision model could be created and
+added to the object.
+<code>False</code> if another collision with the same name already exists.</p>
+<h2 id="pcg_gazebo.simulation.Link.add_collision">add_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">add_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">collision</span><span class="p">)</span>
+</pre></div>
+Add collision model to the object. If a collision element
+with the same name already exists, a suffix will be added
+to the name in the format <code>_i</code>, <code>i</code> being an integer.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>collision</code> (<em>type:</em> <code>pcg_gazebo.simulation.properties.Collision</code>):
+Collision element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if collision element could be added to object.</p>
+<h2 id="pcg_gazebo.simulation.Link.to_sdf">to_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;link&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">,</span> <span class="n">resource_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy_resources</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+Convert object to an SDF element. The object can be converted
+to different SDF elements according to the <code>type</code> input</p>
+<ul>
+<li><code>collision</code>: SDF collision element</li>
+<li><code>visual</code>: SDF visual element</li>
+<li><code>link</code>: SDF link element with collision and visual properties</li>
+<li><code>model</code>: single-link SDF model element</li>
+<li><code>sdf</code>: SDF file format with a nested model element.</li>
+</ul>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>type</code> (<em>type:</em> <code>str</code>): Type of output SDF element, options are
+<code>collision</code>, <code>visual</code>, <code>link</code>, <code>model</code>, <code>sdf</code>.</li>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>model</code>): Name of the output object</li>
+<li><code>sdf_version</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>1.6</code>): Version
+of the output SDF element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.types.XMLBase</code>: SDF element instance.</p>
+<h2 id="pcg_gazebo.simulation.Link.from_sdf">from_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">from_sdf</span><span class="p">(</span><span class="n">sdf</span><span class="p">)</span>
+</pre></div>
+Factory method to generate a <code>pcg_gazebo.simulation.Link</code> instance
+from an SDF instance. Only links can be parsed.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>sdf</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.Link</code>): SDF object</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.simulation.Link</code>: Simulation object instance</p>
+<h2 id="pcg_gazebo.simulation.Link.export_to_gazebo_model">export_to_gazebo_model</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">export_to_gazebo_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="s1">&#39;0.1.0&#39;</span><span class="p">,</span> <span class="n">author_names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">author_emails</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">generate_sdf_with_version</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+Export the object as a Gazebo model, in the format</p>
+<div class="codehilite"><pre><span></span>model_dir/
+    model.sdf
+    model.config
+</pre></div>
+
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>output_dir</code> (<em>type:</em> <code>str</code>): Name of the directory where the model
+directory will be stored.</li>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>model</code>): Name of the model</li>
+<li><code>sdf_version</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>1.6</code>): Version of the
+SDF format</li>
+<li><code>version</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>0.1.0</code>): Gazebo model version</li>
+<li><code>author_names</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>None</code>): List of authors</li>
+<li><code>author_emails</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>None</code>): List of e-mails</li>
+<li><code>description</code> (<em>type:</em> <code>str</code>): Model description</li>
+<li><code>generate_sdf_with_version</code> (<em>type:</em> <code>bool</code>,
+<em>default:</em> <code>False</code>): Parameter description</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if Gazebo model files were exported successfully.</p>
+<h2 id="pcg_gazebo.simulation.Link.add_inertial">add_inertial</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">add_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="p">)</span>
+</pre></div>
+This function must be implemented by derived classes.
+<h2 id="pcg_gazebo.simulation.Link.update_inertial">update_inertial</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">update_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+This function must be implemented by derived classes.
+<h2 id="pcg_gazebo.simulation.Link.update_collision">update_collision</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">update_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+This function must be implemented by derived classes.
+<h2 id="pcg_gazebo.simulation.Link.update_visual">update_visual</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">update_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+This function must be implemented by derived classes.
+<h2 id="pcg_gazebo.simulation.Link.add_sensor">add_sensor</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">add_sensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">sensor</span><span class="p">)</span>
+</pre></div>
+Add sensor associated to the link.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the sensor</li>
+<li><code>sensor</code> (<em>type:</em> <code>pcg_gazebo.simulation.sensors.Sensor</code>):
+Sensor description</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if sensor could be added to link.</p>
+<h2 id="pcg_gazebo.simulation.Link.to_markers">to_markers</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">to_markers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Generate <code>visualization_msgs/Marker</code> instances from the visual and/or
+collision entities.</p>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>visualization_msgs/MarkerArray</code></p>
+<h2 id="pcg_gazebo.simulation.Link.get_footprint">get_footprint</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">get_footprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">,</span> <span class="n">pose_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_bounding_box</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">z_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Returns the <code>shapely._GEOMETRIES.Polygon</code> or
+<code>shapely._GEOMETRIES.MultiPolygon</code> that represent the
+projection of the visual or collision meshes on the XY
+plane.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mesh_type</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>collision</code>):
+Origin of the meshes, options are <code>visual</code> or <code>collision</code>.</li>
+<li><code>pose_offset</code> (<em>type:</em> <code>data_type</code>, <em>default:</em> <code>None</code>):
+Pose offset to be applied to all meshes before the
+footprint is computed</li>
+<li><code>use_bounding_box</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>False</code>):
+Use the mesh's bounding box for the footprint calculation</li>
+<li><code>z_limits</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>None</code>): Minimum
+and maximum limits in the Z direction were the meshes
+will be sectioned.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>shapely._GEOMETRIES.Polygon</code> or <code>shapely._GEOMETRIES.MultiPolygon</code></p>
+<h2 id="pcg_gazebo.simulation.Link.get_meshes">get_meshes</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">get_meshes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">,</span> <span class="n">pose_offset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Return all the meshes associated with this link.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mesh_type</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>collision</code>): Type of mesh
+to be returned, options are <code>visual</code> or <code>collision</code>.</li>
+<li><code>pose_offset</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>None</code>): Pose offset
+to be applied to all meshes.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p>List of <code>trimesh</code> meshes.</p>
+<h2 id="pcg_gazebo.simulation.Link.get_bounds">get_bounds</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Link</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">)</span>
+</pre></div>
+Return the bounds of the link with respect to its meshes.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mesh_type</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>collision</code>): Type of mesh,
+options are <code>visual</code> or <code>collision</code>.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>dict</code>: Meshes' bounds</p>
+<h1 id="pcg_gazebo.simulation.ModelGroup">ModelGroup</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;group&#39;</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">is_ground_plane</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h2 id="pcg_gazebo.simulation.ModelGroup.lights">lights</h2>
+
+<p><code>dict</code>: Lights
+<h2 id="pcg_gazebo.simulation.ModelGroup.models">models</h2></p>
+<p><code>dict</code>: Models
+<h2 id="pcg_gazebo.simulation.ModelGroup.n_lights">n_lights</h2></p>
+<p><code>int</code>: Number of lights
+<h2 id="pcg_gazebo.simulation.ModelGroup.n_models">n_models</h2></p>
+<p><code>int</code>: Number of models
+<h2 id="pcg_gazebo.simulation.ModelGroup.reset_models">reset_models</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">reset_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Reset the list of models.
+<h2 id="pcg_gazebo.simulation.ModelGroup.add_model">add_model</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+</pre></div>
+Add a model to the world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Model's local name in the world. If
+a model with the same name already exists, the model will be
+created with a counter suffix in the format <code>_i</code>, <code>i</code> being
+an integer.</li>
+<li><code>model</code> (<em>type:</em> <code>pcg_gazebo.simulation.SimulationModel</code>):
+Model object</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model could be added to the world.</p>
+<h2 id="pcg_gazebo.simulation.ModelGroup.rm_model">rm_model</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">rm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Remove model from world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the
+model to be removed.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model could be removed, <code>False</code> if
+no model with name <code>tag</code> could be found in the world.</p>
+<h2 id="pcg_gazebo.simulation.ModelGroup.model_exists">model_exists</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">model_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Test if a model with name <code>tag</code> exists in the world description.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the model.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model exists, <code>False</code>, otherwise.</p>
+<h2 id="pcg_gazebo.simulation.ModelGroup.add_include">add_include</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">add_include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include</span><span class="p">)</span>
+</pre></div>
+Add a model via include method.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>include</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.Include</code>):
+SDF <code>&lt;include&gt;</code> element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model directed by the <code>include</code> element
+could be parsed and added to the world.</p>
+<h2 id="pcg_gazebo.simulation.ModelGroup.add_light">add_light</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">add_light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">light</span><span class="p">)</span>
+</pre></div>
+Add light description to the world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Name identifier for the plugin. If
+a model with the same name already exists, the model will be
+created with a counter suffix in the format <code>_i</code>, <code>i</code> being
+an integer.</li>
+<li><code>light</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.Light</code> or
+<code>pcg_gazebo.simulation.properties.Light</code>): Light description</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.ModelGroup.rm_light">rm_light</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">rm_light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Remove light from world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the
+light to be removed.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if light could be removed, <code>False</code> if
+no light with name <code>tag</code> could be found in the world.</p>
+<h2 id="pcg_gazebo.simulation.ModelGroup.light_exists">light_exists</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">ModelGroup</span><span class="o">.</span><span class="n">light_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Test if a light with name <code>tag</code> exists in the world description.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the light.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if light exists, <code>False</code>, otherwise.</p>
+<h1 id="pcg_gazebo.simulation.Plane">Plane</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;plane&#39;</span><span class="p">,</span> <span class="n">normal</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.simulation.Polyline">Polyline</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">Polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;polyline&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="p">[])</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.simulation.SimulationModel">SimulationModel</h1>
+
+<div class="codehilite"><pre><span></span><span class="n">SimulationModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">creation_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">life_timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_ground_plane</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+<h1 id="pcg_gazebo.simulation.Sphere">Sphere</h1>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sphere&#39;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+Class derived from <code>pcg_gazebo.simulation.Link</code> to
+describe a sphere-shaped link or single-link model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>sphere</code>): Name of the object</li>
+<li><code>radius</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>1</code>): Radius of the sphere
+in meters</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Sphere.collision">collision</h2>
+
+<p><code>pcg_gazebo.simulation.properties.Collision</code>:
+Return single sphere-shaped collision model.</p>
+<h2 id="pcg_gazebo.simulation.Sphere.radius">radius</h2>
+
+<p><code>float</code>: Radius of the sphere in meters
+<h2 id="pcg_gazebo.simulation.Sphere.visual">visual</h2></p>
+<p><code>pcg_gazebo.simulation.properties.Visual</code>:
+Return single sphere-shaped visual model.</p>
+<h2 id="pcg_gazebo.simulation.Sphere.to_sdf">to_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sphere&#39;</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">,</span> <span class="n">resource_prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">copy_resources</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+Convert object to an SDF element. The object can be converted
+to different SDF elements according to the <code>type</code> input</p>
+<ul>
+<li><code>sphere</code>: SDF sphere element</li>
+<li><code>geometry</code>: SDF geometry element with nested element</li>
+<li><code>collision</code>: SDF collision element</li>
+<li><code>visual</code>: SDF visual element</li>
+<li><code>link</code>: SDF link element with collision and visual properties</li>
+<li><code>model</code>: single-link SDF model element</li>
+<li><code>sdf</code>: SDF file format with a nested model element.</li>
+</ul>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>type</code> (<em>type:</em> <code>str</code>): Type of output SDF element, options are
+<code>collision</code>, <code>visual</code>, <code>link</code>, <code>model</code>, <code>sdf</code>.</li>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>model</code>): Name of the output object</li>
+<li><code>sdf_version</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>1.6</code>): Version of
+the output SDF element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.types.XMLBase</code>: SDF element instance.</p>
+<h2 id="pcg_gazebo.simulation.Sphere.add_inertial">add_inertial</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="o">.</span><span class="n">add_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="p">,</span> <span class="n">hollow</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+Initialize mass and moments of inertia for sphere model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mass</code> (<em>type:</em> <code>float</code>): Mass in kilograms</li>
+<li><code>hollow</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>False</code>): Compute
+moments of inertia for a hollow sphere, instead of a solid one</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Sphere.update_inertial">update_inertial</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="o">.</span><span class="n">update_inertial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Update mass and moments of inertia for sphere model.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mass</code> (<em>type:</em> <code>float</code>): Mass in kilograms</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.Sphere.update_collision">update_collision</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="o">.</span><span class="n">update_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Update collision model according to the current
+<code>radius</code>.</p>
+<h2 id="pcg_gazebo.simulation.Sphere.update_visual">update_visual</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">Sphere</span><span class="o">.</span><span class="n">update_visual</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Update visual model according to the current
+<code>radius</code>.</p>
+<h1 id="pcg_gazebo.simulation.World">World</h1>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.8</span><span class="p">],</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;ode&#39;</span><span class="p">)</span>
+</pre></div>
+Abstraction of Gazebo's world description. This class
+contains the settings configuring the world's</p>
+<ul>
+<li>physics engine</li>
+<li>models</li>
+<li>lights</li>
+<li>plugins</li>
+<li>gravity</li>
+</ul>
+<p>and can be later exported into a <code>.world</code> file that Gazebo
+can parse and execute.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>name</code> (<em>type:</em> <code>str</code>, <em>value:</em> <code>default</code>): Name of the world.</li>
+<li><code>gravity</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>[0, 0, -9.8]</code>): Acceleration
+of gravity vector.</li>
+<li><code>engine</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>ode</code>): Name of the default
+physics engine, options are <code>ode</code>, <code>bullet</code> or <code>simbody</code>.</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.World.engine">engine</h2>
+
+<p><code>str</code>: Name identifier of the physics engine
+<h2 id="pcg_gazebo.simulation.World.gravity">gravity</h2></p>
+<p><code>list</code>: Acceleration of gravity vector
+<h2 id="pcg_gazebo.simulation.World.lights">lights</h2></p>
+<p><code>dict</code>: Lights
+<h2 id="pcg_gazebo.simulation.World.model_groups">model_groups</h2></p>
+<p><code>dict</code>: Model groups
+<h2 id="pcg_gazebo.simulation.World.models">models</h2></p>
+<p><code>dict</code>: Models
+<h2 id="pcg_gazebo.simulation.World.name">name</h2></p>
+<p><code>str</code>: Name of the world
+<h2 id="pcg_gazebo.simulation.World.physics">physics</h2></p>
+<p><code>pcg_gazebo.simulation.physics.Physics</code>: Physics engine instance
+<h2 id="pcg_gazebo.simulation.World.reset_physics">reset_physics</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">reset_physics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;ode&#39;</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+Reset the physics engine to its default configuration.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>engine</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>ode</code>): Name identifier
+of the physics engine, options are <code>ode</code>, <code>bullet</code> or <code>simbody</code>.</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.World.reset_models">reset_models</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">reset_models</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</pre></div>
+Reset the list of models.
+<h2 id="pcg_gazebo.simulation.World.add_include">add_include</h2></p>
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">add_include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+Add a model via include method.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>include</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.Include</code>):
+SDF <code>&lt;include&gt;</code> element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model directed by the <code>include</code> element
+could be parsed and added to the world.</p>
+<h2 id="pcg_gazebo.simulation.World.add_model">add_model</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+Add a model to the world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Model's local name in the world. If
+a model with the same name already exists, the model will be
+created with a counter suffix in the format <code>_i</code>, <code>i</code> being
+an integer.</li>
+<li><code>model</code> (<em>type:</em> <code>pcg_gazebo.simulation.SimulationModel</code>):
+Model object</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model could be added to the world.</p>
+<h2 id="pcg_gazebo.simulation.World.rm_model">rm_model</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">rm_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+Remove model from world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the
+model to be removed.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model could be removed, <code>False</code> if
+no model with name <code>tag</code> could be found in the world.</p>
+<h2 id="pcg_gazebo.simulation.World.model_exists">model_exists</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">model_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+</pre></div>
+Test if a model with name <code>tag</code> exists in the world description.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the model.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if model exists, <code>False</code>, otherwise.</p>
+<h2 id="pcg_gazebo.simulation.World.add_plugin">add_plugin</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">add_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">plugin</span><span class="p">)</span>
+</pre></div>
+Add plugin description to the world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Name identifier for the plugin. If
+a model with the same name already exists, the model will be
+created with a counter suffix in the format <code>_i</code>, <code>i</code> being
+an integer.</li>
+<li><code>plugin</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.Plugin</code> or
+<code>pcg_gazebo.simulation.properties.Plugin</code>): Plugin description.</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.World.rm_plugin">rm_plugin</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">rm_plugin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Remove plugin from world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the
+plugin to be removed.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if plugin could be removed, <code>False</code> if
+no plugin with name <code>tag</code> could be found in the world.</p>
+<h2 id="pcg_gazebo.simulation.World.plugin_exists">plugin_exists</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">plugin_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Test if a plugin with name <code>tag</code> exists in the world description.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the plugin.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if plugin exists, <code>False</code>, otherwise.</p>
+<h2 id="pcg_gazebo.simulation.World.add_light">add_light</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">add_light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">light</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+Add light description to the world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Name identifier for the plugin. If
+a model with the same name already exists, the model will be
+created with a counter suffix in the format <code>_i</code>, <code>i</code> being
+an integer.</li>
+<li><code>light</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.Light</code> or
+<code>pcg_gazebo.simulation.properties.Light</code>): Light description</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.World.rm_light">rm_light</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">rm_light</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+Remove light from world.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the
+light to be removed.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if light could be removed, <code>False</code> if
+no light with name <code>tag</code> could be found in the world.</p>
+<h2 id="pcg_gazebo.simulation.World.light_exists">light_exists</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">light_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span>
+</pre></div>
+Test if a light with name <code>tag</code> exists in the world description.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Local name identifier of the light.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>bool</code>: <code>True</code>, if light exists, <code>False</code>, otherwise.</p>
+<h2 id="pcg_gazebo.simulation.World.to_sdf">to_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">with_default_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default_sun</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+Convert the world description into as <code>pcg_gazebo</code> SDF
+element.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>type</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>world</code>): Type of output SDF
+element to be generated, options are <code>world</code> or <code>sdf</code>. It is
+important to note that to export the world description into a
+file, it is necessary to have the <code>sdf</code> format.</li>
+<li><code>with_default_ground_plane</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>True</code>):
+Add Gazebo's default ground plane model to the world.</li>
+<li><code>with_default_sun</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>True</code>):
+Add Gazebo's default sun model to the world.</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.sdf.SDF</code> with a world element in it or
+<code>pcg_gazebo.parsers.sdf.World</code>.</p>
+<h2 id="pcg_gazebo.simulation.World.from_sdf">from_sdf</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">from_sdf</span><span class="p">(</span><span class="n">sdf</span><span class="p">)</span>
+</pre></div>
+Parse an <code>pcg_gazebo.parsers.sdf.World</code> into a
+<code>World</code> class.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>sdf</code> (<em>type:</em> <code>pcg_gazebo.parsers.sdf.World</code>):
+SDF world element</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>pcg_gazebo.parsers.sdf.World</code> instance.</p>
+<h2 id="pcg_gazebo.simulation.World.create_scene">create_scene</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">create_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">,</span> <span class="n">add_pseudo_color</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+Return a <code>trimesh.Scene</code> with all the world's models.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>mesh_type</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>collision</code>): Type of mesh
+to be included in the scene, options are <code>collision</code> or <code>visual</code>.</li>
+<li><code>add_pseudo_color</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>True</code>): If <code>True</code>,
+set each mesh with a pseudo-color.</li>
+</ul>
+<h2 id="pcg_gazebo.simulation.World.plot_footprints">plot_footprints</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">plot_footprints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fig_width</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">fig_height</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">,</span> <span class="n">z_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="s1">&#39;magma&#39;</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">line_width</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">line_style</span><span class="o">=</span><span class="s1">&#39;solid&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;matplotlib&#39;</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+Plot the mesh footprint projections on the XY plane.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>fig</code> (<em>type:</em> <code>matplotlib.pyplot.Figure</code> or
+<code>bokeh.plotting.Figure</code> , <em>default:</em> <code>None</code>):
+Figure object. If <code>None</code> is provided, the figure will be created.</li>
+<li><code>ax</code> (<em>type:</em> <code>matplotlib.pyplot.Axes</code>, <em>default:</em> <code>None</code>):
+Axes object to add the plot. If <code>None</code> is provided, the axes
+object will be created.</li>
+<li><code>fig_width</code> (<em>type:</em> <code>float</code> or <code>int</code>, <em>default:</em> <code>20</code>):
+Width of the figure in inches, if <code>engine</code> is <code>matplotlib</code>,
+or pixels, if <code>engine</code> is <code>bokeh</code>.</li>
+<li><code>fig_height</code> (<em>type:</em> <code>float</code> or <code>int</code>, <em>default:</em> <code>20</code>):
+Height of the figure in inches, if <code>engine</code> is <code>matplotlib</code>,
+or pixels, if <code>engine</code> is <code>bokeh</code>.</li>
+<li><code>mesh_type</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>collision</code>): Type
+of mesh to consider for the footprint computation, options
+are <code>collision</code> and <code>visual</code>.</li>
+<li><code>z_limits</code> (<em>type:</em> <code>list</code>, <em>default:</em> <code>None</code>): List
+of minimum and maximum Z-levels to consider when sectioning
+the meshes.</li>
+<li><code>colormap</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>magma</code>): Name of the
+colormap to be used.
+Check <a href="https://matplotlib.org/users/colormaps.html">this link</a>
+for <code>matplotlib</code> colormaps and
+<a href="https://bokeh.pydata.org/en/latest/docs/reference/palettes.html">this link</a>
+for <code>bokeh</code> colormaps.</li>
+<li><code>grid</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>True</code>): If <code>True</code>,
+add grid to the plot.</li>
+<li><code>ignore_ground_plane</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>True</code>):
+Ignore the models flagged as ground plane from the plot.</li>
+<li><code>line_width</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>1</code>):
+Width of the line of each footprint polygon patch.</li>
+<li><code>line_style</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>solid</code>):
+Style of the line of each footprint polygon patch.
+Check this
+<a href="https://matplotlib.org/3.1.0/gallery/lines_bars_and_markers/linestyles.html">link</a>
+to see all the line style options.</li>
+<li><code>alpha</code> (<em>type:</em> <code>float</code>, <em>default:</em> <code>0.5</code>): Alpha
+channel value for the footprint objects.</li>
+<li><code>engine</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>matplotlib</code>):
+Engine to use for the generation of the figure, options
+are <code>bokeh</code> and <code>matplotlib</code>.</li>
+<li><code>dpi</code> (<em>type:</em> <code>int</code>, <em>default:</em> <code>200</code>): Image's DPI</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p><code>matplotlib.pyplot.Figure</code> or <code>bokeh.plotting.Figure</code>.</p>
+                
+                  
+                
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+        
+          <a href="../visualization/" title="pcg_gazebo.visualization" class="md-flex md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+            </div>
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                pcg_gazebo.visualization
+              </span>
+            </div>
+          </a>
+        
+        
+          <a href="../simulation_physics/" title="pcg_gazebo.simulation.physics" class="md-flex md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+              <span class="md-flex__ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                pcg_gazebo.simulation.physics
+              </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink">
+              <i class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        powered by
+        <a href="https://www.mkdocs.org">MkDocs</a>
+        and
+        <a href="https://squidfunk.github.io/mkdocs-material/">
+          Material for MkDocs</a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      
+      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      
+    
+  </body>
+</html>
