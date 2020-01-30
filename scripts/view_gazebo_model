@@ -14,23 +14,27 @@
 # See the License for the specific
 from pcg_gazebo.simulation import SimulationModel, is_gazebo_model
 import argparse
-import os
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Open and display a Gazebo model')
-    parser.add_argument('--model', '-m', type=str, help='Gazebo model name')
-    parser.add_argument('--collision', '-c', action='store_true', help='View collision meshes')
+    parser.add_argument(
+        '--model',
+        '-m', type=str, help='Gazebo model name')
+    parser.add_argument(
+        '--collision',
+        '-c', action='store_true',
+        help='View collision meshes')
 
     args = parser.parse_args()
 
     assert is_gazebo_model(args.model), \
-        '{} is an invalid model or is not the resources path'.format(args.model)
-    
+        '{} is an invalid model or is not the resources path'.format(
+            args.model)
+
     model = SimulationModel.from_gazebo_model(args.model)
-    
+
     if args.collision:
         model.show(mesh_type='collision')
     else:
         model.show(mesh_type='visual')
-

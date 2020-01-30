@@ -13,25 +13,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""**Description**
-
-**Input parameters**
-
-**Examples**
-
-"""
 from __future__ import print_function
-import rospy
 import os
 import argparse
 import numpy as np
 from pcg_gazebo.parsers import parse_sdf
 from pcg_gazebo.visualization import plot_occupancy_grid
 from pcg_gazebo.simulation import World
-from std_msgs.msg import String
 
 
-if __name__ == '__main__':    
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         'Generate occupancy grid map from a SDF world'
         ' file or the current scenario in Gazebo')
@@ -41,7 +32,7 @@ if __name__ == '__main__':
         type=str,
         help='SDF world filename')
     parser.add_argument(
-        '--input-topic',        
+        '--input-topic',
         type=str,
         help='Receive world XML file per ROS topic')
     parser.add_argument(
@@ -82,23 +73,23 @@ if __name__ == '__main__':
         action='store_true',
         help='Ignore ground plane meshes from the map')
     parser.add_argument(
-        '--occupied-color', 
+        '--occupied-color',
         default=0,
         type=int,
         help='Gray-scale color of the occupied cells')
     parser.add_argument(
-        '--free-color', 
+        '--free-color',
         default=1,
         type=float,
         help='Gray-scale color of the free cells')
     parser.add_argument(
-        '--unavailable-color', 
+        '--unavailable-color',
         default=0.5,
         type=float,
         help='Gray-scale color of the unavailable cells')
     parser.add_argument(
-        '--output-dir', 
-        default='/tmp', 
+        '--output-dir',
+        default='/tmp',
         type=str,
         help='Output directory to store the map')
     parser.add_argument(
@@ -110,19 +101,19 @@ if __name__ == '__main__':
         action='store_true',
         help='Uses only static models for the map construction')
     parser.add_argument(
-        '--dpi', 
-        default=200, 
+        '--dpi',
+        default=200,
         type=int,
         help='Figure DPI')
     parser.add_argument(
         '--figure-width',
         default=15,
-        type=float, 
+        type=float,
         help='Width of the figure')
     parser.add_argument(
         '--figure-height',
         default=15,
-        type=float, 
+        type=float,
         help='Height of the figure')
     parser.add_argument(
         '--figure-size-unit',
@@ -155,21 +146,21 @@ if __name__ == '__main__':
         help='Use visual meshes instead of collision')
 
     args = parser.parse_args()
-    
+
     assert args.step_x > 0, 'Step in the X-direction must be greater than zero'
     assert args.step_y > 0, 'Step in the Y-direction must be greater than zero'
     assert args.step_z > 0, 'Step in the Z-direction must be greater than zero'
     assert args.min_z < args.max_z, 'min-z must be smaller then max-z'
     assert 0 <= args.occupied_color <= 1, 'Occupied color must be between 0 and 1'
     assert 0 <= args.unavailable_color <= 1, 'Unavailable color must be between 0 and 1'
-    assert 0 <= args.free_color <= 1, 'Free color must be between 0 and 1' 
+    assert 0 <= args.free_color <= 1, 'Free color must be between 0 and 1'
     if args.map_x_limits is None:
         x_limits = None
     else:
         x_limits = args.map_x_limits
         assert len(x_limits) == 2, 'X limits must be provided as two elements'
         assert x_limits[0] < x_limits[1], 'X limits are invalid'
-        print('Map X limits: {}'.format(x_limits))    
+        print('Map X limits: {}'.format(x_limits))
 
     if args.map_y_limits is None:
         y_limits = None
@@ -177,7 +168,7 @@ if __name__ == '__main__':
         y_limits = args.map_y_limits
         assert len(y_limits) == 2, 'Y limits must be provided as two elements'
         assert y_limits[0] < y_limits[1], 'Y limits are invalid'
-        print('Map Y limits: {}'.format(y_limits))    
+        print('Map Y limits: {}'.format(y_limits))
 
     if args.world_file is not None:
         assert os.path.isfile(args.world_file), 'World file is invalid, filename={}'.format(
@@ -191,14 +182,15 @@ if __name__ == '__main__':
 
         print('SDF world file was parsed, world name={}'.format(world.name))
 
-        if args.output_filename is None:            
-            output_filename = os.path.basename(args.world_file).replace('.world', '.pgm')
+        if args.output_filename is None:
+            output_filename = os.path.basename(
+                args.world_file).replace('.world', '.pgm')
         else:
             output_filename = args.output_filename
     elif args.input_topic is not None:
         try:
             import rospy
-            from std_msgs.msg import String            
+            from std_msgs.msg import String
         except ImportError:
             print('rospy is not available, cannot start node')
             exit(1)
@@ -217,11 +209,11 @@ if __name__ == '__main__':
 
         print('SDF world file was parsed, world name={}'.format(world.name))
 
-        if args.output_filename is None:            
+        if args.output_filename is None:
             output_filename = '{}.pgm'.format(world.name)
-        else: 
+        else:
             output_filename = args.output_filename
-        
+
     # Checking for ground-plane models
     if args.ground_plane_models is None:
         gp_models = ['ground_plane']
@@ -233,7 +225,7 @@ if __name__ == '__main__':
         if model_name in world.models:
             print('Flagging model {} as ground plane'.format(model_name))
             world.set_as_ground_plane(model_name)
-    
+
     print('Generating occupancy grid')
 
     if args.exclude_contains:
@@ -241,13 +233,13 @@ if __name__ == '__main__':
             args.exclude_contains))
         exclude_contains = args.exclude_contains
     else:
-        exclude_contains = ['ground_plane']    
+        exclude_contains = ['ground_plane']
 
     print('Plotting occupancy grid map')
     plot_occupancy_grid(
-        world.models, 
-        step_x=args.step_x, 
-        step_y=args.step_y, 
+        world.models,
+        step_x=args.step_x,
+        step_y=args.step_y,
         z_levels=np.arange(args.min_z, args.max_z + args.step_z, args.step_z),
         with_ground_plane=not args.without_ground_plane,
         static_models_only=args.static_models_only,
@@ -264,5 +256,7 @@ if __name__ == '__main__':
         axis_y_limits=y_limits,
         mesh_type='visual' if args.use_visual else 'collision')
 
-    print('Output map filename: {}'.format(os.path.join(args.output_dir, output_filename)))    
-    print('Map stored at: {}'.format(os.path.join(args.output_dir, output_filename)))
+    print('Output map filename: {}'.format(
+        os.path.join(args.output_dir, output_filename)))
+    print('Map stored at: {}'.format(
+        os.path.join(args.output_dir, output_filename)))

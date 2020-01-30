@@ -27,22 +27,22 @@ def spawn_sdf_model(req, robot_name, param_name, x, y, z, roll, pitch, yaw):
 
     name = 'spawn_sdf_model'
 
-    server = Server()    
+    server = Server()
     # TODO: Use user input to set host and port
     server.create_simulation(
-        name, 
-        ros_host='localhost', 
-        ros_port=11311, 
-        gazebo_host='localhost', 
-        gazebo_port=11345, 
-        anonymous=True, 
+        name,
+        ros_host='localhost',
+        ros_port=11311,
+        gazebo_host='localhost',
+        gazebo_port=11345,
+        anonymous=True,
         output_log_dir=None)
-        
+
     simulation = server.get_simulation(name)
     simulation.init_task(
         name='spawn_sdf_model',
         command='rosrun gazebo_ros spawn_model -x {x} -y {y} -z {z} -R {roll} -P {pitch} -Y {yaw} -sdf -param {param} -model {robot_name}',
-        has_gazebo=False, 
+        has_gazebo=False,
         params=dict(
             x=x,
             y=y,
@@ -53,14 +53,15 @@ def spawn_sdf_model(req, robot_name, param_name, x, y, z, roll, pitch, yaw):
             param=param_name,
             robot_name=robot_name))
     simulation.run_all_tasks()
-    
+
     # TODO: Unpause simulation if unpause-simulation is True
 
     return TriggerResponse(True, 'OK')
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Spawn SDF model after trigger')
+    parser = argparse.ArgumentParser(
+        description='Spawn SDF model after trigger')
     parser.add_argument(
         '--param_name',
         type=str,
@@ -104,18 +105,18 @@ if __name__ == '__main__':
         action='store_true',
         help='Unpause simulation once the model has been spawned')
 
-    args = parser.parse_args(rospy.myargv()[1:])
+    args = parser.parse_args()
 
     rospy.init_node('spawn_sdf_model', anonymous=True)
 
     rospy.loginfo('Waiting for trigger to service to spawn a SDF model')
 
     srv = rospy.Service(
-        'spawn_sdf_model', 
-        Trigger, 
+        'spawn_sdf_model',
+        Trigger,
         lambda req: spawn_sdf_model(
-            req, 
-            args.robot_name, 
+            req,
+            args.robot_name,
             args.param_name,
             args.x,
             args.y,

@@ -21,12 +21,12 @@ from pcg_gazebo.task_manager import Server
 
 
 # Add a run_simulation method to test the generated world
-def run_simulation(world_filename, ros_host='localhost', ros_port=11311, 
-                   gazebo_host='localhost', gazebo_port=11345, 
+def run_simulation(world_filename, ros_host='localhost', ros_port=11311,
+                   gazebo_host='localhost', gazebo_port=11345,
                    anonymous=False, output_log_dir=None, physics='ode',
                    paused=False, gui=True):
     name = 'gazebo_sim'
-    server = Server()    
+    server = Server()
     server.create_simulation(
         name,
         ros_host,
@@ -35,7 +35,7 @@ def run_simulation(world_filename, ros_host='localhost', ros_port=11311,
         gazebo_port,
         anonymous,
         output_log_dir)
-        
+
     simulation = server.get_simulation(name)
     simulation.create_gazebo_task(
         name='gazebo',
@@ -47,12 +47,14 @@ def run_simulation(world_filename, ros_host='localhost', ros_port=11311,
     simulation.run_all_tasks()
     simulation.wait()
 
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Start Gazebo world from file')
+    parser = argparse.ArgumentParser(
+        description='Start Gazebo world from file')
     parser.add_argument(
-        '--input_topic', 
-        '-t', 
-        type=str, 
+        '--input_topic',
+        '-t',
+        type=str,
         help='ROS topic that will deliver the XML text input with the SDF robot description')
     parser.add_argument(
         '--input_world_filename',
@@ -60,28 +62,29 @@ if __name__ == '__main__':
         type=str,
         help='Input')
     parser.add_argument(
-        '--physics', 
+        '--physics',
         default='ode',
         type=str,
         help='Name of the physics engine')
     parser.add_argument(
-        '--paused', 
+        '--paused',
         type=int,
         default=0,
         help='Start simulation paused')
     parser.add_argument(
-        '--gui', 
+        '--gui',
         type=int,
         default=1,
         help='Do not start Gazebo client')
     args = parser.parse_args()
 
     assert args.physics in ['ode', 'bullet', 'simbody'], \
-        'Valid physics engines are ode, bullet or simbody'    
+        'Valid physics engines are ode, bullet or simbody'
 
     world_filename = None
-    if args.input_world_filename:        
-        print('Running Gazebo from world file: {}'.format(args.input_world_filename))
+    if args.input_world_filename:
+        print('Running Gazebo from world file: {}'.format(
+            args.input_world_filename))
         world_filename = os.path.abspath(args.input_world_filename)
         print(world_filename)
     elif args.input_topic:
@@ -92,7 +95,8 @@ if __name__ == '__main__':
             print('rospy could not be imported')
             exit()
         rospy.init_node('start_gazebo_world', anonymous=True)
-        print('Waiting for world filename via topic: {}'.format(args.input_topic))        
+        print('Waiting for world filename via topic: {}'.format(
+            args.input_topic))
         topic_xml = rospy.wait_for_message(args.input_topic, String)
         world_filename = topic_xml.data
         print('Message received')
@@ -106,7 +110,7 @@ if __name__ == '__main__':
         'Input world file is invalid, value={}'.format(world_filename)
 
     run_simulation(
-        world_filename, 
+        world_filename,
         physics=args.physics,
         paused=bool(int(args.paused)),
         gui=bool(int(args.gui)))

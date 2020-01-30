@@ -39,35 +39,41 @@ description.
 from __future__ import print_function
 import os
 import argparse
-import rospy
 import subprocess
 import sys
 import re
 import yaml
 import rospkg
 from time import time, sleep
-from std_msgs.msg import String
-from std_srvs.srv import Trigger, Empty
-from gazebo_msgs.srv import SpawnModel
-from geometry_msgs.msg import Pose
 from pcg_gazebo.parsers import parse_sdf, parse_urdf, \
     sdf2urdf, urdf2sdf
 from pcg_gazebo.simulation.properties import Pose as PosePCG
 from pcg_gazebo.utils import process_jinja_template
+try:
+    import rospy
+    from std_msgs.msg import String
+    from std_srvs.srv import Trigger, Empty
+    from gazebo_msgs.srv import SpawnModel
+    from geometry_msgs.msg import Pose
+    ROS_AVAILABLE = True
+except ImportError:
+    ROS_AVAILABLE = False
+
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Generate SDF model from Jinja2 template files')
+    parser = argparse.ArgumentParser(
+        description='Generate SDF model from Jinja2 template files')
     parser.add_argument(
-        '--param-file', '-f', type=str, 
+        '--param-file', '-f', type=str,
         help='YAML parameter file to be set in the model')
     parser.add_argument(
-        '--param', '-p', action='append', 
+        '--param', '-p', action='append',
         help='Model parameter to be replaced in the SDF file')
     parser.add_argument(
-        '--model-template', '-m', type=str, 
+        '--model-template', '-m', type=str,
         help='Robot model file template')
     parser.add_argument(
-        '--sdf', action='store_true', 
+        '--sdf', action='store_true',
         help='Flag to signal that the input template is for a SDF file')
     parser.add_argument(
         '--urdf', action='store_true')
@@ -89,9 +95,9 @@ if __name__ == '__main__':
     parser.add_argument(
         '--unpause', action='store_true')
     parser.add_argument(
-        '--unpause-timeout', 
-        type=float, 
-        default=0, 
+        '--unpause-timeout',
+        type=float,
+        default=0,
         help='Timeout to call the Gazebo unpause physics service')
     parser.add_argument(
         '--robot-namespace', type=str, default='robot', help='')
@@ -125,60 +131,68 @@ if __name__ == '__main__':
         type=float,
         default=0.0,
         help='Yaw angle of the spawning position in radians')
-    args = parser.parse_args(rospy.myargv()[1:])
+
+    args = parser.parse_args()
 
     assert os.path.isfile(args.model_template), \
         'Invalid model template file, value={}'.format(args.model_template)
-        
+
     if not args.sdf and not args.urdf:
-        rospy.logerr('Neither the --sdf nor the --urdf flags were set')
+        print('Neither the --sdf nor the --urdf flags were set')
         sys.exit(-1)
 
     params = dict()
-    
+
     if args.param_file is not None and os.path.isfile(args.param_file):
-        rospy.loginfo('Importing parameters from file: {}'.format(args.param_file))
+        print('Importing parameters from file: {}'.format(args.param_file))
         with open(args.param_file, 'r') as p_file:
             params = yaml.load(p_file, Loader=yaml.FullLoader)
-        rospy.loginfo('Parameters for Jinja template loaded')
+        print('Parameters for Jinja template loaded')
         for tag in params:
-            rospy.loginfo('\t {}={}'.format(tag, params[tag]))
+            print('\t {}={}'.format(tag, params[tag]))
     if args.param:
         if len(args.param):
             for item in args.param:
                 param = item.split('=')
-                assert len(param) == 2, 'Parameter must be provided as <param_name>=<param_value>'
+                assert len(param) == 2, \
+                    'Parameter must be provided as <param_name>=<param_value>'
                 params[param[0]] = param[1]
-                rospy.loginfo('Jinja input parameter: {}={}'.format(param[0], param[1]))
+                print('Jinja input parameter: {}={}'.format(
+                    param[0], param[1]))
 
-    output_xml = process_jinja_template(args.model_template, parameters=params) 
-    
-    if args.sdf:                
-        rospy.loginfo('Parsing the SDF template: {}'.format(args.model_template))
+    output_xml = process_jinja_template(
+        args.model_template, parameters=params)
+
+    if args.sdf:
+        print('Parsing the SDF template: {}'.format(
+            args.model_template))
         sdf = parse_sdf(output_xml)
         urdf = sdf2urdf(sdf.models[0])
-                    
+
         if args.output_filename:
             sdf.export_xml(args.output_filename)
             urdf.export_xml(args.output_filename.replace('.sdf', '.urdf'))
-            rospy.loginfo('SDF file exported to: {}'.format(args.output_filename))
-            rospy.loginfo('URDF file exported to: {}'.format(args.output_filename.replace('.sdf', '.urdf')))
+            print('SDF file exported to: {}'.format(args.output_filename))
+            print('URDF file exported to: {}'.format(
+                args.output_filename.replace('.sdf', '.urdf')))
     elif args.urdf:
-        rospy.loginfo('Parsing the URDF template: {}'.format(args.model_template))
+        print('Parsing the URDF template: {}'.format(args.model_template))
         urdf = parse_urdf(output_xml)
         sdf = urdf2sdf(urdf)
-        
+
         if args.output_filename:
             # Export file
             urdf.export_xml(args.output_filename)
             sdf.export_xml(args.output_filename.replace('.urdf', '.sdf'))
-            rospy.loginfo('SDF file exported to: {}'.format(args.output_filename.replace('.urdf', '.sdf')))
-            rospy.loginfo('URDF file exported to: {}'.format(args.output_filename))
+            print('SDF file exported to: {}'.format(
+                args.output_filename.replace('.urdf', '.sdf')))
+            print('URDF file exported to: {}'.format(args.output_filename))
     else:
         sys.exit()
 
     if args.sdf_output_param or args.urdf_output_param or args.spawn or \
-        args.output_topic or args.spawn_sdf_model_srv:
+            args.output_topic or args.spawn_sdf_model_srv:
+        assert ROS_AVAILABLE, 'rospy not available, cannot start node'
         if rospy.is_shutdown():
             raise rospy.ROSInitException('ROS master is not running!')
 
@@ -186,17 +200,19 @@ if __name__ == '__main__':
 
     if args.sdf_output_param is not None and len(args.sdf_output_param) > 0:
         # Publish SDF robot description
+        assert ROS_AVAILABLE, 'rospy not available, cannot set parameter'
         rospy.set_param(args.sdf_output_param, sdf.to_xml_as_str())
-        rospy.loginfo('SDF stored in {}'.format(args.sdf_output_param))
-    
+        print('SDF stored in {}'.format(args.sdf_output_param))
+
     if args.urdf_output_param is not None and len(args.urdf_output_param) > 0:
         # Convert file to URDF
-        rospy.set_param(args.urdf_output_param, urdf.to_xml_as_str())     
-        rospy.loginfo('URDF stored in {}'.format(args.urdf_output_param))       
+        assert ROS_AVAILABLE, 'rospy not available, cannot set parameters'
+        rospy.set_param(args.urdf_output_param, urdf.to_xml_as_str())
+        print('URDF stored in {}'.format(args.urdf_output_param))
 
     if args.sdf and args.spawn:
-        rospy.loginfo('Spawning the SDF model to Gazebo')
-
+        print('Spawning the SDF model to Gazebo')
+        assert ROS_AVAILABLE, 'rospy not available, cannot use service'
         # Connect to service
         srv_name = '/gazebo/spawn_sdf_model'
         rospy.wait_for_service(srv_name, timeout=60)
@@ -213,7 +229,7 @@ if __name__ == '__main__':
         pose.orientation.y = rot[1]
         pose.orientation.z = rot[2]
         pose.orientation.w = rot[3]
-        
+
         result = spawn_fcn(
             args.robot_namespace,
             sdf.to_xml_as_str(),
@@ -221,48 +237,53 @@ if __name__ == '__main__':
             pose,
             'world')
         if result.success:
-            rospy.loginfo('Robot was spawned, namespace={}'.format(args.robot_namespace))
+            print('Robot was spawned, namespace={}'.format(
+                args.robot_namespace))
         else:
-            rospy.logerr('Error spawning robot, message={}'.format(result.message))
+            print('Error spawning robot, message={}'.format(
+                result.message))
 
         if args.unpause:
-            rospy.loginfo('Unpausing simulation...')
+            assert ROS_AVAILABLE, 'rospy not available, cannot unpause simulation'
+            print('Unpausing simulation...')
             rospy.wait_for_service('/gazebo/unpause_physics', 10)
             if args.unpause_timeout > 0:
-                rospy.loginfo('Unpause timeout provided = {} s'.format(args.unpause_timeout))
-                start_time = time()                                
-                while time() - start_time <= args.unpause_timeout:                    
-                    sleep(0.001)                    
+                print('Unpause timeout provided = {} s'.format(
+                    args.unpause_timeout))
+                start_time = time()
+                while time() - start_time <= args.unpause_timeout:
+                    sleep(0.001)
             unpause = rospy.ServiceProxy('/gazebo/unpause_physics', Empty)
             unpause()
-            rospy.loginfo('Simulation unpaused')
+            print('Simulation unpaused')
 
-    if args.output_topic:      
-        rospy.loginfo('Output topic: ' + args.output_topic)
+    if args.output_topic:
+        assert ROS_AVAILABLE, 'rospy not available, cannot publish topic'
+        print('Output topic: ' + args.output_topic)
         pub = rospy.Publisher(args.output_topic, String, queue_size=1)
-        
+
         start_time = time()
         # Wait for 30 seconds until another node is subscribed
         while pub.get_num_connections() == 0 and time() - start_time < 30:
             sleep(0.1)
         pub.publish(output_xml)
 
-    if args.sdf and args.spawn_sdf_model_srv:        
+    if args.sdf and args.spawn_sdf_model_srv:
+        assert ROS_AVAILABLE, 'rospy not available, cannot spawn robot'
         try:
-            rospy.wait_for_service(args.spawn_sdf_model_srv, timeout=30)
+            rospy.wait_for_service(
+                args.spawn_sdf_model_srv, timeout=30)
 
-            spawn_sdf_model = rospy.ServiceProxy(args.spawn_sdf_model_srv, Trigger)
+            spawn_sdf_model = rospy.ServiceProxy(
+                args.spawn_sdf_model_srv, Trigger)
 
             output = spawn_sdf_model()
 
             if output.success:
-                rospy.loginfo('SDF model was spawned')
+                print('SDF model was spawned')
             else:
-                rospy.loginfo('Failed to spawn model')
+                print('Failed to spawn model')
+                exit(1)
         except rospy.ROSException as ex:
-            rospy.logerr('Could not connect to service: {}'.format(args.spawn_sdf_model_srv))
-
-
-
-
-    
+            print('Could not connect to service: {}'.format(
+                args.spawn_sdf_model_srv))
