@@ -51,6 +51,7 @@ def run_simulation(world_filename, ros_host='localhost', ros_port=11311,
     print('Created Gazebo task')
     simulation.run_all_tasks()
     print('Running all tasks!')
+    simulation.wait()
 
 
 if __name__ == '__main__':
