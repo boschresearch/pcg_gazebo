@@ -10,7 +10,7 @@ The `pcg_gazebo` Python package is an Open Source
 Project extending the simulation capabilities of the robotics simulator [Gazebo](http://gazebosim.org/)
 for automation and scripting of Gazebo simulations.
 
-Visit the [documentation page](https://boschresearch.github.io/pcg_gazebo_pkgs/) for more information.
+Visit the [documentation page](https://boschresearch.github.io/pcg_gazebo/) for more information.
 
 ## Purpose of the project
 
