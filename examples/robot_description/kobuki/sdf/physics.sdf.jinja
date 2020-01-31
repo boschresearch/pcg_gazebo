@@ -1,0 +1,58 @@
+{% macro collision_friction_properties(
+    sdf_version=1.6, 
+    mu=1.0, 
+    mu2=1.0,
+    slip1=0.0,
+    slip2=0.0,
+    friction=1.0,
+    friction2=1.0,
+    fdir1=[0, 0, 0],
+    rolling_friction=1.0) 
+%}    
+    <friction>
+        <ode>
+            <mu>{{ mu }}</mu>
+            <mu2>{{ mu2 }}</mu2>
+            <slip1>{{ slip1 }}</slip1>
+            <slip2>{{ slip2 }}</slip2>
+        </ode>
+        <bullet>
+            <friction>{{ friction }}</friction>
+            <friction2>{{ friction2 }}</friction2>
+            <fdir1>{{ fdir1|join(" ") }}</fdir1>
+            <rolling_friction>{{ rolling_friction }}</rolling_friction>
+        </bullet>                
+    </friction>
+
+{% endmacro %}
+
+{% macro collision_contact_properties(
+    sdf_version=1.6,
+    soft_cfm=0.0,
+    soft_erp=0.2,
+    kp=1000000000000,
+    kd=1.0,
+    max_vel=0.01,
+    min_depth=0.0,
+    split_impulse=1,
+    split_impulse_penetration_threshold=-0.01) 
+%}
+    <contact>
+        <ode>
+            <soft_cfm>{{ soft_cfm }}</soft_cfm>
+            <soft_erp>{{ soft_erp }}</soft_erp>
+            <kp>{{ kp }}</kp>
+            <kd>{{ kd }}</kd>
+            <max_vel>{{ max_vel }}</max_vel>
+            <min_depth>{{ min_depth }}</min_depth>
+        </ode>
+        <bullet>
+            <soft_cfm>{{ soft_cfm }}</soft_cfm>
+            <soft_erp>{{ soft_erp }}</soft_erp>
+            <kp>{{ kp }}</kp>
+            <kd>{{ kd }}</kd>
+            <split_impulse>{{ split_impulse }}</split_impulse>
+            <split_impulse_penetration_threshold>{{ split_impulse_penetration_threshold }}</split_impulse_penetration_threshold>
+        </bullet>            
+    </contact>
+{% endmacro %}

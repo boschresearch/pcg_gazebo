@@ -1,0 +1,249 @@
+{% import 'inertias'|find_sdf_template as inertias %}
+{% import 'gazebo_ros_plugins'|find_sdf_template as gazebo_plugins %}
+{% import 'parameters.sdf.jinja' as parameters %}
+{% import 'actuators.sdf.jinja' as actuators %}
+{% import 'physics.sdf.jinja' as physics %}
+
+{% macro robot(
+    robot_namespace=none,
+    base_link='base_link',
+    wheel_geometry='cylinder',
+    base_link_friction=0.3,
+    base_link_friction2=0.3,
+    groundtruth_topic='groundtruth',
+    diff_drive_command_topic='cmd_vel',
+    wheel_joint_velocity_limit=-1,
+    wheel_joint_effort_limit=-1,
+    wheel_joint_damping=0,
+    wheel_joint_friction=0,
+    wheel_joint_spring_reference=0,
+    wheel_joint_spring_stiffness=0,
+    wheel_max_contacts=20,
+    wheel_mu=1.0,
+    wheel_mu2=1.0,
+    wheel_slip1=0.0,
+    wheel_slip2=0.0,
+    wheel_friction=1.0,
+    wheel_friction2=1.0,
+    wheel_fdir1=[0, 0, 0],
+    wheel_rolling_friction=1.0,
+    wheel_soft_cfm=0.0,
+    wheel_soft_erp=0.2,
+    wheel_kp=1000000000000,
+    wheel_kd=1.0,
+    wheel_max_vel=0.01,
+    wheel_min_depth=0.0,
+    wheel_split_impulse=1,
+    wheel_split_impulse_penetration_threshold=-0.01,
+    caster_wheel_geometry='cylinder',
+    caster_wheel_joint_type='fixed',
+    caster_wheel_joint_velocity_limit=-1,
+    caster_wheel_joint_effort_limit=-1,
+    caster_wheel_mu=0.0,
+    caster_wheel_mu2=0.0,
+    caster_wheel_slip1=0.0,
+    caster_wheel_slip2=0.0,
+    caster_wheel_friction=0.0,
+    caster_wheel_friction2=0.0,
+    caster_wheel_fdir1=[0, 0, 0],
+    caster_wheel_rolling_friction=1.0,
+    caster_wheel_soft_cfm=0.0,
+    caster_wheel_soft_erp=0.2,
+    caster_wheel_kp=1000000000000,
+    caster_wheel_kd=1.0,
+    caster_wheel_max_vel=0.01,
+    caster_wheel_min_depth=0.0,
+    caster_wheel_split_impulse=1,
+    caster_wheel_split_impulse_penetration_threshold=-0.01,
+    add_sensor_plate=false
+) 
+%}        
+
+{% set wheel_friction = physics.collision_friction_properties(
+    sdf_version=sdf_version, 
+    mu=wheel_mu, 
+    mu2=wheel_mu2,
+    slip1=wheel_slip1,
+    slip2=wheel_slip2,
+    friction=wheel_friction,
+    friction2=wheel_friction2,
+    fdir1=wheel_fdir1,
+    rolling_friction=wheel_rolling_friction
+    ) 
+%}
+
+{% set wheel_contact = physics.collision_contact_properties(
+    sdf_version=sdf_version,
+    soft_cfm=wheel_soft_cfm,
+    soft_erp=wheel_soft_erp,
+    kp=wheel_kp,
+    kd=wheel_kd,
+    max_vel=wheel_max_vel,
+    min_depth=wheel_min_depth,
+    split_impulse=wheel_split_impulse,
+    split_impulse_penetration_threshold=wheel_split_impulse_penetration_threshold
+    ) 
+%}
+
+{% set caster_wheel_friction = physics.collision_friction_properties(
+    sdf_version=sdf_version, 
+    mu=caster_wheel_mu, 
+    mu2=caster_wheel_mu2,
+    slip1=caster_wheel_slip1,
+    slip2=caster_wheel_slip2,
+    friction=caster_wheel_friction,
+    friction2=caster_wheel_friction2,
+    fdir1=caster_wheel_fdir1,
+    rolling_friction=caster_wheel_rolling_friction
+    ) 
+%}
+
+{% set caster_wheel_contact = physics.collision_contact_properties(
+    sdf_version=sdf_version,
+    soft_cfm=caster_wheel_soft_cfm,
+    soft_erp=caster_wheel_soft_erp,
+    kp=caster_wheel_kp,
+    kd=caster_wheel_kd,
+    max_vel=caster_wheel_max_vel,
+    min_depth=caster_wheel_min_depth,
+    split_impulse=caster_wheel_split_impulse,
+    split_impulse_penetration_threshold=caster_wheel_split_impulse_penetration_threshold
+    ) 
+%}
+
+<pose>0 0 0.051597 0 0 0</pose>
+<!-- Base link -->
+
+<link name='{{ base_link }}'>
+    <pose>0 0 0 0 0 0</pose>
+    <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>{{ parameters.base_link_mass }}</mass>
+        {{ inertias.solid_cylinder_inertia(
+            parameters.base_link_mass, 
+            parameters.base_link_radius, 
+            parameters.base_link_length, 
+            'z') }}
+    </inertial>
+
+    <visual name='visual'>
+        <pose>0 0 0 0 0 0</pose>            
+        <geometry>
+            <mesh>
+                <uri>{% '../meshes/kobuki/main_body.obj'|find_file %}</uri>
+                <scale>1 1 1</scale>
+            </mesh>
+        </geometry>
+    </visual>
+
+    <collision name='collision'>
+        <pose>0 0 0.005737 0 0 0</pose>
+        <geometry>
+            <cylinder>
+                <radius>0.175</radius>
+                <length>0.06553</length>
+            </cylinder>
+        </geometry>
+
+        <surface>
+            {{ physics.collision_friction_properties(
+                sdf_version=sdf_version|default(1.6, true), 
+                mu=base_link_friction|default(0.3, true), 
+                mu2=base_link_friction2|default(0.3, true),
+                friction=base_link_friction|default(0.3, true),
+                friction2=base_link_friction2|default(0.3, true)
+                ) }}
+        </surface>
+    </collision>
+    
+</link>
+
+{# Adding bumper sensor to the Kobuki's main body #}
+{{ sensors.bumper(
+    robot_namespace=robot_namespace,
+    topic_name='bumper',
+    update_rate=50) }}
+
+{# Adding actuators #}
+
+<!-- ACTUATORS -->
+
+{{ actuators.wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    geometry=wheel_geometry, 
+    placement='right', 
+    friction=wheel_friction, 
+    contact=wheel_contact,
+    joint_velocity_limit=wheel_joint_velocity_limit,
+    joint_effort_limit=wheel_joint_effort_limit,
+    joint_damping=wheel_joint_damping,
+    joint_friction=wheel_joint_friction,
+    joint_spring_reference=wheel_joint_spring_reference,
+    joint_spring_stiffness=wheel_joint_spring_stiffness,
+    max_contacts=wheel_max_contacts) }}
+
+{{ actuators.wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    geometry=wheel_geometry, 
+    placement='left', 
+    friction=wheel_friction, 
+    contact=wheel_contact,
+    joint_velocity_limit=wheel_joint_velocity_limit,
+    joint_effort_limit=wheel_joint_effort_limit,
+    joint_damping=wheel_joint_damping,
+    joint_friction=wheel_joint_friction,
+    joint_spring_reference=wheel_joint_spring_reference,
+    joint_spring_stiffness=wheel_joint_spring_stiffness,
+    max_contacts=wheel_max_contacts) }}
+
+{{ actuators.caster_wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    geometry=caster_wheel_geometry, 
+    placement='front', 
+    friction=caster_wheel_friction, 
+    contact=caster_wheel_contact,
+    joint_type=caster_wheel_joint_type,
+    joint_velocity_limit=caster_wheel_joint_velocity_limit,
+    joint_effort_limit=caster_wheel_joint_effort_limit) }}
+
+{{ actuators.caster_wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    geometry=caster_wheel_geometry, 
+    placement='back', 
+    friction=caster_wheel_friction, 
+    contact=caster_wheel_contact,
+    joint_type=caster_wheel_joint_type,
+    joint_velocity_limit=caster_wheel_joint_velocity_limit,
+    joint_effort_limit=caster_wheel_joint_effort_limit) }}
+
+
+{{ gazebo_plugins.pose_gt(
+    robot_namespace=robot_namespace,
+    base_link=base_link,
+    topic_name=groundtruth_topic) 
+}} 
+
+{% if robot_namespace is not none %}
+    {% set wheel_left_joint = robot_namespace ~ '/' ~ 'wheel_left_joint' %}
+    {% set wheel_right_joint = robot_namespace ~ '/' ~ 'wheel_right_joint' %}
+{% else %}
+    {% set wheel_left_joint = 'wheel_left_joint' %}
+    {% set wheel_right_joint = 'wheel_right_joint' %}
+{% endif %}
+
+{{ gazebo_plugins.diff_drive(
+    command_topic=diff_drive_command_topic,
+    base_link=base_link,
+    wheel_separation=parameters.wheel_separation,
+    wheel_diameter=parameters.wheel_diameter,
+    wheel_torque=parameters.wheel_torque,
+    odometry_topic=groundtruth_topic,
+    odometry_frame=base_link,
+    left_joint=wheel_left_joint,
+    right_joint=wheel_right_joint) }} 
+    
+{% endmacro %}

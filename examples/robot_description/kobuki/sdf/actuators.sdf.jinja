@@ -1,0 +1,233 @@
+{# ========================================== #}
+{# Robot parts #}
+{# ========================================== #}
+
+{% import 'parameters.sdf.jinja' as parameters %}
+{% import 'inertias'|find_sdf_template as inertias %}
+
+{# Wheel macro #}
+
+{% macro wheel(
+    robot_namespace=none,
+    parent='', 
+    geometry='cylinder', 
+    placement='right',
+    friction=none,    
+    contact=none,
+    joint_velocity_limit=-1,
+    joint_effort_limit=-1,
+    joint_damping=0,
+    joint_friction=0,
+    joint_spring_reference=0,
+    joint_spring_stiffness=0,
+    max_contacts=20) 
+%}
+
+    {% set link_name = 'wheel_' ~ placement ~ '_link' %}
+    {% set joint_name = 'wheel_' ~ placement ~ '_joint' %}
+
+    {% if robot_namespace is defined and robot_namespace is not none %}
+        {% set link_name = [robot_namespace, link_name]|join('/') %}
+        {% set joint_name = [robot_namespace, joint_name]|join('/') %}
+    {% endif %}  
+
+    <!-- Wheel: {{ link_name }} -->
+
+    <link name='{{ link_name }}'>
+        {% if placement == 'right' %}
+            <pose>0 {{ -parameters.wheel_separation / 2 }} {{ parameters.caster_wheel_z_offset - parameters.caster_radius + parameters.wheel_radius }} {{ -1 * parameters.pi / 2 }} 0 0</pose>
+        {% elif placement == 'left' %}
+            <pose>0 {{ parameters.wheel_separation / 2 }} {{ parameters.caster_wheel_z_offset - parameters.caster_radius + parameters.wheel_radius }} {{ -1 * parameters.pi / 2 }} 0 0</pose>
+        {% else %}  
+            Invalid wheel placement, options=right, left
+        {% endif %}        
+        
+        <inertial>            
+            <pose>0 0 0 0 0 0</pose>
+            <mass>{{ parameters.wheel_mass }}</mass>
+            {% if geometry == 'cylinder' or geometry == 'mesh' %}
+                {{ inertias.solid_cylinder_inertia(parameters.wheel_mass, parameters.wheel_radius, parameters.wheel_cylinder_length, 'z') }}
+            {% elif geometry == 'sphere' %}
+                {{ inertias.solid_sphere_inertia(parameters.wheel_mass, parameters.wheel_radius) }}
+            {% else %}
+                Invalid wheel geometry, options=cylinder, sphere or mesh
+            {% endif %}
+        </inertial>
+
+        <visual name='visual'>
+            <geometry>
+                <mesh>
+                    <uri>{{ parameters.wheel_visual_mesh }}</uri>
+                    <scale>1 1 1</scale>
+                </mesh>
+            </geometry>
+        </visual>
+
+        <collision name='collision'>
+            <max_contacts>{{ max_contacts }}</max_contacts>
+            {% if geometry == 'cylinder' %}
+                <geometry>
+                    <cylinder>
+                        <radius>{{ parameters.wheel_radius }}</radius>
+                        <length>{{ parameters.wheel_cylinder_length }}</length>
+                    </cylinder>
+                </geometry>
+            {% elif geometry == 'sphere' %}
+                <geometry>
+                    <sphere>
+                        <radius>{{ parameters.wheel_radius }}</radius>
+                    </sphere>
+                </geometry>
+            {% elif geometry == 'mesh' %}
+                <geometry>
+                    <mesh>
+                        <uri>{{ parameters.wheel_collision_mesh }}</uri>
+                        <scale>1 1 1</scale>
+                    </mesh>
+                </geometry>
+            {% else %}
+                Invalid wheel geometry, options=cylinder, sphere or mesh
+            {% endif %}
+
+            {% if friction is not none or contact is not none %}
+                <surface>
+                    {% if friction is not none %}
+                        {{ friction }}
+                    {% endif %}       
+                    {% if contact is not none %}
+                        {{ contact }}
+                    {% endif %}             
+                </surface>
+            {% endif %}
+        </collision>
+    </link>
+
+    <joint name='{{ joint_name }}' type='revolute'>
+        <parent>{{ parent }}</parent>
+        <child>{{ link_name }}</child>
+        <axis>
+            <xyz>0 0 1</xyz>
+            <limit>
+                <lower>-10000000000000000</lower>
+                <upper>10000000000000000</upper>
+                <velocity>{{ joint_velocity_limit }}</velocity>
+                <effort>{{ joint_effort_limit }}</effort>
+            </limit>
+            <dynamics>
+                <damping>{{ joint_damping }}</damping>
+                <friction>{{ joint_friction }}</friction>
+                <spring_reference>{{ joint_spring_reference }}</spring_reference>
+                <spring_stiffness>{{ joint_spring_stiffness }}</spring_stiffness>
+            </dynamics>
+        </axis>     
+                   
+    </joint>
+
+    <urdf>
+        <transmission name='{{ 'wheel_' ~ placement ~ '_transmission' }}'>
+            <joint name='{{ joint_name }}'>
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name='{{ 'wheel_' ~ placement ~ '_actuator' }}'>
+                <hardwareInterface>VelocityJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+            <type>transmission_interface/SimpleTransmission</type>
+        </transmission>
+    </urdf>
+
+{% endmacro %}
+
+{# Caster wheel macro #}
+
+{% macro caster_wheel(
+    robot_namespace=none,
+    parent='', 
+    geometry='cylinder', 
+    placement='front',
+    friction=none,
+    contact=none,
+    joint_type='fixed',
+    joint_velocity_limit=-1,
+    joint_effort_limit=-1) 
+%}
+    
+    {% set link_name = 'caster_' ~ placement ~ '_link' %}
+    {% set joint_name = 'caster_' ~ placement ~ '_joint' %}
+
+    {% if robot_namespace is not none %}
+        {% set link_name = [robot_namespace, link_name]|join('/') %}
+        {% set joint_name = [robot_namespace, joint_name]|join('/') %}
+    {% endif %}  
+    
+    <!-- Wheel: {{ link_name }} -->
+
+    <link name='{{ link_name }}'>
+        {% if placement == 'front' %}
+            <pose>0.116207 0 {{ parameters.caster_wheel_z_offset }} {{ -1 * parameters.pi / 2 }} 0 0</pose>
+        {% elif placement == 'back' %}
+            <pose>-0.13396221 0 {{ parameters.caster_wheel_z_offset + 0.002 }} {{ -1 * parameters.pi / 2 }} 0 0</pose>
+        {% else %}  
+            Invalid wheel placement, options=front, back
+        {% endif %}
+
+        <inertial>
+            <pose>0 0 0 0 0 0</pose>
+            <mass>{{ parameters.wheel_mass }}</mass>
+            {% if geometry == 'cylinder' %}
+                {{ inertias.solid_cylinder_inertia(parameters.caster_mass, parameters.caster_radius, parameters.caster_cylinder_length, 'z') }}
+            {% elif geometry == 'sphere' %}
+                {{ inertias.solid_sphere_inertia(parameters.caster_mass, parameters.caster_radius) }}
+            {% else %}
+                Invalid wheel geometry, options=cylinder, sphere, received={{ geometry }}
+            {% endif %}
+        </inertial>
+
+        <collision name='collision'>
+            {% if geometry == 'cylinder' %}
+                <geometry>
+                    <cylinder>
+                        <radius>{{ parameters.caster_radius }}</radius>
+                        <length>{{ parameters.caster_cylinder_length }}</length>
+                    </cylinder>
+                </geometry>
+            {% elif geometry == 'sphere' %}
+                <geometry>
+                    <sphere>
+                        <radius>{{ parameters.caster_radius }}</radius>
+                    </sphere>
+                </geometry>
+            {% else %}
+                Invalid wheel geometry, options=cylinder, sphere
+            {% endif %}
+
+            {% if friction is not none or contact is not none %}
+                <surface>
+                    {% if friction is not none %}
+                        {{ friction }}
+                    {% endif %}       
+                    {% if contact is not none %}
+                        {{ contact }}
+                    {% endif %}             
+                </surface>
+            {% endif %}
+        </collision>
+    </link>
+
+    <joint name='{{ joint_name }}' type='{{ joint_type }}'>
+        <parent>{{ parent }}</parent>
+        <child>{{ link_name }}</child>        
+        {% if joint_type != 'fixed' %}
+            <axis>
+                <xyz>0 0 1</xyz>
+                <limit>
+                    <lower>-10000000000000000</lower>
+                    <upper>10000000000000000</upper>
+                    <velocity>{{ joint_velocity_limit }}</velocity>
+                    <effort>{{ joint_effort_limit }}</effort>
+                </limit>
+            </axis>
+        {% endif %}
+    </joint>
+
+{% endmacro %}
