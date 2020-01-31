@@ -166,11 +166,22 @@ def load_yaml(input_yaml):
         return yaml.load(input_yaml, _PCGYAMLLoader)
 
 
+class _RelEnvironment(Environment):
+    """Override join_path() to enable relative template paths."""
+    def join_path(self, template, parent):
+        return os.path.join(os.path.dirname(parent), template)
+
+
 class _AbsFileSystemLoader(BaseLoader):
     def __init__(self, path):
         self.path = path
 
+    def join_path(self, template, parent):
+        return os.path.join(os.path.dirname(parent), template)
+
     def get_source(self, environment, template):
+        print('template=', template)
+        print('path=', self.path)
         if os.path.isfile(template):
             path = template
         else:
@@ -202,6 +213,17 @@ def _find_sdf_template(name):
     else:
         filename = name
     return get_template_path(filename)
+
+
+def _find_relative_path(name):
+    full_path = os.path.abspath(name)
+    if os.path.exists(full_path):
+        return os.path.abspath(full_path)
+    else:
+        PCG_ROOT_LOGGER.error(
+            'Jinja processor [find_file]: Cannot find file <{}>'.format(
+                name))
+        return None
 
 
 def _pretty_print_xml(xml):
@@ -292,10 +314,11 @@ def process_jinja_template(template, parameters=None, include_dir=None):
         base_loader = FileSystemLoader('.')
     includes_loader = _AbsFileSystemLoader(include_dir)
 
-    base_env = Environment(loader=base_loader)
+    base_env = _RelEnvironment(loader=base_loader)
     # Add Jinja function similar to $(find <package>) in XACRO
     base_env.filters['find_ros_package'] = _find_ros_package
     base_env.filters['find_sdf_template'] = _find_sdf_template
+    base_env.filters['find_relative_path'] = _find_relative_path
 
     if os.path.isfile(template):
         PCG_ROOT_LOGGER.info(
@@ -306,10 +329,10 @@ def process_jinja_template(template, parameters=None, include_dir=None):
     model_template.environment.loader = includes_loader
 
     output_xml = _parse_package_paths(model_template.render(**parameters))
-    try:
-        return _pretty_print_xml(output_xml)
-    except BaseException:
-        return output_xml
+    # try:
+    return _pretty_print_xml(output_xml)
+    # except BaseException:
+    #     return output_xml
 
 
 def generate_random_string(size=3):
