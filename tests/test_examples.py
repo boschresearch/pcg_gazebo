@@ -189,6 +189,13 @@ def test_notebooks(script_runner):
         'examples'
     )
 
+    notebook_blacklist = [
+        'sim_inspection_of_gazebo_models.ipynb',
+        'sim_creating_models_with_jupyter_notebooks.ipynb',
+        'sim_model_factory.ipynb',
+        'sim_model_group_generators.ipynb'
+    ]
+    
     for item in os.listdir(examples_dir):
         filename = os.path.join(examples_dir, item)
 
@@ -196,6 +203,8 @@ def test_notebooks(script_runner):
             return
 
         if filename.lower().endswith('.ipynb'):
+            if filename in notebook_blacklist:
+                continue
             with open(filename, 'r') as file_obj:
                 script = load_notebook(file_obj)
             exec(script, globals())
