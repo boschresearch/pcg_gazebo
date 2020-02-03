@@ -27,8 +27,9 @@ from jinja2 import FileSystemLoader, Environment, \
 from .log import PCG_ROOT_LOGGER
 
 PCG_RESOURCES_ROOT_DIR = os.path.join(os.path.expanduser('~'), '.pcg')
+PCG_ROOT_FOLDER = os.path.dirname(os.path.abspath(__file__))
 PCG_TEMPLATE_FOLDER = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
+    PCG_ROOT_FOLDER,
     'templates')
 
 
@@ -166,22 +167,11 @@ def load_yaml(input_yaml):
         return yaml.load(input_yaml, _PCGYAMLLoader)
 
 
-class _RelEnvironment(Environment):
-    """Override join_path() to enable relative template paths."""
-    def join_path(self, template, parent):
-        return os.path.join(os.path.dirname(parent), template)
-
-
 class _AbsFileSystemLoader(BaseLoader):
     def __init__(self, path):
         self.path = path
 
-    def join_path(self, template, parent):
-        return os.path.join(os.path.dirname(parent), template)
-
     def get_source(self, environment, template):
-        print('template=', template)
-        print('path=', self.path)
         if os.path.isfile(template):
             path = template
         else:
@@ -215,13 +205,14 @@ def _find_sdf_template(name):
     return get_template_path(filename)
 
 
-def _find_relative_path(name):
-    full_path = os.path.abspath(name)
+def _find_relative_path(name, root_dir='.'):
+    full_path = os.path.abspath(os.path.join(root_dir, name))
     if os.path.exists(full_path):
         return os.path.abspath(full_path)
     else:
         PCG_ROOT_LOGGER.error(
-            'Jinja processor [find_file]: Cannot find file <{}>'.format(
+            'Jinja processor [find_relative_file]: '
+            'Cannot find file <{}>'.format(
                 name))
         return None
 
@@ -230,7 +221,7 @@ def _pretty_print_xml(xml):
     import lxml.etree as etree
     parser = etree.XMLParser(remove_blank_text=True)
     root = etree.fromstring(xml, parser=parser)
-    return etree.tostring(root, pretty_print=True, encoding='unicode').decode()
+    return etree.tostring(root, pretty_print=True).decode()
 
 
 def _parse_package_paths(xml):
@@ -266,13 +257,7 @@ def _parse_package_paths(xml):
 
 
 def process_jinja_template(template, parameters=None, include_dir=None):
-    if isinstance(include_dir, str):
-        if not os.path.isdir(include_dir):
-            PCG_ROOT_LOGGER.error(
-                'Include directory in invalid, dir={}'.format(include_dir))
-            return None
-    else:
-        include_dir = '.'
+    from .path import Path
 
     if not isinstance(parameters, dict):
         parameters = dict()
@@ -288,6 +273,7 @@ def process_jinja_template(template, parameters=None, include_dir=None):
         return None
 
     PCG_ROOT_LOGGER.info('Input template: {}'.format(template))
+    base_loader = None
     if template.startswith('${PCG}/') or \
             template.startswith('$PCG/') or \
             template.startswith('$(PCG)/'):
@@ -301,24 +287,40 @@ def process_jinja_template(template, parameters=None, include_dir=None):
         if os.path.exists(os.path.join(PCG_TEMPLATE_FOLDER, template)):
             template = os.path.join(PCG_TEMPLATE_FOLDER, template)
             base_loader = FileSystemLoader(PCG_TEMPLATE_FOLDER)
+            templates_dir = PCG_TEMPLATE_FOLDER
         else:
             PCG_ROOT_LOGGER.error(
                 'Input template {} not found in the default '
                 'templates folder {}'.format(template, PCG_TEMPLATE_FOLDER))
             return None
-    elif os.path.isfile(template):
-        PCG_ROOT_LOGGER.info('Input template is a file, {}'.format(template))
-        templates_dir = os.path.dirname(template)
-        base_loader = FileSystemLoader(templates_dir)
+    if base_loader is None:
+        filename_path = Path(template)
+        if filename_path.is_valid:
+            templates_dir = os.path.dirname(filename_path.absolute_uri)
+            PCG_ROOT_LOGGER.info('Input template is a file, {}'.format(
+                filename_path.absolute_uri))
+            base_loader = FileSystemLoader(templates_dir)
+            template = filename_path.absolute_uri
+        else:
+            base_loader = FileSystemLoader('.')
+            templates_dir = '.'
+
+    if isinstance(include_dir, str):
+        if not os.path.isdir(include_dir):
+            PCG_ROOT_LOGGER.error(
+                'Include directory in invalid, dir={}'.format(include_dir))
+            return None
     else:
-        base_loader = FileSystemLoader('.')
+        include_dir = templates_dir
+
     includes_loader = _AbsFileSystemLoader(include_dir)
 
-    base_env = _RelEnvironment(loader=base_loader)
+    base_env = Environment(loader=base_loader)
     # Add Jinja function similar to $(find <package>) in XACRO
     base_env.filters['find_ros_package'] = _find_ros_package
     base_env.filters['find_sdf_template'] = _find_sdf_template
-    base_env.filters['find_relative_path'] = _find_relative_path
+    base_env.filters['find_relative_path'] = lambda p: _find_relative_path(
+        p, templates_dir)
 
     if os.path.isfile(template):
         PCG_ROOT_LOGGER.info(
@@ -329,10 +331,10 @@ def process_jinja_template(template, parameters=None, include_dir=None):
     model_template.environment.loader = includes_loader
 
     output_xml = _parse_package_paths(model_template.render(**parameters))
-    # try:
-    return _pretty_print_xml(output_xml)
-    # except BaseException:
-    #     return output_xml
+    try:
+        return _pretty_print_xml(output_xml)
+    except BaseException:
+        return output_xml
 
 
 def generate_random_string(size=3):
