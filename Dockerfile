@@ -6,6 +6,7 @@ RUN apt-get update && \
     python3-pip \
     libspatialindex-dev \
     libgeos-dev \
+    wget \
     pybind11-dev -y
 
 RUN pip3 install flake8 autopep8
@@ -25,7 +26,5 @@ RUN flake8 /tmp/pcg_gazebo/tests
 RUN pip3 install -e .[all]
 
 RUN python3 -c "import pcg_gazebo"
-
-RUN pip3 install -e .[test]
 
 RUN pytest -x /tmp/pcg_gazebo/tests

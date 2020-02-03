@@ -375,6 +375,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#creating-full-gazebo-models-in-python" class="md-nav__link">
+    Creating full Gazebo models in Python
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-group-generator" class="md-nav__link">
+    Model group generator
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-factory" class="md-nav__link">
+    Model factory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#generating-models-from-a-yaml-configuration-file" class="md-nav__link">
     Generating models from a YAML configuration file
   </a>
@@ -420,6 +441,13 @@
   
     <nav class="md-nav">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parsing-xacro-files" class="md-nav__link">
+    Parsing xacro files
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#sdf-parsers" class="md-nav__link">
@@ -783,6 +811,27 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#creating-full-gazebo-models-in-python" class="md-nav__link">
+    Creating full Gazebo models in Python
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-group-generator" class="md-nav__link">
+    Model group generator
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-factory" class="md-nav__link">
+    Model factory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#generating-models-from-a-yaml-configuration-file" class="md-nav__link">
     Generating models from a YAML configuration file
   </a>
@@ -828,6 +877,13 @@
   
     <nav class="md-nav">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parsing-xacro-files" class="md-nav__link">
+    Parsing xacro files
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#sdf-parsers" class="md-nav__link">
@@ -876,6 +932,13 @@ To run the Jupyter notebooks, be sure to install it as</p>
 </pre></div>
 
 <h4 id="model-generation">Model generation<a class="headerlink" href="#model-generation" title="Permanent link">&para;</a></h4>
+<h5 id="creating-full-gazebo-models-in-python">Creating full Gazebo models in Python<a class="headerlink" href="#creating-full-gazebo-models-in-python" title="Permanent link">&para;</a></h5>
+<p>In the <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_creating_models_with_jupyter_notebooks.ipynb">example on creating Gazebo models in Python</a>, it is demonstrated how to use the tools from the <code>simulation</code> module in order to create simulation entities and can be spawned directly into Gazebo.</p>
+<h5 id="model-group-generator">Model group generator<a class="headerlink" href="#model-group-generator" title="Permanent link">&para;</a></h5>
+<p>In the <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_group_generators.ipynb">model group generator example notebook</a>, it is demonstrated how to create a model group abstraction in which the model's parameters are re-calculated each time an instance of the model group is created. 
+This allows using a single representation of the model group generator as an asset and generating its variations as an instance is created.</p>
+<h5 id="model-factory">Model factory<a class="headerlink" href="#model-factory" title="Permanent link">&para;</a></h5>
+<p>In the <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_factory.ipynb">model factory example notebook</a>, it is demonstrated how to use the <code>creators</code> module to create parametrized simulation models and spawn them in Gazebo.</p>
 <h5 id="generating-models-from-a-yaml-configuration-file">Generating models from a YAML configuration file<a class="headerlink" href="#generating-models-from-a-yaml-configuration-file" title="Permanent link">&para;</a></h5>
 <p>This examples shows how to define a simulation model as a YAML file
 and generate static Gazebo models to be stored in your local <code>$HOME/.pcg/models</code>
@@ -931,6 +994,7 @@ The model is per default stored in the folder <code>$HOME/.pcg/models/pcg_bouncy
 <div class="codehilite"><pre><span></span>process_jinja_template -h
 </pre></div>
 
+<p>This <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb">notebook</a> also shows an example on how the <code>kobuki</code> robot (converted to a <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/robot_description/kobuki/sdf/kobuki.sdf.jinja">Jinja template to generate the robot description in SDF format</a>) is processed from its templates and imported as an <code>SimulationModel</code> object that can be edited and spawned into the simulation.</p>
 <h4 id="world-generation">World generation<a class="headerlink" href="#world-generation" title="Permanent link">&para;</a></h4>
 <h5 id="dynamically-generating-worlds-from-yaml-configuration-file">Dynamically generating worlds from YAML configuration file<a class="headerlink" href="#dynamically-generating-worlds-from-yaml-configuration-file" title="Permanent link">&para;</a></h5>
 <p>The <code>pcg_gazebo</code> package includes not only model creators but also engines
@@ -951,6 +1015,8 @@ The resulting world file will be stored in <code>$HOME/.pcg/worlds</code> folder
 of them with the bounce settings enabled so that they will bounce against
 the ground and each other.</p>
 <h4 id="parsers">Parsers<a class="headerlink" href="#parsers" title="Permanent link">&para;</a></h4>
+<h5 id="parsing-xacro-files">Parsing <code>xacro</code> files<a class="headerlink" href="#parsing-xacro-files" title="Permanent link">&para;</a></h5>
+<p>This <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb">example</a> it is shown how to import a <code>xacro</code> file that will be processed, rendered into an URDF file and imported as a <code>SimulationModel</code> object.</p>
 <h5 id="sdf-parsers">SDF parsers<a class="headerlink" href="#sdf-parsers" title="Permanent link">&para;</a></h5>
 <p>The examples for the <code>sdf</code> parser is available as Jupyter notebooks.
 The list can be seen below.</p>

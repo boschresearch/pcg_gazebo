@@ -19,7 +19,7 @@ before_install:
 
 install:
 - python -c "import sys; print(sys.version)"
-- pip install -e .[all] 
+- pip install -e .[test] 
 
 script: 
 # Check code style to the PEP 8 style guide
@@ -30,5 +30,4 @@ script:
 # Test importing the package
 - set -e; python -c "import pcg_gazebo"; set +e;
 # Install test dependencies and run tests
-- pip install -e .[test]
 - pytest -x tests

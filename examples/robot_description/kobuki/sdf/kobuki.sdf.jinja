@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+{% import 'robot.sdf.jinja' as kobuki %}
+{# SDF template for the Kobuki 
+    This Jinja description can generate several different configurations 
+    for the Kobuki robot
+#}
+
+{% set sdf_version = sdf_version|default(1.6, true) %}
+{% set robot_namespace = robot_namespace|default(none, true) %}
+
+<sdf version='{{ sdf_version }}'>
+    <model name='kobuki'>     
+
+    {#
+        ROBOT BASE CHASSIS DECLARATION
+    #}
+
+    {# Setting the name of the base_link using the robot_namespace input #}
+    {% set base_link = 'base_link' %}
+
+    {% if robot_namespace is not none %}
+        {% set base_link = [robot_namespace, base_link]|join('/') %}
+    {% endif %}
+
+    {{ kobuki.robot(
+        robot_namespace=robot_namespace,
+        base_link=base_link,
+        wheel_geometry=wheel_geometry|default('cylinder', true),
+        groundtruth_topic=groundtruth_topic|default('groundtruth', true)) }} 
+
+    </model>
+</sdf>

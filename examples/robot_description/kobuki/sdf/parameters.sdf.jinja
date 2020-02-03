@@ -1,0 +1,32 @@
+{# ========================================== #}
+{# Fixed Kobuki parameters #}
+{# ========================================== #}
+
+{% set pi = 3.14159265359 %}
+{% set sensor_link_z_offset = 0.045 %}
+
+{% set base_link_mass = 2.4 %}
+{% set base_link_radius = 0.175 %}
+{% set base_link_length = 0.09 %}
+
+{% set wheel_cylinder_length = 0.0206 %}
+{% set wheel_radius = 0.035 %}
+{% set wheel_mass = 0.045 %}
+{% set wheel_visual_mesh = '../meshes/kobuki/wheel.obj'|find_relative_path %}
+{% set wheel_collision_mesh = '../meshes/kobuki/wheel.obj'|find_relative_path %}
+
+{% set caster_cylinder_length = 0.0176 %}
+{% set caster_radius = 0.0165 %}
+{% set caster_mass = 0.02 %}
+{% set caster_wheel_z_offset = -0.035097 %}
+
+{% set wheel_separation = 0.230 %}
+{% set wheel_diameter = 0.07 %}
+{% set wheel_torque = 2.0 %}
+
+{% set realsense_x_offset = 0.152 %}
+{% set realsense_z_offset = -0.007 %}
+
+{% set pole_mass = 0.008 %}
+{% set pole_length = 0.0492 %}
+{% set pole_radius = 0.006 %}

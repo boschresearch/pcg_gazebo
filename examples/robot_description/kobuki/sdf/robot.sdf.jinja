@@ -1,0 +1,139 @@
+{% import 'inertias'|find_sdf_template as inertias %}
+{% import 'gazebo_ros_plugins'|find_sdf_template as gazebo_plugins %}
+{% import 'parameters.sdf.jinja' as parameters %}
+{% import 'actuators.sdf.jinja' as actuators %}
+{% import 'physics.sdf.jinja' as physics %}
+
+{% macro robot(
+    robot_namespace=none,
+    base_link='base_link',
+    wheel_geometry='cylinder',
+    base_link_friction=0.3,
+    base_link_friction2=0.3,
+    groundtruth_topic='groundtruth',
+    diff_drive_command_topic='cmd_vel'
+) 
+%}        
+
+{% set wheel_friction = physics.collision_friction_properties(
+    sdf_version=sdf_version) 
+%}
+
+{% set wheel_contact = physics.collision_contact_properties(
+    sdf_version=sdf_version) 
+%}
+
+{% set caster_wheel_friction = physics.collision_friction_properties(
+    sdf_version=sdf_version, 
+    mu=0, 
+    mu2=0,
+    friction=0,
+    friction2=0) 
+%}
+
+{% set caster_wheel_contact = physics.collision_contact_properties(
+    sdf_version=sdf_version) 
+%}
+
+<pose>0 0 0.051597 0 0 0</pose>
+<!-- Base link -->
+
+<link name='{{ base_link }}'>
+    <pose>0 0 0 0 0 0</pose>
+    <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>{{ parameters.base_link_mass }}</mass>
+        {{ inertias.solid_cylinder_inertia(
+            parameters.base_link_mass, 
+            parameters.base_link_radius, 
+            parameters.base_link_length, 
+            'z') }}
+    </inertial>
+
+    <visual name='visual'>
+        <pose>0 0 0 0 0 0</pose>            
+        <geometry>
+            <mesh>
+                <uri>{{ '../meshes/kobuki/main_body.obj'|find_relative_path }}</uri>
+                <scale>1 1 1</scale>
+            </mesh>
+        </geometry>
+    </visual>
+
+    <collision name='collision'>
+        <pose>0 0 0.005737 0 0 0</pose>
+        <geometry>
+            <cylinder>
+                <radius>0.175</radius>
+                <length>0.06553</length>
+            </cylinder>
+        </geometry>
+
+        <surface>
+            {{ physics.collision_friction_properties(
+                sdf_version=sdf_version|default(1.6, true), 
+                mu=base_link_friction|default(0.3, true), 
+                mu2=base_link_friction2|default(0.3, true),
+                friction=base_link_friction|default(0.3, true),
+                friction2=base_link_friction2|default(0.3, true)
+                ) }}
+        </surface>
+    </collision>
+    
+</link>
+
+{# Adding actuators #}
+
+<!-- ACTUATORS -->
+
+{{ actuators.wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link,  
+    placement='right') }}
+
+{{ actuators.wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    placement='left') }}
+
+{{ actuators.caster_wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    placement='front', 
+    friction=caster_wheel_friction, 
+    contact=caster_wheel_contact) }}
+
+{{ actuators.caster_wheel(
+    robot_namespace=robot_namespace,
+    parent=base_link, 
+    placement='back', 
+    friction=caster_wheel_friction, 
+    contact=caster_wheel_contact) }}
+
+
+{{ gazebo_plugins.pose_gt(
+    robot_namespace=robot_namespace,
+    base_link=base_link,
+    topic_name=groundtruth_topic) 
+}} 
+
+{% if robot_namespace is not none %}
+    {% set wheel_left_joint = robot_namespace ~ '/' ~ 'wheel_left_joint' %}
+    {% set wheel_right_joint = robot_namespace ~ '/' ~ 'wheel_right_joint' %}
+{% else %}
+    {% set wheel_left_joint = 'wheel_left_joint' %}
+    {% set wheel_right_joint = 'wheel_right_joint' %}
+{% endif %}
+
+{{ gazebo_plugins.diff_drive(
+    command_topic=diff_drive_command_topic,
+    base_link=base_link,
+    wheel_separation=parameters.wheel_separation,
+    wheel_diameter=parameters.wheel_diameter,
+    wheel_torque=parameters.wheel_torque,
+    odometry_topic=groundtruth_topic,
+    odometry_frame=base_link,
+    left_joint=wheel_left_joint,
+    right_joint=wheel_right_joint) }} 
+    
+{% endmacro %}

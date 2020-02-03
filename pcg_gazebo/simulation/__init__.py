@@ -62,7 +62,9 @@ def add_custom_gazebo_resource_path(dir_path):
     import os
     from ..log import PCG_ROOT_LOGGER
     if not os.path.isdir(dir_path):
-        PCG_ROOT_LOGGER.error('Invalid custom Gazebo resources path')
+        PCG_ROOT_LOGGER.error(
+            'Invalid custom Gazebo resources path, path={}'.format(
+                dir_path))
         return False
     global CUSTOM_GAZEBO_RESOURCE_PATHS
     if dir_path in CUSTOM_GAZEBO_RESOURCE_PATHS:

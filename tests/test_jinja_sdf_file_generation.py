@@ -214,6 +214,26 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
                         OUTPUT_PARAMS[test_case][param_name]
                     ))
 
+    def test_kobuki_robot_description(self):
+        template_dir = os.path.abspath(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                '..',
+                'examples',
+                'robot_description',
+                'kobuki',
+                'sdf'))
+
+        template = os.path.join(template_dir, 'kobuki.sdf.jinja')
+        xml = process_jinja_template(template)
+        sdf = parse_sdf(xml)
+
+        self.assertIsNotNone(sdf)
+        self.assertEqual(sdf.xml_element_name, 'sdf')
+        self.assertIsNotNone(sdf.models)
+        self.assertEqual(len(sdf.models), 1)
+        self.assertEqual(sdf.models[0].name, 'kobuki')
+
 
 if __name__ == '__main__':
     unittest.main()
