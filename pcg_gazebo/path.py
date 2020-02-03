@@ -138,8 +138,19 @@ class Path(object):
     def resolve_uri(self, uri):
         from .simulation import get_gazebo_model_path, \
             get_gazebo_model_ros_pkg
-        if os.path.isfile(uri):
-            return uri
+        if uri.startswith('${PCG}/') or \
+                uri.startswith('$PCG/') or \
+                uri.startswith('$(PCG)/'):
+            if uri.startswith('${PCG}/'):
+                filename = uri.replace('${PCG}/', '')
+            elif uri.startswith('$PCG/'):
+                filename = uri.replace('$PCG/', '')
+            else:
+                filename = uri.replace('$(PCG)/', '')
+            from .utils import PCG_ROOT_FOLDER
+            filename = os.path.join(PCG_ROOT_FOLDER, filename)
+        elif os.path.isfile(os.path.abspath(uri)):
+            return os.path.abspath(uri)
         elif 'file://' in uri:
             filename = uri.replace('file://', '')
             if os.path.isfile(filename):
