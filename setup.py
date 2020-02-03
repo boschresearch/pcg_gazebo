@@ -47,13 +47,32 @@ requirements_required = set([
 
 requirements_examples = requirements_required.union(['jupyterlab'])
 
-requirements_test = requirements_required.union(set(['nbconvert', 'pytest', 'pytest-console-scripts']))
+requirements_test = requirements_required.union(set([
+    'nbconvert', 
+    'pytest', 
+    'pytest-console-scripts']))
 
-requirements_docs = requirements_required.union(set(['nbconvert', 'pydoc-markdown', 'pypandoc', 'mkdocs-material']))
+requirements_docs = requirements_required.union(set([
+    'nbconvert', 
+    'pydoc-markdown', 
+    'pypandoc', 
+    'mkdocs-material']))
+
+requirements_all = requirements_required.union(set([
+    'jupyterlab', 
+    'nbconvert', 
+    'pytest', 
+    'pytest-console-scripts', 
+    'pydoc-markdown', 
+    'pypandoc', 
+    'mkdocs-material']))
 
 # `python setup.py --list-all > requirements.txt`
 if '--list-all' in sys.argv:
-    print('\n'.join(requirements_required))
+    print('\n'.join(requirements_all))
+    exit()
+elif '--list-docs' in sys.argv:
+    print('\n'.join(requirements_docs))
     exit()
 elif '--list-examples' in sys.argv:
     print('\n'.join(requirements_examples))
@@ -128,7 +147,7 @@ setup(
     ],
     install_requires=list(requirements_required),
     extras_require=dict(
-        all=list(requirements_required),
+        all=list(requirements_all),
         examples=list(requirements_examples),
         test=list(requirements_test),
         docs=list(requirements_docs)
