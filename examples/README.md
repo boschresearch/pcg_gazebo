@@ -10,16 +10,16 @@ pip install jupyterlab
 
 ## Creating full Gazebo models in Python
 
-In the [example on creating Gazebo models in Python](sim_creating_models_with_jupyter_notebooks.ipynb), it is demonstrated how to use the tools from the `simulation` module in order to create simulation entities and can be spawned directly into Gazebo.
+In the [example on creating Gazebo models in Python](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_creating_models_with_jupyter_notebooks.ipynb), it is demonstrated how to use the tools from the `simulation` module in order to create simulation entities and can be spawned directly into Gazebo.
 
 ## Model group generator
 
-In the [model group generator example notebook](sim_model_group_generators.ipynb), it is demonstrated how to create a model group abstraction in which the model's parameters are re-calculated each time an instance of the model group is created. 
+In the [model group generator example notebook](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_group_generators.ipynb), it is demonstrated how to create a model group abstraction in which the model's parameters are re-calculated each time an instance of the model group is created. 
 This allows using a single representation of the model group generator as an asset and generating its variations as an instance is created.
 
 ## Model factory
 
-In the [model factory example notebook](sim_model_factory.ipynb), it is demonstrated how to use the `creators` module to create parametrized simulation models and spawn them in Gazebo.
+In the [model factory example notebook](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_factory.ipynb), it is demonstrated how to use the `creators` module to create parametrized simulation models and spawn them in Gazebo.
 
 ## Generating models from a YAML configuration file
 
@@ -98,7 +98,7 @@ To find out more about how to run the Jinja processor from script, run
 process_jinja_template -h
 ```
 
-This [notebook](sim_inspect_robot_description.ipynb) also shows an example on how the `kobuki` robot (converted to a [Jinja template to generate the robot description in SDF format](robot_description/kobuki/sdf/kobuki.sdf.jinja)) is processed from its templates and imported as an `SimulationModel` object that can be edited and spawned into the simulation.
+This [notebook](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb) also shows an example on how the `kobuki` robot (converted to a [Jinja template to generate the robot description in SDF format](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/robot_description/kobuki/sdf/kobuki.sdf.jinja)) is processed from its templates and imported as an `SimulationModel` object that can be edited and spawned into the simulation.
 
 # World generation
 
@@ -132,7 +132,7 @@ the ground and each other.
 
 ## Parsing `xacro` files
 
-This [example](sim_inspect_robot_description.ipynb) it is shown how to import a `xacro` file that will be processed, rendered into an URDF file and imported as a `SimulationModel` object.
+This [example](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb) it is shown how to import a `xacro` file that will be processed, rendered into an URDF file and imported as a `SimulationModel` object.
 
 ## SDF parsers
 
