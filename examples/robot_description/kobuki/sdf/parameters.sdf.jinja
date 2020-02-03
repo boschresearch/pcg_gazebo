@@ -12,8 +12,8 @@
 {% set wheel_cylinder_length = 0.0206 %}
 {% set wheel_radius = 0.035 %}
 {% set wheel_mass = 0.045 %}
-{% set wheel_visual_mesh = '../meshes/kobuki/wheel.obj'|find_file %}
-{% set wheel_collision_mesh = '../meshes/kobuki/wheel.obj'|find_file %}
+{% set wheel_visual_mesh = '../meshes/kobuki/wheel.obj'|find_relative_path %}
+{% set wheel_collision_mesh = '../meshes/kobuki/wheel.obj'|find_relative_path %}
 
 {% set caster_cylinder_length = 0.0176 %}
 {% set caster_radius = 0.0165 %}
