@@ -47,7 +47,10 @@ def get_axes(fig=None, engine='matplotlib', fig_width=20, fig_height=15):
         fig = get_figure(engine=engine, fig_width=fig_width,
                          fig_height=fig_height)
 
-    ax = fig.add_subplot(111)
+    if engine == 'matplotlib':
+        ax = fig.add_subplot(111)
+    else:
+        ax = None
     return fig, ax
 
 
@@ -64,7 +67,7 @@ def get_figure(engine='matplotlib', fig_width=20, fig_height=15):
     if use_matplotlib:
         fig = plt.figure(figsize=(fig_width, fig_height))
     else:
-        fig = figure(fig_width=fig_width, fig_height=fig_height)
+        fig = figure(plot_width=fig_width, plot_height=fig_height)
     return fig
 
 
@@ -98,7 +101,7 @@ def plot_shapely_geometry(
                 vertices[:, 1],
                 alpha=alpha,
                 line_width=line_width,
-                legend=legend,
+                legend_label=legend,
                 color=color,
                 line_dash=line_style)
     else:
@@ -169,7 +172,6 @@ def plot_shapely_geometry(
                     legend=legend,
                     color=color,
                     use_matplotlib=use_matplotlib)
-
         ax.axis('equal')
         ax.grid(grid)
     return fig, ax
@@ -179,24 +181,30 @@ def plot_workspace(
         workspace,
         fig=None,
         ax=None,
-        fig_width=800,
-        fig_height=400,
+        fig_width=None,
+        fig_height=None,
         color=None,
         alpha=0.5,
         line_width=2,
         legend=None,
         line_style='dashed',
-        engine='bokeh'):
+        engine='matplotlib'):
     assert BOKEH_AVAILABLE or MATPLOTLIB_AVAILABLE, \
         'None of the plotting libraries matplotlib or bokeh could be imported'
     use_matplotlib = engine == 'matplotlib' or not BOKEH_AVAILABLE
+
+    if fig_height is None:
+        fig_height = 10 if use_matplotlib else 400
+
+    if fig_width is None:
+        fig_width = 15 if use_matplotlib else 800
 
     if fig is None and ax is None:
         if use_matplotlib:
             fig = plt.figure(figsize=(fig_width, fig_height))
             ax = fig.add_subplot(111)
         else:
-            fig = figure(fig_width=fig_width, fig_height=fig_height)
+            fig = figure(plot_width=fig_width, plot_height=fig_height)
     elif fig is not None and ax is None:
         if use_matplotlib:
             ax = fig.gca()
@@ -216,13 +224,15 @@ def plot_workspace(
             ax.add_patch(patch)
         else:
             plot_shapely_geometry(
-                fig,
-                geo,
-                alpha,
-                line_width,
-                legend,
-                color,
-                line_style)
+                polygon=geo,
+                fig=fig,
+                ax=ax,
+                alpha=alpha,
+                line_width=line_width,
+                legend=legend if legend is not None else 'workspace',
+                color=color,
+                line_style=line_style,
+                use_matplotlib=use_matplotlib)
     elif isinstance(geo, MultiPolygon):
         for g in geo.geoms:
             if use_matplotlib:
@@ -237,7 +247,14 @@ def plot_workspace(
                 ax.add_patch(patch)
             else:
                 plot_shapely_geometry(
-                    fig, g, alpha, line_width, legend, color, line_style)
+                    polygon=g,
+                    fig=fig,
+                    ax=ax,
+                    alpha=alpha,
+                    line_width=line_width,
+                    legend=legend if legend is not None else 'workspace',
+                    color=color,
+                    line_style=line_style)
     return fig, ax
 
 
