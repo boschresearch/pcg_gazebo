@@ -17,7 +17,7 @@ import datetime
 from time import sleep, time
 from .. import visualization
 from ..log import PCG_ROOT_LOGGER
-from ..utils import load_yaml
+from ..utils import load_yaml, generate_random_string
 from ..task_manager import GazeboProxy, is_gazebo_running
 from ..parsers.sdf import create_sdf_element, is_sdf_element
 from ..simulation import SimulationModel, Light, World
@@ -279,7 +279,11 @@ class WorldGenerator:
         * `poses` (*type:* `list`): List of 6D pose vectors
         """
         self.add_asset(model)
-        self.add_engine('fixed_pose', [model.name], dict(poses=poses))
+        self.add_engine(
+            tag=generate_random_string(5),
+            engine_name='fixed_pose',
+            models=[model.name],
+            poses=poses)
 
     def add_gazebo_model(self, model_name, pose=[0, 0, 0, 0, 0, 0]):
         """Add an existent Gazebo model to the world in designed poses.
