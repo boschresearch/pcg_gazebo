@@ -15,15 +15,17 @@
 # limitations under the License.
 import unittest
 import os
+import random
 from pcg_gazebo.simulation import SimulationModel, ModelGroup
 from pcg_gazebo.simulation.physics import ODE, Simbody, Bullet
 from pcg_gazebo.generators import WorldGenerator
 from pcg_gazebo.generators.creators import box_factory
+from pcg_gazebo.utils import generate_random_string
 
 
 BOX_MODEL = box_factory(
     size=[
-        [1, 1, 1]
+        [0.1, 0.1, 0.1]
     ],
     mass=1,
     use_permutation=True,
@@ -67,20 +69,20 @@ RANDOM_ENGINE = dict(
     tag='add_random_objects',
     engine_name='random_pose',
     models=[
-        'test_box',
+        'box',
         'box_floor'
     ],
     model_picker='size',
     max_area=0.9,
     no_collision=True,
     max_num=dict(
-        test_box=2,
+        box=2,
         box_floor=2
     ),
     policies=[
         dict(
             models=[
-                'test_box',
+                'box',
                 'box_floor'
             ],
             config=[
@@ -96,7 +98,7 @@ RANDOM_ENGINE = dict(
     ],
     constraints=[
         dict(
-            model='test_box',
+            model='box',
             constraint='tangent_to_ground_plane'
         )
     ]
@@ -174,7 +176,7 @@ class TestWorldGenerator(unittest.TestCase):
                     BOX_FACTORY_INPUT,
                     TEST_MODEL_GROUP_GENERATOR
                 ],
-                ground_planecatkin=['box_floor']
+                ground_plane=['box_floor']
             ),
             engines=[
                 dict(
@@ -384,6 +386,7 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertIsNotNone(model)
         self.assertIsInstance(model, ModelGroup)
         self.assertEqual(model.name, 'box_generated')
+        print(model.to_sdf(type='model'))
         self.assertEqual(model.n_models, 5)
 
     def test_add_assets_from_dict(self):
@@ -570,6 +573,24 @@ class TestWorldGenerator(unittest.TestCase):
         generator.from_dict(config)
         self.assertIsNotNone(generator.world.physics)
         self.assertEqual(generator.world.physics.engine, 'simbody')
+
+    def test_add_model(self):
+        generator = WorldGenerator()
+
+        name = generate_random_string(5)
+        obj = SimulationModel(name)
+        obj.add_cuboid_link(
+            link_name='link',
+            size=[random.random() for _ in range(3)],
+            mass=random.random())
+
+        pose = [random.random() for _ in range(6)]
+        generator.add_model(obj, [pose])
+
+        self.assertTrue(generator.assets.is_model(name))
+        self.assertTrue(generator.run_engines())
+
+        self.assertIn(name, generator.world.models)
 
 
 if __name__ == '__main__':
