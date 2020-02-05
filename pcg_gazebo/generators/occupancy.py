@@ -476,7 +476,7 @@ def _get_occupied_area_proc(args):
 
 def generate_occupancy_grid_with_ray(
         models,
-        z_levels,
+        z_levels=None,
         x_limits=None,
         y_limits=None,
         z_limits=None,
@@ -537,7 +537,7 @@ def generate_occupancy_grid_with_ray(
             return None
 
     if z_levels is None:
-        z_levels = np.linspace(z_limits[0], z_levels[1], 5)
+        z_levels = np.linspace(z_limits[0], z_limits[1], 5)
 
     PCG_ROOT_LOGGER.info(
         'Generating occupancy grid in intervals, x_limits={},'
