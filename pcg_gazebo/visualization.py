@@ -85,6 +85,7 @@ def plot_shapely_geometry(
         fig_height=15,
         marker_style='o',
         grid=True):
+
     if not use_matplotlib:
         assert BOKEH_AVAILABLE, 'Bokeh is not available!'
         if fig is None:
@@ -211,50 +212,17 @@ def plot_workspace(
 
     geo = workspace.get_geometry()
 
-    if isinstance(geo, Polygon):
-        if use_matplotlib:
-            patch = descartes.PolygonPatch(
-                geo,
-                facecolor=color,
-                edgecolor='black',
-                alpha=alpha,
-                zorder=2,
-                linestyle=line_style,
-                label=legend)
-            ax.add_patch(patch)
-        else:
-            plot_shapely_geometry(
-                polygon=geo,
-                fig=fig,
-                ax=ax,
-                alpha=alpha,
-                line_width=line_width,
-                legend=legend if legend is not None else 'workspace',
-                color=color,
-                line_style=line_style,
-                use_matplotlib=use_matplotlib)
-    elif isinstance(geo, MultiPolygon):
-        for g in geo.geoms:
-            if use_matplotlib:
-                patch = descartes.PolygonPatch(
-                    g,
-                    facecolor=color,
-                    edgecolor='black',
-                    alpha=alpha,
-                    zorder=2,
-                    linestyle=line_style,
-                    label=legend)
-                ax.add_patch(patch)
-            else:
-                plot_shapely_geometry(
-                    polygon=g,
-                    fig=fig,
-                    ax=ax,
-                    alpha=alpha,
-                    line_width=line_width,
-                    legend=legend if legend is not None else 'workspace',
-                    color=color,
-                    line_style=line_style)
+    plot_shapely_geometry(
+        polygon=geo,
+        fig=fig,
+        ax=ax,
+        alpha=alpha,
+        line_width=line_width,
+        legend=legend if legend is not None else 'workspace',
+        color=color,
+        line_style=line_style,
+        use_matplotlib=use_matplotlib)
+
     return fig, ax
 
 
