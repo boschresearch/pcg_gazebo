@@ -128,6 +128,11 @@ generates an environment of 40 spheres placed randomly in the 3D world, all
 of them with the bounce settings enabled so that they will bounce against
 the ground and each other.
 
+# Occupancy grid map generation
+
+Occupancy grid maps can be computed from single models, model groups or worlds using ray tracing.
+In this [notebook](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/gen_grid_map.ipynb) it is demonstrated how a grid map can be plotted and stored from a generated world.
+
 # Parsers
 
 ## Parsing `xacro` files
