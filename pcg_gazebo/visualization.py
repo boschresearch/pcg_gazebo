@@ -550,6 +550,10 @@ def plot_occupancy_grid(
     filtered_models = dict()
     for tag in models:
         if not is_excluded(tag):
+            if models[tag].is_ground_plane and not with_ground_plane:
+                continue
+            if not models[tag].static and static_models_only:
+                continue
             filtered_models[tag] = models[tag]
 
     PCG_ROOT_LOGGER.info('Computing model footprints using ray tracing')

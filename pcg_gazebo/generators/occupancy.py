@@ -536,9 +536,6 @@ def generate_occupancy_grid_with_ray(
                 ' z_limits[1], provided={}'.format(z_limits))
             return None
 
-    if z_levels is None:
-        z_levels = np.linspace(z_limits[0], z_limits[1], 5)
-
     PCG_ROOT_LOGGER.info(
         'Generating occupancy grid in intervals, x_limits={},'
         'y_limits={}, z_limits={}'.format(
