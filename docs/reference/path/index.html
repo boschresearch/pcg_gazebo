@@ -77,10 +77,6 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#pcg_gazebopath" tabindex="1" class="md-skip">
-        Skip to content
-      </a>
-    
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
@@ -398,69 +394,9 @@
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        pcg_gazebo.path
-      </label>
-    
     <a href="./" title="pcg_gazebo.path" class="md-nav__link md-nav__link--active">
       pcg_gazebo.path
     </a>
-    
-      
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pcg_gazebopath" class="md-nav__link">
-    pcg_gazebo.path
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#path" class="md-nav__link">
-    Path
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#is_valid" class="md-nav__link">
-    is_valid
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#original_uri" class="md-nav__link">
-    original_uri
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
     
   </li>
 
@@ -729,68 +665,6 @@
               </div>
             
             
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary">
-  
-  
-  
-    <label class="md-nav__title" for="__toc">Table of contents</label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#pcg_gazebopath" class="md-nav__link">
-    pcg_gazebo.path
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#path" class="md-nav__link">
-    Path
-  </a>
-  
-    <nav class="md-nav">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#is_valid" class="md-nav__link">
-    is_valid
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#original_uri" class="md-nav__link">
-    original_uri
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-      
-      
-      
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -799,10 +673,10 @@
                   <a href="https://github.com/boschresearch/pcg_gazebo/edit/master/docs/reference/path.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                  <h1>pcg_gazebo.path</h1>
-                
-                <h4 id="pcg_gazebopath">pcg_gazebo.path<a class="headerlink" href="#pcg_gazebopath" title="Permanent link">&para;</a></h4>
-<h5 id="path">Path<a class="headerlink" href="#path" title="Permanent link">&para;</a></h5>
+                <h1 id="pcg_gazebo.path">pcg_gazebo.path</h1>
+
+<h2 id="pcg_gazebo.path.Path">Path</h2>
+
 <p><div class="codehilite"><pre><span></span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
 </pre></div>
 Path resolver for ROS and Gazebo model paths.
@@ -820,9 +694,10 @@ The paths can be resolved if provided as:</p>
 <ul>
 <li><code>uri</code> (<em>type:</em> <code>str</code>): Input path to be resolved.</li>
 </ul>
-<h6 id="is_valid">is_valid<a class="headerlink" href="#is_valid" title="Permanent link">&para;</a></h6>
-<p><code>bool</code>: <code>True</code> if the absolute URI exists.</p>
-<h6 id="original_uri">original_uri<a class="headerlink" href="#original_uri" title="Permanent link">&para;</a></h6>
+<h3 id="pcg_gazebo.path.Path.is_valid">is_valid</h3>
+
+<p><code>bool</code>: <code>True</code> if the absolute URI exists.
+<h3 id="pcg_gazebo.path.Path.original_uri">original_uri</h3></p>
 <p><code>str</code>: Original URI provided.</p>
                 
                   

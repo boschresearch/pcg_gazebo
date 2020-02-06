@@ -194,7 +194,8 @@ def test_notebooks(script_runner):
         'sim_creating_models_with_jupyter_notebooks.ipynb',
         'sim_model_factory.ipynb',
         'sim_model_group_generators.ipynb',
-        'sim_inspect_robot_description.ipynb'
+        'sim_inspect_robot_description.ipynb',
+        'gen_grid_map.ipynb'
     ]
 
     for item in os.listdir(examples_dir):
