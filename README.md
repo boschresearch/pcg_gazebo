@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/boschresearch/pcg_gazebo.svg?branch=master)](https://travis-ci.org/boschresearch/pcg_gazebo)
 [![GitHub issues](https://img.shields.io/github/issues/boschresearch/pcg_gazebo_pkgs.svg)](https://github.com/boschresearch/pcg_gazebo/issues)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://github.com/boschresearch/pcg_gazebo/blob/master/LICENSE)
-![PyPI](https://img.shields.io/pypi/v/pcg-gazebo)
+[![PyPI](https://img.shields.io/pypi/v/pcg-gazebo)](https://pypi.org/project/pcg-gazebo/)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pcg-gazebo)
 
 The `pcg_gazebo` Python package is an Open Source
