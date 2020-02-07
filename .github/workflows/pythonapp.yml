@@ -41,8 +41,14 @@ jobs:
     - name: Test with pytest
       run: |
         pytest
+    - name: Prepare package for deployment
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
+      run: |
+        pip install twine wheel
+        python setup.py sdist bdist_wheel
+        twine check dist/*
     - name: Publish package
-      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
       uses: pypa/gh-action-pypi-publish@master
       with:
         user: ${{ secrets.PYPI_USERNAME }}
