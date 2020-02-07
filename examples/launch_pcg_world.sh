@@ -47,7 +47,7 @@ else
         mkdir -p ${WORLDS_FOLDER}
     fi
 
-    generate_pcg_world \
+    pcg-generate-pcg-world \
         --config-file ${CONFIG_FOLDER}/${WORLD_NAME}.yml \
         --output-world-file ${WORLDS_FOLDER}/${WORLD_NAME}.world
 
