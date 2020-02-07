@@ -7,7 +7,8 @@ RUN apt-get update && \
     libspatialindex-dev \
     libgeos-dev \
     wget \
-    pybind11-dev -y
+    pybind11-dev \
+    pandoc -y
 
 RUN pip3 install flake8 autopep8
     
