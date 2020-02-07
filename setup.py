@@ -132,19 +132,19 @@ setup(
         'pcg_gazebo': ['simulation/properties/resources/xkcd_rgb.txt']
     },
     scripts=[
-        'scripts/generate_occupancy_map',
-        'scripts/generate_pcg_world',
-        'scripts/list_gazebo_models',
-        'scripts/process_jinja_template',
-        'scripts/run_model_factory',
-        'scripts/sdf2urdf',
-        'scripts/sdflint',
-        'scripts/spawn_sdf_model',
-        'scripts/start_gazebo_world',
-        'scripts/urdf2sdf',
-        'scripts/urdflint',
-        'scripts/view_gazebo_model',
-        'scripts/view_mesh'
+        'scripts/pcg-generate-occupancy-map',
+        'scripts/pcg-generate-world',
+        'scripts/pcg-list-gazebo-models',
+        'scripts/pcg-process-jinja-template',
+        'scripts/pcg-run-model-factory',
+        'scripts/pcg-sdf2urdf',
+        'scripts/pcg-sdflint',
+        'scripts/pcg-spawn-sdf-model',
+        'scripts/pcg-start-gazebo-world',
+        'scripts/pcg-urdf2sdf',
+        'scripts/pcg-urdflint',
+        'scripts/pcg-view-gazebo-model',
+        'scripts/pcg-view-mesh'
     ],
     install_requires=list(requirements_required),
     extras_require=dict(
