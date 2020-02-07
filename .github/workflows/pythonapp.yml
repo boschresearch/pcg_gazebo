@@ -44,7 +44,8 @@ jobs:
     - name: Prepare package for deployment
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
       run: |
-        pip install twine wheel
+        sudo apt-get install pandoc -y -qq
+        pip install twine wheel pypandoc
         python setup.py sdist bdist_wheel
         twine check dist/*
     - name: Publish package
