@@ -45,7 +45,7 @@ else
         mkdir -p ${MODELS_FOLDER}/${MODEL_NAME}
     fi
 
-    run_model_factory \
+    pcg-run-model-factory \
         --config-file ${CONFIG_FOLDER}/${CONFIG_NAME}.yaml \
         --store-dir ${MODELS_FOLDER} \
         --spawn --spawn-random-positions --print

@@ -27,7 +27,7 @@ def test_run_linter_on_test_files(script_runner):
         if '.urdf' not in filename:
             continue
         output = script_runner.run(
-            'urdflint', '--filename',
+            'pcg-urdflint', '--filename',
             os.path.join(test_folder, filename))
 
         assert output.success

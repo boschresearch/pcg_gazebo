@@ -46,7 +46,7 @@ else
         mkdir -p ${MODELS_FOLDER}/${MODEL_NAME}
     fi
 
-    process_jinja_template \
+    pcg-process-jinja-template \
         -i '$(PCG)/model.config.jinja' \
         -o ${MODELS_FOLDER}/${MODEL_NAME}/model.config \
         -p model_name=${MODEL_NAME} \
@@ -56,7 +56,7 @@ else
         -p author_email=$(whoami)@email.com \
         -p sdf_filename=model.sdf
 
-    process_jinja_template \
+    pcg-process-jinja-template \
         -i ${TEMPLATES_FOLDER}/${TEMPLATE_FILE}.sdf.jinja \
         -o ${MODELS_FOLDER}/${MODEL_NAME}/model.sdf
 

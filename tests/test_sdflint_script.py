@@ -45,7 +45,7 @@ def test_random_sdf(script_runner):
         obj = create_sdf_element(sdf_name)
         obj.random()
         output = script_runner.run(
-            'sdflint', '--xml',
+            'pcg-sdflint', '--xml',
             obj.to_xml_as_str())
 
         assert output.success

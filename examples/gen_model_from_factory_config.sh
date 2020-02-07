@@ -44,7 +44,7 @@ else
         echo "Output directory ${MODELS_FOLDER} created"
     fi
 
-    run_model_factory \
+    pcg-run-model-factory \
         --config-file ${CONFIG_FOLDER}/${CONFIG_NAME}.yaml \
         --store-dir ${MODELS_FOLDER} --store-model --overwrite    
 fi
