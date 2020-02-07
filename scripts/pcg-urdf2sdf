@@ -1,0 +1,186 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""**Description**
+
+URDF to SDF converter.
+
+**Input parameters**
+
+* `param` (*type:* `str`): Name of ROS parameter where the URDF robot description is stored
+* `filename` (*type:* `str`): Filename of the URDF robot description file
+* `xml` (*type:* `str`): String with the URDF XML content of the robot description
+* `input-topic` (*type:* `str`): ROS topic that will deliver the XML text input with the URDF robot description
+* `output-filename` (*type:* `str`): Output file to store the converted SDF file
+* `output-parameter` (*type:* `str`): Output ROS parameter to store the converted SDF file
+* `print`: Print the file in the console
+* `sdf-version` (*type:* `str`): Version of the SDF to be generated
+
+"""
+from __future__ import print_function
+import argparse
+import os
+import sys
+from pcg_gazebo.parsers import urdf2sdf, parse_urdf, parse_xacro
+from pcg_gazebo.parsers.sdf import create_sdf_element
+from pcg_gazebo.simulation import SimulationModel
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Convert SDF to URDF file')
+    parser.add_argument(
+        '--param', '-p', type=str,
+        help='ROS parameter where the URDF robot description is stored')
+    parser.add_argument(
+        '--filename', '-f', type=str,
+        help='Filename name to the URDF robot description')
+    parser.add_argument(
+        '--xml', '-x', type=str,
+        help='XML text input with the URDF robot description')
+    parser.add_argument(
+        '--input-topic', '-t', type=str,
+        help='ROS topic that will deliver the XML text input with the URDF robot description')
+    parser.add_argument(
+        '--output-filename', '-o', type=str,
+        help='Output file to store the converted SDF file')
+    parser.add_argument(
+        '--output-parameter', '-r', type=str,
+        help='Output ROS parameter to store the converted SDF file')
+    parser.add_argument(
+        '--output-gazebo-model-path', '-gp', type=str,
+        help='Output path for the Gazebo model',
+        default=os.path.join(os.path.expanduser('~'), '.gazebo', 'models'))
+    parser.add_argument(
+        '--create-gazebo-model', '-g',
+        action='store_true',
+        help='Export SDF as a static Gazebo model')
+    parser.add_argument(
+        '--model-name', '-m', type=str,
+        help='Name of the model being generated')
+    parser.add_argument(
+        '--print', action='store_true',
+        help='Print the file')
+    parser.add_argument(
+        '--sdf-version',
+        type=str, default='1.6',
+        help='Version of the SDF file being generated')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true',
+        help='Run on verbose mode')
+
+    args = parser.parse_args()
+
+    assert args.sdf_version in ['1.4', '1.5', '1.6'], \
+        'Invalid SDF version, options=1.4, 1.5, 1.6'
+
+    assert args.param is not None or \
+        args.filename is not None or \
+        args.xml is not None or \
+        args.input_topic is not None, \
+        'None of the input options were provided'
+
+    try:
+        if args.param:
+            try:
+                import rospy
+            except ImportError as ex:
+                print('rospy could not be imported')
+                exit()
+            assert rospy.has_param(args.param), \
+                'ROS parameter {} not found'.format(args.param)
+
+            xml = rospy.get_param(args.param)
+            urdf = parse_urdf(xml)
+        elif args.filename:
+            assert os.path.isfile(args.filename), \
+                'Invalid file, filename={}'.format(args.filename)
+
+            if '.xacro' in args.filename:
+                urdf = parse_xacro(args.filename, output_type='urdf')
+            else:
+                urdf = parse_urdf(args.filename)
+        elif args.xml:
+            urdf = parse_urdf(args.xml)
+        elif args.input_topic:
+            try:
+                import rospy
+                from std_msgs.msg import String
+            except ImportError as ex:
+                print('rospy could not be imported')
+                exit()
+            if rospy.is_shutdown():
+                raise rospy.ROSInitException('ROS master is not running!')
+
+            rospy.init_node('urdf2sdf', anonymous=True)
+            topic_xml = rospy.wait_for_message(
+                args.input_topic, String, timeout=30)
+
+            urdf = parse_urdf(topic_xml.data)
+    except Exception as ex:
+        print(type(ex), ex)
+        sys.exit(-1)
+
+    sdf = urdf2sdf(urdf)
+
+    if args.print:
+        print(sdf.to_xml_as_str(pretty_print=True, version=args.sdf_version))
+
+    if args.output_filename:
+        if sdf._NAME == 'model':
+            sdf_root = create_sdf_element('sdf')
+            sdf_root.version = args.sdf_version
+            sdf_root.add_model(sdf.name, sdf)
+            sdf_root.export_xml(args.output_filename, version=args.sdf_version)
+        else:
+            sdf.export_xml(args.output_filename, version=args.sdf_version)
+    if args.output_parameter:
+        try:
+            import rospy
+            from std_msgs.msg import String
+        except ImportError as ex:
+            print('rospy could not be imported')
+            exit()
+
+        try:
+            rospy.set_param(args.output_parameter, sdf.to_xml_as_str(
+                pretty_print=True, version=args.sdf_version))
+        except Exception as ex:
+            print('Error setting ROS parameter {}, message={}'.format(
+                args.output_parameter, ex))
+    if args.create_gazebo_model:
+        assert args.model_name is not None, 'Model has no name'
+        model_dir = args.output_gazebo_model_path
+        assert os.path.isdir(model_dir), \
+            'Invalid directory={}'.format(model_dir)
+        if args.verbose:
+            print(
+                'Creating static Gazebo model <{}> at: {}'.format(
+                    args.model_name, model_dir))
+
+        model = SimulationModel.from_sdf(sdf)
+        model_dir = model.to_gazebo_model(
+            output_dir=model_dir,
+            overwrite=True,
+            copy_resources=False)
+
+        if args.verbose:
+            print(
+                'Gazebo model <{}> generated from stored in {}'.format(
+                    args.model_name, model_dir))
+        urdf.export_xml(os.path.join(model_dir, args.model_name + '.urdf'))
+        if args.verbose:
+            print(
+                'URDF file exported to {}'.format(
+                    os.path.join(model_dir, args.model_name + '.urdf')))

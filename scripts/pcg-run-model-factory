@@ -1,0 +1,129 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import print_function
+import argparse
+import yaml
+import os
+import json
+import random
+from pcg_gazebo.parsers.sdf_config import create_sdf_config_element
+from pcg_gazebo.generators.creators import create_models_from_config
+from pcg_gazebo.task_manager import GazeboProxy
+from pcg_gazebo.utils import load_yaml
+
+# TODO: Add parsing from model configuration using type=json.loads
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        'Imports a YAML file with the description of a model'
+        ' and/or description of the factory parameters to'
+        ' generate models procedurally')
+
+    parser.add_argument(
+        '--config-file',
+        '-f',
+        type=str,
+        help='YAML file with the model generator configuration')
+    parser.add_argument(
+        '--config',
+        '-c',
+        type=json.loads,
+        help='Enter the configuration in the JSON format as a string')
+    parser.add_argument(
+        '--print',
+        action='store_true',
+        help='Print models as SDF')
+    parser.add_argument(
+        '--store-model',
+        action='store_true',
+        help='Store the generated models as Gazebo models')
+    parser.add_argument(
+        '--store-dir',
+        type=str,
+        default=os.path.expanduser('~/.gazebo/models'),
+        help='Output directory to store the generated models')
+    parser.add_argument(
+        '--overwrite',
+        action='store_true',
+        help='Overwrite models with the same name when storing')
+    parser.add_argument(
+        '--spawn',
+        action='store_true',
+        help='Spawn the generated models if Gazebo is running')
+    parser.add_argument(
+        '--spawn-random-positions',
+        action='store_true',
+        help='Spawn models on random positions')
+
+    args = parser.parse_args()
+
+    models = list()
+
+    if args.config_file:
+        assert os.path.isfile(args.config_file), 'Invalid input file, filename={}'.format(
+            args.config_file)
+
+        config = load_yaml(args.config_file)
+        models = create_models_from_config(config)
+
+    if args.spawn:
+        print('Connecting to Gazebo')
+        gp = GazeboProxy()
+    else:
+        gp = None
+
+    for model in models:
+        if args.print:
+            print(model.to_sdf())
+
+        if args.spawn:
+            pos = [0, 0, 0]
+            if args.spawn_random_positions:
+                pos = [20 * (random.random() - 0.5) for _ in range(3)]
+                pos[2] = max(0, pos[2])
+            if not gp.spawn_sdf_model(
+                    model.name,
+                    model.to_sdf(type='sdf').to_xml_as_str(),
+                    pos=pos):
+                print('Failed to spawn model ' + model.name)
+
+        if args.store_model:
+            if os.path.isdir(args.store_dir):
+                model_path = os.path.join(args.store_dir, model.name)
+                if not os.path.isdir(model_path):
+                    os.makedirs(model_path)
+                elif not args.overwrite:
+                    print('Model {} already exists in path {}, skipping'.format(
+                        model.name, model_path))
+                    continue
+
+                sdf_config = create_sdf_config_element('model')
+                sdf_config.name = model.name
+
+                sdf_item = create_sdf_config_element('sdf')
+                sdf_item.value = 'model.sdf'
+
+                sdf_config.add_sdf(sdf_item)
+
+                sdf_config.export_xml(
+                    os.path.join(model_path, 'model.config'))
+                model.to_sdf('sdf').export_xml(
+                    os.path.join(model_path, 'model.sdf'))
+
+                print('Model {} stored at {}'.format(model.name, model_path))
+            else:
+                print('Cannot store model {}, output directory {} does not exist'.format(
+                    model.name, args.store_dir))

@@ -1,0 +1,116 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import print_function
+import os
+import sys
+import argparse
+from pcg_gazebo.task_manager import Server
+
+
+# Add a run_simulation method to test the generated world
+def run_simulation(world_filename, ros_host='localhost', ros_port=11311,
+                   gazebo_host='localhost', gazebo_port=11345,
+                   anonymous=False, output_log_dir=None, physics='ode',
+                   paused=False, gui=True):
+    name = 'gazebo_sim'
+    server = Server()
+    server.create_simulation(
+        name,
+        ros_host,
+        ros_port,
+        gazebo_host,
+        gazebo_port,
+        anonymous,
+        output_log_dir)
+
+    simulation = server.get_simulation(name)
+    simulation.create_gazebo_task(
+        name='gazebo',
+        world=world_filename,
+        gui=gui,
+        physics=physics,
+        paused=paused,
+        required=True)
+    simulation.run_all_tasks()
+    simulation.wait()
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Start Gazebo world from file')
+    parser.add_argument(
+        '--input_topic',
+        '-t',
+        type=str,
+        help='ROS topic that will deliver the XML text input with the SDF robot description')
+    parser.add_argument(
+        '--input_world_filename',
+        '-f',
+        type=str,
+        help='Input')
+    parser.add_argument(
+        '--physics',
+        default='ode',
+        type=str,
+        help='Name of the physics engine')
+    parser.add_argument(
+        '--paused',
+        type=int,
+        default=0,
+        help='Start simulation paused')
+    parser.add_argument(
+        '--gui',
+        type=int,
+        default=1,
+        help='Do not start Gazebo client')
+    args = parser.parse_args()
+
+    assert args.physics in ['ode', 'bullet', 'simbody'], \
+        'Valid physics engines are ode, bullet or simbody'
+
+    world_filename = None
+    if args.input_world_filename:
+        print('Running Gazebo from world file: {}'.format(
+            args.input_world_filename))
+        world_filename = os.path.abspath(args.input_world_filename)
+        print(world_filename)
+    elif args.input_topic:
+        try:
+            import rospy
+            from std_msgs.msg import String
+        except ImportError as ex:
+            print('rospy could not be imported')
+            exit()
+        rospy.init_node('start_gazebo_world', anonymous=True)
+        print('Waiting for world filename via topic: {}'.format(
+            args.input_topic))
+        topic_xml = rospy.wait_for_message(args.input_topic, String)
+        world_filename = topic_xml.data
+        print('Message received')
+    else:
+        print('No world file input provided, leaving node...')
+        sys.exit()
+
+    print('World filename: {}'.format(world_filename))
+
+    assert os.path.isfile(world_filename), \
+        'Input world file is invalid, value={}'.format(world_filename)
+
+    run_simulation(
+        world_filename,
+        physics=args.physics,
+        paused=bool(int(args.paused)),
+        gui=bool(int(args.gui)))

@@ -1,0 +1,133 @@
+#!/usr/bin/env python
+# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""**Description**
+
+SDF to URDF converter.
+
+**Input parameters**
+
+* `param` (*type:* `str`): Name of ROS parameter where the SDF robot description is stored
+* `filename` (*type:* `str`): Filename of the SDF robot description file
+* `xml` (*type:* `str`): String with the SDF XML content of the robot description
+* `input-topic` (*type:* `str`): ROS topic that will deliver the XML text input with the SDF robot description
+* `output-filename` (*type:* `str`): Output file to store the converted URDF file
+* `output-parameter` (*type:* `str`): Output ROS parameter to store the converted URDF file
+* `print`: Print the file in the console
+
+"""
+from __future__ import print_function
+import argparse
+import os
+import sys
+from pcg_gazebo.parsers import sdf2urdf, parse_sdf
+from pcg_gazebo.parsers.urdf import create_urdf_element
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Convert URDF to SDF file')
+    parser.add_argument(
+        '--param', '-p', type=str,
+        help='ROS parameter where the SDF robot description is stored')
+    parser.add_argument(
+        '--filename', '-f', type=str,
+        help='Filename name to the SDF robot description')
+    parser.add_argument(
+        '--xml', '-x', type=str,
+        help='XML text input with the SDF robot description')
+    parser.add_argument(
+        '--input-topic', '-t', type=str,
+        help='ROS topic that will deliver the XML text input with the SDF robot description')
+    parser.add_argument(
+        '--output-filename', '-o', type=str,
+        help='Output file to store the converted URDF file')
+    parser.add_argument(
+        '--output-parameter', '-r', type=str,
+        help='Output ROS parameter to store the converted URDF file')
+    parser.add_argument(
+        '--print', action='store_true',
+        help='Print the file')
+    parser.add_argument(
+        '--verbose', '-v', action='store_true',
+        help='Run on verbose mode')
+
+    args = parser.parse_args()
+
+    assert args.param is not None or \
+        args.filename is not None or \
+        args.xml is not None or \
+        args.input_topic is not None, \
+        'None of the input options were provided'
+
+    if args.input_topic or args.param or args.output_parameter:
+        try:
+            import rospy
+            from std_msgs.msg import String
+        except ImportError as ex:
+            print('rospy could not be imported')
+            exit()
+        rospy.init_node('sdf2urdf', anonymous=True)
+
+    if args.param:
+        if args.verbose:
+            print('Parsing from ROS parameter, param={}'.format(
+                args.param))
+        assert rospy.has_param(args.param), \
+            'ROS parameter {} not found'.format(args.param)
+
+        xml = rospy.get_param(args.param)
+        sdf = parse_sdf(xml)
+    elif args.filename:
+        if args.verbose:
+            print('Parsing from file, filename={}'.format(args.filename))
+        assert os.path.isfile(args.filename), \
+            'Invalid file, filename={}'.format(args.filename)
+
+        sdf = parse_sdf(args.filename)
+    elif args.xml:
+        if args.verbose:
+            print('Parsing from input string')
+        sdf = parse_sdf(args.xml)
+    elif args.input_topic:
+        if args.verbose:
+            print('Waiting for SDF through topic: {}'.format(
+                args.input_topic))
+        if rospy.is_shutdown():
+            raise rospy.ROSInitException('ROS master is not running!')
+
+        topic_xml = rospy.wait_for_message(
+            args.input_topic, String, timeout=100)
+        if args.verbose:
+            print('SDF received through topic {}'.format(
+                args.input_topic))
+        sdf = parse_sdf(topic_xml.data)
+
+    if sdf._NAME == 'sdf':
+        urdf = sdf2urdf(sdf.models[0])
+    else:
+        urdf = sdf2urdf(sdf)
+
+    if args.print:
+        print(urdf.to_xml_as_str(pretty_print=True))
+
+    if args.output_filename:
+        urdf.export_xml(args.output_filename)
+    if args.output_parameter:
+        try:
+            rospy.set_param(args.output_parameter, urdf.to_xml_as_str(
+                pretty_print=True))
+        except Exception as ex:
+            print('Error setting ROS parameter {}, message={}'.format(
+                args.output_parameter, ex))
