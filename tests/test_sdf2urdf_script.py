@@ -40,7 +40,7 @@ def test_xml_input_random(script_runner):
         assert obj is not None
         obj.random()
         output = script_runner.run(
-            'sdf2urdf', '--xml', obj.to_xml_as_str(),
+            'pcg-sdf2urdf', '--xml', obj.to_xml_as_str(),
             '--print')
         assert output.success
         urdf = parse_urdf(output.stdout)
@@ -57,7 +57,7 @@ def test_xml_input_random(script_runner):
     obj.friction.random()
 
     output = script_runner.run(
-        'sdf2urdf', '--xml', obj.to_xml_as_str(),
+        'pcg-sdf2urdf', '--xml', obj.to_xml_as_str(),
         '--print')
     assert output.success
     urdf = parse_urdf(output.stdout)
@@ -90,7 +90,7 @@ def test_xml_input_visual_collision(script_runner):
             getattr(obj.geometry, geo_name).random()
 
             output = script_runner.run(
-                'sdf2urdf', '--xml', obj.to_xml_as_str(),
+                'pcg-sdf2urdf', '--xml', obj.to_xml_as_str(),
                 '--print')
             assert output.success
 
