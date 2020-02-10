@@ -75,6 +75,13 @@ def exclude_calls(
                  'show',
                  'plt',
                  'save_image',
+                 'run_all_tasks',
+                 'kill_all_tasks',
+                 'spawn',
+                 'spawn_model',
+                 'wait',
+                 'apply_body_wrench',
+                 'rostopic',
                  '?']):
     # The MIT License (MIT)
     #
@@ -195,6 +202,7 @@ def test_notebooks(script_runner):
         'sim_model_factory.ipynb',
         'sim_model_group_generators.ipynb',
         'sim_inspect_robot_description.ipynb',
+        'sim_sensors.ipynb',
         'gen_grid_map.ipynb'
     ]
 
