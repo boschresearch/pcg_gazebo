@@ -209,7 +209,7 @@ def test_notebooks(script_runner):
         if filename.lower().endswith('.ipynb'):
             if item in notebook_blacklist:
                 continue
-            if item.startswith('sim_'):
+            if item.startswith('sim_') or item.startswith('tm_'):
                 continue
             with open(filename, 'r') as file_obj:
                 script = load_notebook(file_obj)
