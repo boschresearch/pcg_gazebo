@@ -132,10 +132,13 @@ class Camera(Sensor):
 
     @noise.setter
     def noise(self, values):
-        assert isinstance(
-            values, dict), 'Noise parameters' \
-            ' must be provided as a dictionary'
-        self._noise = Noise(**values)
+        if isinstance(values, dict):
+            self._noise = Noise(**values)
+        elif isinstance(values, Noise):
+            self._noise = values
+        else:
+            raise ValueError(
+                'Invalid noise input, received={}'.format(str(values)))
 
     @property
     def horizontal_fov(self):
@@ -342,7 +345,7 @@ class Camera(Sensor):
         sensor.camera_name = sdf.camera.name
 
         if sdf.camera.noise is not None:
-            sensor.noise = Noise.from_sdf(sdf.noise)
+            sensor.noise = Noise.from_sdf(sdf.camera.noise)
 
         tags = ['format', 'width', 'height']
         for tag in tags:
