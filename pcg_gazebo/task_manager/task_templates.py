@@ -26,7 +26,7 @@ TASK_ROS_CORE = dict(
 
 TASK_SIMULATION_TIMER = dict(
     name='simulation_timer',
-    command='rosrun pcg_libraries simulation_timer --timeout {timeout}',
+    command='pcg-simulation-timer --timeout {timeout}',
     type=None,
     stage='gazebo',
     has_gazebo=False,
