@@ -139,6 +139,33 @@ In this [notebook](https://github.com/boschresearch/pcg_gazebo/blob/master/examp
 
 This [example](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb) it is shown how to import a `xacro` file that will be processed, rendered into an URDF file and imported as a `SimulationModel` object.
 
+# List of Jupyter notebooks
+
+## Simulation
+
+To run some of the notebooks below you may need to source your current ROS distribution and have Gazebo installed in your system since they will also run the simulation.
+To source ROS, use
+
+```bash
+source /opt/ros/$ROS_DISTRO/setup.bash  # You can also replace $ROS_DISTRO by the distro you are using, e.g. melodic
+```
+
+The installation instructions for Gazebo can be found [here](http://gazebosim.org/tutorials?tut=install_ubuntu&cat=install).
+
+* [Testing the model's surface collision properties](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_surface_collision_properties.ipynb)
+* [Using the model factory](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_factory.ipynb)
+* [Inspecting Gazebo models](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspection_of_gazebo_models.ipynb)
+* [Creating models with Jupyter notebooks](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_creating_models_with_jupyter_notebooks.ipynb)
+* [Stopping Gazebo with a simulation timeout](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_run_gazebo_with_simulation_timeout.ipynb)
+* [Using model group generators](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_group_generators.ipynb)
+* [Creating sensors](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_sensors.ipynb)
+* [Creating single-link models](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_objects.ipynb)
+* [Stopping Gazebo with a process timeout](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_run_gazebo_with_process_timeout.ipynb)
+* [Handling meshes](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_meshes.ipynb)
+* [Configuring the different physics engines](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_physics_engines.ipynb)
+* [Inspecting different formats of robot descriptions](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb)
+* [Handling Gazebo materials](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_materials.ipynb)
+
 ## SDF parsers
 
 The examples for the `sdf` parser is available as Jupyter notebooks.
@@ -165,3 +192,7 @@ The list can be seen below.
 * [Parsing `<link>`, `<joint>` and `<sensor>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_links_joints_sensors.ipynb)
 * [Parsing `<robot>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_robots.ipynb)
 * [Parsing `<visual>` elements](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_visual.ipynb)
+
+## Occupancy grid generation
+
+* [Generating an occupancy grid map from a generated world](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/gen_grid_map.ipynb)

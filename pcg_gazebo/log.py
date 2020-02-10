@@ -120,7 +120,7 @@ def create_logger(name, log_filename=None, output_dir=None,
             file_hdlr.setLevel(log_level)
 
             logger.addHandler(file_hdlr)
-            logger.setLevel(log_level)
+            logger.setLevel(logging.WARNING)
     return logger
 
 

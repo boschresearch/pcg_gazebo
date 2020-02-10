@@ -47,7 +47,7 @@ def is_roscore_running(ros_master_uri='http://localhost:11311'):
         )
         return True
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error testing roscore, message={}'.format(ex))
         return False
 
@@ -74,7 +74,7 @@ def is_gazebo_running(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8')
         return 'gazebo' in output
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error testing Gazebo server, message={}'.format(ex))
         return False
 
@@ -101,7 +101,7 @@ def rosnode_exists(name, ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8')
         return name in output
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error testing ROS master, message={}'.format(ex))
         return False
 
@@ -129,7 +129,7 @@ def get_rosparam_list(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error getting ROS parameter list, message={}'.format(ex))
         return None
 
@@ -156,7 +156,7 @@ def get_rostopic_list(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error getting ROS parameter list, message={}'.format(ex))
         return None
 
@@ -183,7 +183,7 @@ def get_rosservice_list(ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error getting ROS parameter list, message={}'.format(ex))
         return None
 
@@ -214,7 +214,7 @@ def set_rosparam(params, ros_master_uri='http://localhost:11311'):
         output = output.decode('utf-8').split('\n')
         return [elem for elem in output if elem != '']
     except subprocess.CalledProcessError as ex:
-        PCG_ROOT_LOGGER.error(
+        PCG_ROOT_LOGGER.warning(
             'Error setting ROS parameters, message={}'.format(ex))
         return None
 

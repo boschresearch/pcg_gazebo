@@ -75,6 +75,13 @@ def exclude_calls(
                  'show',
                  'plt',
                  'save_image',
+                 'run_all_tasks',
+                 'kill_all_tasks',
+                 'spawn',
+                 'spawn_model',
+                 'wait',
+                 'apply_body_wrench',
+                 'rostopic',
                  '?']):
     # The MIT License (MIT)
     #
@@ -190,11 +197,6 @@ def test_notebooks(script_runner):
     )
 
     notebook_blacklist = [
-        'sim_inspection_of_gazebo_models.ipynb',
-        'sim_creating_models_with_jupyter_notebooks.ipynb',
-        'sim_model_factory.ipynb',
-        'sim_model_group_generators.ipynb',
-        'sim_inspect_robot_description.ipynb',
         'gen_grid_map.ipynb'
     ]
 
@@ -207,10 +209,12 @@ def test_notebooks(script_runner):
         if filename.lower().endswith('.ipynb'):
             if item in notebook_blacklist:
                 continue
+            if item.startswith('sim_'):
+                continue
             with open(filename, 'r') as file_obj:
                 script = load_notebook(file_obj)
-            exec(script, globals())
             print(filename)
+            exec(script, globals())
         elif filename.lower().endswith('.py'):
             output = script_runner.run('python', filename)
             assert output.success

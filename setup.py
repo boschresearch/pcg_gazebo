@@ -139,6 +139,7 @@ setup(
         'scripts/pcg-run-model-factory',
         'scripts/pcg-sdf2urdf',
         'scripts/pcg-sdflint',
+        'scripts/pcg-simulation-timer',
         'scripts/pcg-spawn-sdf-model',
         'scripts/pcg-start-gazebo-world',
         'scripts/pcg-urdf2sdf',
