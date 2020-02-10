@@ -456,6 +456,26 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-of-jupyter-notebooks" class="md-nav__link">
+    List of Jupyter notebooks
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simulation" class="md-nav__link">
+    Simulation
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#sdf-parsers" class="md-nav__link">
     SDF parsers
@@ -466,6 +486,13 @@
           <li class="md-nav__item">
   <a href="#urdf-parsers" class="md-nav__link">
     URDF parsers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occupancy-grid-generation" class="md-nav__link">
+    Occupancy grid generation
   </a>
   
 </li>
@@ -899,6 +926,26 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#list-of-jupyter-notebooks" class="md-nav__link">
+    List of Jupyter notebooks
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#simulation" class="md-nav__link">
+    Simulation
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#sdf-parsers" class="md-nav__link">
     SDF parsers
@@ -909,6 +956,13 @@
           <li class="md-nav__item">
   <a href="#urdf-parsers" class="md-nav__link">
     URDF parsers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#occupancy-grid-generation" class="md-nav__link">
+    Occupancy grid generation
   </a>
   
 </li>
@@ -1034,6 +1088,29 @@ In this <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/example
 <h4 id="parsers">Parsers<a class="headerlink" href="#parsers" title="Permanent link">&para;</a></h4>
 <h5 id="parsing-xacro-files">Parsing <code>xacro</code> files<a class="headerlink" href="#parsing-xacro-files" title="Permanent link">&para;</a></h5>
 <p>This <a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb">example</a> it is shown how to import a <code>xacro</code> file that will be processed, rendered into an URDF file and imported as a <code>SimulationModel</code> object.</p>
+<h4 id="list-of-jupyter-notebooks">List of Jupyter notebooks<a class="headerlink" href="#list-of-jupyter-notebooks" title="Permanent link">&para;</a></h4>
+<h5 id="simulation">Simulation<a class="headerlink" href="#simulation" title="Permanent link">&para;</a></h5>
+<p>To run some of the notebooks below you may need to source your current ROS distribution and have Gazebo installed in your system since they will also run the simulation.
+To source ROS, use</p>
+<div class="codehilite"><pre><span></span><span class="nb">source</span> /opt/ros/<span class="nv">$ROS_DISTRO</span>/setup.bash  <span class="c1"># You can also replace $ROS_DISTRO by the distro you are using, e.g. melodic</span>
+</pre></div>
+
+<p>The installation instructions for Gazebo can be found <a href="http://gazebosim.org/tutorials?tut=install_ubuntu&amp;cat=install">here</a>.</p>
+<ul>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_surface_collision_properties.ipynb">Testing the model's surface collision properties</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_factory.ipynb">Using the model factory</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspection_of_gazebo_models.ipynb">Inspecting Gazebo models</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_creating_models_with_jupyter_notebooks.ipynb">Creating models with Jupyter notebooks</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_run_gazebo_with_simulation_timeout.ipynb">Stopping Gazebo with a simulation timeout</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_model_group_generators.ipynb">Using model group generators</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_sensors.ipynb">Creating sensors</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_objects.ipynb">Creating single-link models</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_run_gazebo_with_process_timeout.ipynb">Stopping Gazebo with a process timeout</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_meshes.ipynb">Handling meshes</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_physics_engines.ipynb">Configuring the different physics engines</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_inspect_robot_description.ipynb">Inspecting different formats of robot descriptions</a></li>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/sim_materials.ipynb">Handling Gazebo materials</a></li>
+</ul>
 <h5 id="sdf-parsers">SDF parsers<a class="headerlink" href="#sdf-parsers" title="Permanent link">&para;</a></h5>
 <p>The examples for the <code>sdf</code> parser is available as Jupyter notebooks.
 The list can be seen below.</p>
@@ -1058,6 +1135,10 @@ The list can be seen below.</p>
 <li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_links_joints_sensors.ipynb">Parsing <code>&lt;link&gt;</code>, <code>&lt;joint&gt;</code> and <code>&lt;sensor&gt;</code> elements</a></li>
 <li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_robots.ipynb">Parsing <code>&lt;robot&gt;</code> elements</a></li>
 <li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/urdf_parser_visual.ipynb">Parsing <code>&lt;visual&gt;</code> elements</a></li>
+</ul>
+<h5 id="occupancy-grid-generation">Occupancy grid generation<a class="headerlink" href="#occupancy-grid-generation" title="Permanent link">&para;</a></h5>
+<ul>
+<li><a href="https://github.com/boschresearch/pcg_gazebo/blob/master/examples/gen_grid_map.ipynb">Generating an occupancy grid map from a generated world</a></li>
 </ul>
                 
                   
