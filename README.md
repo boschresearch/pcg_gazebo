@@ -56,6 +56,7 @@ Then clone the repository and install it using `pip`
 
 ```
 git clone https://github.com/boschresearch/pcg_gazebo.git
+cd pcg_gazebo
 pip install .
 ```
 
