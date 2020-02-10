@@ -6,23 +6,6 @@ To run the Jupyter notebooks, be sure to install it as
 pip install jupyterlab
 ```
 
-- [Model generation](#model-generation)
-  - [Creating full Gazebo models in Python](#creating-full-gazebo-models-in-python)
-  - [Model group generator](#model-group-generator)
-  - [Model factory](#model-factory)
-  - [Generating models from a YAML configuration file](#generating-models-from-a-yaml-configuration-file)
-  - [Generating models from template Jinja files](#generating-models-from-template-jinja-files)
-- [World generation](#world-generation)
-  - [Dynamically generating worlds from YAML configuration file](#dynamically-generating-worlds-from-yaml-configuration-file)
-- [Occupancy grid map generation](#occupancy-grid-map-generation)
-- [Parsers](#parsers)
-  - [Parsing `xacro` files](#parsing-xacro-files)
-- [List of Jupyter notebooks](#list-of-jupyter-notebooks)
-  - [Simulation](#simulation)
-  - [SDF parsers](#sdf-parsers)
-  - [URDF parsers](#urdf-parsers)
-  - [Occupancy grid generation](#occupancy-grid-generation)
-
 # Model generation
 
 ## Creating full Gazebo models in Python
