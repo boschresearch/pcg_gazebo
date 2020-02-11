@@ -196,3 +196,9 @@ The list can be seen below.
 ## Occupancy grid generation
 
 * [Generating an occupancy grid map from a generated world](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/gen_grid_map.ipynb)
+
+## Task manager
+
+* [Using the Gazebo proxy object](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/tm_gazebo_proxy.ipynb)
+* [Showcasing the process manager for simulation tasks](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/tm_process_manager.ipynb)
+* [Showcasing the setup of conditional stages for sequences of tasks](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/tm_stage_conditions.ipynb)
