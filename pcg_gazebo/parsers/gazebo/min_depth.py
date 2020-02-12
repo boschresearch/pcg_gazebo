@@ -13,19 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from ..types import XMLBoolean
+from ..types import XMLScalar
 
 
-class SelfCollide(XMLBoolean):
-    _NAME = 'selfCollide'
-    _TYPE = 'urdf'
+class MinDepth(XMLScalar):
+    _NAME = 'minDepth'
+    _TYPE = 'gazebo'
 
-    def __init__(self, default=False):
-        XMLBoolean.__init__(self, default)
+    def __init__(self, default=0):
+        XMLScalar.__init__(self, default)
+
+    def _set_value(self, value):
+        assert self._is_scalar(value), \
+            'Input value for {} must be a scalar'.format(self._NAME)
+        assert value >= 0, \
+            'Input value for {} must be equal' \
+            ' or greater than zero'.format(self._NAME)
+        XMLScalar._set_value(self, value)
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
 
-        obj = create_sdf_element('self_collide')
+        obj = create_sdf_element('min_depth')
         obj.value = self.value
         return obj

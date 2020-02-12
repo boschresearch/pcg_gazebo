@@ -16,9 +16,9 @@
 from ..types import XMLBoolean
 
 
-class ProvideFeedback(XMLBoolean):
-    _NAME = 'provideFeedback'
-    _TYPE = 'urdf'
+class SelfCollide(XMLBoolean):
+    _NAME = 'selfCollide'
+    _TYPE = 'gazebo'
 
     def __init__(self, default=False):
         XMLBoolean.__init__(self, default)
@@ -26,6 +26,6 @@ class ProvideFeedback(XMLBoolean):
     def to_sdf(self):
         from ..sdf import create_sdf_element
 
-        obj = create_sdf_element('provide_feedback')
+        obj = create_sdf_element('self_collide')
         obj.value = self.value
         return obj

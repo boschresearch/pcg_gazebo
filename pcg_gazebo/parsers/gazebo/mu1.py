@@ -12,22 +12,34 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from ..types import XMLScalar
+from ..sdf.bullet import FrictionBullet
 
 
-class MaxVel(XMLScalar):
-    _NAME = 'maxVel'
-    _TYPE = 'urdf'
+class Mu1(XMLScalar):
+    _NAME = 'mu1'
+    _TYPE = 'gazebo'
 
-    def __init__(self, default=0.01):
+    def __init__(self, default=1):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        XMLScalar._set_value(self, value, min_value=0)
+        assert self._is_scalar(value), \
+            'Input value for {} must be a scalar'.format(self._NAME)
+        assert value >= 0, \
+            'Input value for {} must be equal or' \
+            ' greater than zero'.format(self._NAME)
+        XMLScalar._set_value(self, value)
 
-    def to_sdf(self):
+    def to_sdf(self, engine='ode'):
         from ..sdf import create_sdf_element
 
-        obj = create_sdf_element('max_vel')
-        obj.value = self.value
+        assert engine in ['ode', 'bullet'], 'Accepted engine inputs are ode' \
+            ' or bullet'
+        if engine == 'ode':
+            obj = create_sdf_element('mu')
+            obj.value = self.value
+        else:
+            obj = FrictionBullet(self.value)
         return obj

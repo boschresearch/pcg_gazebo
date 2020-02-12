@@ -18,7 +18,7 @@ from ..types import XMLScalar
 
 class Kp(XMLScalar):
     _NAME = 'kp'
-    _TYPE = 'urdf'
+    _TYPE = 'gazebo'
 
     def __init__(self, default=1e12):
         XMLScalar.__init__(self, default)
