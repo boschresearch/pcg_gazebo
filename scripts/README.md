@@ -25,10 +25,40 @@ Lists all the static Gazebo models found in the ROS paths and `$HOME/.gazebo/mod
 $ pcg-list-gazebo-models
 ```
 
+# `pcg-preview-sdf`
+
+Opens a SDF file (either `.sdf` or `.world`) and shows a 3D preview of the geometries and meshes.
+The input SDF file must contain either a world or a model.
+Beware that if the world or model includes another model or meshes using the prefixes `model://`, that
+the included models must be in the Gazebo resources path so that they can be also parsed.
+
+> Example
+
+```bash
+pcg-preview-sdf --filename SDF_FILENAME              # Preview of the visual meshes
+pcg-preview-sdf --filename SDF_FILENAME --collision  # Preview of the collision meshes
+```
+
+# `pcg-preview-urdf`
+
+Opens an URDF file (`.urdf`) or a XACRO file (`.xacro`) that will be parsed into an URDF file, 
+and shows a 3D preview of the geometries and meshes.
+Beware that if the model includes meshes and includes other XACRO files, they should also
+be reachable within the ROS paths so that the model can be parsed.
+
+> Example
+
+```bash
+pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME              # Preview of the visual meshes
+pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME --collision  # Preview of the collision meshes
+```
+
 # `pcg-print-xml-element`
 
 This tool can be called to retrieve information on SDF, URDF or SDF Config elements.
 They can be displayed in XML format or the script can list all the children and attributes of an XML element.
+
+> Example 
 
 ```bash
 pcg-print-xml-element --sdf --list

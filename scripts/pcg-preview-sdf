@@ -1,0 +1,61 @@
+#!/usr/bin/env python
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import os
+from pcg_gazebo.simulation import SimulationModel, World
+from pcg_gazebo.parsers import parse_sdf
+import argparse
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        'Parse a SDF file (.sdf or .world) and'
+        ' display its geometries and meshes')
+    parser.add_argument(
+        '--filename',
+        '-f', type=str, help='SDF file (.sdf or .world)')
+    parser.add_argument(
+        '--collision',
+        '-c', action='store_true',
+        help='View collision meshes')
+
+    args = parser.parse_args()
+
+    assert os.path.exists(args.filename), 'Invalid filename provided'
+    assert args.filename.endswith('.sdf') or \
+        args.filename.endswith('.world'), \
+        'Support file extensions are .sdf and .world'
+
+    sdf = parse_sdf(args.filename)
+
+    if sdf.xml_element_name == 'model':
+        obj = SimulationModel.from_sdf(sdf)
+    elif sdf.xml_element_name == 'world':
+        obj = World.from_sdf(sdf)
+    elif sdf.xml_element_name == 'sdf':
+        if sdf.world is not None:
+            obj = World.from_sdf(sdf.world)
+        if sdf.models is not None:
+            assert len(sdf.models) == 1, \
+                'Only one model per SDF file can be previewed'
+            obj = SimulationModel.from_sdf(sdf.models[0])
+    else:
+        raise ValueError(
+            'No world or model was found in the file provided')
+
+    if args.collision:
+        obj.show(mesh_type='collision')
+    else:
+        obj.show(mesh_type='visual')
