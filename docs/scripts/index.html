@@ -352,6 +352,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pcg-preview-sdf" class="md-nav__link">
+    pcg-preview-sdf
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pcg-preview-urdf" class="md-nav__link">
+    pcg-preview-urdf
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pcg-print-xml-element" class="md-nav__link">
     pcg-print-xml-element
   </a>
@@ -832,6 +846,20 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pcg-preview-sdf" class="md-nav__link">
+    pcg-preview-sdf
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pcg-preview-urdf" class="md-nav__link">
+    pcg-preview-urdf
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pcg-print-xml-element" class="md-nav__link">
     pcg-print-xml-element
   </a>
@@ -951,9 +979,36 @@ Run <code>generate_occupancy_map -h</code> for more information.</p>
 <div class="codehilite"><pre><span></span>$ pcg-list-gazebo-models
 </pre></div>
 
+<h4 id="pcg-preview-sdf"><code>pcg-preview-sdf</code><a class="headerlink" href="#pcg-preview-sdf" title="Permanent link">&para;</a></h4>
+<p>Opens a SDF file (either <code>.sdf</code> or <code>.world</code>) and shows a 3D preview of the geometries and meshes.
+The input SDF file must contain either a world or a model.
+Beware that if the world or model includes another model or meshes using the prefixes <code>model://</code>, that
+the included models must be in the Gazebo resources path so that they can be also parsed.</p>
+<blockquote>
+<p>Example</p>
+</blockquote>
+<div class="codehilite"><pre><span></span>pcg-preview-sdf --filename SDF_FILENAME              <span class="c1"># Preview of the visual meshes</span>
+pcg-preview-sdf --filename SDF_FILENAME --collision  <span class="c1"># Preview of the collision meshes</span>
+</pre></div>
+
+<h4 id="pcg-preview-urdf"><code>pcg-preview-urdf</code><a class="headerlink" href="#pcg-preview-urdf" title="Permanent link">&para;</a></h4>
+<p>Opens an URDF file (<code>.urdf</code>) or a XACRO file (<code>.xacro</code>) that will be parsed into an URDF file, 
+and shows a 3D preview of the geometries and meshes.
+Beware that if the model includes meshes and includes other XACRO files, they should also
+be reachable within the ROS paths so that the model can be parsed.</p>
+<blockquote>
+<p>Example</p>
+</blockquote>
+<div class="codehilite"><pre><span></span>pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME              <span class="c1"># Preview of the visual meshes</span>
+pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME --collision  <span class="c1"># Preview of the collision meshes</span>
+</pre></div>
+
 <h4 id="pcg-print-xml-element"><code>pcg-print-xml-element</code><a class="headerlink" href="#pcg-print-xml-element" title="Permanent link">&para;</a></h4>
 <p>This tool can be called to retrieve information on SDF, URDF or SDF Config elements.
 They can be displayed in XML format or the script can list all the children and attributes of an XML element.</p>
+<blockquote>
+<p>Example </p>
+</blockquote>
 <div class="codehilite"><pre><span></span>pcg-print-xml-element --sdf --list
 pcg-print-xml-element --urdf --list
 pcg-print-xml-element --sdf-config --list
