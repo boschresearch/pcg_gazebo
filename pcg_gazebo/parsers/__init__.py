@@ -616,6 +616,7 @@ def urdf2sdf(urdf):
     from ..simulation.properties import Pose
     from ..path import Path
     import collections
+    from ..log import PCG_ROOT_LOGGER
 
     assert urdf is not None, 'Input URDF is invalid'
     URDF2SDF_OPT = dict(
@@ -690,7 +691,16 @@ def urdf2sdf(urdf):
                     for elem in urdf.gazebo.children[tag]:
                         if elem._TYPE != 'sdf':
                             continue
-                        sdf._add_child_element(elem._NAME, elem)
+                        try:
+                            sdf._add_child_element(elem._NAME, elem)
+                        except AssertionError as ex:
+                            PCG_ROOT_LOGGER.error(
+                                '[urdf2sdf] Cannot add element <{}> of '
+                                'format <{}> to <{}>, message={}'.format(
+                                    elem.xml_element_name,
+                                    elem.xml_format,
+                                    sdf.xml_element_name,
+                                    str(ex)))
                 else:
                     if urdf.gazebo.children[tag]._TYPE != 'sdf':
                         continue
@@ -814,6 +824,10 @@ def urdf2sdf(urdf):
         if urdf.visuals is not None:
             for visual in urdf.visuals:
                 sdf_visual = urdf2sdf(visual)
+                if urdf.gazebo is not None:
+                    if urdf.gazebo.material:
+                        sdf_visual.material = \
+                            urdf.gazebo.material.to_sdf()
                 sdf.add_visual(sdf_visual.name, sdf_visual)
 
         if urdf.collisions is not None:
@@ -908,7 +922,6 @@ def urdf2sdf(urdf):
                             urdf.gazebo.maxVel.value
 
                 sdf.add_collision(sdf_collision.name, sdf_collision)
-
     elif urdf._NAME == 'robot':
         import networkx
         sdf.name = urdf.name
@@ -928,25 +941,26 @@ def urdf2sdf(urdf):
                 robot_graph.add_edge(
                     joint.parent.link, joint.child.link, label=joint.name)
 
-        # Test if the robot graph is connected
-        for n in robot_graph.nodes():
-            if robot_graph.out_degree(n) + robot_graph.in_degree(n) == 0:
-                raise ValueError(
-                    'Link <{}> is not connected by any joint'.format(n))
+        if urdf.links is not None and len(urdf.links) > 1:
+            # Test if the robot graph is connected
+            for n in robot_graph.nodes():
+                if robot_graph.out_degree(n) + robot_graph.in_degree(n) == 0:
+                    raise ValueError(
+                        'Link <{}> is not connected by any joint'.format(n))
 
-        start_nodes = list()
-        end_nodes = list()
-        for n in robot_graph.nodes():
-            if robot_graph.out_degree(n) > 0 and \
-                    robot_graph.in_degree(n) == 0:
-                start_nodes.append(n)
-            if robot_graph.out_degree(n) == 0 and \
-                    robot_graph.in_degree(n) > 0:
-                end_nodes.append(n)
+            start_nodes = list()
+            end_nodes = list()
+            for n in robot_graph.nodes():
+                if robot_graph.out_degree(n) > 0 and \
+                        robot_graph.in_degree(n) == 0:
+                    start_nodes.append(n)
+                if robot_graph.out_degree(n) == 0 and \
+                        robot_graph.in_degree(n) > 0:
+                    end_nodes.append(n)
 
-        assert len(start_nodes) == 1, \
-            'The URDF structure should have only one start node' \
-            ', n_start_nodes={}'.format(len(start_nodes))
+            assert len(start_nodes) == 1, \
+                'The URDF structure should have only one start node' \
+                ', n_start_nodes={}'.format(len(start_nodes))
 
         if urdf.links is not None:
             for link in urdf.links:
