@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import print_function
+import argparse
+from pcg_gazebo.parsers.sdf import create_sdf_element, \
+    get_all_sdf_element_classes
+from pcg_gazebo.parsers.urdf import create_urdf_element, \
+    get_all_urdf_element_classes
+
+
+if __name__ == '__main__':
+    usage_text = '''Usage:
+    pcg-print-xml-element --sdf --list
+    pcg-print-xml-element --urdf --list
+    pcg-print-xml-element --sdf-config --list
+    pcg-print-xml-element --sdf --tag NAME --xml
+    pcg-print-xml-element --sdf --tag NAME --description
+    '''
+    parser = argparse.ArgumentParser(
+        description='Print XML elements (SDF, URDF or SDF Config)',
+        epilog=usage_text,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument(
+        '--sdf', action='store_true',
+        help='Retrieve information on SDF element')
+    parser.add_argument(
+        '--urdf', action='store_true',
+        help='Retrieve information on URDF element')
+    parser.add_argument(
+        '--sdf-config', action='store_true',
+        help='Retrieve information on SDF Config element')
+    parser.add_argument(
+        '--tag', '-t', type=str, help='Name of the XML element')
+    parser.add_argument(
+        '--list', '-l', action='store_true',
+        help='List tags of all elements available')
+    parser.add_argument(
+        '--xml', '-x', action='store_true',
+        help='Output the element as XML')
+    parser.add_argument(
+        '--description', '-d', action='store_true',
+        help='Print information on the children of the XML element')
+
+    args = parser.parse_args()
+
+    if sum([args.sdf, args.urdf, args.sdf_config]) != 1:
+        print('Please choose only one of the XML format types'
+              ' supported (--sdf, --urdf or --sdf-config)')
+        exit(1)
+
+    if args.list:
+        if args.sdf:
+            from pcg_gazebo.parsers.sdf import get_all_sdf_element_classes
+            elements = get_all_sdf_element_classes()
+        elif args.urdf:
+            from pcg_gazebo.parsers.urdf import get_all_urdf_element_classes
+            from pcg_gazebo.parsers.gazebo import \
+                get_all_gazebo_element_classes
+            elements = get_all_urdf_element_classes() + \
+                get_all_gazebo_element_classes()
+        else:
+            from pcg_gazebo.parsers.sdf_config import \
+                get_all_sdf_config_element_classes
+            elements = get_all_sdf_config_element_classes()
+
+        for obj in elements:
+            print('{}'.format(obj().xml_element_name))
+    else:
+        if args.tag is None:
+            print('No tag was provided to retrieve an XML element')
+            exit(1)
+        if args.sdf:
+            from pcg_gazebo.parsers.sdf import create_sdf_element
+            obj = create_sdf_element(args.tag)
+            if obj is None:
+                print('Invalid tag for SDF element, tag={}'.format(
+                    args.tag))
+                exit(1)
+        elif args.urdf:
+            from pcg_gazebo.parsers.urdf import create_urdf_element
+            obj = create_urdf_element(args.tag)
+            if obj is None:
+                print('Invalid tag for URDF element, tag={}'.format(args.tag))
+                exit(1)
+        else:
+            from pcg_gazebo.parsers.sdf_config import create_sdf_config_element
+            obj = create_sdf_config_element(args.tag)
+            if obj is None:
+                print('Invalid tag for SDF config element, tag={}'.format(
+                    args.tag))
+                exit(1)
+
+        if len(obj.modes):
+            print('Element <{}> has multiple modes:'.format(
+                obj.xml_element_name))
+            for tag in obj.modes:
+                print('- {}'.format(tag))
+            print('')
+
+        if args.xml:
+            if len(obj.modes):
+                for tag in obj.modes:
+                    obj.reset(mode=tag, with_optional_elements=True)
+                    print('- Element <{}> for mode <{}>'.format(
+                        obj.xml_element_name, tag))
+                    print(obj)
+            else:
+                obj.reset(with_optional_elements=True)
+                print('Element <{}>\n'.format(obj.xml_element_name))
+                print(obj)
+        else:
+            if len(obj.modes):
+                for mode in obj.modes:
+                    print('Children elements in mode <{}>:'.format(mode))
+                    for tag in obj._CHILDREN_CREATORS:
+                        if 'mode' in obj._CHILDREN_CREATORS[tag]:
+                            if obj._CHILDREN_CREATORS[tag]['mode'] != mode:
+                                continue
+                        msg = ' - <{}>:'.format(tag)
+                        if 'optional' in obj._CHILDREN_CREATORS[tag]:
+                            msg += ' optional={}'.format(
+                                'true' if obj._CHILDREN_CREATORS[tag]['optional'] else 'false')
+                        else:
+                            msg += ' optional=false'
+
+                        if 'n_elems' in obj._CHILDREN_CREATORS[tag]:
+                            msg += ', # elements supported={}'.format(
+                                'multiple' if obj._CHILDREN_CREATORS[tag]['n_elems'] == '+' else 1)
+                        else:
+                            msg += ', # elements supported=1'
+                        t = obj._CHILDREN_CREATORS[tag]['creator']._VALUE_TYPE
+                        if len(t):
+                            msg += ', type={}'.format(t)
+                        print(msg)
+                    print('')
+            else:
+                print('Children elements:')
+                for tag in obj._CHILDREN_CREATORS:
+                    msg = ' - <{}>:'.format(tag)
+                    if 'optional' in obj._CHILDREN_CREATORS[tag]:
+                        msg += ' optional={}'.format(
+                            'true' if obj._CHILDREN_CREATORS[tag]['optional'] else 'false')
+                    else:
+                        msg += ' optional=false'
+
+                    if 'n_elems' in obj._CHILDREN_CREATORS[tag]:
+                        msg += ', # elements supported={}'.format(
+                            'multiple' if obj._CHILDREN_CREATORS[tag]['n_elems'] == '+' else 1)
+                    else:
+                        msg += ', # elements supported=1'
+
+                    if len(obj._CHILDREN_CREATORS[tag]['creator']._VALUE_TYPE):
+                        msg += ', type={}'.format(
+                            obj._CHILDREN_CREATORS[tag]['creator']._VALUE_TYPE)
+                    print(msg)
