@@ -28,13 +28,7 @@ class Visual(XMLBase):
         origin=dict(creator=Origin),
         geometry=dict(creator=Geometry),
         material=dict(creator=Material, optional=True),
-        gazebo=dict(
-            creator=Gazebo,
-            optional=True,
-            default=['none', dict(
-                material=None,
-                transparency=None,
-                cast_shadows=None)])
+        gazebo=dict(creator=Gazebo, optional=True)
     )
 
     _ATTRIBUTES = dict(
@@ -114,6 +108,4 @@ class Visual(XMLBase):
                 obj.transparency = self.transparency
             if 'cast_shadows' in self.children['gazebo'].children:
                 obj.cast_shadows = self.cast_shadows
-            if 'material' in self.children['gazebo'].children:
-                obj.material = self.material.to_sdf()
         return obj
