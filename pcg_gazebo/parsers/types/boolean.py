@@ -18,6 +18,7 @@ from . import XMLBase
 
 class XMLBoolean(XMLBase):
     _NAME = ''
+    _VALUE_TYPE = 'boolean'
 
     def __init__(self, default=False):
         XMLBase.__init__(self)

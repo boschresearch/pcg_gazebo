@@ -18,6 +18,7 @@ from . import XMLBase
 
 class XMLScalar(XMLBase):
     _NAME = ''
+    _VALUE_TYPE = 'scalar'
 
     def __init__(self, default=0, min_value=None, max_value=None):
         XMLBase.__init__(self)
