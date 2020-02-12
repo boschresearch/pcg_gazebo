@@ -6,6 +6,7 @@
     <kd>100.0</kd>
     <minDepth>0.001</minDepth>
     <maxVel>1.0</maxVel>
-    <selfCollide>false</selfCollide>
+    <selfCollide>0</selfCollide>
     <maxContacts>15</maxContacts>
+    <material>Gazebo/Yellow</material>
 </gazebo>
