@@ -181,11 +181,18 @@ class AssetsManager(_CollectionManager):
         """
         from ..parsers import parse_sdf, parse_urdf, urdf2sdf
         from .model_group_generator import ModelGroupGenerator
+        if self.has_element(tag):
+            PCG_ROOT_LOGGER.error(
+                'Asset with tag <{}> already exists'.format(tag))
+            return False
         assert isinstance(description, SimulationModel) or \
             isinstance(description, Light) or \
             isinstance(description, ModelGroup) or \
             isinstance(description, ModelGroupGenerator) or \
-            isinstance(description, dict) or isinstance(description, str)
+            isinstance(description, dict) or isinstance(description, str), \
+            'Invalid asset type, options are=SimulationModel, Light,' \
+            ' ModelGroup, ModelGroupGenerator, dict, received={}'.format(
+                type(description))
         if hasattr(description, 'name'):
             if tag is None:
                 tag = description.name
