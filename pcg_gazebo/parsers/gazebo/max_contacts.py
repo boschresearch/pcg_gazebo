@@ -12,23 +12,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from ..types import XMLScalar
+
+from ..types import XMLInteger
 
 
-class StopERP(XMLScalar):
-    _NAME = 'stopErp'
-    _TYPE = 'urdf'
+class MaxContacts(XMLInteger):
+    _NAME = 'maxContacts'
+    _TYPE = 'gazebo'
 
-    def __init__(self, default=0.2):
-        XMLScalar.__init__(self, default)
+    def __init__(self, default=20):
+        XMLInteger.__init__(self, default)
 
     def _set_value(self, value):
-        XMLScalar._set_value(self, value, min_value=0)
+        assert isinstance(value, int)
+        assert value > 0
+        XMLInteger._set_value(self, value)
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
 
-        print('WARNING: stopErp only translates to SDF erp for the ODE engine')
-        obj = create_sdf_element('erp')
+        obj = create_sdf_element('max_contacts')
         obj.value = self.value
         return obj

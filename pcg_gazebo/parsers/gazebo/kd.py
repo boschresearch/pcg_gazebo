@@ -16,11 +16,11 @@
 from ..types import XMLScalar
 
 
-class MinDepth(XMLScalar):
-    _NAME = 'minDepth'
-    _TYPE = 'urdf'
+class Kd(XMLScalar):
+    _NAME = 'kd'
+    _TYPE = 'gazebo'
 
-    def __init__(self, default=0):
+    def __init__(self, default=1):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
@@ -34,6 +34,6 @@ class MinDepth(XMLScalar):
     def to_sdf(self):
         from ..sdf import create_sdf_element
 
-        obj = create_sdf_element('min_depth')
+        obj = create_sdf_element('kd')
         obj.value = self.value
         return obj

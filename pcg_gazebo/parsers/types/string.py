@@ -19,6 +19,7 @@ from ...utils import is_string, generate_random_string
 
 class XMLString(XMLBase):
     _NAME = ''
+    _VALUE_TYPE = 'string'
 
     def __init__(self, default=''):
         XMLBase.__init__(self)

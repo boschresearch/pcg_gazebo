@@ -53,6 +53,20 @@ generate:
   - pcg_gazebo.simulation.sensors.Sensor++
 - reference/parsers.md:
   - pcg_gazebo.parsers++
+- reference/parsers_gazebo.md:
+  - pcg_gazebo.parsers.gazebo++
+  - pcg_gazebo.parsers.gazebo.Kd++
+  - pcg_gazebo.parsers.gazebo.Kp++
+  - pcg_gazebo.parsers.gazebo.Material++
+  - pcg_gazebo.parsers.gazebo.MaxContacts++
+  - pcg_gazebo.parsers.gazebo.MaxVel++
+  - pcg_gazebo.parsers.gazebo.MinDepth++
+  - pcg_gazebo.parsers.gazebo.Mu1++
+  - pcg_gazebo.parsers.gazebo.Mu2++
+  - pcg_gazebo.parsers.gazebo.ProvideFeedback++
+  - pcg_gazebo.parsers.gazebo.SelfCollide++
+  - pcg_gazebo.parsers.gazebo.StopCFM++
+  - pcg_gazebo.parsers.gazebo.StopERP++
 - reference/parsers_sdf.md:
   - pcg_gazebo.parsers.sdf++
   - pcg_gazebo.parsers.sdf.Accel++
@@ -332,29 +346,18 @@ generate:
   - pcg_gazebo.parsers.urdf.Inertia++
   - pcg_gazebo.parsers.urdf.Inertial++
   - pcg_gazebo.parsers.urdf.Joint++
-  - pcg_gazebo.parsers.urdf.Kd++
-  - pcg_gazebo.parsers.urdf.Kp++
   - pcg_gazebo.parsers.urdf.Limit++
   - pcg_gazebo.parsers.urdf.Link++
   - pcg_gazebo.parsers.urdf.Mass++
   - pcg_gazebo.parsers.urdf.Material++
-  - pcg_gazebo.parsers.urdf.MaxContacts++
-  - pcg_gazebo.parsers.urdf.MaxVel++
   - pcg_gazebo.parsers.urdf.MechanicalReduction++
   - pcg_gazebo.parsers.urdf.Mesh++
   - pcg_gazebo.parsers.urdf.Mimic++
-  - pcg_gazebo.parsers.urdf.MinDepth++
-  - pcg_gazebo.parsers.urdf.Mu1++
-  - pcg_gazebo.parsers.urdf.Mu2++
   - pcg_gazebo.parsers.urdf.Origin++
   - pcg_gazebo.parsers.urdf.Parent++
-  - pcg_gazebo.parsers.urdf.ProvideFeedback++
   - pcg_gazebo.parsers.urdf.Robot++
   - pcg_gazebo.parsers.urdf.SafetyController++
-  - pcg_gazebo.parsers.urdf.SelfCollide++
   - pcg_gazebo.parsers.urdf.Sphere++
-  - pcg_gazebo.parsers.urdf.StopCFM++
-  - pcg_gazebo.parsers.urdf.StopERP++
   - pcg_gazebo.parsers.urdf.Texture++
   - pcg_gazebo.parsers.urdf.Transmission++
   - pcg_gazebo.parsers.urdf.Type++
@@ -415,6 +418,7 @@ pages:
     - pcg_gazebo.parsers.sdf_config: reference/parsers_sdf_config.md
     - pcg_gazebo.parsers.types: reference/parsers_types.md
     - pcg_gazebo.parsers.urdf: reference/parsers_urdf.md
+    - pcg_gazebo.parsers.gazebo: reference/parsers_gazebo.md
   - pcg_gazebo.task_manager: reference/task_manager.md
   - pcg_gazebo.generators:
     - pcg_gazebo.generators: reference/generators.md

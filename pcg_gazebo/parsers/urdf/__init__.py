@@ -27,29 +27,18 @@ from .hardware_interface import HardwareInterface
 from .inertia import Inertia
 from .inertial import Inertial
 from .joint import Joint
-from .kd import Kd
-from .kp import Kp
 from .limit import Limit
 from .link import Link
 from .mass import Mass
 from .material import Material
-from .max_contacts import MaxContacts
-from .max_vel import MaxVel
 from .mechanical_reduction import MechanicalReduction
 from .mesh import Mesh
 from .mimic import Mimic
-from .min_depth import MinDepth
-from .mu1 import Mu1
-from .mu2 import Mu2
 from .origin import Origin
 from .parent import Parent
-from .provide_feedback import ProvideFeedback
 from .robot import Robot
 from .safety_controller import SafetyController
-from .self_collide import SelfCollide
 from .sphere import Sphere
-from .stopCfm import StopCFM
-from .stopErp import StopERP
 from .texture import Texture
 from .transmission import Transmission
 from .type import Type
@@ -144,29 +133,18 @@ __all__ = [
     'Inertia',
     'Inertial',
     'Joint',
-    'Kd',
-    'Kp',
     'Limit',
     'Link',
     'Mass',
     'Material',
-    'MaxContacts',
-    'MaxVel',
     'MechanicalReduction',
     'Mesh',
     'Mimic',
-    'MinDepth',
-    'Mu1',
-    'Mu2',
     'Origin',
     'Parent',
-    'ProvideFeedback',
     'Robot',
     'SafetyController',
-    'SelfCollide',
     'Sphere',
-    'StopCFM',
-    'StopERP',
     'Texture',
     'Transmission',
     'Type',

@@ -19,12 +19,15 @@ class Center(XMLBase):
     _NAME = 'center'
     _TYPE = 'sdf'
 
+    _MODES = ['boolean', 'vector']
+
     def __init__(self, default=False):
         XMLBase.__init__(self)
 
         assert self._is_boolean(default) or self._is_array(default), \
             'Input default value must be a boolean, a list or an array'
         if self._is_array(default):
+            self._mode = 'vector'
             default = list(default)
             assert len(default) == 2, 'List must have 2 elements'
             self._is_numeric_vector(default), \
@@ -32,6 +35,7 @@ class Center(XMLBase):
             self._default = default
             self._value = default
         else:
+            self._mode = 'boolean'
             self._default = bool(default)
             self._value = bool(default)
 
@@ -41,10 +45,18 @@ class Center(XMLBase):
         if self._is_numeric_vector(value):
             assert len(list(value)) == 2, 'List must have 2 elements'
             self._value = list(value)
+            self._mode = 'vector'
         else:
             self._value = bool(value)
+            self._mode = 'boolean'
 
-    def reset(self):
+    def reset(self, mode='boolean', with_optional_elements=False):
+        assert mode in self._MODES, \
+            'Center can either be a boolean or a vector'
+        if mode == 'boolean':
+            self._default = False
+        else:
+            self._default = [0, 0]
         self._value = self._default
 
     def is_valid(self):

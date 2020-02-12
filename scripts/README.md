@@ -25,6 +25,19 @@ Lists all the static Gazebo models found in the ROS paths and `$HOME/.gazebo/mod
 $ pcg-list-gazebo-models
 ```
 
+# `pcg-print-xml-element`
+
+This tool can be called to retrieve information on SDF, URDF or SDF Config elements.
+They can be displayed in XML format or the script can list all the children and attributes of an XML element.
+
+```bash
+pcg-print-xml-element --sdf --list
+pcg-print-xml-element --urdf --list
+pcg-print-xml-element --sdf-config --list
+pcg-print-xml-element --sdf --tag NAME --xml
+pcg-print-xml-element --sdf --tag NAME --description
+```
+
 # `pcg-process-jinja-template`
 
 Generates a file from a Jinja template. 

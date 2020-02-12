@@ -2,4 +2,5 @@
 <gazebo reference="joint">
     <stopCfm>0.1</stopCfm>
     <stopErp>0.3</stopErp>
+    <provideFeedback>0</provideFeedback>
 </gazebo>

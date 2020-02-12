@@ -18,6 +18,7 @@ from . import XMLBase
 
 class XMLInteger(XMLBase):
     _NAME = ''
+    _VALUE_TYPE = 'integer'
 
     def __init__(self, default=0, min_value=None, max_value=None):
         XMLBase.__init__(self)

@@ -14,16 +14,18 @@
 # limitations under the License.
 
 from ..types import XMLBase
-from .mu1 import Mu1
-from .mu2 import Mu2
-from .kp import Kp
-from .kd import Kd
-from .max_contacts import MaxContacts
-from .min_depth import MinDepth
-from .max_vel import MaxVel
-from .self_collide import SelfCollide
-from .stopCfm import StopCFM
-from .stopErp import StopERP
+from ..gazebo.kp import Kp
+from ..gazebo.kd import Kd
+from ..gazebo.material import Material
+from ..gazebo.max_contacts import MaxContacts
+from ..gazebo.max_vel import MaxVel
+from ..gazebo.min_depth import MinDepth
+from ..gazebo.mu1 import Mu1
+from ..gazebo.mu2 import Mu2
+from ..gazebo.provide_feedback import ProvideFeedback
+from ..gazebo.self_collide import SelfCollide
+from ..gazebo.stop_cfm import StopCFM
+from ..gazebo.stop_erp import StopERP
 
 
 class Gazebo(XMLBase):
@@ -35,6 +37,8 @@ class Gazebo(XMLBase):
             creator=Mu1, default=[0], mode='link', optional=True),
         mu2=dict(
             creator=Mu2, default=[0], mode='link', optional=True),
+        material=dict(
+            creator=Material, default=['none'], mode='link', optional=True),
         kp=dict(
             creator=Kp, default=[1e12], mode='link', optional=True),
         kd=dict(
@@ -47,6 +51,9 @@ class Gazebo(XMLBase):
             creator=MaxVel, default=[0.01], mode='link', optional=True),
         selfCollide=dict(
             creator=SelfCollide, default=[False], mode='link', optional=True),
+        provideFeedback=dict(
+            creator=ProvideFeedback, default=[False], mode='joint',
+            optional=True),
         stopCfm=dict(
             creator=StopCFM, default=[0.0], mode='joint', optional=True),
         stopErp=dict(
@@ -94,6 +101,16 @@ class Gazebo(XMLBase):
         if self._mode != 'link':
             self.reset(mode='link')
         self._add_child_element('mu2', value)
+
+    @property
+    def material(self):
+        return self._get_child_element('material')
+
+    @material.setter
+    def material(self, value):
+        if self._mode != 'link':
+            self.reset(mode='link')
+        self._add_child_element('material', value)
 
     @property
     def kp(self):
@@ -175,6 +192,16 @@ class Gazebo(XMLBase):
             self.reset(mode='joint')
         self._add_child_element('stopErp', value)
 
+    @property
+    def provideFeedback(self):
+        return self._get_child_element('provideFeedback')
+
+    @provideFeedback.setter
+    def provideFeedback(self, value):
+        if self._mode != 'joint':
+            self.reset(mode='joint')
+        self._add_child_element('provideFeedback', value)
+
     def is_valid_element(self, name):
         from ..sdf import create_sdf_element
 
@@ -226,11 +253,16 @@ class Gazebo(XMLBase):
                                                 elem._add_child_element(
                                                     tag, item)
                                     else:
-                                        elem._add_child_element(
-                                            tag, value[tag])
+                                        try:
+                                            elem._add_child_element(
+                                                tag, value[tag])
+                                        except AssertionError as ex:
+                                            self.log_error(
+                                                'Error parsing XML'
+                                                ' element', ex)
 
             if elem is None:
-                print('SDF element {} does not exist'.format(name))
+                self.log_warning('SDF element {} does not exist'.format(name))
                 return False
             else:
                 if elem.xml_element_name not in self.children:

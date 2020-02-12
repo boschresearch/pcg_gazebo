@@ -19,6 +19,7 @@ import collections
 
 class XMLVector(XMLBase):
     _NAME = ''
+    _VALUE_TYPE = 'vector'
 
     def __init__(self, size=None):
         XMLBase.__init__(self)

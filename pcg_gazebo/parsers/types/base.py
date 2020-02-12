@@ -38,6 +38,7 @@ class XMLBase(object):
     _MODES = list()
     _VALUE_OPTIONS = list()
     _FORMAT_VERSIONS = ['1.4', '1.5', '1.6']
+    _VALUE_TYPE = ''
 
     def __init__(self):
         # Block attributes
@@ -141,6 +142,10 @@ class XMLBase(object):
         except (ValueError, TypeError):
             return False
 
+    @property
+    def modes(self):
+        return self._MODES
+
     def _is_numeric_vector(self, vec, range=None):
         if not self._is_array(vec):
             return False
@@ -209,7 +214,8 @@ class XMLBase(object):
         if not self._has_custom_elements:
             assert tag in self._CHILDREN_CREATORS, \
                 '<{}> child not found for <{}>'.format(tag, self._NAME)
-        assert value is not None, 'Input value cannot be None'
+        assert value is not None, \
+            'Input value for element <{}> cannot be None'.format(tag)
 
         if self.has_value():
             if issubclass(value.__class__, XMLBase):
@@ -583,7 +589,6 @@ class XMLBase(object):
                 if 'default' in self._CHILDREN_CREATORS[child]:
                     assert isinstance(
                         self._CHILDREN_CREATORS[child]['default'], list)
-
                     obj = creator(*self._CHILDREN_CREATORS[child]['default'])
                 else:
                     obj = creator()
@@ -745,3 +750,22 @@ class XMLBase(object):
                         self.children[tag].random()
             except Exception:
                 pass
+
+    def log_error(self, msg, ex=None):
+        error_msg = '[{}] {}'.format(
+            self.xml_element_name, msg)
+        if ex is not None:
+            error_msg += ', message={}'.format(str(ex))
+        PCG_ROOT_LOGGER.error(error_msg)
+
+    def log_warning(self, msg, ex=None):
+        warning_msg = '[{}] {}'.format(
+            self.xml_element_name, msg)
+        if ex is not None:
+            warning_msg += ', message={}'.format(str(ex))
+        PCG_ROOT_LOGGER.warning(warning_msg)
+
+    def log_info(self, msg):
+        info_msg = '[{}] {}'.format(
+            self.xml_element_name, msg)
+        PCG_ROOT_LOGGER.info(info_msg)

@@ -12,28 +12,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLScalar
 
 
-class Kd(XMLScalar):
-    _NAME = 'kd'
-    _TYPE = 'urdf'
+class MaxVel(XMLScalar):
+    _NAME = 'maxVel'
+    _TYPE = 'gazebo'
 
-    def __init__(self, default=1):
+    def __init__(self, default=0.01):
         XMLScalar.__init__(self, default)
 
     def _set_value(self, value):
-        assert self._is_scalar(value), \
-            'Input value for {} must be a scalar'.format(self._NAME)
-        assert value >= 0, \
-            'Input value for {} must be equal' \
-            ' or greater than zero'.format(self._NAME)
-        XMLScalar._set_value(self, value)
+        XMLScalar._set_value(self, value, min_value=0)
 
     def to_sdf(self):
         from ..sdf import create_sdf_element
 
-        obj = create_sdf_element('kd')
+        obj = create_sdf_element('max_vel')
         obj.value = self.value
         return obj
