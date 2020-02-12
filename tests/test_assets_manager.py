@@ -224,6 +224,27 @@ class TestAssetManager(unittest.TestCase):
         self.assertIn('<mesh>', model.to_sdf().to_xml_as_str())
         self.assertEqual(len(model.links), 1)
 
+    def test_add_duplicated_models(self):
+        box_config = dict(
+            type='box',
+            args=dict(
+                size=[2, 2, 2],
+                mass=10,
+                name='box',
+                pose=[0, 0, 1, 0, 0, 0],
+                color='random'
+            )
+        )
+
+        model = SimulationModel.from_sdf(config2models(box_config)[0])
+        name = generate_random_string(5)
+
+        manager = AssetsManager.get_instance()
+        self.assertTrue(manager.add(model, name))
+        self.assertIn(name, manager.tags)
+        self.assertIsInstance(manager.get(name), SimulationModel)
+        self.assertFalse(manager.add(model, name))
+
 
 if __name__ == '__main__':
     unittest.main()
