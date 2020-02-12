@@ -152,7 +152,7 @@ class WorldGenerator:
         will be assets to the created engine
         * `kwargs` (*type:* `dict`): Input arguments to the created engine.
         """
-        self._engines.add(tag, engine_name, models, **kwargs)
+        return self._engines.add(tag, engine_name, models, **kwargs)
 
     def add_constraint(self, name, type, **kwargs):
         """Add a new positioning constraint class to the internal
@@ -176,7 +176,7 @@ class WorldGenerator:
         * `model` (*type:* `pcg_gazebo.simulation.SimulationModel`):
         Simulation model
         """
-        self._assets.add(*args, **kwargs)
+        return self._assets.add(*args, **kwargs)
 
     def set_model_as_ground_plane(self, model_name):
         """Flag a model asset as part of the ground plane. This procedure will
