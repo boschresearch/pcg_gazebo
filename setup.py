@@ -136,6 +136,8 @@ setup(
         'scripts/pcg-generate-occupancy-map',
         'scripts/pcg-generate-world',
         'scripts/pcg-list-gazebo-models',
+        'scripts/pcg-preview-sdf',
+        'scripts/pcg-preview-urdf',
         'scripts/pcg-print-xml-element',
         'scripts/pcg-process-jinja-template',
         'scripts/pcg-run-model-factory',
