@@ -210,12 +210,15 @@ class XMLBase(object):
         else:
             return type(self)
 
-    def _add_child_element(self, tag, value):
+    def _add_child_element(self, tag, value, use_as_if_duplicated=None):
         if not self._has_custom_elements:
             assert tag in self._CHILDREN_CREATORS, \
-                '<{}> child not found for <{}>'.format(tag, self._NAME)
+                '<{}> child not found for <{}>, value=\n{}'.format(
+                    tag, self._NAME, value)
         assert value is not None, \
-            'Input value for element <{}> cannot be None'.format(tag)
+            'Input value for element <{}> in element <{}>' \
+            ' cannot be None'.format(
+                tag, self._NAME)
 
         if self.has_value():
             if issubclass(value.__class__, XMLBase):
@@ -380,6 +383,9 @@ class XMLBase(object):
                 self.children[obj._NAME].append(obj)
             else:
                 self.children[obj._NAME] = obj
+
+            if self.is_child_and_attribute(obj._NAME):
+                self.attributes[obj._NAME] = obj.value
 
             mode = self._get_child_element_mode(obj._NAME)
             if mode is not None:
@@ -622,12 +628,20 @@ class XMLBase(object):
         # Adding attributes
         att = self.get_attributes(version)
         for tag in att:
+            # Test if the element has both the options to use
+            # an input as attribute or as a child
+            if self.is_child_and_attribute(tag):
+                if hasattr(self, '_use_{}_as'.format(tag)):
+                    if getattr(self, '_use_{}_as'.format(tag)) == 'child':
+                        continue
+
             att[tag] = str(att[tag])
 
         if root is None:
             base = Element(self._NAME, attrib=att)
-        else:
+        else:            
             base = SubElement(root, self._NAME, attrib=att)
+
         if self.has_value():
             base.text = self.get_formatted_value_as_str()
         else:
@@ -638,16 +652,25 @@ class XMLBase(object):
                             for elem in self.children[child_name]:
                                 elem.to_xml(base, version)
                         else:
-                            PCG_ROOT_LOGGER.warning(
-                                '{} child element not available'
+                            PCG_ROOT_LOGGER.info(
+                                '<{}> child element not available'
                                 ' for version {}'.format(
                                     child_name, version))
                     else:
-                        if self._child_exists_in_version(child_name, version):
+                        # Test if the element has both the options to use
+                        # an input as attribute or as a child
+                        if self.is_child_and_attribute(child_name):
+                            # If that is the case, check if it was
+                            # explicitly defined as a child or an attribute
+                            if hasattr(self, '_use_{}_as'.format(child_name)):
+                                if getattr(self, '_use_{}_as'.format(child_name)) == 'child':
+                                    self.children[child_name].to_xml(base, version)
+                                    continue
+                        elif self._child_exists_in_version(child_name, version):
                             self.children[child_name].to_xml(base, version)
                         else:
-                            PCG_ROOT_LOGGER.warning(
-                                '{} child element not available'
+                            PCG_ROOT_LOGGER.info(
+                                '<{}> child element not available'
                                 ' for version {}'.format(
                                     child_name, version))
         return base
@@ -693,6 +716,15 @@ class XMLBase(object):
                 return output
             else:
                 return data
+
+    def has_duplicated_child_and_attribute(self):
+        for tag in self.attributes:
+            if tag in self._CHILDREN_CREATORS:
+                return True
+        return False
+
+    def is_child_and_attribute(self, tag):
+        return tag in self.attributes and tag in self._CHILDREN_CREATORS
 
     def from_dict(self, sdf_data, ignore_tags=list()):
         for tag in sdf_data:
@@ -751,12 +783,18 @@ class XMLBase(object):
             except Exception:
                 pass
 
-    def log_error(self, msg, ex=None):
+    def log_error(self, msg, ex=None, raise_exception=False,
+                  exception_type=None):
         error_msg = '[{}] {}'.format(
             self.xml_element_name, msg)
         if ex is not None:
             error_msg += ', message={}'.format(str(ex))
         PCG_ROOT_LOGGER.error(error_msg)
+        if raise_exception:
+            if exception_type is None:
+                raise Exception(error_msg)
+            else:
+                raise exception_type(error_msg)
 
     def log_warning(self, msg, ex=None):
         warning_msg = '[{}] {}'.format(
