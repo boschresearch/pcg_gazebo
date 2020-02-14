@@ -25,7 +25,7 @@ class Surface(XMLBase):
 
     _CHILDREN_CREATORS = dict(
         bounce=dict(creator=Bounce, optional=True),
-        friction=dict(creator=Friction, optional=True),
+        friction=dict(creator=Friction, default=['surface'], optional=True),
         contact=dict(creator=Contact, default=['collision'], optional=True)
     )
 
