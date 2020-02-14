@@ -141,9 +141,11 @@ if __name__ == '__main__':
                                 'multiple' if obj._CHILDREN_CREATORS[tag]['n_elems'] == '+' else 1)
                         else:
                             msg += ', # elements supported=1'
-                        t = obj._CHILDREN_CREATORS[tag]['creator']._VALUE_TYPE
-                        if len(t):
-                            msg += ', type={}'.format(t)
+                        creator = obj._CHILDREN_CREATORS[tag]['creator']
+                        if creator:
+                            t = creator._VALUE_TYPE
+                            if len(t):
+                                msg += ', type={}'.format(t)
                         print(msg)
                     print('')
             else:
@@ -162,7 +164,9 @@ if __name__ == '__main__':
                     else:
                         msg += ', # elements supported=1'
 
-                    if len(obj._CHILDREN_CREATORS[tag]['creator']._VALUE_TYPE):
-                        msg += ', type={}'.format(
-                            obj._CHILDREN_CREATORS[tag]['creator']._VALUE_TYPE)
+                    creator = obj._CHILDREN_CREATORS[tag]['creator']
+                    if creator:
+                        if len(creator._VALUE_TYPE):
+                            msg += ', type={}'.format(
+                                creator._VALUE_TYPE)
                     print(msg)
