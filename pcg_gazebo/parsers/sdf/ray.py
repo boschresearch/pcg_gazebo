@@ -24,7 +24,9 @@ class Ray(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        noise=dict(creator=Noise, default=['gaussian'], optional=True),
+        noise=dict(
+            creator=Noise, default=['gaussian', 'child'],
+            optional=True),
         range=dict(creator=Range),
         scan=dict(creator=Scan)
     )
