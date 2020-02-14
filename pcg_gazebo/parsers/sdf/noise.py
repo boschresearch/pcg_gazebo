@@ -50,17 +50,18 @@ class Noise(XMLBase):
         type=dict(
             creator=Type,
             default=['gaussian'],
-            optional=True,
-            sdf_versions=['1.4'])
+            optional=True)
     )
 
-    def __init__(self, type='none'):
+    def __init__(self, type='none', use_type_as='attribute'):
         XMLBase.__init__(self)
         self.reset()
         self.type = 'none'
         self._description = dict(
             default='The properties of a sensor noise model'
         )
+
+        self._use_type_as = use_type_as
 
     @property
     def type(self):
