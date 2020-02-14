@@ -14,31 +14,10 @@
 # limitations under the License.
 
 from ..types import XMLBase
-from ..types import XMLScalar
 from .damping import Damping
+from .friction import Friction
 from .spring_reference import SpringReference
 from .spring_stiffness import SpringStiffness
-
-
-class FrictionDynamics(XMLScalar):
-    """
-    The physics static friction value of the joint
-
-    Args:
-        default (float): Coefficient of friction
-
-    Attributes:
-        value (float): Stored coefficient of friction
-    """
-    _NAME = 'friction'
-    _TYPE = 'sdf'
-
-    def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0
-        XMLScalar._set_value(self, value)
 
 
 class Dynamics(XMLBase):
@@ -47,7 +26,9 @@ class Dynamics(XMLBase):
 
     _CHILDREN_CREATORS = dict(
         damping=dict(creator=Damping, default=[0], optional=True),
-        friction=dict(creator=FrictionDynamics, default=[0], optional=True),
+        friction=dict(
+            creator=Friction, default=['scalar', 0, 0],
+            optional=True),
         spring_reference=dict(creator=SpringReference, default=[0]),
         spring_stiffness=dict(creator=SpringStiffness, default=[0])
     )
