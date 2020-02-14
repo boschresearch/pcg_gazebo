@@ -32,7 +32,8 @@ class Camera(XMLBase):
 
     _CHILDREN_CREATORS = dict(
         noise=dict(
-            creator=Noise, default=['gaussian'], optional=True, mode='sensor'),
+            creator=Noise, default=['gaussian', 'child'], optional=True,
+            mode='sensor'),
         horizontal_fov=dict(creator=HorizontalFOV, mode='sensor'),
         image=dict(creator=Image, default=['camera'], mode='sensor'),
         clip=dict(creator=Clip, mode='sensor'),
