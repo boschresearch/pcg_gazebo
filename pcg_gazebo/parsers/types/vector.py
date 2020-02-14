@@ -21,8 +21,8 @@ class XMLVector(XMLBase):
     _NAME = ''
     _VALUE_TYPE = 'vector'
 
-    def __init__(self, size=None):
-        XMLBase.__init__(self)
+    def __init__(self, size=None, min_value=None, max_value=None):
+        XMLBase.__init__(self, min_value=min_value, max_value=max_value)
         assert size is not None, 'Vector size cannot be None'
         assert isinstance(size, int), \
             '[{}] Vector size input must be an integer, received={}'.format(
@@ -32,7 +32,7 @@ class XMLVector(XMLBase):
         self._size = size
         self._value = [0 for _ in range(self._size)]
 
-    def _set_value(self, value, min_value=None, max_value=None):
+    def _set_value(self, value):
         if self._size == 1 and self._is_scalar(value):
             value = [value]
         assert isinstance(value, collections.Iterable), \
@@ -44,20 +44,20 @@ class XMLVector(XMLBase):
                 self._NAME, value, len(list(value)), self._size)
         for item in value:
             assert self._is_scalar(item)
-            if min_value is not None:
-                assert item >= min_value, \
+            if self._min_value is not None:
+                assert item >= self._min_value, \
                     '[{}] Value must be greater or equal to {}'.format(
-                        self._NAME, min_value)
+                        self._NAME, self._min_value)
 
-            if max_value is not None:
-                if min_value is not None:
-                    assert max_value > min_value, \
+            if self._max_value is not None:
+                if self._min_value is not None:
+                    assert self._max_value > self._min_value, \
                         '[{}] Max. value {} is not greater than' \
                         ' provided min. value {}'.format(
-                            self._NAME, max_value, min_value)
-                assert item <= max_value, \
+                            self._NAME, self._max_value, self._min_value)
+                assert item <= self._max_value, \
                     '[{}] Value must be less or equal to {}'.format(
-                        self._NAME, max_value)
+                        self._NAME, self._max_value)
         self._value = list(value)
 
     def reset(self):

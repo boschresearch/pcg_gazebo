@@ -21,33 +21,12 @@ class XMLInteger(XMLBase):
     _VALUE_TYPE = 'integer'
 
     def __init__(self, default=0, min_value=None, max_value=None):
-        XMLBase.__init__(self)
+        XMLBase.__init__(self, min_value=min_value, max_value=max_value)
         assert isinstance(default, float) or isinstance(default, int)
         self._default = default
         self._value = default
 
-        if min_value is not None:
-            assert is_scalar(min_value), \
-                '[{}] Min. value must be a scalar'.format(
-                    self.xml_element_name)
-            self._min_value = min_value
-        else:
-            self._min_value = None
-
-        if max_value is not None:
-            if min_value is not None:
-                assert max_value > min_value, \
-                    '[{}] Max. value {} is not greater than' \
-                    ' provided min. value {}'.format(
-                        self.xml_element_name, max_value, min_value)
-            assert is_scalar(max_value), \
-                '[{}] Max. value must be a scalar'.format(
-                    self.xml_element_name)
-            self._max_value = max_value
-        else:
-            self._max_value = None
-
-    def _set_value(self, value, min_value=None, max_value=None):
+    def _set_value(self, value):
         assert not isinstance(value, bool), \
             '[{}] Input value cannot be a boolean'.format(
                 self.xml_element_name)
@@ -61,20 +40,20 @@ class XMLInteger(XMLBase):
                 ' not hold an integer value'.format(
                     self.xml_element_name)
 
-        if min_value is not None:
-            assert value >= min_value, \
+        if self._min_value is not None:
+            assert value >= self._min_value, \
                 'Value for {} must be greater or equal to {}'.format(
-                    self._NAME, min_value)
+                    self._NAME, self._min_value)
 
-        if max_value is not None:
-            if min_value is not None:
-                assert max_value > min_value, \
+        if self._max_value is not None:
+            if self._min_value is not None:
+                assert self._max_value > self._min_value, \
                     'Max. value {} for {} is not greater' \
                     ' than provided min. value {}'.format(
-                        max_value, self._NAME, min_value)
-            assert value <= max_value, \
+                        self._max_value, self._NAME, self._min_value)
+            assert value <= self._max_value, \
                 'Value for {} must be less or equal to {}'.format(
-                    self._NAME, max_value)
+                    self._NAME, self._max_value)
 
         self._value = int(value)
 

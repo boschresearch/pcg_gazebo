@@ -21,54 +21,33 @@ class XMLScalar(XMLBase):
     _VALUE_TYPE = 'scalar'
 
     def __init__(self, default=0, min_value=None, max_value=None):
-        XMLBase.__init__(self)
+        XMLBase.__init__(self, min_value=min_value, max_value=max_value)
         assert isinstance(default, float) or isinstance(default, int), \
             'Input default value must be either a float or an integer'
         self._default = default
         self._value = default
 
-        if min_value is not None:
-            assert is_scalar(min_value), \
-                '[{}] Min. value must be a scalar'.format(
-                    self.xml_element_name)
-            self._min_value = min_value
-        else:
-            self._min_value = None
-
-        if max_value is not None:
-            if min_value is not None:
-                assert max_value > min_value, \
-                    '[{}] Max. value {} is not greater than' \
-                    ' provided min. value {}'.format(
-                        self.xml_element_name, max_value, min_value)
-            assert is_scalar(max_value), \
-                '[{}] Max. value must be a scalar'.format(
-                    self.xml_element_name)
-            self._max_value = max_value
-        else:
-            self._max_value = None
-
-    def _set_value(self, value, min_value=None, max_value=None):
+    def _set_value(self, value):
         assert not isinstance(value, bool), 'Input value cannot be a boolean'
         assert is_scalar(value), \
             '[{}] Input value must be either a float or an integer for {},' \
             ' received={}, type={}'.format(
                 self.xml_element_name, self._NAME, value, type(value))
 
-        if min_value is not None:
-            assert value >= min_value, \
+        if self._min_value is not None:
+            assert value >= self._min_value, \
                 '[{}] Value must be greater or equal to {}'.format(
-                    self._NAME, min_value)
+                    self._NAME, self._min_value)
 
-        if max_value is not None:
-            if min_value is not None:
-                assert max_value > min_value, \
+        if self._max_value is not None:
+            if self._min_value is not None:
+                assert self._max_value > self._min_value, \
                     '[{}] Max. value {} is not greater than' \
                     ' provided min. value {}'.format(
-                        self._NAME, max_value, min_value)
-            assert value <= max_value, \
+                        self._NAME, self._max_value, self._min_value)
+            assert value <= self._max_value, \
                 '[{}] Value must be less or equal to {}'.format(
-                    self._NAME, max_value)
+                    self._NAME, self._max_value)
 
         self._value = float(value)
 
@@ -77,9 +56,9 @@ class XMLScalar(XMLBase):
         XMLBase.reset(self)
 
     def is_valid(self):
-        if not isinstance(self._value, float) and \
-           not isinstance(self._value, int):
-            print('Scalar object must have a float or integer as a value')
+        if not self._is_scalar(self._value):
+            self.log_error(
+                'Scalar object must have a float or integer as a value')
             return False
         return True
 
