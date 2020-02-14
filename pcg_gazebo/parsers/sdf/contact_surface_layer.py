@@ -21,7 +21,4 @@ class ContactSurfaceLayer(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.001):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        XMLScalar._set_value(self, value, min_value=0)
+        XMLScalar.__init__(self, default, min_value=0)

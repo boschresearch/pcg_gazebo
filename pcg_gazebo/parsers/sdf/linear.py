@@ -19,11 +19,6 @@ class Linear(XMLScalar):
     _NAME = 'linear'
     _TYPE = 'sdf'
 
-    def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert self._is_scalar(value), \
-            'Linear must be a float or an integer'
-        assert value >= 0 and value <= 1, 'Linear must be in range [0, 1]'
-        XMLScalar._set_value(self, value)
+    def __init__(self, default=0, min_value=None, max_value=None):
+        XMLScalar.__init__(self, default, min_value=min_value,
+                           max_value=max_value)

@@ -30,9 +30,6 @@ class Mu(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=1):
-        XMLScalar.__init__(self, default)
+        XMLScalar.__init__(self, default, min_value=0)
         self._description = dict(
             ode="(float) Coefficient of friction in the range of [0, 1]")
-
-    def _set_value(self, value):
-        XMLScalar._set_value(self, value, min_value=0)

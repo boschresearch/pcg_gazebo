@@ -51,12 +51,19 @@ class Center(XMLBase):
             self._mode = 'boolean'
 
     def reset(self, mode='boolean', with_optional_elements=False):
-        assert mode in self._MODES, \
-            'Center can either be a boolean or a vector'
-        if mode == 'boolean':
+        if mode is not None:
+            if mode not in self._MODES:
+                self.log_error(
+                    'Mode can either be boolean or vector',
+                    raise_exception=True,
+                    exception_type=AssertionError)
+            self._mode = mode
+        if self._mode == 'boolean':
             self._default = False
+            self._VALUE_TYPE = 'boolean'
         else:
             self._default = [0, 0]
+            self._VALUE_TYPE = 'vector'
         self._value = self._default
 
     def is_valid(self):
