@@ -220,10 +220,22 @@ class Ray(Sensor):
                 0)
 
         if sdf.ray.noise is not None:
+            assert sdf.ray.noise.type is not None, \
+                'Ray sensor <{}> has noise model with no type' \
+                ' specificed, noise=\n{}'.format(
+                    sdf.name.value, sdf.ray.noise)
+            if sdf.ray.noise.mean is None:
+                mean = 0.0
+            else:
+                mean = sdf.ray.noise.mean.value
+            if sdf.ray.noise.stddev is None:
+                stddev = 0.0
+            else:
+                stddev = sdf.ray.noise.stddev.value
             sensor.set_noise(
                 type=sdf.ray.noise.type.value,
-                mean=sdf.ray.noise.mean.value,
-                stddev=sdf.ray.noise.stddev.value)
+                mean=mean,
+                stddev=stddev)
 
         if sdf.plugins is not None:
             assert len(
