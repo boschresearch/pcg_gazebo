@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from ..types import XMLScalar
-from ..sdf.bullet import FrictionBullet
 
 
 class Mu1(XMLScalar):
@@ -22,18 +21,11 @@ class Mu1(XMLScalar):
     _TYPE = 'gazebo'
 
     def __init__(self, default=1):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert self._is_scalar(value), \
-            'Input value for {} must be a scalar'.format(self._NAME)
-        assert value >= 0, \
-            'Input value for {} must be equal or' \
-            ' greater than zero'.format(self._NAME)
-        XMLScalar._set_value(self, value)
+        XMLScalar.__init__(self, default, min_value=0)
 
     def to_sdf(self, engine='ode'):
         from ..sdf import create_sdf_element
+        from ..sdf import Friction
 
         assert engine in ['ode', 'bullet'], 'Accepted engine inputs are ode' \
             ' or bullet'
@@ -41,5 +33,5 @@ class Mu1(XMLScalar):
             obj = create_sdf_element('mu')
             obj.value = self.value
         else:
-            obj = FrictionBullet(self.value)
+            obj = Friction('scalar', self.value)
         return obj

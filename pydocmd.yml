@@ -77,6 +77,7 @@ generate:
   - pcg_gazebo.parsers.sdf.AlwaysOn++
   - pcg_gazebo.parsers.sdf.Ambient++
   - pcg_gazebo.parsers.sdf.AngularVelocity++
+  - pcg_gazebo.parsers.sdf.Angular++
   - pcg_gazebo.parsers.sdf.Animation++
   - pcg_gazebo.parsers.sdf.Attenuation++
   - pcg_gazebo.parsers.sdf.AutoStart++

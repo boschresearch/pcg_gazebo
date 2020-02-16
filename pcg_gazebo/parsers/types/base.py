@@ -21,6 +21,7 @@ import sys
 from lxml import etree
 from lxml.etree import Element, SubElement
 from ...log import PCG_ROOT_LOGGER
+from ...utils import is_scalar
 from .. import convert_from_string
 
 if sys.version_info[2]:
@@ -40,7 +41,7 @@ class XMLBase(object):
     _FORMAT_VERSIONS = ['1.4', '1.5', '1.6']
     _VALUE_TYPE = ''
 
-    def __init__(self):
+    def __init__(self, min_value=None, max_value=None):
         # Block attributes
         self._attributes = dict()
         # Children of this block
@@ -67,6 +68,39 @@ class XMLBase(object):
             if 'optional' in self._CHILDREN_CREATORS[tag]:
                 if self._CHILDREN_CREATORS[tag]['optional']:
                     self._n_optional_elems += 1
+
+        # Store range limits for scalar value inputs
+        if min_value is not None:
+            if not self._is_scalar(min_value):
+                self.log_error(
+                    'Minimum value must be a scalar,'
+                    ' received={}, type={}'.format(
+                        min_value, type(min_value)),
+                    raise_exception=True,
+                    exception_type=AssertionError)
+            self._min_value = min_value
+        else:
+            self._min_value = None
+
+        if max_value is not None:
+            if min_value is not None:
+                if max_value <= min_value:
+                    self.log_error(
+                        'Maximum value is not greater '
+                        'than minimum value, min={}, max={}'.format(
+                            min_value, max_value),
+                        raise_exception=True,
+                        exception_type=AssertionError)
+            if not self._is_scalar(max_value):
+                self.log_error(
+                    'Maximum value must be a scalar,'
+                    ' received={}, type={}'.format(
+                        max_value, type(max_value)),
+                    raise_exception=True,
+                    exception_type=AssertionError)
+            self._max_value = max_value
+        else:
+            self._max_value = None
 
     def __str__(self):
         msg = self.to_xml_as_str(pretty_print=True)
@@ -134,13 +168,7 @@ class XMLBase(object):
         self._set_value(value)
 
     def _is_scalar(self, value):
-        if value is None or isinstance(value, str):
-            return False
-        try:
-            float(value)
-            return True
-        except (ValueError, TypeError):
-            return False
+        return is_scalar(value)
 
     @property
     def modes(self):
@@ -210,12 +238,15 @@ class XMLBase(object):
         else:
             return type(self)
 
-    def _add_child_element(self, tag, value):
+    def _add_child_element(self, tag, value, use_as_if_duplicated=None):
         if not self._has_custom_elements:
             assert tag in self._CHILDREN_CREATORS, \
-                '<{}> child not found for <{}>'.format(tag, self._NAME)
+                '<{}> child not found for <{}>, value=\n{}'.format(
+                    tag, self._NAME, value)
         assert value is not None, \
-            'Input value for element <{}> cannot be None'.format(tag)
+            'Input value for element <{}> in element <{}>' \
+            ' cannot be None'.format(
+                tag, self._NAME)
 
         if self.has_value():
             if issubclass(value.__class__, XMLBase):
@@ -349,10 +380,12 @@ class XMLBase(object):
                                         elem)
                                 obj._add_child_element(elem, subelem[elem])
                 elif obj.has_value():
-                    assert len(obj._CHILDREN_CREATORS) == 0, \
-                        'No value parameter found for <{}>, value={},' \
-                        ' value type={}'.format(
-                            tag, value, type(value))
+                    tag_blacklist = ['friction']
+                    if tag not in tag_blacklist:
+                        assert len(obj._CHILDREN_CREATORS) == 0, \
+                            'No value parameter found for <{}>, value={},' \
+                            ' value type={}'.format(
+                                tag, value, type(value))
                     if obj._NAME != 'empty':
                         setattr(obj, 'value', value)
                 else:
@@ -380,6 +413,9 @@ class XMLBase(object):
                 self.children[obj._NAME].append(obj)
             else:
                 self.children[obj._NAME] = obj
+
+            if self.is_child_and_attribute(obj._NAME):
+                self.attributes[obj._NAME] = obj.value
 
             mode = self._get_child_element_mode(obj._NAME)
             if mode is not None:
@@ -622,12 +658,20 @@ class XMLBase(object):
         # Adding attributes
         att = self.get_attributes(version)
         for tag in att:
+            # Test if the element has both the options to use
+            # an input as attribute or as a child
+            if self.is_child_and_attribute(tag):
+                if hasattr(self, '_use_{}_as'.format(tag)):
+                    if getattr(self, '_use_{}_as'.format(tag)) == 'child':
+                        continue
+
             att[tag] = str(att[tag])
 
         if root is None:
             base = Element(self._NAME, attrib=att)
         else:
             base = SubElement(root, self._NAME, attrib=att)
+
         if self.has_value():
             base.text = self.get_formatted_value_as_str()
         else:
@@ -638,16 +682,28 @@ class XMLBase(object):
                             for elem in self.children[child_name]:
                                 elem.to_xml(base, version)
                         else:
-                            PCG_ROOT_LOGGER.warning(
-                                '{} child element not available'
+                            PCG_ROOT_LOGGER.info(
+                                '<{}> child element not available'
                                 ' for version {}'.format(
                                     child_name, version))
                     else:
-                        if self._child_exists_in_version(child_name, version):
+                        # Test if the element has both the options to use
+                        # an input as attribute or as a child
+                        if self.is_child_and_attribute(child_name):
+                            # If that is the case, check if it was
+                            # explicitly defined as a child or an attribute
+                            if hasattr(self, '_use_{}_as'.format(child_name)):
+                                if getattr(self, '_use_{}_as'.format(
+                                        child_name)) == 'child':
+                                    self.children[child_name].to_xml(
+                                        base, version)
+                                    continue
+                        elif self._child_exists_in_version(
+                                child_name, version):
                             self.children[child_name].to_xml(base, version)
                         else:
-                            PCG_ROOT_LOGGER.warning(
-                                '{} child element not available'
+                            PCG_ROOT_LOGGER.info(
+                                '<{}> child element not available'
                                 ' for version {}'.format(
                                     child_name, version))
         return base
@@ -693,6 +749,15 @@ class XMLBase(object):
                 return output
             else:
                 return data
+
+    def has_duplicated_child_and_attribute(self):
+        for tag in self.attributes:
+            if tag in self._CHILDREN_CREATORS:
+                return True
+        return False
+
+    def is_child_and_attribute(self, tag):
+        return tag in self.attributes and tag in self._CHILDREN_CREATORS
 
     def from_dict(self, sdf_data, ignore_tags=list()):
         for tag in sdf_data:
@@ -751,12 +816,18 @@ class XMLBase(object):
             except Exception:
                 pass
 
-    def log_error(self, msg, ex=None):
+    def log_error(self, msg, ex=None, raise_exception=False,
+                  exception_type=None):
         error_msg = '[{}] {}'.format(
             self.xml_element_name, msg)
         if ex is not None:
             error_msg += ', message={}'.format(str(ex))
         PCG_ROOT_LOGGER.error(error_msg)
+        if raise_exception:
+            if exception_type is None:
+                raise Exception(error_msg)
+            else:
+                raise exception_type(error_msg)
 
     def log_warning(self, msg, ex=None):
         warning_msg = '[{}] {}'.format(

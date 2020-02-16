@@ -34,7 +34,7 @@ class Attenuation(XMLBase):
 
     _CHILDREN_CREATORS = dict(
         range=dict(creator=AttenuationRange, default=[10]),
-        linear=dict(creator=Linear, default=[1]),
+        linear=dict(creator=Linear, default=[1, 0, 1]),
         constant=dict(creator=Constant, default=[1]),
         quadratic=dict(creator=Quadratic, default=[0])
     )

@@ -21,12 +21,7 @@ class MaxContacts(XMLInteger):
     _TYPE = 'gazebo'
 
     def __init__(self, default=20):
-        XMLInteger.__init__(self, default)
-
-    def _set_value(self, value):
-        assert isinstance(value, int)
-        assert value > 0
-        XMLInteger._set_value(self, value)
+        XMLInteger.__init__(self, default, min_value=1)
 
     def to_sdf(self):
         from ..sdf import create_sdf_element

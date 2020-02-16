@@ -12,20 +12,18 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLScalar
 
 
-class Kd(XMLScalar):
-    _NAME = 'kd'
-    _TYPE = 'gazebo'
+class Angular(XMLScalar):
+    _NAME = 'angular'
+    _TYPE = 'sdf'
 
-    def __init__(self, default=1):
-        XMLScalar.__init__(self, default, min_value=0)
+    def __init__(self, default=0):
+        XMLScalar.__init__(self, default)
 
-    def to_sdf(self):
-        from ..sdf import create_sdf_element
-
-        obj = create_sdf_element('kd')
-        obj.value = self.value
-        return obj
+    def _set_value(self, value):
+        assert self._is_scalar(value), \
+            'Angular must be a float or an integer'
+        assert value >= 0 and value <= 1, 'Linear must be in range [0, 1]'
+        XMLScalar._set_value(self, value)

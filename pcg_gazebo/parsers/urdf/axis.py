@@ -40,9 +40,22 @@ class Axis(XMLBase):
     def xyz(self, value):
         assert isinstance(value, list), 'Vector must be a list'
         assert len(value) == 3, 'Vector must have 3 elements'
-        for elem in value:
-            assert isinstance(elem, float) or isinstance(elem, int)
-        assert sum(value) == 1, 'Axis must be an unit vector'
+        for i in range(len(value)):
+            if not self._is_scalar(value[i]):
+                self.log_error(
+                    'Value in vector must be a number,'
+                    ' type={}'.format(type(value[i])),
+                    raise_exception=True,
+                    exception_type=AssertionError)
+            if value[i] < 0 or value[i] > 1:
+                self.log_error(
+                    'Value in vector should be within the'
+                    ' interval [0, 1]', raise_exception=True,
+                    exception_type=AssertionError)
+        if sum(value) != 1:
+            self.log_error('Axis should be an unit vector, vector={}'.format(
+                value, sum(value)))
+            return
         self.attributes['xyz'] = ' '.join(['{}'] * len(value))
         self.attributes['xyz'] = self.attributes['xyz'].format(*value)
 

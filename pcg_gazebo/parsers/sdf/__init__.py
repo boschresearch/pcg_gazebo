@@ -21,6 +21,7 @@ from .altimeter import Altimeter
 from .always_on import AlwaysOn
 from .ambient import Ambient
 from .angular_velocity import AngularVelocity
+from .angular import Angular
 from .animation import Animation
 from .attenuation import Attenuation
 from .auto_start import AutoStart
@@ -322,6 +323,7 @@ __all__ = [
     'AlwaysOn',
     'Ambient',
     'AngularVelocity',
+    'Angular',
     'Animation',
     'Attenuation',
     'AutoStart',

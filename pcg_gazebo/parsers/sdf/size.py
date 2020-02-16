@@ -20,7 +20,7 @@ class Size(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, vec_length=3):
-        XMLVector.__init__(self, vec_length)
+        XMLVector.__init__(self, vec_length, min_value=0)
 
     @property
     def width(self):
@@ -55,4 +55,4 @@ class Size(XMLVector):
         self.value[2] = float(value)
 
     def _set_value(self, value):
-        XMLVector._set_value(self, value, min_value=0)
+        XMLVector._set_value(self, value)

@@ -14,7 +14,6 @@
 # limitations under the License.
 
 from ..types import XMLBase
-from ..types import XMLScalar
 from .solver import Solver
 from .constraints import Constraints
 from .fdir1 import FDir1
@@ -29,27 +28,6 @@ from .split_impulse_penetration_threshold import \
     SplitImpulsePenetrationThreshold
 
 
-class FrictionBullet(XMLScalar):
-    """
-    Coefficient of friction in the range of [0, 1]
-
-    Args:
-        default (float): Coefficient of friction
-
-    Attributes:
-        value (float): Stored coefficient of friction
-    """
-    _NAME = 'friction'
-    _TYPE = 'sdf'
-
-    def __init__(self, default=1):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0, 'friction should be equal or greater than zero'
-        XMLScalar._set_value(self, value)
-
-
 class Bullet(XMLBase):
     _NAME = 'bullet'
     _TYPE = 'sdf'
@@ -60,7 +38,8 @@ class Bullet(XMLBase):
         constraints=dict(
             creator=Constraints, default=['bullet'], mode='physics'),
         friction=dict(
-            creator=FrictionBullet, default=[1], mode='collision'),
+            creator=None,
+            default=['scalar', 1, 0], mode='collision'),
         friction2=dict(
             creator=Friction2, default=[1], mode='collision'),
         rolling_friction=dict(
@@ -86,6 +65,9 @@ class Bullet(XMLBase):
     _MODES = ['physics', 'collision', 'contact']
 
     def __init__(self, mode='physics'):
+        # Solve circular dependency
+        from .friction import Friction
+        self._CHILDREN_CREATORS['friction']['creator'] = Friction
         XMLBase.__init__(self)
         self.reset(mode)
 

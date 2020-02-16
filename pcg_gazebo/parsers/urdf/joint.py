@@ -70,6 +70,11 @@ class Joint(XMLBase):
         assert value in ['revolute', 'continuous', 'prismatic', 'fixed',
                          'floating', 'planar'], 'Invalid joint type'
         self.attributes['type'] = value
+        if value in ['fixed', 'floating']:
+            self.rm_child('axis')
+            self.log_info(
+                'Removing <axis> from joint since it'
+                ' is of type <{}>'.format(value))
 
     @property
     def origin(self):
@@ -101,7 +106,13 @@ class Joint(XMLBase):
 
     @axis.setter
     def axis(self, value):
-        self._add_child_element('axis', value)
+        if self.attributes['type'] not in ['fixed', 'floating']:
+            self._add_child_element('axis', value)
+        else:
+            self.log_warning(
+                'No <axis> element can be used for fixed'
+                ' or floating joints, joint={}'.format(
+                    self.attributes['name']))
 
     @property
     def dynamics(self):

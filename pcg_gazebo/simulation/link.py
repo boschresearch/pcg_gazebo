@@ -46,6 +46,7 @@ class Link(object):
                  static=False,
                  self_collide=False,
                  kinematic=False,
+                 gravity=True,
                  visuals=None,
                  collisions=None):
         assert isinstance(name, str), 'Name must be a string'
@@ -67,6 +68,7 @@ class Link(object):
         self._static = False
         self._self_collide = False
         self._kinematic = False
+        self._gravity = True
         self._collisions = list()
         self._visuals = list()
         self._sensors = dict()
@@ -357,6 +359,17 @@ class Link(object):
         assert isinstance(value, bool) or value in [0, 1], \
             'Input should be a boolean, 0 or 1'
         self._kinematic = value
+
+    @property
+    def gravity(self):
+        """`bool`: Flag to that link is affected by gravity"""
+        return self._gravity
+
+    @gravity.setter
+    def gravity(self, value):
+        assert isinstance(value, bool) or value in [0, 1], \
+            'Input should be a boolean, 0 or 1'
+        self._gravity = value
 
     @property
     def life_timeout(self):
@@ -654,6 +667,10 @@ class Link(object):
         # Create a link for the plane, initially empty
         link = create_sdf_element('link')
         link.name = self._name
+        link.static = self.static
+        link.kinematic = self.kinematic
+        link.gravity = self.gravity
+        link.self_collide = self.self_collide
 
         # Add collision elements
         if self._include_in_sdf['collision']:
@@ -739,6 +756,8 @@ class Link(object):
         link.static = False if sdf.static is None else sdf.static.value
         link.kinematic = \
             False if sdf.kinematic is None else sdf.kinematic.value
+        link.gravity = \
+            True if sdf.gravity is None else sdf.gravity.value
 
         if sdf.inertial is not None:
             link._inertial = Inertial.from_sdf(sdf.inertial)
