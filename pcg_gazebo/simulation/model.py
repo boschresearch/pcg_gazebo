@@ -67,6 +67,9 @@ class SimulationModel(object):
 
         self._logger.info('New model created, name={}'.format(self._name))
 
+    def __str__(self):
+        return self.to_sdf().to_xml_as_str(pretty_print=True)
+
     @property
     def name(self):
         return self._name

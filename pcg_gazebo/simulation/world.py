@@ -60,6 +60,9 @@ class World(object):
         self._plugins = dict()
         self.reset_physics(engine)
 
+    def __str__(self):
+        return self.to_sdf().to_xml_as_str(pretty_print=True)
+
     @property
     def physics(self):
         """`pcg_gazebo.simulation.physics.Physics`: Physics engine instance"""

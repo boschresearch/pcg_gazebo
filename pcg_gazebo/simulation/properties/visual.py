@@ -59,6 +59,9 @@ class Visual(object):
             elif geometry_type == 'box':
                 self.set_box_as_geometry(**geometry_args)
 
+    def __str__(self):
+        return self.to_sdf().to_xml_as_str(pretty_print=True)
+
     @property
     def sdf(self):
         return self._sdf_visual

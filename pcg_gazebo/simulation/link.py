@@ -106,6 +106,9 @@ class Link(object):
                     self._logger.error(
                         'Invalid visual element input={}'.format(visual))
 
+    def __str__(self):
+        return self.to_sdf().to_xml_as_str(pretty_print=True)
+
     @staticmethod
     def create_link_from_mesh(
             name='link',
