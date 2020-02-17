@@ -24,7 +24,7 @@ class _CollectionManager(object):
     @property
     def tags(self):
         """`list`: List of strings of all tags in the collection"""
-        return self._collection.keys()
+        return list(self._collection.keys())
 
     @property
     def size(self):
@@ -50,6 +50,11 @@ class _CollectionManager(object):
 
     def create_empty(self, *args, **kwargs):
         raise NotImplementedError()
+
+    def reset(self):
+        """Reset the collection.
+        """
+        self._collection.clear()
 
     def remove(self, tag):
         """Remove an element from the collection.
