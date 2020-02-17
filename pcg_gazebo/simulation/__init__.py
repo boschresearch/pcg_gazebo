@@ -127,24 +127,54 @@ def load_gazebo_models():
 
     `dict`: Information of all Gazebo models found
     """
-    import rospkg
     import os
+    try:
+        import rospkg
+        ROS1_AVAILABLE = True
+    except ImportError:
+        ROS1_AVAILABLE = False
 
-    finder = rospkg.RosPack()
+    try:
+        import ament_index_python
+        ROS2_AVAILABLE = True
+    except ImportError:
+        ROS2_AVAILABLE = False
 
     global GAZEBO_MODELS
     GAZEBO_MODELS = dict()
 
+    ros_pkgs = list()
+    if ROS1_AVAILABLE:
+        ros_pkgs = ros_pkgs + list(rospkg.RosPack().list())
+    if ROS2_AVAILABLE:
+        ros_pkgs = ros_pkgs + list(
+            ament_index_python.get_packages_with_prefixes().keys())
     # Load all models from catkin packages
-    for ros_pkg in finder.list():
-        ros_path = finder.get_path(ros_pkg)
-        for folder in os.listdir(ros_path):
-            if not os.path.isdir(os.path.join(ros_path, folder)):
-                continue
-            models = get_gazebo_model_folders(os.path.join(ros_path, folder))
-            for tag in models:
-                models[tag]['ros_pkg'] = ros_pkg
-            GAZEBO_MODELS.update(models)
+    for ros_pkg in ros_pkgs:
+        ros_path = None
+
+        if ROS1_AVAILABLE:
+            try:
+                ros_path = rospkg.RosPack().get_path(ros_pkg)
+            except rospkg.ResourceNotFound:
+                pass
+        if ROS2_AVAILABLE and ros_path is None:
+            try:
+                ros_path = \
+                    ament_index_python.get_package_share_directory(
+                        ros_pkg)
+            except ament_index_python.PackageNotFoundError:
+                pass
+
+        if ros_path:
+            for folder in os.listdir(ros_path):
+                if not os.path.isdir(os.path.join(ros_path, folder)):
+                    continue
+                models = get_gazebo_model_folders(
+                    os.path.join(ros_path, folder))
+                for tag in models:
+                    models[tag]['ros_pkg'] = ros_pkg
+                GAZEBO_MODELS.update(models)
 
     # Load all models from ~/.gazebo/models
     home_folder = os.path.expanduser('~')

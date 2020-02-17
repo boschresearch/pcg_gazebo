@@ -120,6 +120,9 @@ class Collision(object):
             poissons_ratio=poissons_ratio,
             elastic_modulus=elastic_modulus)
 
+    def __str__(self):
+        return self.to_sdf().to_xml_as_str(pretty_print=True)
+
     @property
     def sdf(self):
         return self._sdf_collision

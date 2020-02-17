@@ -60,6 +60,9 @@ class Geometry(object):
                     self._mesh = Mesh.create_box(
                         size=self.get_param('size') + [0.001])
 
+    def __str__(self):
+        return self.to_sdf().to_xml_as_str(pretty_print=True)
+
     def get_samples(self):
         pnts = None
         if self.get_type() == 'sphere':
