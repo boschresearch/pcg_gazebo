@@ -61,7 +61,7 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: ${{ github.head_ref }}
+        branch: ${{ github.event.pull_request.head.ref }}
     - name: Publish package
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
       uses: pypa/gh-action-pypi-publish@master
