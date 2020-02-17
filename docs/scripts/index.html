@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.3">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -40,12 +40,12 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/application.adb8469c.css">
+      <link rel="stylesheet" href="../assets/stylesheets/application.1b62728e.css">
       
       
     
     
-      <script src="../assets/javascripts/modernizr.86422ebf.js"></script>
+      <script src="../assets/javascripts/modernizr.268332fc.js"></script>
     
     
       
@@ -77,7 +77,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#pcg-generate-occupancy-map" tabindex="0" class="md-skip">
+      <a href="#pcg-generate-occupancy-map" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -86,7 +86,7 @@
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href=".." title="Procedural Generation for Gazebo" aria-label="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
+        <a href=".." title="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -117,7 +117,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -976,8 +976,8 @@ Run <code>generate_occupancy_map -h</code> for more information.</p>
 <blockquote>
 <p>Example </p>
 </blockquote>
-<div class="codehilite"><pre><span></span><code>$ pcg-list-gazebo-models
-</code></pre></div>
+<div class="codehilite"><pre><span></span>$ pcg-list-gazebo-models
+</pre></div>
 
 <h4 id="pcg-preview-sdf"><code>pcg-preview-sdf</code><a class="headerlink" href="#pcg-preview-sdf" title="Permanent link">&para;</a></h4>
 <p>Opens a SDF file (either <code>.sdf</code> or <code>.world</code>) and shows a 3D preview of the geometries and meshes.
@@ -987,9 +987,9 @@ the included models must be in the Gazebo resources path so that they can be als
 <blockquote>
 <p>Example</p>
 </blockquote>
-<div class="codehilite"><pre><span></span><code>pcg-preview-sdf --filename SDF_FILENAME              <span class="c1"># Preview of the visual meshes</span>
+<div class="codehilite"><pre><span></span>pcg-preview-sdf --filename SDF_FILENAME              <span class="c1"># Preview of the visual meshes</span>
 pcg-preview-sdf --filename SDF_FILENAME --collision  <span class="c1"># Preview of the collision meshes</span>
-</code></pre></div>
+</pre></div>
 
 <h4 id="pcg-preview-urdf"><code>pcg-preview-urdf</code><a class="headerlink" href="#pcg-preview-urdf" title="Permanent link">&para;</a></h4>
 <p>Opens an URDF file (<code>.urdf</code>) or a XACRO file (<code>.xacro</code>) that will be parsed into an URDF file, 
@@ -999,9 +999,9 @@ be reachable within the ROS paths so that the model can be parsed.</p>
 <blockquote>
 <p>Example</p>
 </blockquote>
-<div class="codehilite"><pre><span></span><code>pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME              <span class="c1"># Preview of the visual meshes</span>
+<div class="codehilite"><pre><span></span>pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME              <span class="c1"># Preview of the visual meshes</span>
 pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME --collision  <span class="c1"># Preview of the collision meshes</span>
-</code></pre></div>
+</pre></div>
 
 <h4 id="pcg-print-xml-element"><code>pcg-print-xml-element</code><a class="headerlink" href="#pcg-print-xml-element" title="Permanent link">&para;</a></h4>
 <p>This tool can be called to retrieve information on SDF, URDF or SDF Config elements.
@@ -1009,12 +1009,12 @@ They can be displayed in XML format or the script can list all the children and 
 <blockquote>
 <p>Example </p>
 </blockquote>
-<div class="codehilite"><pre><span></span><code>pcg-print-xml-element --sdf --list
+<div class="codehilite"><pre><span></span>pcg-print-xml-element --sdf --list
 pcg-print-xml-element --urdf --list
 pcg-print-xml-element --sdf-config --list
 pcg-print-xml-element --sdf --tag NAME --xml
 pcg-print-xml-element --sdf --tag NAME --description
-</code></pre></div>
+</pre></div>
 
 <h4 id="pcg-process-jinja-template"><code>pcg-process-jinja-template</code><a class="headerlink" href="#pcg-process-jinja-template" title="Permanent link">&para;</a></h4>
 <p>Generates a file from a Jinja template. 
@@ -1065,9 +1065,9 @@ To see the tags of all Gazebo models available in your system, run <code>pcg-lis
 <blockquote>
 <p>Examples</p>
 </blockquote>
-<div class="codehilite"><pre><span></span><code>$ pcg-view-gazebo-model --model MODEL_NAME # To display the visual meshes
+<div class="codehilite"><pre><span></span>$ pcg-view-gazebo-model --model MODEL_NAME # To display the visual meshes
 $ pcg-view-gazebo-model --model MODEL_NAME --collision # To display the collision meshes
-</code></pre></div>
+</pre></div>
 
 <h4 id="pcg-view-mesh"><code>pcg-view-mesh</code><a class="headerlink" href="#pcg-view-mesh" title="Permanent link">&para;</a></h4>
 <p>Opens a mesh file and displays it.
@@ -1130,9 +1130,9 @@ Run <code>pcg-view-mesh -h</code> for more information.</p>
       <div class="md-footer-copyright">
         
         powered by
-        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
+        <a href="https://www.mkdocs.org">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+        <a href="https://squidfunk.github.io/mkdocs-material/">
           Material for MkDocs</a>
       </div>
       
@@ -1142,7 +1142,7 @@ Run <code>pcg-view-mesh -h</code> for more information.</p>
       
     </div>
     
-      <script src="../assets/javascripts/application.c33a9706.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       
