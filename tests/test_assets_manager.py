@@ -71,6 +71,9 @@ class TestAssetManager(unittest.TestCase):
         model = manager.get('box')
         self.assertIsInstance(model, SimulationModel)
 
+        manager.reset()
+        self.assertEqual(len(manager.tags), 0)
+
     def test_add_simulation_models(self):
         box_config = dict(
             type='box',
@@ -90,6 +93,9 @@ class TestAssetManager(unittest.TestCase):
         manager.add(model, name)
         self.assertIn(name, manager.tags)
         self.assertIsInstance(manager.get(name), SimulationModel)
+
+        manager.reset()
+        self.assertEqual(len(manager.tags), 0)
 
     def test_add_model_groups(self):
         box_factory_config = dict(
@@ -114,6 +120,9 @@ class TestAssetManager(unittest.TestCase):
 
         self.assertIsInstance(manager.get(group_name), ModelGroup)
 
+        manager.reset()
+        self.assertEqual(len(manager.tags), 0)
+
     def test_get_gazebo_models(self):
         manager = AssetsManager.get_instance()
 
@@ -136,6 +145,9 @@ class TestAssetManager(unittest.TestCase):
         model_2 = manager.get('test_static_model')
         self.assertIsNotNone(model_2)
         self.assertTrue(model_2.is_ground_plane)
+
+        manager.reset()
+        self.assertEqual(len(manager.tags), 3)
 
     def test_add_factory_config(self):
         manager = AssetsManager.get_instance()
@@ -224,6 +236,9 @@ class TestAssetManager(unittest.TestCase):
         self.assertIn('<mesh>', model.to_sdf().to_xml_as_str())
         self.assertEqual(len(model.links), 1)
 
+        manager.reset()
+        self.assertEqual(len(manager.tags), 0)
+
     def test_add_duplicated_models(self):
         box_config = dict(
             type='box',
@@ -244,6 +259,9 @@ class TestAssetManager(unittest.TestCase):
         self.assertIn(name, manager.tags)
         self.assertIsInstance(manager.get(name), SimulationModel)
         self.assertFalse(manager.add(model, name))
+
+        manager.reset()
+        self.assertEqual(len(manager.tags), 0)
 
 
 if __name__ == '__main__':
