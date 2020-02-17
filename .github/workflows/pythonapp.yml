@@ -48,9 +48,23 @@ jobs:
         pip install twine wheel pypandoc
         python setup.py sdist bdist_wheel
         twine check dist/*
+    # - name: Update and commit GitHub Pages
+    #   if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
+    #   run: |
+    #     pip install -e .[docs]
+    #     pydocmd build
+    #     git config --local user.email "action@github.com"
+    #     git config --local user.name "GitHub Action"
+    #     git commit -m "Update documentation" -a    
+    # - name: Push GitHub Pages
+    #   if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
+    #   uses: ad-m/github-push-action@master
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     branch: ${{ github.event.pull_request.head.ref }}
     - name: Publish package
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
       uses: pypa/gh-action-pypi-publish@master
       with:
         user: ${{ secrets.PYPI_USERNAME }}
-        password: ${{ secrets. PYPI_PASSWORD }}
+        password: ${{ secrets.PYPI_PASSWORD }}
