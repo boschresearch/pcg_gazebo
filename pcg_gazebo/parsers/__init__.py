@@ -847,6 +847,7 @@ def urdf2sdf(urdf):
                                 create_sdf_element(
                                     'friction')
                             sdf_collision.surface.friction.reset(
+                                mode='surface',
                                 with_optional_elements=True)
 
                         sdf_collision.surface.friction.ode.mu = \
@@ -862,6 +863,7 @@ def urdf2sdf(urdf):
                                 create_sdf_element(
                                     'friction')
                             sdf_collision.surface.friction.reset(
+                                mode='surface',
                                 with_optional_elements=True)
 
                         sdf_collision.surface.friction.ode.mu2 = \
