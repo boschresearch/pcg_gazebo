@@ -115,6 +115,7 @@ setup(
         'pcg_gazebo.generators.components',
         'pcg_gazebo.generators.constraints',
         'pcg_gazebo.generators.engines',
+        'pcg_gazebo.generators.rules',
         'pcg_gazebo.parsers',
         'pcg_gazebo.parsers.gazebo',
         'pcg_gazebo.parsers.sdf',
@@ -126,7 +127,7 @@ setup(
         'pcg_gazebo.simulation.physics',
         'pcg_gazebo.simulation.properties',
         'pcg_gazebo.simulation.sensors',
-        'pcg_gazebo.task_manager',        
+        'pcg_gazebo.task_manager'
     ],
     package_data={
         '': ['templates/*.jinja'],
