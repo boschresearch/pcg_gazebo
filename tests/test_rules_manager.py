@@ -16,7 +16,7 @@ import unittest
 import random
 from pcg_gazebo.generators.rules import create_rule
 from pcg_gazebo.generators import ConstraintsManager, RulesManager
-from pcg_gazebo.simulation.properties import Pose
+from pcg_gazebo.utils import generate_random_string
 import numpy as np
 
 
@@ -59,7 +59,7 @@ class TestRulesManager(unittest.TestCase):
         self.assertEqual(rule.value, value)
 
         for tag in rule.dofs:
-            self.assertFalse(rule.dofs[tag])        
+            self.assertFalse(rule.dofs[tag])
 
         for tag in DOF_TAGS:
             dofs = dict()
@@ -96,7 +96,7 @@ class TestRulesManager(unittest.TestCase):
                         if np.isclose(v, getattr(pose, t)):
                             found_value = True
                             break
-                
+
                     self.assertTrue(found_value)
                 else:
                     self.assertEqual(getattr(pose, t), 0)
@@ -182,7 +182,18 @@ class TestRulesManager(unittest.TestCase):
         self.assertTrue(constraint.contains_point([pose.x, pose.y]))
 
     def test_add_rule_to_manager(self):
-        pass
+        rm = RulesManager.get_instance()
+
+        value = random.random()
+        rule = create_rule('value', value=value)
+
+        name = generate_random_string(5)
+        self.assertTrue(rm.add(name, rule))
+        self.assertIn(name, rm.tags)
+
+        name = generate_random_string(5)
+        self.assertTrue(rm.add(name, type='value', value=value))
+        self.assertIn(name, rm.tags)
 
 
 if __name__ == '__main__':
