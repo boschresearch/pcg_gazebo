@@ -371,6 +371,16 @@ def is_string(obj):
 
 
 def is_scalar(obj):
+    """Test if input object is a scalar.
+
+    > *Input arguments*
+
+    * `obj`: Input variable.
+
+    > *Returns*
+
+    `True`, if `obj` is a scalar.
+    """
     import numpy as np
     return isinstance(obj, float) or \
         isinstance(obj, int) or \
@@ -379,6 +389,47 @@ def is_scalar(obj):
 
 
 def is_integer(obj):
+    """Test if input object is an integer.
+
+    > *Input arguments*
+
+    * `obj`: Input variable.
+
+    > *Returns*
+
+    `True`, if `obj` is a integer.
+    """
     import numpy as np
     return isinstance(obj, int) or \
         isinstance(obj, np.int64)
+
+
+def is_boolean(obj):
+    """Test if input object is a boolean.
+
+    > *Input arguments*
+
+    * `obj`: Input variable.
+
+    > *Returns*
+
+    `True`, if `obj` is a boolean.
+    """
+    return isinstance(obj, bool) or obj in [0, 1]
+
+
+def is_array(obj):
+    """Test if input object is a numerical vector.
+
+    > *Input arguments*
+
+    * `obj`: Input variable.
+
+    > *Returns*
+
+    `True`, if `obj` is a vector.
+    """
+    import collections
+    return isinstance(
+        obj, collections.Iterable) and not isinstance(
+        obj, str)
