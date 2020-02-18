@@ -57,8 +57,8 @@ class EngineManager(_CollectionManager):
             input_args = kwargs
             input_args['models'] = models
             input_args['assets_manager'] = self._assets_manager
-            input_args['callback_fcn_get_constraint'] = \
-                self._constraints_manager.get
+            input_args['constraints_manager'] = \
+                self._constraints_manager
             input_args['collision_checker'] = self._collision_checker
             self._collection[tag] = create_engine(engine_name, **input_args)
         PCG_ROOT_LOGGER.info(
