@@ -76,6 +76,20 @@ class TangentConstraint(Constraint):
 
         self._reference = reference
 
+    def __eq__(self, other):
+        if not isinstance(other, TangentConstraint):
+            return False
+        if other._LABEL != self._LABEL:
+            return False
+        if self._reference['type'] != other._reference['type']:
+            return False
+        for tag in self._reference['args']:
+            if tag not in other._reference['args']:
+                return False
+            if other._reference['args'][tag] != self._reference['args'][tag]:
+                return False
+        return True
+
     def apply_constraint(self, model):
         """Compute and apply the tangent constraint for the
         provided model using the reference input.

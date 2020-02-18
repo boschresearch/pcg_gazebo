@@ -25,3 +25,14 @@ class Constraint(object):
 
     def __init__(self):
         """Class constructor."""
+
+    def __eq__(self, other):
+        return self._LABEL != other._LABEL
+
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
+
+    @property
+    def type(self):
+        return self._LABEL
