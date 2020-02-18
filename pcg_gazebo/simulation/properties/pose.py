@@ -160,7 +160,7 @@ class Pose(object):
     @property
     def roll(self):
         return Pose.quat2rpy(self._quat)[0]
-    
+
     @property
     def pitch(self):
         return Pose.quat2rpy(self._quat)[1]

@@ -49,7 +49,7 @@ class EngineManager(_CollectionManager):
         """
         if self.has_element(tag):
             PCG_ROOT_LOGGER.warning(
-                'Engine with tag <{}> already exists'.format(tag))                
+                'Engine with tag <{}> already exists'.format(tag))
             return True
         if engine_obj is not None and isinstance(engine_obj, Engine):
             self._collection[tag] = engine_obj

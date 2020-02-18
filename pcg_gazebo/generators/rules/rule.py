@@ -75,7 +75,7 @@ class Rule(object):
 
         for tag in ['x', 'y', 'z']:
             if self._dofs[tag]:
-                setattr(pose, tag, self._get_value())                
+                setattr(pose, tag, self._get_value())
 
         pose.rpy = [
             0 if not self._dofs['roll'] else self._get_value(),
