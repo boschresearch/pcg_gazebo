@@ -21,10 +21,10 @@ import sys
 from lxml import etree
 from lxml.etree import Element, SubElement
 from ...log import PCG_ROOT_LOGGER
-from ...utils import is_scalar
+from ...utils import is_scalar, is_boolean, is_array
 from .. import convert_from_string
 
-if sys.version_info[2]:
+if sys.version_info[0] == 3:
     # Importing a io.open compatible with Python 3.x
     from io import open
 
@@ -187,12 +187,10 @@ class XMLBase(object):
             return False
 
     def _is_array(self, vec):
-        return isinstance(
-            vec, collections.Iterable) and not isinstance(
-            vec, str)
+        return is_array(vec)
 
     def _is_boolean(self, value):
-        return isinstance(value, bool) or value in [0, 1]
+        return is_boolean(value)
 
     def _set_value(self, value):
         raise NotImplementedError()
