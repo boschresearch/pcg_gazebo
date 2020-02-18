@@ -12,9 +12,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from .constraints import create_constraint
+from .constraints import create_constraint, Constraint
 from ._collection_manager import _CollectionManager
 from ..log import PCG_ROOT_LOGGER
+from ..utils import load_yaml
 
 
 class ConstraintsManager(_CollectionManager):
@@ -27,7 +28,7 @@ class ConstraintsManager(_CollectionManager):
             ConstraintsManager._INSTANCE = ConstraintsManager()
         return ConstraintsManager._INSTANCE
 
-    def add(self, name, type, **kwargs):
+    def add(self, name, type=None, constraint_obj=None, **kwargs):
         """Add a new positioning constraint class to the internal
         constraints list.
 
@@ -38,11 +39,21 @@ class ConstraintsManager(_CollectionManager):
         * `kwargs` (*type:* `dict`): Input arguments for the constraint class
         to be created
         """
+        new_constraint = create_constraint(type, **kwargs)
         if self.has_element(name):
-            PCG_ROOT_LOGGER.error(
-                'Constraint with name <{}> already exists'.format(name))
-            return False
-        self._collection[name] = create_constraint(type, **kwargs)
+            if self._collection[name] != new_constraint:
+                PCG_ROOT_LOGGER.error(
+                    'Constraint with name <{}> already'
+                    ' exists and has different parameters'.format(
+                        name))
+                return False
+            else:
+                return True
+        if constraint_obj is not None and \
+                isinstance(constraint_obj, Constraint):
+            self._collection[name] = constraint_obj
+        else:
+            self._collection[name] = create_constraint(type, **kwargs)
         return True
 
     def from_dict(self, config):
@@ -59,4 +70,5 @@ class ConstraintsManager(_CollectionManager):
                     ' configuration={}'.format(config))
 
     def from_yaml(self, filename):
-        pass
+        config = load_yaml(filename)
+        self.from_dict(config)
