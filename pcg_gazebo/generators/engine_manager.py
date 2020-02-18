@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..utils import load_yaml
-from .engines import create_engine
+from .engines import create_engine, Engine
 from ._collection_manager import _CollectionManager
 from .constraints_manager import ConstraintsManager
 from .assets_manager import AssetsManager
@@ -26,7 +26,7 @@ class EngineManager(_CollectionManager):
     def __init__(self):
         super(EngineManager, self).__init__()
 
-        self._constraints_manager = ConstraintsManager()
+        self._constraints_manager = ConstraintsManager.get_instance()
         self._assets_manager = AssetsManager.get_instance()
         self._collision_checker = CollisionChecker()
 
@@ -34,7 +34,8 @@ class EngineManager(_CollectionManager):
     def constraints_manager(self):
         return self._constraints_manager
 
-    def add(self, tag, engine_name, models, **kwargs):
+    def add(self, tag, engine_name=None, models=None, engine_obj=None,
+            **kwargs):
         """Add a new model creator engine to the internal engines list.
 
         > *Input arguments*
@@ -47,16 +48,19 @@ class EngineManager(_CollectionManager):
         created engine.
         """
         if self.has_element(tag):
-            PCG_ROOT_LOGGER.error(
-                'Engine with tag <{}> already exists'.format(tag))
-            return False
-        input_args = kwargs
-        input_args['models'] = models
-        input_args['assets_manager'] = self._assets_manager
-        input_args['callback_fcn_get_constraint'] = \
-            self._constraints_manager.get
-        input_args['collision_checker'] = self._collision_checker
-        self._collection[tag] = create_engine(engine_name, **input_args)
+            PCG_ROOT_LOGGER.warning(
+                'Engine with tag <{}> already exists'.format(tag))                
+            return True
+        if engine_obj is not None and isinstance(engine_obj, Engine):
+            self._collection[tag] = engine_obj
+        else:
+            input_args = kwargs
+            input_args['models'] = models
+            input_args['assets_manager'] = self._assets_manager
+            input_args['callback_fcn_get_constraint'] = \
+                self._constraints_manager.get
+            input_args['collision_checker'] = self._collision_checker
+            self._collection[tag] = create_engine(engine_name, **input_args)
         PCG_ROOT_LOGGER.info(
             'New model creator engine added, type={}, tag={}'.format(
                 engine_name, tag))
