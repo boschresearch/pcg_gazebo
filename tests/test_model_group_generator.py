@@ -21,7 +21,7 @@ from pcg_gazebo.generators.creators import box_factory
 FIXED_ENGINE = dict(
     tag='add_fixed_models',
     engine_name='fixed_pose',
-    models=['test_static_model'],
+    models=['box_floor'],
     poses=[
         [0, 0, 0, 0, 0, 0]
     ]
@@ -31,18 +31,18 @@ RANDOM_ENGINE = dict(
     tag='add_random_objects',
     engine_name='random_pose',
     models=[
-        'test_box'
+        'box'
     ],
     model_picker='size',
     max_area=0.9,
     no_collision=True,
     max_num=dict(
-        test_box=2,
+        box=2,
     ),
     policies=[
         dict(
             models=[
-                'test_box'
+                'box'
             ],
             config=[
                 dict(
@@ -57,7 +57,7 @@ RANDOM_ENGINE = dict(
     ],
     constraints=[
         dict(
-            model='test_box',
+            model='box',
             constraint='tangent_to_ground_plane'
         )
     ]
