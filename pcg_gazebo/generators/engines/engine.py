@@ -15,7 +15,10 @@
 import collections
 from ...simulation.properties import Pose
 from ...log import PCG_ROOT_LOGGER
-from ..collision_checker import SingletonCollisionChecker, CollisionChecker
+from ..assets_manager import AssetsManager
+from ..constraints_manager import ConstraintsManager
+from ..collision_checker import SingletonCollisionChecker, \
+    CollisionChecker
 
 
 class Engine(object):
@@ -38,12 +41,8 @@ class Engine(object):
     """
     _LABEL = None
 
-    def __init__(self, assets_manager, callback_fcn_get_constraint=None,
+    def __init__(self, assets_manager=None, constraints_manager=None,
                  models=None, constraints=None, collision_checker=None):
-        if callback_fcn_get_constraint is not None:
-            assert callable(callback_fcn_get_constraint), \
-                'Invalid callback function to retrieve constraints, ' \
-                'received={}'.format(callback_fcn_get_constraint)
         if models is None:
             self._models = list()
         else:
@@ -75,8 +74,17 @@ class Engine(object):
             self._collision_checker = SingletonCollisionChecker.get_instance(
                 ignore_ground_plane=True)
 
-        self._assets_manager = assets_manager
-        self._callback_fcn_get_constraint = callback_fcn_get_constraint
+        if assets_manager is not None and \
+                isinstance(assets_manager, AssetsManager):
+            self._assets_manager = assets_manager
+        else:
+            self._assets_manager = AssetsManager.get_instance()
+
+        if constraints_manager is not None and \
+                isinstance(constraints_manager, ConstraintsManager):
+            self._constraints_manager = constraints_manager
+        else:
+            self._constraints_manager = ConstraintsManager.get_instance()
 
     def __str__(self):
         raise NotImplementedError()
@@ -209,7 +217,7 @@ class Engine(object):
         `pcg_gazebo.generators.constraint.Constraint`
         or one of its derived classes.
         """
-        return self._callback_fcn_get_constraint(name)
+        return self._constraints_manager.get(name)
 
     def add_model(self, model):
         """Add a model name to the list of model assets for this engine.
