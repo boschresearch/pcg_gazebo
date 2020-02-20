@@ -16,10 +16,6 @@ import unittest
 import random
 from pcg_gazebo.generators.rules import create_rule, get_rule_parameters
 from pcg_gazebo.generators import ConstraintsManager, RulesManager
-<<<<<<< HEAD
-=======
-from pcg_gazebo.utils import generate_random_string
->>>>>>> c8a1b369afa2e91f68883776ce7f10026d3e3dcf
 import numpy as np
 
 
@@ -212,7 +208,6 @@ class TestRulesManager(unittest.TestCase):
     def test_add_rule_to_manager(self):
         rm = RulesManager.get_instance()
 
-<<<<<<< HEAD
         mean = random.random()
         min = mean - 1
         max = mean + 1
@@ -226,18 +221,6 @@ class TestRulesManager(unittest.TestCase):
 
         rm.add(name='uniform_rule', rule_obj=rule)
         self.assertIn('uniform_rule', rm.tags)
-=======
-        value = random.random()
-        rule = create_rule('value', value=value)
-
-        name = generate_random_string(5)
-        self.assertTrue(rm.add(name, rule))
-        self.assertIn(name, rm.tags)
-
-        name = generate_random_string(5)
-        self.assertTrue(rm.add(name, type='value', value=value))
-        self.assertIn(name, rm.tags)
->>>>>>> c8a1b369afa2e91f68883776ce7f10026d3e3dcf
 
 
 if __name__ == '__main__':
