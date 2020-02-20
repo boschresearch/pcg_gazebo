@@ -14,9 +14,8 @@
 # limitations under the License.
 import unittest
 import random
-from pcg_gazebo.generators.rules import create_rule
+from pcg_gazebo.generators.rules import create_rule, get_rule_parameters
 from pcg_gazebo.generators import ConstraintsManager, RulesManager
-from pcg_gazebo.simulation.properties import Pose
 import numpy as np
 
 
@@ -51,6 +50,30 @@ DOF_TAGS = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
 
 
 class TestRulesManager(unittest.TestCase):
+    def test_examples(self):
+        sample = get_rule_parameters('value')
+        self.assertIn('dofs', sample)
+        self.assertIn('value', sample)
+
+        sample = get_rule_parameters('from_set')
+        self.assertIn('dofs', sample)
+        self.assertIn('values', sample)
+
+        sample = get_rule_parameters('random')
+        self.assertIn('dofs', sample)
+        self.assertIn('scaling_factor', sample)
+        self.assertIn('offset', sample)
+
+        sample = get_rule_parameters('uniform')
+        self.assertIn('dofs', sample)
+        self.assertIn('mean', sample)
+        self.assertIn('min', sample)
+        self.assertIn('max', sample)
+
+        sample = get_rule_parameters('workspace')
+        self.assertIn('dofs', sample)
+        self.assertIn('workspace', sample)
+
     def test_fixed_value_rule(self):
         value = random.random()
         rule = create_rule('value', value=value)
@@ -59,7 +82,7 @@ class TestRulesManager(unittest.TestCase):
         self.assertEqual(rule.value, value)
 
         for tag in rule.dofs:
-            self.assertFalse(rule.dofs[tag])        
+            self.assertFalse(rule.dofs[tag])
 
         for tag in DOF_TAGS:
             dofs = dict()
@@ -75,7 +98,7 @@ class TestRulesManager(unittest.TestCase):
 
     def test_from_set_rule(self):
         values = [random.random() for _ in range(5)]
-        rule = create_rule('choice', values=values)
+        rule = create_rule('from_set', values=values)
 
         self.assertIsNotNone(rule)
         self.assertEqual(rule.values, values)
@@ -96,7 +119,7 @@ class TestRulesManager(unittest.TestCase):
                         if np.isclose(v, getattr(pose, t)):
                             found_value = True
                             break
-                
+
                     self.assertTrue(found_value)
                 else:
                     self.assertEqual(getattr(pose, t), 0)
@@ -159,6 +182,7 @@ class TestRulesManager(unittest.TestCase):
                     self.assertGreaterEqual(getattr(pose, t), min)
                     self.assertLessEqual(getattr(pose, t), max)
                 else:
+                    print(pose.position)
                     self.assertEqual(getattr(pose, t), 0)
 
     def test_within_workspace_rule(self):
@@ -182,7 +206,21 @@ class TestRulesManager(unittest.TestCase):
         self.assertTrue(constraint.contains_point([pose.x, pose.y]))
 
     def test_add_rule_to_manager(self):
-        pass
+        rm = RulesManager.get_instance()
+
+        mean = random.random()
+        min = mean - 1
+        max = mean + 1
+
+        rule = create_rule(
+            'uniform',
+            dofs=dict(x=True, y=True),
+            mean=mean,
+            min=min,
+            max=max)
+
+        rm.add(name='uniform_rule', rule_obj=rule)
+        self.assertIn('uniform_rule', rm.tags)
 
 
 if __name__ == '__main__':
