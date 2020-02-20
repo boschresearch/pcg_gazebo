@@ -18,7 +18,7 @@ from ...utils import is_array, is_scalar
 
 
 class FromSet(Rule):
-    _NAME = 'choice'
+    _NAME = 'from_set'
 
     def __init__(self, dofs=None, values=None):
         assert is_array(values), \
@@ -45,3 +45,9 @@ class FromSet(Rule):
 
     def _get_value(self):
         return choice(self._values)
+
+    @staticmethod
+    def example():
+        sample = Rule.example()
+        sample['values'] = list()
+        return sample

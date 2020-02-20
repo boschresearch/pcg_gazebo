@@ -91,3 +91,7 @@ class Rule(object):
             if sum([self._dofs[tag], other.dofs[tag]]) == 2:
                 return True
         return False
+
+    @staticmethod
+    def example():
+        return dict(dofs=dict(x=0, y=0, z=0, roll=0, pitch=0, yaw=0))

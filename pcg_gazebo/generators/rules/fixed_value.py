@@ -35,3 +35,9 @@ class FixedValue(Rule):
 
     def _get_value(self):
         return self._value
+
+    @staticmethod
+    def example():
+        sample = Rule.example()
+        sample['value'] = 0
+        return sample

@@ -55,3 +55,10 @@ class Random(Rule):
 
     def _get_value(self):
         return self._scaling_factor * random() + self._offset
+
+    @staticmethod
+    def example():
+        sample = Rule.example()
+        sample['scaling_factor'] = 1
+        sample['offset'] = 0
+        return sample

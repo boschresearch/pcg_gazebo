@@ -69,3 +69,11 @@ class Uniform(Rule):
     def _get_value(self):
         return self._mean + uniform(
             self._min - self._mean, self._max - self._mean)
+
+    @staticmethod
+    def example():
+        sample = Rule.example()
+        sample['mean'] = 0
+        sample['min'] = -1
+        sample['max'] = 1
+        return sample

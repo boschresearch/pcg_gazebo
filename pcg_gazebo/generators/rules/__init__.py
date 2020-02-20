@@ -46,6 +46,29 @@ def create_rule(tag, **kwargs):
     return None
 
 
+def get_rule_parameters(tag):
+    import inspect
+    from ...log import PCG_ROOT_LOGGER
+
+    for obj in Rule.__subclasses__():
+        if inspect.isclass(obj):
+            if issubclass(obj, Rule):
+                if tag == obj._NAME:
+                    return obj.example()
+    PCG_ROOT_LOGGER.error('Rule {} does not exist'.format(tag))
+    return None
+
+
+def get_rule_tags():
+    import inspect
+    tags = list()
+    for obj in Rule.__subclasses__():
+        if inspect.isclass(obj):
+            if issubclass(obj, Rule):
+                tags.append(obj._NAME)
+    return tags
+
+
 __all__ = [
     'create_rule',
     'Rule',

@@ -74,3 +74,9 @@ class WithinWorkspace(Rule):
         if pose.has_z and not self.dofs['z']:
             pose.z = 0
         return pose
+
+    @staticmethod
+    def example():
+        sample = Rule.example()
+        sample['workspace'] = 'name_of_workspace'
+        return sample
