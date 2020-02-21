@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import random
+import numpy as np
 from .rule import Rule
 from ...utils import is_scalar
 
@@ -54,7 +54,7 @@ class Random(Rule):
         self._offset = value
 
     def _get_value(self):
-        return self._scaling_factor * random.random() + self._offset
+        return self._scaling_factor * np.random.rand() + self._offset
 
     @staticmethod
     def example():
