@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from random import uniform
+import random
 from .rule import Rule
 from ...utils import is_scalar
 
@@ -67,7 +67,7 @@ class Uniform(Rule):
         self._max = value
 
     def _get_value(self):
-        return self._mean + uniform(
+        return self._mean + random.uniform(
             self._min - self._mean, self._max - self._mean)
 
     @staticmethod

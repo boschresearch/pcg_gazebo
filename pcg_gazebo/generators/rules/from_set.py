@@ -12,8 +12,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import random
 from .rule import Rule
-from random import choice
 from ...utils import is_array, is_scalar
 
 
@@ -44,7 +44,7 @@ class FromSet(Rule):
         self._values = values
 
     def _get_value(self):
-        return choice(self._values)
+        return random.choice(self._values)
 
     @staticmethod
     def example():
