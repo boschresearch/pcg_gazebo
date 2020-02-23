@@ -24,7 +24,7 @@ from ...log import PCG_ROOT_LOGGER
 from ...utils import is_scalar, is_boolean, is_array
 from .. import convert_from_string
 
-if sys.version_info[0] == 3:
+if sys.version_info[0] == 2:
     # Importing a io.open compatible with Python 3.x
     from io import open
 
