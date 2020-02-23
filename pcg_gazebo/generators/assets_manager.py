@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+from .components import Sun, GroundPlane
 from ..utils import load_yaml
 from ..simulation import SimulationModel, ModelGroup, Light, \
     add_custom_gazebo_resource_path
@@ -43,6 +44,12 @@ class AssetsManager(_CollectionManager):
     def __init__(self):
         super(AssetsManager, self).__init__()
         self._ground_plane_assets = list()
+
+        if 'sun' not in self.tags:
+            self.add(description=Sun(), tag='sun')
+        if 'ground_plane' not in self.tags:
+            self.add(description=GroundPlane(), tag='ground_plane')
+            self.set_asset_as_ground_plane('ground_plane')
 
     @staticmethod
     def get_instance():
