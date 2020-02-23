@@ -243,7 +243,7 @@ class World(object):
 
         self._model_groups[name] = group
         self._model_groups[name].name = name
-        return name
+        return True
 
     def rm_model(self, tag, group='default'):
         """Remove model from world.
