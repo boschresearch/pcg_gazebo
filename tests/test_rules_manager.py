@@ -94,7 +94,8 @@ class TestRulesManager(unittest.TestCase):
                 if t == tag:
                     self.assertTrue(np.isclose(getattr(pose, t), value))
                 else:
-                    self.assertEqual(getattr(pose, t), 0)
+                    if t in ['x', 'y', 'z']:
+                        self.assertEqual(getattr(pose, t), 0)
 
     def test_from_set_rule(self):
         values = [random.random() for _ in range(5)]
@@ -122,7 +123,8 @@ class TestRulesManager(unittest.TestCase):
 
                     self.assertTrue(found_value)
                 else:
-                    self.assertEqual(getattr(pose, t), 0)
+                    if t in ['x', 'y', 'z']:
+                        self.assertEqual(getattr(pose, t), 0)
 
     def test_random_rule(self):
         scaling_factor = random.random()
@@ -150,7 +152,8 @@ class TestRulesManager(unittest.TestCase):
                 if t == tag:
                     self.assertNotEqual(getattr(pose, t), 0)
                 else:
-                    self.assertEqual(getattr(pose, t), 0)
+                    if t in ['x', 'y', 'z']:
+                        self.assertEqual(getattr(pose, t), 0)
 
     def test_uniform_rule(self):
         mean = random.random()
@@ -182,8 +185,8 @@ class TestRulesManager(unittest.TestCase):
                     self.assertGreaterEqual(getattr(pose, t), min)
                     self.assertLessEqual(getattr(pose, t), max)
                 else:
-                    print(pose.position)
-                    self.assertEqual(getattr(pose, t), 0)
+                    if t in ['x', 'y', 'z']:
+                        self.assertEqual(getattr(pose, t), 0)
 
     def test_within_workspace_rule(self):
         cm = ConstraintsManager.get_instance()
