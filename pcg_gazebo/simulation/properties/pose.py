@@ -22,6 +22,7 @@ from ...transformations import quaternion_from_euler, euler_from_quaternion, \
 import collections
 import numpy as np
 from ...log import PCG_ROOT_LOGGER
+from ...utils import is_scalar
 
 
 class Pose(object):
@@ -120,7 +121,7 @@ class Pose(object):
 
     @x.setter
     def x(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
+        assert is_scalar(value), \
             'Input must be a float or an integer'
         self._pos[0] = value
 
@@ -130,7 +131,7 @@ class Pose(object):
 
     @y.setter
     def y(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
+        assert is_scalar(value), \
             'Input must be a float or an integer'
         self._pos[1] = value
 
@@ -140,7 +141,7 @@ class Pose(object):
 
     @z.setter
     def z(self, value):
-        assert isinstance(value, float) or isinstance(value, int), \
+        assert is_scalar(value), \
             'Input must be a float or an integer'
         self._pos[2] = value
 
@@ -155,6 +156,18 @@ class Pose(object):
         assert len(list(value)) == 3, \
             'Input vector must have 3 elements'
         self._quat = Pose.rpy2quat(*value)
+
+    @property
+    def roll(self):
+        return Pose.quat2rpy(self._quat)[0]
+
+    @property
+    def pitch(self):
+        return Pose.quat2rpy(self._quat)[1]
+
+    @property
+    def yaw(self):
+        return Pose.quat2rpy(self._quat)[2]
 
     @property
     def quat(self):

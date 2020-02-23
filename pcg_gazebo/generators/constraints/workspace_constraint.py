@@ -121,6 +121,22 @@ class WorkspaceConstraint(Constraint):
 
         self._frame = frame
 
+    def __eq__(self, other):
+        if not isinstance(other, WorkspaceConstraint):
+            return False
+        if other._LABEL != self._LABEL:
+            return False
+        if self._geometry_type != other._geometry_type:
+            return False
+        if self._geometry != other._geometry:
+            return False
+        if len(self._holes) != len(other._holes):
+            return False
+        for hole in self._holes:
+            if hole not in other._holes:
+                return False
+        return True
+
     def __str__(self):
         """Return formatted string."""
         msg = 'Workspace constraint\n'

@@ -95,7 +95,7 @@ class RandomPoseEngine(Engine):
     def __init__(
             self,
             assets_manager=None,
-            callback_fcn_get_constraint=None,
+            constraints_manager=None,
             is_ground_plane=False,
             models=None,
             max_num=None,
@@ -108,7 +108,7 @@ class RandomPoseEngine(Engine):
         Engine.__init__(
             self,
             assets_manager=assets_manager,
-            callback_fcn_get_constraint=callback_fcn_get_constraint,
+            constraints_manager=constraints_manager,
             models=models,
             constraints=constraints,
             collision_checker=collision_checker)

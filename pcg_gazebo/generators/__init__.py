@@ -22,6 +22,7 @@ from .assets_manager import AssetsManager
 from .engine_manager import EngineManager
 from .constraints_manager import ConstraintsManager
 from .model_group_generator import ModelGroupGenerator
+from .rules_manager import RulesManager
 
 __all__ = [
     'WorldGenerator',
@@ -30,5 +31,6 @@ __all__ = [
     'AssetsManager',
     'EngineManager',
     'ConstraintsManager',
-    'ModelGroupGenerator'
+    'ModelGroupGenerator',
+    'RulesManager'
 ]

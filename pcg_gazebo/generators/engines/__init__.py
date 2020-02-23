@@ -21,14 +21,6 @@ from .random_pose_engine import RandomPoseEngine
 from .pattern_engine import PatternEngine
 
 
-__all__ = [
-    'Engine',
-    'FixedPoseEngine',
-    'RandomPoseEngine',
-    'PatternEngine'
-]
-
-
 def create_engine(tag, **kwargs):
     """Engine factory that returns the engine according
     to its `LABEL` definition. It returns `None` if the engine name
@@ -52,3 +44,12 @@ def create_engine(tag, **kwargs):
                     return obj(**kwargs)
     PCG_ROOT_LOGGER.error('Engine {} does not exist'.format(tag))
     return None
+
+
+__all__ = [
+    'create_engine',
+    'Engine',
+    'FixedPoseEngine',
+    'RandomPoseEngine',
+    'PatternEngine'
+]
