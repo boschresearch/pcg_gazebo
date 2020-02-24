@@ -44,18 +44,14 @@ class AssetsManager(_CollectionManager):
     def __init__(self):
         super(AssetsManager, self).__init__()
         self._ground_plane_assets = list()
-
-        if 'sun' not in self.tags:
-            self.add(description=Sun(), tag='sun')
-        if 'ground_plane' not in self.tags:
-            self.add(description=GroundPlane(), tag='ground_plane')
-            self.set_asset_as_ground_plane('ground_plane')
+        self.init()
 
     @staticmethod
     def get_instance():
         """Return singleton instance of the `AssetsMananger`"""
         if AssetsManager._INSTANCE is None:
             AssetsManager._INSTANCE = AssetsManager()
+        AssetsManager._INSTANCE.init()
         return AssetsManager._INSTANCE
 
     @property
@@ -68,6 +64,13 @@ class AssetsManager(_CollectionManager):
     def ground_planes(self):
         """`list`: List of strings with tags of ground plane models"""
         return self._ground_plane_assets
+
+    def init(self):
+        if 'sun' not in self.tags:
+            self.add(description=Sun(), tag='sun')
+        if 'ground_plane' not in self.tags:
+            self.add(description=GroundPlane(), tag='ground_plane')
+            self.set_asset_as_ground_plane('ground_plane')
 
     def is_model(self, tag):
         """Return if asset identified by `tag` is an instance of
@@ -189,8 +192,9 @@ class AssetsManager(_CollectionManager):
         from ..parsers import parse_sdf, parse_urdf, urdf2sdf
         from .model_group_generator import ModelGroupGenerator
         if self.has_element(tag):
-            PCG_ROOT_LOGGER.error(
-                'Asset with tag <{}> already exists'.format(tag))
+            PCG_ROOT_LOGGER.warning(
+                'Asset with tag <{}> already exists, tags='.format(
+                    tag, self.tags))
             return False
         assert isinstance(description, SimulationModel) or \
             isinstance(description, Light) or \
