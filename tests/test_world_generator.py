@@ -602,14 +602,18 @@ class TestWorldGenerator(unittest.TestCase):
         )
 
         for filename in os.listdir(examples_dir):
+            if not filename.endswith('.yml'):
+                continue
+            if filename == 'full_crates_ode.yml':
+                continue
             gen_config_file = os.path.join(examples_dir, filename)
-            
+
             generator = WorldGenerator()
             generator.from_yaml(gen_config_file)
 
             self.assertTrue(generator.run_engines())
             self.assertGreaterEqual(len(generator.world.models), 1, filename)
-            
+
 
 if __name__ == '__main__':
     unittest.main()
