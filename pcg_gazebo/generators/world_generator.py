@@ -683,8 +683,9 @@ class WorldGenerator:
                 if models is not None:
                     for model in models:
                         if not self._add_asset_to_world(model):
-                            PCG_ROOT_LOGGER.error('Cannot add asset <{}>'.format(
-                                model.name))
+                            PCG_ROOT_LOGGER.error(
+                                'Cannot add asset <{}>'.format(
+                                    model.name))
         # Run all other engines
         PCG_ROOT_LOGGER.info('Run other engines')
         for tag in self._engines.tags:
@@ -698,8 +699,9 @@ class WorldGenerator:
                 if models is not None:
                     for model in models:
                         if not self._add_asset_to_world(model):
-                            PCG_ROOT_LOGGER.error('Cannot add asset <{}>'.format(
-                                model.name))
+                            PCG_ROOT_LOGGER.error(
+                                'Cannot add asset <{}>'.format(
+                                    model.name))
 
         PCG_ROOT_LOGGER.info(
             'World model generation'

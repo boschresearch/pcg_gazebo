@@ -17,7 +17,9 @@ from ...simulation import Light
 
 class Sun(Light):
     def __init__(self, name='sun', pose=[0, 0, 10, 0, 0, 0]):
-        super(Sun, self).__init__(name=name, pose=pose,
+        super(Sun, self).__init__(
+            name=name,
+            pose=pose,
             type='directional')
         self.cast_shadows = True
         self.diffuse = [0.8, 0.8, 0.8, 1.0]

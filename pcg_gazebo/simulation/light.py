@@ -211,7 +211,6 @@ class Light(object):
         self._sdf.spot.falloff = falloff
 
     def to_sdf(self):
-        from copy import deepcopy
         return self._sdf
 
     @staticmethod

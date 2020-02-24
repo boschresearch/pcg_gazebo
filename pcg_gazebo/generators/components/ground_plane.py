@@ -28,7 +28,7 @@ class GroundPlane(SimulationModel):
         self.allow_auto_disable = True
         # Disable self-collide
         self.self_collide = False
-        
+
         # Add ground plane link
         link = Link()
         # Set plane parameters
