@@ -21,6 +21,9 @@ class _CollectionManager(object):
     def __init__(self):
         self._collection = dict()
 
+    def __del__(self):
+        self._collection.clear()
+
     @property
     def tags(self):
         """`list`: List of strings of all tags in the collection"""
