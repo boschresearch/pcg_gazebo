@@ -1,6 +1,7 @@
 *~
 *.pyc
 __pycache__
+.pytest_cache
 .ipynb_checkpoints
 .vscode/c_cpp_properties.json
 .vscode/settings.json
