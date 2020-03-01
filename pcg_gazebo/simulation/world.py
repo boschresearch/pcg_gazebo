@@ -668,7 +668,7 @@ class World(object):
                 'Plotting footprints using Z limits: {}'.format(z_limits))
 
         from ..visualization import plot_footprints
-        fig = plot_footprints(
+        fig, ax = plot_footprints(
             models=self.models,
             fig=fig,
             ax=ax,
@@ -687,4 +687,4 @@ class World(object):
         )
 
         PCG_ROOT_LOGGER.info('Plotting footprints: finished')
-        return fig
+        return fig, ax
