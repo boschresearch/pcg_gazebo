@@ -16,6 +16,7 @@ from .engine import Engine
 import numpy as np
 import random
 from copy import deepcopy
+from ...simulation.properties import Pose
 
 
 class RandomPoseEngine(Engine):
@@ -140,11 +141,11 @@ class RandomPoseEngine(Engine):
             else:
                 self._volumes[name] = -1
 
-        self._policies = policies
-
-        self._has_repeated_models()
-        for policy in self._policies:
-            self._has_repeated_dofs(policy)
+        for item in policies:
+            assert 'models' in item, \
+                'Rule does not contain list of models,' \
+                ' config={}'.format(item)
+            self.add_rule(**item)
 
         if max_num is not None:
             assert isinstance(max_num, dict), \
@@ -177,47 +178,6 @@ class RandomPoseEngine(Engine):
             msg += '\tNo models\n'
         return msg
 
-    def _has_repeated_dofs(self, policy):
-        """Check if policies don't interfere with repeated DoFs."""
-        dofs = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
-        for config in policy['config']:
-            for dof in config['dofs']:
-                assert dof in ['x', 'y', 'z', 'roll',
-                               'pitch', 'yaw'], 'Invalid DoF'
-                if dof in dofs:
-                    dofs.remove(dof)
-                else:
-                    raise ValueError(
-                        'Randomization policies have repeated DoFs')
-
-    def _has_repeated_models(self):
-        """Check if policies have repeated model associations."""
-        models = deepcopy(self._models)
-        for policy in self._policies:
-            for model in policy['models']:
-                assert model in self._models, \
-                    'Invalid asset for random generation'
-                assert model in models, \
-                    'Repeated policy for model {}'.format(
-                        model)
-                models.remove(model)
-
-    def _get_policies(self, model_name):
-        """Retrieve a placement policy for a model.
-
-        > *Input arguments*
-
-        * `model_name` (*type:* `str`): Name of the model asset
-
-        > *Returns*
-
-        `dict`: Policy definition
-        """
-        for i in range(len(self._policies)):
-            if model_name in self._policies[i]['models']:
-                return self._policies[i]['config']
-        return None
-
     def _get_random_pose(self, model_name):
         """Compute a random pose for a model respecting its placement policies
         and workspace constraints, if provided.
@@ -230,72 +190,9 @@ class RandomPoseEngine(Engine):
 
         `list`: Pose vector
         """
-        pose = [0 for _ in range(6)]
-        dofs = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
-        for config in self._get_policies(model_name):
-            # Apply the workspace constraint
-            if config['policy']['name'] == 'workspace':
-                assert set(['x', 'y']) == set(config['dofs']) or \
-                    set(['x', 'y', 'z']) == set(config['dofs']), \
-                    'For workspace policy, either x, y' \
-                    ' or x, y, z components must be used'
-                # Retrieve workspace instance
-                if self._workspace is None:
-                    self._workspace = self._get_constraint(
-                        config['policy']['args'])
-
-                assert self._workspace is not None, \
-                    'Invalid workspace constraint {}'.format(
-                        config['policy']['args'])
-
-                pnt = self._workspace.get_random_position()
-
-                if 'x' in config['dofs']:
-                    pose[0] = pnt.x
-                if 'y' in config['dofs']:
-                    pose[1] = pnt.y
-                if pnt.has_z and 'z' in config['dofs']:
-                    pose[2] = pnt.z
-            elif config['policy']['name'] == 'value':
-                assert isinstance(config['policy']['args'], int) or isinstance(
-                    config['policy']['args'], float), \
-                    'Argument for policy value must be an ' \
-                    'integer or a float'
-                for i in range(len(dofs)):
-                    if dofs[i] in config['dofs']:
-                        pose[i] = config['policy']['args']
-            elif config['policy']['name'] == 'uniform':
-                min_value = 0
-                max_value = 1
-
-                if 'args' in config['policy']:
-                    if 'min' in config['policy']['args']:
-                        min_value = config['policy']['args']['min']
-                    if 'max' in config['policy']['args']:
-                        max_value = config['policy']['args']['max']
-
-                assert min_value < max_value, \
-                    'For the uniform distribution, min < max must hold'
-                for i in range(len(dofs)):
-                    if dofs[i] in config['dofs']:
-                        pose[i] = random.uniform(
-                            min_value,
-                            max_value)
-            elif config['policy']['name'] == 'choice':
-                assert 'args' in config['policy'], \
-                    'No arguments found for <choice> policy on the '\
-                    'placement of model <{}>'.format(model_name)
-                assert 'values' in config['policy']['args'], \
-                    'List of values must be available for <choice> ' \
-                    'policy on the placement of model <{}>'.format(model_name)
-                assert isinstance(config['policy']['args']['values'], list), \
-                    'Input <values> for <choice> policy must' \
-                    ' be a list of scalars'
-                for i in range(len(dofs)):
-                    if dofs[i] in config['dofs']:
-                        value = random.choice(
-                            config['policy']['args']['values'])
-                        pose[i] = float(value)
+        pose = Pose()
+        for rule in self.get_rules_for_model(model_name):
+            pose = pose + rule.get_pose()
 
         return pose
 
@@ -412,9 +309,11 @@ class RandomPoseEngine(Engine):
         `bool`: `True` if the polygon is entirely contained
         inside the workspace
         """
-        for mesh in model.get_meshes():
-            if not self._workspace.contains_mesh(mesh):
-                return False
+        for rule in self.get_rules_for_model(model.name):
+            if rule.name == 'workspace':
+                for mesh in model.get_meshes():
+                    if not rule.workspace.contains_mesh(mesh):
+                        return False
         return True
 
     def get_list_of_footprint_polygons(self, footprint):
@@ -452,8 +351,9 @@ class RandomPoseEngine(Engine):
 
         `bool`: `True`, if any collision is detected
         """
-        return self._collision_checker.check_collision_with_current_scene(
+        has_collision = self._collision_checker.check_collision_with_current_scene(
             model)
+        return has_collision
 
     def run(self):
         """Run the placement engine and generate a list of models placed
@@ -501,28 +401,33 @@ class RandomPoseEngine(Engine):
 
             # Retrieve model
             model = self._get_model(model_name)
+            # model.show()
             if model is None:
                 self._logger.error(
                     'Cannot spawn model <{}>'.format(
                         self._models[0]))
                 return None
             else:
+                print('get model to place={}'.format(model_name))
+                print('\t pose=', model.pose.position, model.pose.rpy)
+                print('\t bounds=', model.get_bounds())
+                print(model.to_sdf())
+                # model.show()
                 pose = self._get_random_pose(model_name)
-                self._logger.info('Generated random pose: {}'.format(pose))
 
-                model.pose = pose
+                model.pose = self._get_random_pose(model_name)
+                self._logger.info('Generated random pose: {}'.format(
+                    model.pose))
 
-                if self._workspace is not None:
-                    while not self.is_model_in_workspace(model):
-                        self._logger.info(
-                            'Model outside of the '
-                            'workspace or in collision'
-                            ' with other objects!')
-                        pose = self._get_random_pose(model_name)
-                        self._logger.info(
-                            '\t Generated random pose: {}'.format(pose))
-                        model.pose = pose
-
+                while not self.is_model_in_workspace(model):
+                    self._logger.info(
+                        'Model outside of the '
+                        'workspace or in collision'
+                        ' with other objects!')
+                    pose = self._get_random_pose(model_name)
+                    self._logger.info(
+                        '\t Generated random pose: {}'.format(pose))
+                    model.pose = pose
                 # Enforce positioning constraints
                 model = self.apply_local_constraints(model)
                 if self._no_collision:
@@ -537,20 +442,31 @@ class RandomPoseEngine(Engine):
                         continue
                     else:
                         collision_counter = 0
-
+            
+            # Increase the counter for this chosen model
+            self.increase_counter(model_name)
+            
             models.append(model)
+            # from ...visualization import create_scene
+            # scene = create_scene(models, add_pseudo_color=True)
+
+            # from trimesh.viewer.notebook import in_notebook
+            # from trimesh.viewer import SceneViewer
+
+            # SceneViewer(scene)
+
+            print('adding model {}, has collision {}'.format(model.name, self.has_collision(model)))
+
             if not self._assets_manager.is_light(model_name):
                 self._collision_checker.add_model(model)
 
-            # Increase the counter for this chosen model
-            self.increase_counter(model_name)
-
         self._logger.info('# models:')
+        
         for tag in self._counters:
             self._logger.info('\t - {} = {}'.format(tag, self._counters[tag]))
 
         # Add the models to the collision checker's fixed models list
         for model in models:
             self._collision_checker.add_fixed_model(model)
-
+        
         return models
