@@ -19,7 +19,7 @@ from ...utils import is_scalar
 class FixedValue(Rule):
     _NAME = 'value'
 
-    def __init__(self, dofs=None, value=None):
+    def __init__(self, dofs=None, value=None, **kwargs):
         assert is_scalar(value), 'Input value must be a scalar'
         self._value = value
         super(FixedValue, self).__init__(dofs=dofs)
@@ -40,4 +40,5 @@ class FixedValue(Rule):
     def example():
         sample = Rule.example()
         sample['value'] = 0
+        sample['tag'] = FixedValue._NAME
         return sample

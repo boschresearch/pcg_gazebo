@@ -42,23 +42,32 @@ class Rule(object):
 
     @dofs.setter
     def dofs(self, value):
-        assert isinstance(value, dict), 'Input dofs variable must be a dict'
-        self._dofs = dict(
-            x=False,
-            y=False,
-            z=False,
-            roll=False,
-            pitch=False,
-            yaw=False
-        )
+        if isinstance(value, dict):
+            self._dofs = dict(
+                x=False,
+                y=False,
+                z=False,
+                roll=False,
+                pitch=False,
+                yaw=False
+            )
 
-        for tag in self._dofs:
-            if tag in value:
-                assert is_boolean(value[tag]), \
-                    'DOF element <{}> must be a boolean, ' \
-                    'received={}, type={}'.format(
-                        value[tag], type(value[tag]))
-                self._dofs[tag] = value[tag]
+            for tag in self._dofs:
+                if tag in value:
+                    assert is_boolean(value[tag]), \
+                        'DOF element <{}> must be a boolean, ' \
+                        'received={}, type={}'.format(
+                            value[tag], type(value[tag]))
+                    self._dofs[tag] = value[tag]
+        elif isinstance(value, list):
+            for tag in value:
+                assert tag in self._dofs, \
+                    'Invalid DoF component, tag={}'.format(tag)
+                self._dofs[tag] = True
+        else:
+            raise ValueError(
+                'Invalid input for DoFs configuration, value={},'
+                ' type={}'.format(value, type(value)))
 
     def _get_empty_pose(self):
         return Pose([0, 0, 0], [0, 0, 0])
@@ -94,4 +103,5 @@ class Rule(object):
 
     @staticmethod
     def example():
-        return dict(dofs=dict(x=0, y=0, z=0, roll=0, pitch=0, yaw=0))
+        return dict(
+            dofs=dict(x=0, y=0, z=0, roll=0, pitch=0, yaw=0))

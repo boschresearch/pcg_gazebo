@@ -21,16 +21,21 @@ class Uniform(Rule):
     _NAME = 'uniform'
 
     def __init__(self, dofs=None, mean=None, min=None, max=None):
-        assert is_scalar(mean), 'Mean value must be a scalar'
         assert is_scalar(min), 'Minimum value must be a scalar'
         assert is_scalar(max), 'Maximum value must be a scalar'
         assert min < max, 'Limits are invalid, min={}, max={}'.format(min, max)
-        assert mean >= min and mean <= max, \
-            'Mean value is not within the limits, mean={}, min={},' \
-            ' max={}'.format(mean, min, max)
-        self._mean = mean
+
         self._min = min
         self._max = max
+
+        if mean is not None:
+            assert is_scalar(mean), 'Mean value must be a scalar'
+            assert mean >= min and mean <= max, \
+                'Mean value is not within the limits, mean={}, min={},' \
+                ' max={}'.format(mean, min, max)
+            self._mean = mean
+        else:
+            self._mean = (self._max - self._min) / 2 + self._min
         super(Uniform, self).__init__(dofs=dofs)
 
     @property
@@ -76,4 +81,5 @@ class Uniform(Rule):
         sample['mean'] = 0
         sample['min'] = -1
         sample['max'] = 1
+        sample['tag'] = Uniform._NAME
         return sample
