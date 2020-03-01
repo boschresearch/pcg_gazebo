@@ -23,7 +23,7 @@ from .pose import Pose
 class Inertial(object):
     def __init__(self, mass=0, ixx=0, iyy=0, izz=0, ixy=0, ixz=0, iyz=0):
         self._mass = mass
-        self._pose = Pose()
+        self._pose = Pose([0, 0, 0], [0, 0, 0, 1])
         self._ixx = ixx
         self._iyy = iyy
         self._izz = izz
