@@ -101,6 +101,12 @@ class CollisionChecker(object):
     def show(self):
         """Display the current collision check scenario using `pyglet`."""
         if not self._simulation_scenario.is_empty:
+            from trimesh.viewer.notebook import in_notebook
+            if not in_notebook():
+                self._simulation_scenario.show()
+            else:
+                from trimesh.viewer import SceneViewer
+                return SceneViewer(self._simulation_scenario)
             self._simulation_scenario.show()
         else:
             PCG_ROOT_LOGGER.warning('Collision scene is empty')
