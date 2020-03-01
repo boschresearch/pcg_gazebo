@@ -16,6 +16,7 @@ import unittest
 import random
 from pcg_gazebo.generators.rules import create_rule, get_rule_parameters
 from pcg_gazebo.generators import ConstraintsManager, RulesManager
+from pcg_gazebo.utils import generate_random_string
 import numpy as np
 
 
@@ -49,28 +50,67 @@ WORKSPACE_CONSTRAINT = dict(
 DOF_TAGS = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
 
 
+UNIFORM_RULE_SAMPLE = dict(
+    type='uniform',
+    dofs=dict(x=True, y=True),
+    mean=random.random(),
+    min=-10,
+    max=10
+)
+
+FIXED_VALUE_RULE_SAMPLE = dict(
+    type='value',
+    dofs=dict(x=True, y=True),
+    value=random.random()
+)
+
+FROM_SET_RULE_SAMPLE = dict(
+    type='from_set',
+    dofs=dict(x=True, y=True, z=True),
+    values=[random.random() for _ in range(5)]
+)
+
+RANDOM_RULE_SAMPLE = dict(
+    type='random',
+    dofs=dict(x=True, y=True, z=True),
+    scaling_factor=random.random(),
+    offset=random.random()
+)
+
+WORKSPACE_RULE_SAMPLE = dict(
+    type='workspace',
+    dofs=dict(x=True, y=True),
+    workspace=WORKSPACE_CONSTRAINT['name']
+)
+
+
 class TestRulesManager(unittest.TestCase):
     def test_examples(self):
         sample = get_rule_parameters('value')
+        self.assertIn('tag', sample)
         self.assertIn('dofs', sample)
         self.assertIn('value', sample)
 
         sample = get_rule_parameters('from_set')
+        self.assertIn('tag', sample)
         self.assertIn('dofs', sample)
         self.assertIn('values', sample)
 
         sample = get_rule_parameters('random')
+        self.assertIn('tag', sample)
         self.assertIn('dofs', sample)
         self.assertIn('scaling_factor', sample)
         self.assertIn('offset', sample)
 
         sample = get_rule_parameters('uniform')
+        self.assertIn('tag', sample)
         self.assertIn('dofs', sample)
         self.assertIn('mean', sample)
         self.assertIn('min', sample)
         self.assertIn('max', sample)
 
         sample = get_rule_parameters('workspace')
+        self.assertIn('tag', sample)
         self.assertIn('dofs', sample)
         self.assertIn('workspace', sample)
 
@@ -211,19 +251,96 @@ class TestRulesManager(unittest.TestCase):
     def test_add_rule_to_manager(self):
         rm = RulesManager.get_instance()
 
-        mean = random.random()
-        min = mean - 1
-        max = mean + 1
+        rules = [
+            UNIFORM_RULE_SAMPLE,
+            FIXED_VALUE_RULE_SAMPLE,
+            FROM_SET_RULE_SAMPLE,
+            RANDOM_RULE_SAMPLE,
+            WORKSPACE_RULE_SAMPLE
+        ]
+
+        for rule in rules:
+            name = generate_random_string(5)
+            rm.add(name=name, **rule)
+            self.assertIn(name, rm.tags)
+
+        self.assertEqual(len(rm.tags), len(rules))
+
+    def test_deprecated_rules_args(self):
+        DOFS = dict(x=True, y=True, z=True)
 
         rule = create_rule(
-            'uniform',
-            dofs=dict(x=True, y=True),
-            mean=mean,
-            min=min,
-            max=max)
+            policy=dict(
+                name='workspace',
+                args='my_workspace'
+            ),
+            dofs=DOFS
+        )
 
-        rm.add(name='uniform_rule', rule_obj=rule)
-        self.assertIn('uniform_rule', rm.tags)
+        self.assertIsNotNone(rule)
+        self.assertEqual(rule.name, 'workspace')
+        self.assertEqual(rule._workspace_tag, 'my_workspace')
+
+        rule = create_rule(
+            policy=dict(
+                name='uniform',
+                args=dict(
+                    min=-1,
+                    max=1
+                )
+            ),
+            dofs=DOFS
+        )
+
+        self.assertIsNotNone(rule)
+        self.assertEqual(rule.name, 'uniform')
+        self.assertEqual(rule._min, -1)
+        self.assertEqual(rule._max, 1)
+        self.assertEqual(rule._mean, 0)
+
+        rule = create_rule(
+            policy=dict(
+                name='uniform',
+                args=dict(
+                    min=3,
+                    max=5,
+                    mean=4
+                )
+            ),
+            dofs=DOFS
+        )
+
+        self.assertIsNotNone(rule)
+        self.assertEqual(rule.name, 'uniform')
+        self.assertEqual(rule._min, 3)
+        self.assertEqual(rule._max, 5)
+        self.assertEqual(rule._mean, 4)
+
+        rule = create_rule(
+            policy=dict(
+                name='choice',
+                args=dict(
+                    values=[1, 2, 3]
+                )
+            ),
+            dofs=DOFS
+        )
+
+        self.assertIsNotNone(rule)
+        self.assertEqual(rule.name, 'from_set')
+        self.assertEqual(rule._values, [1, 2, 3])
+
+        rule = create_rule(
+            policy=dict(
+                name='value',
+                args=10
+            ),
+            dofs=DOFS
+        )
+
+        self.assertIsNotNone(rule)
+        self.assertEqual(rule.name, 'value')
+        self.assertEqual(rule._value, 10)
 
 
 if __name__ == '__main__':
