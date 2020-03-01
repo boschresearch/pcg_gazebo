@@ -334,12 +334,16 @@ class SimulationModel(object):
             link.inertial = Inertial.create_cuboid_inertia(mass, *size)
             self._logger.info('[{}] Setting mass={}, size={}, link={}'.format(
                 self.name, mass, size, link_name))
+            print('Setting inertial, ', self.name, mass, size)
+            print(link.inertial.to_sdf())
 
         link.pose = pose
         self._logger.info(
             '[{}] Link {} pose={}'.format(
                 self.name, link_name, pose))
-
+        if mass > 0:
+            print('Inertial after setting pose, ', self.name, link.pose.to_sdf())
+            print(link.inertial.to_sdf())
         if add_visual:
             visual_input = dict(
                 name='visual'
@@ -1496,8 +1500,9 @@ class SimulationModel(object):
             self,
             mesh_type='collision',
             pose_offset=None,
-            use_bounding_box=False,
             z_limits=None):
+        from ..generators.occupancy import generate_occupancy_grid
+
         if mesh_type not in ['collision', 'visual']:
             msg = 'Mesh type to compute the footprints' \
                 ' must be either collision or visual' \
@@ -1525,22 +1530,26 @@ class SimulationModel(object):
         footprints = dict()
         for tag in self._models:
             footprint = self._models[tag].get_footprint(
-                mesh_type, combined_pose, use_bounding_box, z_limits)
+                mesh_type, combined_pose, z_limits)
             if footprint is not None:
                 footprints[self.name + '::' +
                            self._models[tag].name] = footprint
 
-        model_footprint = Footprint()
-        for tag in self._links:
-            footprint = self._links[tag].get_footprint(
-                mesh_type, combined_pose, use_bounding_box, z_limits)
-            if footprint is not None:
-                model_footprint.add_polygon(footprint)
+        gridmap_input = dict()
+        gridmap_input[self.name] = self
+        grid = generate_occupancy_grid(
+            gridmap_input,
+            mesh_type=mesh_type,
+            z_limits=z_limits
+        )
 
-        combined_model_footprint = model_footprint.get_footprint_polygon()
-
-        if combined_model_footprint is not None:
-            footprints[self.name] = combined_model_footprint
+        if grid is not None:
+            combined_model_footprint = Footprint()
+            for tag in grid['static']:
+                combined_model_footprint.add_polygon(grid['static'][tag])
+            for tag in grid['non_static']:
+                combined_model_footprint.add_polygon(grid['non_static'][tag])
+            footprints[self.name] = combined_model_footprint.get_footprint_polygon()
 
         self._logger.info(
             'Footprint computed for model <{}>'.format(
@@ -1635,11 +1644,10 @@ class SimulationModel(object):
                 'Plotting footprints using Z limits: {}'.format(z_limits))
 
         from ..visualization import plot_footprints
-
-        input_model = dict()
-        input_model[self.name] = self
-        fig = plot_footprints(
-            models=input_model,
+        models = dict()
+        models[self.name] = self
+        fig, ax = plot_footprints(
+            models=models,
             fig=fig,
             ax=ax,
             fig_height=fig_height,
@@ -1657,7 +1665,7 @@ class SimulationModel(object):
         )
 
         PCG_ROOT_LOGGER.info('Plotting footprints: finished')
-        return fig
+        return fig, ax
 
     def get_bounds(self, mesh_type='collision'):
         meshes = self.get_meshes(mesh_type)

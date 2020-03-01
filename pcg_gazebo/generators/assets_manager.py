@@ -319,10 +319,13 @@ class AssetsManager(_CollectionManager):
         elif self.is_model_group_generator(tag):
             model = self._collection[tag].run(group_name=tag, *args, **kwargs)
         elif self.is_factory_input(tag):
+            print('--- ASSETS MANAGER=', tag)
             from .creators import config2models
             model = SimulationModel.from_sdf(
                 config2models(self._collection[tag])[0])
             model.name = tag
+            print(model.to_sdf())
+            print('--- ASSETS MANAGER')
         if model is not None and not self.is_light(tag):
             model.is_ground_plane = self.is_ground_plane(tag)
         return model
