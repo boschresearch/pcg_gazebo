@@ -17,7 +17,7 @@ import unittest
 import random
 from pcg_gazebo.generators import WorldGenerator
 from pcg_gazebo.generators.creators import box_factory
-from pcg_gazebo.generators.occupancy import generate_occupancy_grid_with_ray
+from pcg_gazebo.generators.occupancy import generate_occupancy_grid
 
 
 STATIC_CYL = dict(
@@ -157,7 +157,7 @@ class TestOccupancyGrid(unittest.TestCase):
                              n_cylinders + n_boxes + 1)
 
             # First occupancy grid with box floor
-            occupancy_output = generate_occupancy_grid_with_ray(
+            occupancy_output = generate_occupancy_grid(
                 world_gen.world.models,
                 z_levels=None,
                 x_limits=None,
@@ -178,7 +178,7 @@ class TestOccupancyGrid(unittest.TestCase):
                     filtered_models[tag] = world_gen.world.models[tag]
 
             # Without box floor
-            occupancy_output = generate_occupancy_grid_with_ray(
+            occupancy_output = generate_occupancy_grid(
                 filtered_models,
                 z_levels=None,
                 x_limits=None,
