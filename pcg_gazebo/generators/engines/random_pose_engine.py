@@ -351,8 +351,9 @@ class RandomPoseEngine(Engine):
 
         `bool`: `True`, if any collision is detected
         """
-        has_collision = self._collision_checker.check_collision_with_current_scene(
-            model)
+        has_collision = \
+            self._collision_checker.check_collision_with_current_scene(
+                model)
         return has_collision
 
     def run(self):
@@ -408,11 +409,6 @@ class RandomPoseEngine(Engine):
                         self._models[0]))
                 return None
             else:
-                print('get model to place={}'.format(model_name))
-                print('\t pose=', model.pose.position, model.pose.rpy)
-                print('\t bounds=', model.get_bounds())
-                print(model.to_sdf())
-                # model.show()
                 pose = self._get_random_pose(model_name)
 
                 model.pose = self._get_random_pose(model_name)
@@ -442,31 +438,22 @@ class RandomPoseEngine(Engine):
                         continue
                     else:
                         collision_counter = 0
-            
+
             # Increase the counter for this chosen model
             self.increase_counter(model_name)
-            
+
             models.append(model)
-            # from ...visualization import create_scene
-            # scene = create_scene(models, add_pseudo_color=True)
-
-            # from trimesh.viewer.notebook import in_notebook
-            # from trimesh.viewer import SceneViewer
-
-            # SceneViewer(scene)
-
-            print('adding model {}, has collision {}'.format(model.name, self.has_collision(model)))
 
             if not self._assets_manager.is_light(model_name):
                 self._collision_checker.add_model(model)
 
         self._logger.info('# models:')
-        
+
         for tag in self._counters:
             self._logger.info('\t - {} = {}'.format(tag, self._counters[tag]))
 
         # Add the models to the collision checker's fixed models list
         for model in models:
             self._collision_checker.add_fixed_model(model)
-        
+
         return models
