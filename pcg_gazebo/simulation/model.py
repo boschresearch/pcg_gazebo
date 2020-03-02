@@ -334,16 +334,11 @@ class SimulationModel(object):
             link.inertial = Inertial.create_cuboid_inertia(mass, *size)
             self._logger.info('[{}] Setting mass={}, size={}, link={}'.format(
                 self.name, mass, size, link_name))
-            print('Setting inertial, ', self.name, mass, size)
-            print(link.inertial.to_sdf())
 
         link.pose = pose
         self._logger.info(
             '[{}] Link {} pose={}'.format(
                 self.name, link_name, pose))
-        if mass > 0:
-            print('Inertial after setting pose, ', self.name, link.pose.to_sdf())
-            print(link.inertial.to_sdf())
         if add_visual:
             visual_input = dict(
                 name='visual'
@@ -1549,7 +1544,8 @@ class SimulationModel(object):
                 combined_model_footprint.add_polygon(grid['static'][tag])
             for tag in grid['non_static']:
                 combined_model_footprint.add_polygon(grid['non_static'][tag])
-            footprints[self.name] = combined_model_footprint.get_footprint_polygon()
+            footprints[self.name] = \
+                combined_model_footprint.get_footprint_polygon()
 
         self._logger.info(
             'Footprint computed for model <{}>'.format(
