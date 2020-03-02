@@ -111,7 +111,6 @@ def box(size, mass=0, name='box', pose=[0, 0, 0, 0, 0, 0], color=None,
 
     A box-shaped `pcg_gazebo.simulation.SimulationModel` instance.
     """
-    print('--- BOX CREATOR')
     input_mass = float(_parse_factory_input_as_vector(mass)[0])
     input_size = _parse_factory_input_as_vector(size).tolist()
     input_pose = _parse_factory_input_as_vector(pose).tolist()
@@ -139,8 +138,6 @@ def box(size, mass=0, name='box', pose=[0, 0, 0, 0, 0, 0], color=None,
         model.static = True
 
     model.pose = input_pose
-    print(model.links[model.link_names[0]].inertial.to_sdf())
-    print('--- BOX CREATOR')
     return model
 
 
