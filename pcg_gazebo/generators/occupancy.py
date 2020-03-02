@@ -194,7 +194,8 @@ def get_occupied_area(
             else:
                 ray_origins = np.vstack((ray_origins, horz_origin))
 
-        ray_directions = np.array([[1, 0, 0] for _ in range(ray_origins.shape[0])])
+        ray_directions = np.array([[1, 0, 0]
+                                   for _ in range(ray_origins.shape[0])])
 
         # Generating ray origins on the BOTTOM of scene
         for z in z_levels:
@@ -283,7 +284,8 @@ def get_occupied_area(
                     ray_intersections = np.unique(ray_intersections, axis=0)
                     # Generating ray origins from the maximum Z level limit
                     PCG_ROOT_LOGGER.info(
-                        'Performing triangulation, model={}'.format(model_name))
+                        'Performing triangulation, model={}'.format(
+                            model_name))
                     triangles = triangulate(MultiPoint(ray_intersections))
                     PCG_ROOT_LOGGER.info('# triangles={}, model={}'.format(
                         len(triangles), model_name))
@@ -302,7 +304,8 @@ def get_occupied_area(
                     idx = None
                     PCG_ROOT_LOGGER.info(
                         'Checking triangles centroids for'
-                        ' intersections with mesh, model={}'.format(model_name))
+                        ' intersections with mesh, model={}'.format(
+                            model_name))
                     for mesh in meshes:
                         locations, index_ray, index_tri = \
                             mesh.ray.intersects_location(
@@ -313,19 +316,22 @@ def get_occupied_area(
                         if idx is None:
                             idx = np.array(index_ray)
                         else:
-                            idx = np.unique(np.hstack((idx, np.array(index_ray))))
+                            idx = np.unique(
+                                np.hstack((idx, np.array(index_ray))))
 
                     PCG_ROOT_LOGGER.info(
                         'Triangles filtered for intersections,'
                         ' model={}, # triangles={}'.format(
                             model_name, idx.shape[0]))
-                    occupied_areas = occupied_areas + [triangles[i] for i in idx]
+                    occupied_areas = occupied_areas + \
+                        [triangles[i] for i in idx]
                     PCG_ROOT_LOGGER.info(
                         'Finished triangulation, model={}'.format(model_name))
                 except ValueError as ex:
                     PCG_ROOT_LOGGER.warning(
                         'triangulation failed, using vertical rays'
-                        ' instead, model={}, message={}'.format(model_name, ex))
+                        ' instead, model={}, message={}'.format(
+                            model_name, ex))
                     occupied_areas = occupied_areas + \
                         _find_footprint_with_rays(x_samples, y_samples)
             else:
@@ -367,7 +373,7 @@ def get_occupied_area(
         plane_normal = [0, 0, 1]
 
         meshes = model.get_meshes(mesh_type)
-        filtered_geoms  = list()
+        filtered_geoms = list()
         for mesh in meshes:
             if model_z_limits[0] in z_levels:
                 z_levels = np.delete(
@@ -379,7 +385,8 @@ def get_occupied_area(
                     np.where(z_levels == model_z_limits[0]))
             if z_levels.size == 0:
                 z_levels = np.array(
-                    [(model_z_limits[1] - model_z_limits[0]) / 2 + model_z_limits[0]])
+                    [(model_z_limits[1] - model_z_limits[0]) / 2 +
+                     model_z_limits[0]])
 
             sections = mesh.section_multiplane(
                 plane_origin=[0, 0, 0],
@@ -559,7 +566,8 @@ def generate_occupancy_grid(
             _get_occupied_area_proc,
             non_gp_models)
 
-        for model_occupied_area, model_name in zip(results, models):
+        for model_occupied_area, model_name in zip(
+                results, [x[0].name for x in non_gp_models]):
             if model_occupied_area is None:
                 PCG_ROOT_LOGGER.warning(
                     'No footprint found for model {}'
