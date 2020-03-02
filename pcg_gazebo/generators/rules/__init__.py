@@ -56,8 +56,6 @@ def create_rule(tag=None, **kwargs):
     else:
         rule_args = kwargs
 
-    print(tag, rule_args)
-
     for obj in Rule.__subclasses__():
         if inspect.isclass(obj):
             if issubclass(obj, Rule):
