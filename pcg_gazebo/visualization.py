@@ -139,7 +139,7 @@ def plot_shapely_geometry(
             ax.add_patch(patch)
         elif isinstance(polygon, MultiPolygon):
             for geo in polygon.geoms:
-                fig, ax  = plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
                     fig=fig,
                     ax=ax,
                     polygon=geo,
@@ -163,7 +163,7 @@ def plot_shapely_geometry(
                 zorder=2)
         elif isinstance(polygon, MultiLineString):
             for geo in polygon.geoms:
-                fig, ax  = plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
                     fig=fig,
                     ax=ax,
                     polygon=geo,
@@ -180,7 +180,7 @@ def plot_shapely_geometry(
             ax.plot(x, y, marker=marker_style, color=color, zorder=2)
         elif isinstance(polygon, MultiPoint):
             for point in polygon.geoms:
-                fig, ax  = plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
                     fig=fig,
                     ax=ax,
                     polygon=point,
@@ -221,7 +221,7 @@ def plot_workspace(
 
     geo = workspace.get_geometry()
 
-    fig, ax  = plot_shapely_geometry(
+    fig, ax = plot_shapely_geometry(
         polygon=geo,
         fig=fig,
         ax=ax,
@@ -314,7 +314,7 @@ def plot_footprint(
 
         if len(footprints) > 0:
             for fp in footprints:
-                fig, ax  = plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
                     fig=fig,
                     ax=ax,
                     polygon=fp,
@@ -457,7 +457,7 @@ def plot_occupancy_grid(
         output_folder='/tmp',
         output_filename='map.pgm',
         static_models_only=True,
-        with_ground_plane=True,        
+        with_ground_plane=True,
         z_levels=None,
         x_limits=None,
         y_limits=None,
@@ -574,7 +574,7 @@ def plot_occupancy_grid(
 
     min_axis_y = None
     max_axis_y = None
-    
+
     if occupancy_output is not None:
         if with_ground_plane and len(occupancy_output['ground_plane']) > 0:
             ax.patch.set_facecolor(unavailable_color)
