@@ -32,7 +32,8 @@ class WithinWorkspace(Rule):
             if isinstance(dofs, list):
                 ws_dofs['z'] = 'z' in dofs
             elif isinstance(dofs, dict):
-                ws_dofs['z'] = dofs['z']
+                if 'z' in dofs:
+                    ws_dofs['z'] = dofs['z']
         for tag in ['roll', 'pitch', 'yaw']:
             ws_dofs[tag] = False
         self._constraints_manager = ConstraintsManager.get_instance()
