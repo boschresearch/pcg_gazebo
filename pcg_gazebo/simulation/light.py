@@ -90,6 +90,8 @@ class Light(object):
 
             self._pose = Pose(pos=vec[0:3], rot=vec[3::])
 
+        self._sdf.pose = self._pose.to_sdf()
+
     @property
     def diffuse(self):
         return self._sdf.diffuse.value
@@ -217,8 +219,34 @@ class Light(object):
         assert sdf._NAME == 'light', 'Only light elements can be parsed'
         light = Light()
         light._sdf = deepcopy(sdf)
+        light._pose = Pose.from_sdf(sdf.pose)
         return light
 
     @staticmethod
     def from_dict(config):
         return Light(**config)
+
+    @staticmethod
+    def from_gazebo_model(name):
+        from . import get_gazebo_model_sdf
+        PCG_ROOT_LOGGER.info('Importing a Gazebo model, name={}'.format(name))
+        # Update list of Gazebo models
+        sdf = get_gazebo_model_sdf(name)
+
+        if sdf is None:
+            msg = 'Gazebo model {} not found in the ROS paths'.format(name)
+            PCG_ROOT_LOGGER.error(msg)
+            raise ValueError(msg)
+        if sdf.lights is None:
+            msg = 'No models found in Gazebo model {}'.format(name)
+            PCG_ROOT_LOGGER.warning(msg)
+            raise ValueError(msg)
+        if len(sdf.lights) != 1:
+            msg = 'Imported SDF file should have one model only'
+            PCG_ROOT_LOGGER.error(msg)
+            raise ValueError(msg)
+
+        light = Light.from_sdf(sdf.lights[0])
+        light.is_gazebo_model = True
+        light._source_model_name = name
+        return light

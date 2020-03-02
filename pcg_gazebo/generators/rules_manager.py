@@ -14,7 +14,7 @@
 # limitations under the License.
 from ._collection_manager import _CollectionManager
 from .rules import create_rule, Rule
-from ..utils import load_yaml
+from ..utils import load_yaml, generate_random_string
 from ..log import PCG_ROOT_LOGGER
 
 
@@ -28,22 +28,30 @@ class RulesManager(_CollectionManager):
             RulesManager._INSTANCE = RulesManager()
         return RulesManager._INSTANCE
 
-    def add(self, name, type=None, rule_obj=None, **kwargs):
-        """Add a new positioning constraint class to the internal
-        constraints list.
+    def add(self, name=None, type=None, rule_obj=None, **kwargs):
+        """Add a new positioning rule class to the internal
+        rules list.
 
         > *Input arguments*
 
-        * `name` (*type:* `str`): ID name for the constraint class instance
-        * `type` (*type:* `str`): Name of the constraints class to be created
-        * `kwargs` (*type:* `dict`): Input arguments for the constraint class
+        * `name` (*type:* `str`): ID name for the rule class instance
+        * `type` (*type:* `str`): Name of the rules class to be created
+        * `kwargs` (*type:* `dict`): Input arguments for the rule class
         to be created
         """
         new_role = create_rule(type, **kwargs)
+        if name is None:
+            name = generate_random_string(5)
+            while self.has_element(name):
+                name = generate_random_string(5)
+            PCG_ROOT_LOGGER.info(
+                'Since rule tag was not provided, '
+                'an unique random tag has been '
+                'generated, name={}'.format(name))
         if self.has_element(name):
             if self._collection[name] != new_role:
                 PCG_ROOT_LOGGER.error(
-                    'Constraint with name <{}> already'
+                    'Rule with name <{}> already'
                     ' exists and has different parameters'.format(
                         name))
                 return False
@@ -65,7 +73,7 @@ class RulesManager(_CollectionManager):
         else:
             if not self.add(**config):
                 PCG_ROOT_LOGGER.error(
-                    'Failed to parse constraint'
+                    'Failed to parse rule'
                     ' configuration={}'.format(config))
 
     def from_yaml(self, filename):

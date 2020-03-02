@@ -19,6 +19,7 @@ from ..assets_manager import AssetsManager
 from ..constraints_manager import ConstraintsManager
 from ..collision_checker import SingletonCollisionChecker, \
     CollisionChecker
+from ..rules import create_rule
 
 
 class Engine(object):
@@ -57,6 +58,8 @@ class Engine(object):
         self._fixed_pose_models = list()
 
         self._local_constraints = dict()
+
+        self._rules = list()
 
         if constraints is not None:
             for c in constraints:
@@ -107,6 +110,45 @@ class Engine(object):
         names.
         """
         return self._poses
+
+    def _test_repeated_rule_dofs(self):
+        dofs = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
+        for item in self._rules:
+            for dof in item['rule'].dofs:
+                assert dof in ['x', 'y', 'z', 'roll', 'pitch', 'yaw'], \
+                    'Invalid DoF for rule, dof={}'.format(dof)
+                if item['rule'].dofs[dof]:
+                    if dof in dofs:
+                        dofs.remove(dof)
+                    else:
+                        raise ValueError(
+                            'Randomization policies have repeated DoFs'
+                            ', dof={}'.format(dof))
+
+    def add_rule(self, models, config):
+        assert isinstance(config, list)
+        assert isinstance(models, list)
+
+        for rule_config in config:
+            rule = create_rule(**rule_config)
+            assert rule is not None, \
+                'Could not create rule with provided input ' \
+                'arguments, config={}'.format(rule_config)
+            self._rules.append(
+                dict(
+                    models=models,
+                    rule=rule
+                )
+            )
+            self._test_repeated_rule_dofs()
+        return True
+
+    def get_rules_for_model(self, model_name):
+        rules = list()
+        for item in self._rules:
+            if model_name in item['models']:
+                rules.append(item['rule'])
+        return rules
 
     def add_local_constraint(self, model_name, constraint_name):
         """Add an association of a constraint definitions with an

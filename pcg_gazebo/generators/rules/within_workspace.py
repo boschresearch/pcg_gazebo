@@ -15,6 +15,7 @@
 from .rule import Rule
 from ..constraints_manager import ConstraintsManager
 from ...utils import is_string, is_boolean
+from ...simulation.properties import Pose
 
 
 class WithinWorkspace(Rule):
@@ -24,16 +25,21 @@ class WithinWorkspace(Rule):
         assert is_string(workspace), \
             'Workspace identifier must be a string,' \
             ' received={}'.format(workspace)
-        if dofs is None:
-            dofs = dict()
-        dofs['x'] = True
-        dofs['y'] = True
+        ws_dofs = dict()
+        ws_dofs['x'] = True
+        ws_dofs['y'] = True
+        if dofs is not None:
+            if isinstance(dofs, list):
+                ws_dofs['z'] = 'z' in dofs
+            elif isinstance(dofs, dict):
+                if 'z' in dofs:
+                    ws_dofs['z'] = dofs['z']
         for tag in ['roll', 'pitch', 'yaw']:
-            dofs[tag] = False
+            ws_dofs[tag] = False
         self._constraints_manager = ConstraintsManager.get_instance()
         self._workspace_tag = workspace
         self._workspace = None
-        super(WithinWorkspace, self).__init__(dofs=dofs)
+        super(WithinWorkspace, self).__init__(dofs=ws_dofs)
 
     @property
     def dofs(self):
@@ -59,19 +65,32 @@ class WithinWorkspace(Rule):
                         value[tag], type(value[tag]))
                 self._dofs[tag] = value[tag]
 
-    def get_pose(self):
-        assert self._constraints_manager.has_element(self._workspace_tag), \
-            'Workspace <{}> could not be found in the list of' \
-            ' constraints, options are={}'.format(
-                self._workspace_tag, self._constraints_manager.tags)
+    @property
+    def workspace_tag(self):
+        return self._workspace_tag
+
+    @property
+    def workspace(self):
         if self._workspace is None:
             self._workspace = self._constraints_manager.get(
                 self._workspace_tag)
             assert self._workspace.type == 'workspace', \
                 'Constraint <{}> is not a workspace constraint'.format(
                     self._workspace_tag)
-        pose = self._workspace.get_random_position()
-        if pose.has_z and not self.dofs['z']:
+        return self._workspace
+
+    def get_pose(self):
+        assert self._constraints_manager.has_element(self._workspace_tag), \
+            'Workspace <{}> could not be found in the list of' \
+            ' constraints, options are={}'.format(
+                self._workspace_tag, self._constraints_manager.tags)
+
+        pose = Pose()
+        point = self.workspace.get_random_position()
+        pose.x = point.xy[0][0]
+        pose.y = point.xy[1][0]
+
+        if point.has_z and self.dofs['z']:
             pose.z = 0
         return pose
 
@@ -79,4 +98,5 @@ class WithinWorkspace(Rule):
     def example():
         sample = Rule.example()
         sample['workspace'] = 'name_of_workspace'
+        sample['tag'] = WithinWorkspace._NAME
         return sample

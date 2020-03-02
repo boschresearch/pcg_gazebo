@@ -58,9 +58,11 @@ class Footprint(object):
 
         self._original_footprint = deepcopy(footprint)
 
-        footprint = affinity.rotate(footprint, self._heading, use_radians=True)
-        footprint = affinity.translate(
-            footprint, self._offset[0], self._offset[1], 0)
+        if not footprint.is_empty:
+            footprint = affinity.rotate(
+                footprint, self._heading, use_radians=True)
+            footprint = affinity.translate(
+                footprint, self._offset[0], self._offset[1], 0)
 
         return footprint
 

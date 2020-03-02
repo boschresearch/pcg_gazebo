@@ -46,6 +46,11 @@ def get_axes(fig=None, engine='matplotlib', fig_width=20, fig_height=15):
     if fig is None:
         fig = get_figure(engine=engine, fig_width=fig_width,
                          fig_height=fig_height)
+    if fig_height is None:
+        fig_height = 10 if engine == 'matplotlib' else 400
+
+    if fig_width is None:
+        fig_width = 15 if engine == 'matplotlib' else 800
 
     if engine == 'matplotlib':
         ax = fig.add_subplot(111)
@@ -63,7 +68,16 @@ def get_figure(engine='matplotlib', fig_width=20, fig_height=15):
         raise ValueError(
             'Plotting engine <{}> is not available'.format(engine))
 
-    use_matplotlib = engine == 'matplotlib' or not BOKEH_AVAILABLE
+    use_matplotlib = engine == 'matplotlib'
+    if not BOKEH_AVAILABLE:
+        use_matplotlib = True
+
+    if fig_height is None:
+        fig_height = 10 if engine == 'matplotlib' else 400
+
+    if fig_width is None:
+        fig_width = 15 if engine == 'matplotlib' else 800
+
     if use_matplotlib:
         fig = plt.figure(figsize=(fig_width, fig_height))
     else:
@@ -125,7 +139,8 @@ def plot_shapely_geometry(
             ax.add_patch(patch)
         elif isinstance(polygon, MultiPolygon):
             for geo in polygon.geoms:
-                plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
+                    fig=fig,
                     ax=ax,
                     polygon=geo,
                     alpha=alpha,
@@ -148,7 +163,8 @@ def plot_shapely_geometry(
                 zorder=2)
         elif isinstance(polygon, MultiLineString):
             for geo in polygon.geoms:
-                plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
+                    fig=fig,
                     ax=ax,
                     polygon=geo,
                     alpha=alpha,
@@ -164,7 +180,8 @@ def plot_shapely_geometry(
             ax.plot(x, y, marker=marker_style, color=color, zorder=2)
         elif isinstance(polygon, MultiPoint):
             for point in polygon.geoms:
-                plot_shapely_geometry(
+                fig, ax = plot_shapely_geometry(
+                    fig=fig,
                     ax=ax,
                     polygon=point,
                     alpha=alpha,
@@ -192,7 +209,9 @@ def plot_workspace(
         engine='matplotlib'):
     assert BOKEH_AVAILABLE or MATPLOTLIB_AVAILABLE, \
         'None of the plotting libraries matplotlib or bokeh could be imported'
-    use_matplotlib = engine == 'matplotlib' or not BOKEH_AVAILABLE
+    use_matplotlib = engine == 'matplotlib'
+    if not BOKEH_AVAILABLE:
+        use_matplotlib = True
 
     if fig_height is None:
         fig_height = 10 if use_matplotlib else 400
@@ -200,19 +219,9 @@ def plot_workspace(
     if fig_width is None:
         fig_width = 15 if use_matplotlib else 800
 
-    if fig is None and ax is None:
-        if use_matplotlib:
-            fig = plt.figure(figsize=(fig_width, fig_height))
-            ax = fig.add_subplot(111)
-        else:
-            fig = figure(plot_width=fig_width, plot_height=fig_height)
-    elif fig is not None and ax is None:
-        if use_matplotlib:
-            ax = fig.gca()
-
     geo = workspace.get_geometry()
 
-    plot_shapely_geometry(
+    fig, ax = plot_shapely_geometry(
         polygon=geo,
         fig=fig,
         ax=ax,
@@ -239,20 +248,9 @@ def plot_workspaces(
         colormap='viridis'):
     assert BOKEH_AVAILABLE or MATPLOTLIB_AVAILABLE, \
         'None of the plotting libraries matplotlib or bokeh could be imported'
-    use_matplotlib = engine == 'matplotlib' or not BOKEH_AVAILABLE
-
-    if fig is None and ax is None:
-        if use_matplotlib:
-            fig = plt.figure(figsize=(fig_width, fig_height))
-            ax = fig.add_subplot(111)
-        else:
-            fig = figure(
-                fig_width=fig_width,
-                fig_height=fig_height,
-                match_aspect=True)
-    elif fig is not None and ax is None:
-        if use_matplotlib:
-            ax = fig.gca()
+    use_matplotlib = engine == 'matplotlib'
+    if not BOKEH_AVAILABLE:
+        use_matplotlib = True
 
     if use_matplotlib:
         if isinstance(colormap, str):
@@ -262,7 +260,7 @@ def plot_workspaces(
             colors = getattr(bokeh.palettes, colormap)(len(workspaces))
 
     for tag, color in zip(workspaces.keys(), colors):
-        plot_workspace(
+        fig = plot_workspace(
             workspaces[tag],
             fig=fig,
             ax=ax,
@@ -289,25 +287,13 @@ def plot_footprint(
         engine='bokeh'):
     assert BOKEH_AVAILABLE or MATPLOTLIB_AVAILABLE, \
         'None of the plotting libraries matplotlib or bokeh could be imported'
-    use_matplotlib = engine == 'matplotlib' or not BOKEH_AVAILABLE
-
-    if fig is None and ax is None:
-        if use_matplotlib:
-            fig = plt.figure(figsize=(fig_width, fig_height))
-            ax = fig.add_subplot(111)
-        else:
-            fig = figure(
-                fig_width=fig_width,
-                fig_height=fig_height,
-                match_aspect=True)
-
-    elif fig is not None and ax is None:
-        if use_matplotlib:
-            ax = fig.gca()
+    use_matplotlib = engine == 'matplotlib'
+    if not BOKEH_AVAILABLE:
+        use_matplotlib = True
 
     if isinstance(footprint, dict):
         for tag in footprint:
-            plot_footprint(
+            fig, ax = plot_footprint(
                 footprint=footprint[tag],
                 fig=fig,
                 ax=ax,
@@ -327,25 +313,19 @@ def plot_footprint(
             footprints = [t for t in footprint.geoms]
 
         if len(footprints) > 0:
-            use_legend_label = True
             for fp in footprints:
-                if use_matplotlib:
+                fig, ax = plot_shapely_geometry(
+                    fig=fig,
+                    ax=ax,
+                    polygon=fp,
+                    alpha=alpha,
+                    line_width=line_width,
+                    legend=legend,
+                    color=color,
+                    line_style=line_style,
+                    use_matplotlib=use_matplotlib)
 
-                    patch = descartes.PolygonPatch(
-                        fp,
-                        facecolor=color,
-                        edgecolor='black',
-                        alpha=alpha,
-                        zorder=2,
-                        linestyle=line_style,
-                        label=legend if use_legend_label else None)
-                    ax.add_patch(patch)
-                    use_legend_label = False
-                else:
-                    plot_shapely_geometry(
-                        fig, fp, alpha, line_width, legend, color, line_style)
-
-    return fig
+    return fig, ax
 
 
 def plot_footprints(
@@ -369,20 +349,9 @@ def plot_footprints(
         'must be greater than zero'
     assert BOKEH_AVAILABLE or MATPLOTLIB_AVAILABLE, \
         'None of the plotting libraries matplotlib or bokeh could be imported'
-    use_matplotlib = engine == 'matplotlib' or not BOKEH_AVAILABLE
-
-    if fig is None and ax is None:
-        if use_matplotlib:
-            fig = plt.figure(figsize=(fig_width, fig_height), dpi=dpi)
-            ax = fig.add_subplot(111)
-        else:
-            fig = figure(
-                width=fig_width,
-                height=fig_height,
-                match_aspect=True)
-    elif fig is not None and ax is None:
-        if use_matplotlib:
-            ax = fig.gca()
+    use_matplotlib = engine == 'matplotlib'
+    if not BOKEH_AVAILABLE:
+        use_matplotlib = True
 
     pool = ThreadPool(n_processes)
     if ignore_ground_plane:
@@ -414,7 +383,7 @@ def plot_footprints(
             'Plotting footprint from model <{}>, polygons={}'.format(
                 model_name, fp))
         for tag in fp:
-            plot_footprint(
+            fig, ax = plot_footprint(
                 fp[tag],
                 fig=fig,
                 ax=ax,
@@ -444,7 +413,7 @@ def plot_footprints(
 
         fig.legend.click_policy = 'hide'
 
-    return fig
+    return fig, ax
 
 
 def create_scene(
@@ -502,7 +471,8 @@ def plot_occupancy_grid(
         axis_x_limits=None,
         axis_y_limits=None,
         exclude_contains=None,
-        mesh_type='collision'):
+        mesh_type='collision',
+        ground_plane_models=None):
 
     if not MATPLOTLIB_AVAILABLE:
         PCG_ROOT_LOGGER.error('Matplotlib is not available')
@@ -533,6 +503,9 @@ def plot_occupancy_grid(
     else:
         exclude_contains = list()
 
+    if ground_plane_models is None:
+        ground_plane_models = list()
+
     # Create internal function to check if a model should be ignored from the
     # map
     def is_excluded(model_name):
@@ -545,7 +518,7 @@ def plot_occupancy_grid(
         'Plotting occupancy grid, models={}'.format(
             models.keys()))
 
-    from .generators.occupancy import generate_occupancy_grid_with_ray
+    from .generators.occupancy import generate_occupancy_grid
 
     filtered_models = dict()
     for tag in models:
@@ -557,7 +530,7 @@ def plot_occupancy_grid(
             filtered_models[tag] = models[tag]
 
     PCG_ROOT_LOGGER.info('Computing model footprints using ray tracing')
-    occupancy_output = generate_occupancy_grid_with_ray(
+    occupancy_output = generate_occupancy_grid(
         filtered_models,
         z_levels=z_levels,
         x_limits=x_limits,
@@ -566,7 +539,8 @@ def plot_occupancy_grid(
         step_x=step_x,
         step_y=step_y,
         n_processes=n_processes,
-        mesh_type=mesh_type)
+        mesh_type=mesh_type,
+        ground_plane_models=ground_plane_models)
 
     if fig_size_unit == 'cm':
         fig_size_factor = 0.393701

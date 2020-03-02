@@ -61,4 +61,5 @@ class Random(Rule):
         sample = Rule.example()
         sample['scaling_factor'] = 1
         sample['offset'] = 0
+        sample['tag'] = Random._NAME
         return sample

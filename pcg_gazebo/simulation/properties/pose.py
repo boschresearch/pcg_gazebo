@@ -26,12 +26,15 @@ from ...utils import is_scalar
 
 
 class Pose(object):
-    def __init__(self, pos=[0, 0, 0], rot=None):
-        assert isinstance(pos, collections.Iterable), \
-            'Input vector must be iterable'
-        assert len(list(pos)) == 3, \
-            'Position vector must have 3 elements'
-        self._pos = pos
+    def __init__(self, pos=None, rot=None):
+        if pos is not None:
+            assert isinstance(pos, collections.Iterable), \
+                'Input vector must be iterable'
+            assert len(list(pos)) == 3, \
+                'Position vector must have 3 elements'
+            self._pos = pos
+        else:
+            self._pos = [0, 0, 0]
         self._quat = np.array([0, 0, 0, 1])
 
         if rot is not None:

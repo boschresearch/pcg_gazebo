@@ -51,4 +51,5 @@ class FromSet(Rule):
     def example():
         sample = Rule.example()
         sample['values'] = list()
+        sample['tag'] = FromSet._NAME
         return sample

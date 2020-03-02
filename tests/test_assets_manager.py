@@ -24,6 +24,11 @@ CUR_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class TestAssetManager(unittest.TestCase):
+    def test_default_models(self):
+        man = AssetsManager.get_instance()
+        self.assertIn('sun', man.tags)
+        self.assertIn('ground_plane', man.tags)
+
     def test_add_assets_from_dict(self):
         box_factory_config = dict(
             type='box',

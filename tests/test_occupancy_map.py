@@ -17,7 +17,7 @@ import unittest
 import random
 from pcg_gazebo.generators import WorldGenerator
 from pcg_gazebo.generators.creators import box_factory
-from pcg_gazebo.generators.occupancy import generate_occupancy_grid_with_ray
+from pcg_gazebo.generators.occupancy import generate_occupancy_grid
 
 
 STATIC_CYL = dict(
@@ -25,8 +25,8 @@ STATIC_CYL = dict(
     description=dict(
         type='cylinder',
         args=dict(
-            length="max(0.1, __import__('numpy').random.random())",
-            radius="max(0.1, __import__('numpy').random.random())",
+            length="max(0.1, 0.5 * __import__('numpy').random.random())",
+            radius="max(0.1, 0.5 * __import__('numpy').random.random())",
             name='cylinder',
             color='xkcd'
         )
@@ -38,7 +38,7 @@ DYN_BOXES = dict(
     description=dict(
         type='box',
         args=dict(
-            size="__import__('numpy').random.random(3)",
+            size="0.5 * __import__('numpy').random.random(3)",
             name='cuboid',
             mass="max(0.1, __import__('numpy').random.random())",
             color='xkcd'
@@ -122,8 +122,8 @@ class TestOccupancyGrid(unittest.TestCase):
             world_gen.add_constraint(**WORKSPACE),
             self.assertIn('ws', world_gen.constraints.tags)
 
-            n_cylinders = random.randint(3, 5)
-            n_boxes = random.randint(3, 5)
+            n_cylinders = random.randint(1, 3)
+            n_boxes = random.randint(1, 3)
             # Add ground place
             world_gen.add_engine(
                 engine_name='fixed_pose',
@@ -157,7 +157,7 @@ class TestOccupancyGrid(unittest.TestCase):
                              n_cylinders + n_boxes + 1)
 
             # First occupancy grid with box floor
-            occupancy_output = generate_occupancy_grid_with_ray(
+            occupancy_output = generate_occupancy_grid(
                 world_gen.world.models,
                 z_levels=None,
                 x_limits=None,
@@ -168,6 +168,9 @@ class TestOccupancyGrid(unittest.TestCase):
                 n_processes=1,
                 mesh_type='collision')
 
+            print(world_gen.world.models)
+            print(n_boxes, n_cylinders)
+            print(occupancy_output)
             self.assertIsNotNone(occupancy_output)
             self.assertEqual(len(occupancy_output['non_static']), n_boxes)
             self.assertEqual(len(occupancy_output['static']), n_cylinders + 1)
@@ -178,7 +181,7 @@ class TestOccupancyGrid(unittest.TestCase):
                     filtered_models[tag] = world_gen.world.models[tag]
 
             # Without box floor
-            occupancy_output = generate_occupancy_grid_with_ray(
+            occupancy_output = generate_occupancy_grid(
                 filtered_models,
                 z_levels=None,
                 x_limits=None,

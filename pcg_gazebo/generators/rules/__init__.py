@@ -21,7 +21,7 @@ from .uniform import Uniform
 from .within_workspace import WithinWorkspace
 
 
-def create_rule(tag, **kwargs):
+def create_rule(tag=None, **kwargs):
     """Rule factory that returns the engine according
     to its `LABEL` definition. It returns `None` if the engine name
     is invalid.
@@ -34,6 +34,28 @@ def create_rule(tag, **kwargs):
     import inspect
     from ...log import PCG_ROOT_LOGGER
 
+    if 'policy' in kwargs and tag is None:
+        rule_args = dict()
+        assert 'name' in kwargs['policy']
+        tag = kwargs['policy']['name']
+
+        assert 'args' in kwargs['policy']
+
+        if isinstance(kwargs['policy']['args'], dict):
+            rule_args.update(kwargs['policy']['args'])
+        elif tag == 'workspace':
+            rule_args.update(dict(workspace=kwargs['policy']['args']))
+        elif tag == 'value':
+            rule_args.update(dict(value=kwargs['policy']['args']))
+
+        if tag == 'choice':
+            tag = 'from_set'
+
+        assert 'dofs' in kwargs
+        rule_args['dofs'] = kwargs['dofs']
+    else:
+        rule_args = kwargs
+
     for obj in Rule.__subclasses__():
         if inspect.isclass(obj):
             if issubclass(obj, Rule):
@@ -41,7 +63,7 @@ def create_rule(tag, **kwargs):
                     PCG_ROOT_LOGGER.info(
                         'Creating engine: {}'.format(
                             obj._NAME))
-                    return obj(**kwargs)
+                    return obj(**rule_args)
     PCG_ROOT_LOGGER.error('Rule {} does not exist'.format(tag))
     return None
 

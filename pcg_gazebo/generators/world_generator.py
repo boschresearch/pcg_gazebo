@@ -20,7 +20,8 @@ from ..log import PCG_ROOT_LOGGER
 from ..utils import load_yaml, generate_random_string
 from ..task_manager import GazeboProxy, is_gazebo_running
 from ..parsers.sdf import create_sdf_element, is_sdf_element
-from ..simulation import SimulationModel, Light, World
+from ..simulation import SimulationModel, ModelGroup, Light, \
+    World
 from ..simulation.physics import ODE, Simbody, Bullet
 from .assets_manager import AssetsManager
 from .engine_manager import EngineManager
@@ -104,6 +105,21 @@ class WorldGenerator:
         positioning constraints.
         """
         return self._engines.constraints_manager
+
+    def _add_asset_to_world(self, obj):
+        if isinstance(obj, SimulationModel):
+            PCG_ROOT_LOGGER.info(
+                'Adding model {} to world'.format(
+                    obj.name))
+            return self._world.add_model(obj.name, obj)
+        elif isinstance(obj, ModelGroup):
+            PCG_ROOT_LOGGER.info(
+                'Adding model group {} to world'.format(
+                    obj.name))
+            return self._world.add_model_group(obj, obj.name)
+        elif isinstance(obj, Light):
+            return self._world.add_light(obj.name, obj)
+        return False
 
     def init_gazebo_proxy(
             self,
@@ -666,17 +682,10 @@ class WorldGenerator:
                 models = engine.run()
                 if models is not None:
                     for model in models:
-                        if isinstance(model, SimulationModel):
-                            PCG_ROOT_LOGGER.info(
-                                'Adding model {} to world'.format(
+                        if not self._add_asset_to_world(model):
+                            PCG_ROOT_LOGGER.error(
+                                'Cannot add asset <{}>'.format(
                                     model.name))
-                            self._world.add_model(model.name, model)
-                        else:
-                            PCG_ROOT_LOGGER.info(
-                                'Adding model group {} to world'.format(
-                                    model.name))
-                            self._world.add_model_group(model, model.name)
-
         # Run all other engines
         PCG_ROOT_LOGGER.info('Run other engines')
         for tag in self._engines.tags:
@@ -689,16 +698,10 @@ class WorldGenerator:
                 models = engine.run()
                 if models is not None:
                     for model in models:
-                        if isinstance(model, SimulationModel):
-                            PCG_ROOT_LOGGER.info(
-                                'Adding model {} to world'.format(
+                        if not self._add_asset_to_world(model):
+                            PCG_ROOT_LOGGER.error(
+                                'Cannot add asset <{}>'.format(
                                     model.name))
-                            self._world.add_model(model.name, model)
-                        else:
-                            PCG_ROOT_LOGGER.info(
-                                'Adding model group {} to world'.format(
-                                    model.name))
-                            self._world.add_model_group(model, model.name)
 
         PCG_ROOT_LOGGER.info(
             'World model generation'

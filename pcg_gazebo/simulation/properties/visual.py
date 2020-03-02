@@ -58,6 +58,8 @@ class Visual(object):
                 self.set_mesh_as_geometry(**geometry_args)
             elif geometry_type == 'box':
                 self.set_box_as_geometry(**geometry_args)
+            elif geometry_type == 'plane':
+                self.set_plane_as_geometry(**geometry_args)
 
     def __str__(self):
         return self.to_sdf().to_xml_as_str(pretty_print=True)
@@ -186,6 +188,9 @@ class Visual(object):
 
     def set_mesh_as_geometry(self, mesh, scale=[1, 1, 1], load_mesh=True):
         self._geometry.set_mesh(mesh=mesh, scale=scale, load_mesh=load_mesh)
+
+    def set_plane_as_geometry(self, size, normal):
+        self._geometry.set_plane(size=size, normal=normal)
 
     def enable_property(self, name):
         assert name in self._include_in_sdf, 'Invalid property name'
