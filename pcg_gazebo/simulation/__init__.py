@@ -192,6 +192,12 @@ def load_gazebo_models():
         if os.path.isdir(gazebo_folder):
             GAZEBO_MODELS.update(get_gazebo_model_folders(gazebo_folder))
 
+    # Parse the GAZEBO_MODEL_PATH, if available
+    if 'GAZEBO_MODEL_PATH' in os.environ:
+        for folder in os.environ['GAZEBO_MODEL_PATH'].split(':'):
+            if os.path.isdir(folder):
+                GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
+
     if len(CUSTOM_GAZEBO_RESOURCE_PATHS) > 0:
         for folder in CUSTOM_GAZEBO_RESOURCE_PATHS:
             GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
