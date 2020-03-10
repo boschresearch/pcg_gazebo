@@ -433,3 +433,18 @@ def is_array(obj):
     return isinstance(
         obj, collections.Iterable) and not isinstance(
         obj, str)
+
+
+def get_random_point_from_shape(geo):
+    from shapely.geometry import Point
+    min_x, min_y, max_x, max_y = geo.bounds
+    pnt = [
+        random.uniform(min_x, max_x),
+        random.uniform(min_y, max_y)
+    ]
+    while not geo.contains(Point(pnt)):
+        pnt = [
+            random.uniform(min_x, max_x),
+            random.uniform(min_y, max_y)
+        ]
+    return pnt
