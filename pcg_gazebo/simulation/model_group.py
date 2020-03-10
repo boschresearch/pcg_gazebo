@@ -158,7 +158,7 @@ class ModelGroup(object):
         else:
             name = tag
 
-        self._models[name] = model
+        self._models[name] = model.copy()
         self._models[name].name = name
         return name
 
