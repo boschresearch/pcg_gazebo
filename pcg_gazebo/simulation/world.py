@@ -13,11 +13,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import print_function
-from .physics import Physics, ODE, Simbody, Bullet
-from .properties import Plugin
+import os
+import numpy as np
 from . import Light, SimulationModel, ModelGroup
+from .physics import Physics, ODE, Simbody, Bullet
+from .properties import Plugin, Pose, Footprint
 from ..parsers.sdf import create_sdf_element
 from ..log import PCG_ROOT_LOGGER
+from ..utils import is_string, is_array, get_random_point_from_shape
 
 
 class World(object):
@@ -688,3 +691,374 @@ class World(object):
 
         PCG_ROOT_LOGGER.info('Plotting footprints: finished')
         return fig, ax
+
+    def save_occupancy_grid(
+            self,
+            occupied_thresh=0.65,
+            free_thresh=0.196,
+            occupied_color=[0, 0, 0],
+            free_color=[1, 1, 1],
+            unavailable_color=[0.5, 0.5, 0.5],
+            output_folder='/tmp',
+            output_filename='map.pgm',
+            static_models_only=False,
+            with_ground_plane=True,
+            z_levels=None,
+            x_limits=None,
+            y_limits=None,
+            z_limits=None,
+            step_x=0.01,
+            step_y=0.01,
+            n_processes=None,
+            fig_size=(5, 5),
+            fig_size_unit='cm',
+            dpi=200,
+            axis_x_limits=None,
+            axis_y_limits=None,
+            exclude_contains=None,
+            mesh_type='collision',
+            ground_plane_models=None):
+        from ..visualization import plot_occupancy_grid
+        assert os.path.isdir(output_folder), \
+            'Output folder is invalid, folder={}'.format(output_folder)
+        if output_filename is None:
+            output_filename = 'map.pgm'
+        plot_occupancy_grid(
+            self.models,
+            occupied_thresh=occupied_thresh,
+            free_thresh=free_thresh,
+            occupied_color=occupied_color,
+            free_color=free_color,
+            unavailable_color=unavailable_color,
+            output_folder=output_folder,
+            output_filename=output_filename,
+            static_models_only=static_models_only,
+            with_ground_plane=with_ground_plane,
+            z_levels=z_levels,
+            x_limits=x_limits,
+            y_limits=y_limits,
+            z_limits=z_limits,
+            step_x=step_x,
+            step_y=step_y,
+            n_processes=n_processes,
+            fig_size=fig_size,
+            fig_size_unit=fig_size_unit,
+            dpi=dpi,
+            axis_x_limits=axis_x_limits,
+            axis_y_limits=axis_y_limits,
+            exclude_contains=exclude_contains,
+            mesh_type=mesh_type,
+            ground_plane_models=ground_plane_models)
+        return os.path.join(output_folder, output_filename)
+
+    def test_free_space(self, model, pose, ignore_models=None):
+        from ..generators import CollisionChecker
+        test_model = None
+        if is_string(model):
+            test_model = SimulationModel.from_gazebo_model(model)
+        elif isinstance(model, SimulationModel):
+            test_model = model.copy()
+        else:
+            raise ValueError(
+                'Input model must be either the name of the Gazebo'
+                ' model available in GAZEBO_RESOURCE_PATH or in the'
+                ' ROS paths, or a SimulationModel object, received={}'.format(
+                    type(model)))
+
+        if ignore_models is None:
+            ignore_models = list()
+
+        def _ignore_model(model):
+            for tag in ignore_models:
+                if '*' not in tag:
+                    if tag == model.name:
+                        return True
+                if tag.startswith('*') and not tag.endswith('*'):
+                    suffix = tag.replace('*', '')
+                    if model.name.endswith(suffix):
+                        return True
+                if tag.endswith('*') and not tag.startswith('*'):
+                    prefix = tag.replace('*', '')
+                    if model.name.startswith(prefix):
+                        return True
+                if tag.startswith('*') and tag.endswith('*'):
+                    pattern = tag.replace('*', '')
+                    if pattern in model.name:
+                        return True
+            return False
+
+        test_model.pose = pose
+
+        collision_checker = CollisionChecker()
+
+        # Add models to the collision checker
+        for tag in self.models:
+            if not _ignore_model(self.models[tag]):
+                collision_checker.add_model(self.models[tag])
+
+        return not collision_checker.check_collision_with_current_scene(model)
+
+    def get_bounds(self, mesh_type='collision'):
+        from copy import deepcopy
+        bounds = None
+
+        for tag in self.models:
+            meshes = self.models[tag].get_meshes(mesh_type)
+            for mesh in meshes:
+                if bounds is None:
+                    bounds = deepcopy(mesh.bounds)
+                else:
+                    cur_bounds = deepcopy(mesh.bounds)
+                    for i in range(3):
+                        bounds[0, i] = min(bounds[0, i], cur_bounds[0, i])
+                    for i in range(3):
+                        bounds[1, i] = max(bounds[1, i], cur_bounds[1, i])
+        return bounds
+
+    def get_free_space_polygon(
+            self,
+            ground_plane_models=None,
+            ignore_models=None,
+            x_limits=None,
+            y_limits=None,
+            free_space_min_area=5e-3):
+        from shapely.geometry import Polygon, MultiPolygon
+        from ..generators.occupancy import generate_occupancy_grid
+
+        if ground_plane_models is None:
+            ground_plane_models = list()
+        if ignore_models is None:
+            ignore_models = list()
+
+        def _ignore_model(model):
+            for tag in ignore_models:
+                if '*' not in tag:
+                    if tag == model.name:
+                        return True
+                if tag.startswith('*') and not tag.endswith('*'):
+                    suffix = tag.replace('*', '')
+                    if model.name.endswith(suffix):
+                        return True
+                if tag.endswith('*') and not tag.startswith('*'):
+                    prefix = tag.replace('*', '')
+                    if model.name.startswith(prefix):
+                        return True
+                if tag.startswith('*') and tag.endswith('*'):
+                    pattern = tag.replace('*', '')
+                    if pattern in model.name:
+                        return True
+            return False
+
+        for tag in self.models:
+            if self.models[tag].is_ground_plane and \
+                    tag not in ground_plane_models:
+                ground_plane_models.append(tag)
+
+        bounds = self.get_bounds()
+        if x_limits is not None:
+            assert is_array(x_limits), 'X limits must be an array'
+            assert x_limits[0] < x_limits[1], \
+                'Invalid X limits, value={}'.format(x_limits)
+        else:
+            x_limits = [bounds[0, 0], bounds[1, 0]]
+
+        if y_limits is not None:
+            assert is_array(y_limits), 'Y limits must be an array'
+            assert y_limits[0] < y_limits[1], \
+                'Invalid Y limits, value={}'.format(y_limits)
+        else:
+            y_limits = [bounds[0, 1], bounds[1, 1]]
+
+        free_space_polygon = Polygon(
+            [
+                [x_limits[0], y_limits[0]],
+                [x_limits[0], y_limits[1]],
+                [x_limits[1], y_limits[1]],
+                [x_limits[1], y_limits[0]],
+                [x_limits[0], y_limits[0]]]
+        )
+
+        if len(ground_plane_models) == 0:
+            return free_space_polygon
+
+        filtered_models = dict()
+        for tag in ground_plane_models:
+            filtered_models[tag] = self.models[tag]
+
+        occupancy_output = generate_occupancy_grid(
+            filtered_models,
+            n_processes=4,
+            mesh_type='collision',
+            ground_plane_models=ground_plane_models)
+
+        free_space_polygon = free_space_polygon.intersection(
+            occupancy_output['ground_plane'])
+        for tag in occupancy_output['static']:
+            free_space_polygon = free_space_polygon.difference(
+                occupancy_output['static'][tag])
+        for tag in occupancy_output['non_static']:
+            free_space_polygon = free_space_polygon.difference(
+                occupancy_output['non_static'][tag])
+
+        free_space_polygon = free_space_polygon.buffer(-1e-3)
+        # Remove small free spaces
+        if isinstance(free_space_polygon, MultiPolygon):
+            for geo in free_space_polygon.geoms:
+                if geo.area <= free_space_min_area:
+                    free_space_polygon = free_space_polygon.difference(
+                        geo.buffer(1e-5))
+        free_space_polygon = free_space_polygon.simplify(tolerance=1e-4)
+        free_space_polygon = free_space_polygon.buffer(1e-8)
+        return free_space_polygon
+
+    def get_random_free_spots(
+            self,
+            model,
+            n_spots=1,
+            ground_plane_models=None,
+            ignore_models=None,
+            x_limits=None,
+            y_limits=None,
+            z_limits=None,
+            roll_limits=None,
+            pitch_limits=None,
+            yaw_limits=None,
+            free_space_min_area=5e-3,
+            dofs=None):
+        assert n_spots > 0, 'Number of free spots must be greater than zero'
+        if is_string(model):
+            test_model = SimulationModel.from_gazebo_model(model)
+        elif isinstance(model, SimulationModel):
+            test_model = model.copy()
+        else:
+            raise ValueError(
+                'Input model must be either the name of the Gazebo'
+                ' model available in GAZEBO_RESOURCE_PATH or in the'
+                ' ROS paths, or a SimulationModel object, received={}'.format(
+                    type(model)))
+
+        if z_limits is not None:
+            assert z_limits[0] < z_limits[1], \
+                'Invalid Z limits, z_limits={}'.format(z_limits)
+        else:
+            bounds = self.get_bounds()
+            z_limits = [bounds[0, 2], bounds[1, 2]]
+
+        if roll_limits is not None:
+            assert roll_limits[0] < roll_limits[1], \
+                'Invalid roll limits, roll_limits={}'.format(roll_limits)
+        else:
+            roll_limits = [-np.pi, np.pi]
+
+        if pitch_limits is not None:
+            assert pitch_limits[0] < pitch_limits[1], \
+                'Invalid pitch limits, pitch_limits={}'.format(pitch_limits)
+        else:
+            pitch_limits = [-np.pi, np.pi]
+
+        if yaw_limits is not None:
+            assert yaw_limits[0] < yaw_limits[1], \
+                'Invalid yaw limits, yaw_limits={}'.format(yaw_limits)
+        else:
+            yaw_limits = [-np.pi, np.pi]
+
+        active_dofs = list()
+        if dofs is None:
+            active_dofs = ['x', 'y']
+        else:
+            ref_dofs = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
+            assert is_array(dofs), \
+                'dofs must be a list of active DoFs to vary'
+            for item in dofs:
+                assert item in ref_dofs, \
+                    'Invalid dofs tag provided, dof={}'.format(item)
+            active_dofs = dofs
+            if 'x' not in active_dofs:
+                active_dofs.append('x')
+            if 'y' not in active_dofs:
+                active_dofs.append('y')
+
+        footprints = test_model.get_footprint()
+        combined_footprint = Footprint()
+        for tag in footprints:
+            combined_footprint.add_polygon(footprints[tag])
+        model_footprint = combined_footprint.get_footprint_polygon()
+
+        if model_footprint.is_empty:
+            PCG_ROOT_LOGGER.error('Model provieed has no valid footprint')
+            return None
+
+        free_space_polygon = self.get_free_space_polygon(
+            ground_plane_models=ground_plane_models,
+            ignore_models=ignore_models,
+            x_limits=x_limits,
+            y_limits=y_limits,
+            free_space_min_area=free_space_min_area)
+
+        if free_space_polygon.is_empty:
+            PCG_ROOT_LOGGER.error(
+                'No free space found for the X and Y limits'
+                ' given, x_limits={}, y_limits={}'.format(
+                    x_limits, y_limits))
+            return None
+
+        if model_footprint.area >= free_space_polygon.area:
+            PCG_ROOT_LOGGER.error(
+                'Model is too big for the available free space')
+            return None
+
+        poses = list()
+        while len(poses) < n_spots:
+            pose = Pose()
+            # Generate random point
+            xy = get_random_point_from_shape(free_space_polygon)
+
+            pose.x = xy[0]
+            pose.y = xy[1]
+
+            # Computing Z component
+            if z_limits is not None and 'z' in active_dofs:
+                pose.z = np.random.random() * (z_limits[1] - z_limits[0]) \
+                    + z_limits[0]
+
+            # Computing roll, pitch and yaw
+            roll = 0
+            if 'roll' in active_dofs:
+                roll = np.random.random() * (roll_limits[1] - roll_limits[0]) \
+                    + roll_limits[0]
+
+            pitch = 0
+            if 'pitch' in active_dofs:
+                pitch = np.random.random() * \
+                    (pitch_limits[1] - pitch_limits[0]) \
+                    + pitch_limits[0]
+
+            yaw = 0
+            if 'yaw' in active_dofs:
+                yaw = np.random.random() * (yaw_limits[1] - yaw_limits[0]) \
+                    + yaw_limits[0]
+
+            pose.rpy = [roll, pitch, yaw]
+
+            print(pose.position, pose.rpy)
+
+            if self.test_free_space(
+                    test_model,
+                    pose,
+                    ignore_models=ignore_models):
+                poses.append(pose)
+
+        from ..visualization import plot_shapely_geometry
+        import matplotlib.pyplot as plt
+        from shapely.geometry import MultiPoint
+
+        fig, ax = plot_shapely_geometry(
+            polygon=free_space_polygon)
+        fig, ax = plot_shapely_geometry(
+            fig=fig,
+            ax=ax,
+            polygon=MultiPoint([[p.x, p.y] for p in poses])
+        )
+        plt.show()
+
+        return poses
