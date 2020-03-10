@@ -16,7 +16,7 @@
 import unittest
 import random
 from pcg_gazebo.generators import WorldGenerator
-from pcg_gazebo.generators.creators import box_factory
+from pcg_gazebo.generators.creators import box
 from pcg_gazebo.generators.occupancy import generate_occupancy_grid
 
 
@@ -46,15 +46,13 @@ DYN_BOXES = dict(
     )
 )
 
-BOX_FLOOR_MODEL = box_factory(
-    size=[
-        [1, 1, 0.01]
-    ],
-    mass=1,
-    use_permutation=True,
+BOX_FLOOR_MODEL = box(
+    size=[1, 1, 0.01],
+    mass=0,
     name='box_floor'
-)[0]
+)
 BOX_FLOOR_MODEL.name = 'box_floor'
+BOX_FLOOR_MODEL.static = True
 
 TANG_TO_GROUND = dict(
     name='tangent_to_ground_plane',
@@ -166,7 +164,8 @@ class TestOccupancyGrid(unittest.TestCase):
                 step_x=0.01,
                 step_y=0.01,
                 n_processes=1,
-                mesh_type='collision')
+                mesh_type='collision',
+                ground_plane_models=['box_floor'])
 
             print(world_gen.world.models)
             print(n_boxes, n_cylinders)
@@ -177,8 +176,9 @@ class TestOccupancyGrid(unittest.TestCase):
 
             filtered_models = dict()
             for tag in world_gen.world.models:
-                if not world_gen.world.models[tag].is_ground_plane:
+                if tag != 'box_floor':
                     filtered_models[tag] = world_gen.world.models[tag]
+            print(filtered_models)
 
             # Without box floor
             occupancy_output = generate_occupancy_grid(
