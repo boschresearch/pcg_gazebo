@@ -15,13 +15,17 @@
 from __future__ import print_function
 import os
 import numpy as np
+from shapely.geometry import Polygon, MultiPolygon
+from shapely.ops import unary_union
 from . import Light, SimulationModel, ModelGroup
 from .physics import Physics, ODE, Simbody, Bullet
 from .properties import Plugin, Pose, Footprint
+from ..parsers import parse_xacro, parse_sdf
 from ..parsers.sdf import create_sdf_element
 from ..log import PCG_ROOT_LOGGER
 from ..utils import is_string, is_array, get_random_point_from_shape, \
     has_string_pattern
+from ..generators.occupancy import generate_occupancy_grid
 
 
 class World(object):
@@ -499,18 +503,27 @@ class World(object):
 
         `pcg_gazebo.parsers.sdf.World` instance.
         """
-        if sdf.xml_element_name == 'sdf':
-            if sdf.world is not None:
-                sdf = sdf.world
+        sdf_tree = None
+        if is_string(sdf):
+            if sdf.endswith('.xacro'):
+                sdf_tree = parse_xacro(sdf, output_type='sdf')
+            elif sdf.endswith('.world') or sdf.endswith('.sdf'):
+                sdf_tree = parse_sdf(sdf)
+        else:
+            sdf_tree = sdf
 
-        if sdf.xml_element_name != 'world':
+        if sdf_tree.xml_element_name == 'sdf':
+            if sdf_tree.world is not None:
+                sdf_tree = sdf_tree.world
+
+        if sdf_tree.xml_element_name != 'world':
             msg = 'SDF element must be of type <world>'
             PCG_ROOT_LOGGER.error(msg)
             raise ValueError(msg)
 
         world = World()
-        if sdf.models is not None:
-            for model in sdf.models:
+        if sdf_tree.models is not None:
+            for model in sdf_tree.models:
                 if '/' in model.name:
                     group_name = model.name.split('/')[0]
                     model_name = model.name.replace(group_name + '/', '')
@@ -522,8 +535,8 @@ class World(object):
                     SimulationModel.from_sdf(model),
                     group=group_name)
 
-        if sdf.lights is not None:
-            for light in sdf.lights:
+        if sdf_tree.lights is not None:
+            for light in sdf_tree.lights:
                 if '/' in light.name:
                     group_name = light.name.split('/')[0]
                     light_name = light.name.replace(group_name + '/', '')
@@ -535,12 +548,12 @@ class World(object):
                     Light.from_sdf(light),
                     group=group_name)
 
-        if sdf.plugins is not None:
-            for plugin in sdf.plugins:
+        if sdf_tree.plugins is not None:
+            for plugin in sdf_tree.plugins:
                 world.add_plugin(plugin.name, Plugin.from_sdf(plugin))
 
-        if sdf.includes is not None:
-            for inc in sdf.includes:
+        if sdf_tree.includes is not None:
+            for inc in sdf_tree.includes:
                 try:
                     if inc.name is not None:
                         if '/' in inc.name.value:
@@ -559,15 +572,16 @@ class World(object):
                         'Cannot import model <{}>, message={}'.format(
                             inc.uri.value, ex))
 
-        if sdf.gravity is not None:
-            world.gravity = sdf.gravity.value
+        if sdf_tree.gravity is not None:
+            world.gravity = sdf_tree.gravity.value
 
-        world.physics = Physics.from_sdf(sdf.physics)
-        world.name = sdf.name
+        world.physics = Physics.from_sdf(sdf_tree.physics)
+        world.name = sdf_tree.name
 
         return world
 
-    def create_scene(self, mesh_type='collision', add_pseudo_color=True):
+    def create_scene(self, mesh_type='collision', add_pseudo_color=True,
+                     ignore_models=None):
         """Return a `trimesh.Scene` with all the world's models.
 
         > *Input arguments*
@@ -578,9 +592,17 @@ class World(object):
         set each mesh with a pseudo-color.
         """
         from ..visualization import create_scene
+        if ignore_models is None:
+            ignore_models = list()
+
+        def _is_ignored(name):
+            for item in ignore_models:
+                if has_string_pattern(name, item):
+                    return True
+            return False
+
         return create_scene(
-            list(
-                self.models.values()),
+            [self.models[tag] for tag in self.models if not _is_ignored(tag)],
             mesh_type,
             add_pseudo_color)
 
@@ -806,39 +828,31 @@ class World(object):
             x_limits=None,
             y_limits=None,
             free_space_min_area=5e-3):
-        from shapely.geometry import Polygon, MultiPolygon
-        from ..generators.occupancy import generate_occupancy_grid
-
         if ground_plane_models is None:
             ground_plane_models = list()
         if ignore_models is None:
             ignore_models = list()
 
-        def _ignore_model(model):
-            for tag in ignore_models:
-                if '*' not in tag:
-                    if tag == model.name:
-                        return True
-                if tag.startswith('*') and not tag.endswith('*'):
-                    suffix = tag.replace('*', '')
-                    if model.name.endswith(suffix):
-                        return True
-                if tag.endswith('*') and not tag.startswith('*'):
-                    prefix = tag.replace('*', '')
-                    if model.name.startswith(prefix):
-                        return True
-                if tag.startswith('*') and tag.endswith('*'):
-                    pattern = tag.replace('*', '')
-                    if pattern in model.name:
-                        return True
-            return False
+        if self.n_models == 0:
+            assert x_limits is not None, \
+                'For an empty world, the x_limits cannot be None'
+            assert x_limits[0] < x_limits[1], \
+                'Invalid X limits, value={}'.format(x_limits)
+            assert y_limits is not None, \
+                'For an empty world, the y_limits cannot be None'
+            assert y_limits[0] < y_limits[1], \
+                'Invalid Y limits, value={}'.format(y_limits)
+            return Polygon(
+                [
+                    [x_limits[0], y_limits[0]],
+                    [x_limits[0], y_limits[1]],
+                    [x_limits[1], y_limits[1]],
+                    [x_limits[1], y_limits[0]],
+                    [x_limits[0], y_limits[0]]]
+            )
 
-        for tag in self.models:
-            if self.models[tag].is_ground_plane and \
-                    tag not in ground_plane_models:
-                ground_plane_models.append(tag)
-
-        bounds = self.get_bounds()
+        scene = self.create_scene(ignore_models=ignore_models)
+        bounds = scene.bounds
         if x_limits is not None:
             assert is_array(x_limits), 'X limits must be an array'
             assert x_limits[0] < x_limits[1], \
@@ -863,17 +877,36 @@ class World(object):
         )
 
         if len(ground_plane_models) == 0:
-            return free_space_polygon
+            for tag in self.models:
+                if self.models[tag].is_ground_plane:
+                    is_ignored = False
+                    for item in ignore_models:
+                        if has_string_pattern(self.models[tag].name, item):
+                            is_ignored = True
+                            break
+                    if not is_ignored:
+                        ground_plane_models.append(tag)
 
         filtered_models = dict()
         for tag in self.models:
             if self.models[tag].is_ground_plane:
                 filtered_models[tag] = self.models[tag]
+            elif self.models[tag].static:
+                is_ignored = False
+                for item in ignore_models:
+                    if has_string_pattern(self.models[tag].name, item):
+                        is_ignored = True
+                        break
+                if not is_ignored:
+                    filtered_models[tag] = self.models[tag]
             else:
                 for item in ground_plane_models:
                     if has_string_pattern(self.models[tag].name, item):
                         filtered_models[tag] = self.models[tag]
                         break
+
+        if len(filtered_models) == 0:
+            return free_space_polygon
 
         occupancy_output = generate_occupancy_grid(
             filtered_models,
@@ -881,14 +914,32 @@ class World(object):
             mesh_type='collision',
             ground_plane_models=ground_plane_models)
 
-        free_space_polygon = free_space_polygon.intersection(
-            occupancy_output['ground_plane'])
-        for tag in occupancy_output['static']:
-            free_space_polygon = free_space_polygon.difference(
-                occupancy_output['static'][tag])
-        for tag in occupancy_output['non_static']:
-            free_space_polygon = free_space_polygon.difference(
-                occupancy_output['non_static'][tag])
+        if occupancy_output is None:
+            return free_space_polygon
+
+        static_footprints = unary_union(
+            [occupancy_output['static'][tag]
+             for tag in occupancy_output['static']])
+
+        dynamic_footprints = unary_union(
+            [occupancy_output['non_static'][tag]
+             for tag in occupancy_output['non_static']])
+
+        if occupancy_output['ground_plane'] is not None:
+            diff_st_gp = occupancy_output['ground_plane'].difference(
+                static_footprints)
+
+            if not diff_st_gp.is_empty and \
+                    (diff_st_gp.area /
+                        occupancy_output['ground_plane'].area) > 1e-2:
+                free_space_polygon = free_space_polygon.intersection(
+                    occupancy_output['ground_plane'])
+
+        free_space_polygon = free_space_polygon.difference(
+            static_footprints)
+
+        free_space_polygon = free_space_polygon.difference(
+            dynamic_footprints)
 
         free_space_polygon = free_space_polygon.buffer(-1e-3)
         # Remove small free spaces
@@ -898,7 +949,8 @@ class World(object):
                     free_space_polygon = free_space_polygon.difference(
                         geo.buffer(1e-5))
         free_space_polygon = free_space_polygon.simplify(tolerance=1e-4)
-        free_space_polygon = free_space_polygon.buffer(1e-8)
+        free_space_polygon = free_space_polygon.buffer(1e-3)
+
         return free_space_polygon
 
     def get_random_free_spots(
@@ -927,11 +979,12 @@ class World(object):
                 ' ROS paths, or a SimulationModel object, received={}'.format(
                     type(model)))
 
+        scene = self.create_scene(ignore_models=ignore_models)
+        bounds = scene.bounds
         if z_limits is not None:
             assert z_limits[0] < z_limits[1], \
                 'Invalid Z limits, z_limits={}'.format(z_limits)
         else:
-            bounds = self.get_bounds()
             z_limits = [bounds[0, 2], bounds[1, 2]]
 
         if roll_limits is not None:

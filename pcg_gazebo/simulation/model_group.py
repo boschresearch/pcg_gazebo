@@ -109,6 +109,16 @@ class ModelGroup(object):
         """`int`: Number of lights"""
         return len(self._lights)
 
+    def copy(self):
+        mg = ModelGroup(name=deepcopy(self._name))
+        for tag in self._models:
+            mg._models[tag] = self._models[tag].copy()
+        for tag in self._lights:
+            mg._lights[tag] = self._lights[tag].copy()
+        mg._is_ground_plane = deepcopy(self._is_ground_plane)
+        mg._pose = deepcopy(self._pose)
+        return mg
+
     def set_as_ground_plane(self, model_name):
         if model_name in self._models:
             self._models[model_name].set_as_ground_plane()
