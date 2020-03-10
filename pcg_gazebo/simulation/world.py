@@ -20,7 +20,8 @@ from .physics import Physics, ODE, Simbody, Bullet
 from .properties import Plugin, Pose, Footprint
 from ..parsers.sdf import create_sdf_element
 from ..log import PCG_ROOT_LOGGER
-from ..utils import is_string, is_array, get_random_point_from_shape
+from ..utils import is_string, is_array, get_random_point_from_shape, \
+    has_string_pattern
 
 
 class World(object):
@@ -751,7 +752,7 @@ class World(object):
             ground_plane_models=ground_plane_models)
         return os.path.join(output_folder, output_filename)
 
-    def test_free_space(self, model, pose, ignore_models=None):
+    def is_free_space(self, model, pose, ignore_models=None):
         from ..generators import CollisionChecker
         test_model = None
         if is_string(model):
@@ -768,35 +769,18 @@ class World(object):
         if ignore_models is None:
             ignore_models = list()
 
-        def _ignore_model(model):
-            for tag in ignore_models:
-                if '*' not in tag:
-                    if tag == model.name:
-                        return True
-                if tag.startswith('*') and not tag.endswith('*'):
-                    suffix = tag.replace('*', '')
-                    if model.name.endswith(suffix):
-                        return True
-                if tag.endswith('*') and not tag.startswith('*'):
-                    prefix = tag.replace('*', '')
-                    if model.name.startswith(prefix):
-                        return True
-                if tag.startswith('*') and tag.endswith('*'):
-                    pattern = tag.replace('*', '')
-                    if pattern in model.name:
-                        return True
-            return False
-
         test_model.pose = pose
 
         collision_checker = CollisionChecker()
 
         # Add models to the collision checker
         for tag in self.models:
-            if not _ignore_model(self.models[tag]):
-                collision_checker.add_model(self.models[tag])
+            for item in ignore_models:
+                if not has_string_pattern(self.models[tag].name, item):
+                    collision_checker.add_model(self.models[tag])
 
-        return not collision_checker.check_collision_with_current_scene(model)
+        return not collision_checker.check_collision_with_current_scene(
+            test_model)
 
     def get_bounds(self, mesh_type='collision'):
         from copy import deepcopy
@@ -882,8 +866,14 @@ class World(object):
             return free_space_polygon
 
         filtered_models = dict()
-        for tag in ground_plane_models:
-            filtered_models[tag] = self.models[tag]
+        for tag in self.models:
+            if self.models[tag].is_ground_plane:
+                filtered_models[tag] = self.models[tag]
+            else:
+                for item in ground_plane_models:
+                    if has_string_pattern(self.models[tag].name, item):
+                        filtered_models[tag] = self.models[tag]
+                        break
 
         occupancy_output = generate_occupancy_grid(
             filtered_models,
@@ -1040,9 +1030,7 @@ class World(object):
 
             pose.rpy = [roll, pitch, yaw]
 
-            print(pose.position, pose.rpy)
-
-            if self.test_free_space(
+            if self.is_free_space(
                     test_model,
                     pose,
                     ignore_models=ignore_models):
