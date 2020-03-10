@@ -22,6 +22,7 @@ import random
 from ..log import PCG_ROOT_LOGGER
 from ..visualization import create_scene
 from ..simulation import SimulationModel, ModelGroup
+from ..utils import has_string_pattern
 
 
 def _get_model_limits(model, mesh_type='collision'):
@@ -322,21 +323,8 @@ def generate_occupancy_grid(
         if model.is_ground_plane:
             return True
         for tag in ground_plane_models:
-            if '*' not in tag:
-                if tag == model.name:
-                    return True
-            if tag.startswith('*') and not tag.endswith('*'):
-                suffix = tag.replace('*', '')
-                if model.name.endswith(suffix):
-                    return True
-            if tag.endswith('*') and not tag.startswith('*'):
-                prefix = tag.replace('*', '')
-                if model.name.startswith(prefix):
-                    return True
-            if tag.startswith('*') and tag.endswith('*'):
-                pattern = tag.replace('*', '')
-                if pattern in model.name:
-                    return True
+            if has_string_pattern(model.name, tag):
+                return True
         return False
 
     scene = create_scene(list(models.values()))
