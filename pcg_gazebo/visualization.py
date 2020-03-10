@@ -576,19 +576,15 @@ def plot_occupancy_grid(
     max_axis_y = None
 
     if occupancy_output is not None:
-        if with_ground_plane and len(occupancy_output['ground_plane']) > 0:
+        if with_ground_plane:
             ax.patch.set_facecolor(unavailable_color)
             PCG_ROOT_LOGGER.info(
                 'Adding ground plane models as '
                 'free-space in the occupancy grid')
 
-            for tag in occupancy_output['ground_plane']:
-                if is_excluded(tag):
-                    PCG_ROOT_LOGGER.info(
-                        'Model {} is excluded from final map'.format(tag))
-                    continue
+            if occupancy_output['ground_plane'] is not None:
                 patch = descartes.PolygonPatch(
-                    occupancy_output['ground_plane'][tag],
+                    occupancy_output['ground_plane'],
                     facecolor=free_color,
                     edgecolor=free_color,
                     alpha=1,
@@ -596,42 +592,42 @@ def plot_occupancy_grid(
                 ax.add_patch(patch)
 
                 PCG_ROOT_LOGGER.info(
-                    'Ground-plane model <{}> added'
-                    ' to occupancy grid'.format(tag))
+                    'Ground-plane footprint added'
+                    ' to occupancy grid')
 
                 if axis_x_limits is None:
                     if min_axis_x is None:
                         min_axis_x = \
-                            occupancy_output['ground_plane'][tag].bounds[0]
+                            occupancy_output['ground_plane'].bounds[0]
                     else:
                         min_axis_x = min(
                             min_axis_x,
-                            occupancy_output['ground_plane'][tag].bounds[0])
+                            occupancy_output['ground_plane'].bounds[0])
 
                     if max_axis_x is None:
                         max_axis_x = \
-                            occupancy_output['ground_plane'][tag].bounds[2]
+                            occupancy_output['ground_plane'].bounds[2]
                     else:
                         max_axis_x = max(
                             max_axis_x,
-                            occupancy_output['ground_plane'][tag].bounds[2])
+                            occupancy_output['ground_plane'].bounds[2])
 
                 if axis_y_limits is None:
                     if min_axis_y is None:
                         min_axis_y = \
-                            occupancy_output['ground_plane'][tag].bounds[1]
+                            occupancy_output['ground_plane'].bounds[1]
                     else:
                         min_axis_y = min(
                             min_axis_y,
-                            occupancy_output['ground_plane'][tag].bounds[1])
+                            occupancy_output['ground_plane'].bounds[1])
 
                     if max_axis_y is None:
                         max_axis_y = \
-                            occupancy_output['ground_plane'][tag].bounds[3]
+                            occupancy_output['ground_plane'].bounds[3]
                     else:
                         max_axis_y = max(
                             max_axis_y,
-                            occupancy_output['ground_plane'][tag].bounds[3])
+                            occupancy_output['ground_plane'].bounds[3])
         else:
             PCG_ROOT_LOGGER.info(
                 'Ignoring ground plane from the occupancy grid')
@@ -785,7 +781,7 @@ def plot_occupancy_grid(
 
     fig.canvas.draw()
 
-    if os.path.isdir(output_folder):
+    if output_folder is not None and os.path.isdir(output_folder):
         if '.pgm' in output_filename:
             filename = os.path.join(output_folder, output_filename)
             filename_svg = os.path.join(
@@ -793,7 +789,7 @@ def plot_occupancy_grid(
                     '.pgm', '.svg'))
             has_ground_plane = True
             if occupancy_output is not None:
-                has_ground_plane = len(occupancy_output['ground_plane']) > 0
+                has_ground_plane = occupancy_output['ground_plane'] is not None
 
             if with_ground_plane and has_ground_plane:
                 color = unavailable_color
