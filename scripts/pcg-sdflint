@@ -43,7 +43,7 @@ if __name__ == '__main__':
         try:
             import rospy
         except ImportError as ex:
-            print('rospy could not be imported')
+            print('rospy could not be imported, message={}'.format(ex))
             exit()
         if args.verbose:
             print('Verifying errors in SDF from ROS parameter: {}'.format(
@@ -65,7 +65,7 @@ if __name__ == '__main__':
         assert os.path.isfile(args.filename), \
             'Invalid SDF filename, file={}'.format(
                 args.filename)
-        if '.xacro' in args.filename:
+        if args.filename.endswith('.xacro'):
             sdf = parse_xacro(args.filename, output_type='sdf')
         else:
             sdf = parse_sdf(args.filename)
