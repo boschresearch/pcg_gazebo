@@ -222,8 +222,9 @@ if __name__ == '__main__':
         if rospy.is_shutdown():
             raise rospy.ROSInitException('ROS master is not running!')
 
-        logging.info('Waiting to receive the world XML file through topic {}'.format(
-            args.input_topic))
+        logging.info(
+            'Waiting to receive the world XML file through topic {}'.format(
+                args.input_topic))
         rospy.init_node('generate_occupancy_map', anonymous=True)
         topic_xml = rospy.wait_for_message(args.input_topic, String)
 
@@ -232,7 +233,8 @@ if __name__ == '__main__':
 
         world = World.from_sdf(sdf)
 
-        logging.info('SDF world file was parsed, world name={}'.format(world.name))
+        logging.info('SDF world file was parsed, world name={}'.format(
+            world.name))
 
         if args.output_filename is None:
             output_filename = '{}.pgm'.format(world.name)
@@ -256,7 +258,8 @@ if __name__ == '__main__':
     logging.info('Flag ground plane models with names={}'.format(gp_models))
     for model_name in gp_models:
         if model_name in world.models:
-            logging.info('Flagging model {} as ground plane'.format(model_name))
+            logging.info('Flagging model {} as ground plane'.format(
+                model_name))
             world.set_as_ground_plane(model_name)
 
     logging.info('Generating occupancy grid')
@@ -268,7 +271,7 @@ if __name__ == '__main__':
         exclude_contains = args.exclude_contains
     else:
         exclude_contains = ['ground_plane']
-    
+
     logging.info('Excluded models from the grid map computation')
 
     logging.info('Plotting occupancy grid map')
