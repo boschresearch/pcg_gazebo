@@ -509,6 +509,8 @@ class World(object):
                 sdf_tree = parse_xacro(sdf, output_type='sdf')
             elif sdf.endswith('.world') or sdf.endswith('.sdf'):
                 sdf_tree = parse_sdf(sdf)
+            else:
+                sdf_tree = parse_sdf(sdf)
         else:
             sdf_tree = sdf
 
@@ -966,7 +968,8 @@ class World(object):
             pitch_limits=None,
             yaw_limits=None,
             free_space_min_area=5e-3,
-            dofs=None):
+            dofs=None,
+            return_free_polygon=False):
         assert n_spots > 0, 'Number of free spots must be greater than zero'
         if is_string(model):
             test_model = SimulationModel.from_gazebo_model(model)
@@ -1088,18 +1091,5 @@ class World(object):
                     pose,
                     ignore_models=ignore_models):
                 poses.append(pose)
-
-        from ..visualization import plot_shapely_geometry
-        import matplotlib.pyplot as plt
-        from shapely.geometry import MultiPoint
-
-        fig, ax = plot_shapely_geometry(
-            polygon=free_space_polygon)
-        fig, ax = plot_shapely_geometry(
-            fig=fig,
-            ax=ax,
-            polygon=MultiPoint([[p.x, p.y] for p in poses])
-        )
-        plt.show()
 
         return poses
