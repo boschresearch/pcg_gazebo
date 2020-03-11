@@ -617,6 +617,42 @@ class World(object):
             from trimesh.viewer import SceneViewer
             return SceneViewer(scene)
 
+    def export_as_mesh(
+            self,
+            mesh_type='collision',
+            add_pseudo_color=True,
+            filename=None,
+            folder=None,
+            format='obj'):
+        scene = self.create_scene(mesh_type, add_pseudo_color)
+
+        export_formats = ['obj']
+        if format not in export_formats:
+            PCG_ROOT_LOGGER.error(
+                'Invalid mesh export format, options={}'.format(
+                    export_formats))
+            return None
+        if folder is not None:
+            assert os.path.isdir(folder), \
+                'Invalid output folder, provided={}'.format(folder)
+        else:
+            folder = '/tmp'
+
+        if filename is not None:
+            assert is_string(filename), 'Filename is not a string'
+        else:
+            filename = 'world'
+
+        mesh_filename = os.path.join(
+            folder,
+            filename.split('.')[0] + '.' + format)
+
+        scene.export(
+            mesh_filename,
+            file_type=format)
+
+        return mesh_filename
+
     def plot_footprints(
             self,
             fig=None,
