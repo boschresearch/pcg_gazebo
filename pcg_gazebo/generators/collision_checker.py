@@ -111,7 +111,7 @@ class CollisionChecker(object):
         else:
             PCG_ROOT_LOGGER.warning('Collision scene is empty')
 
-    def check_collision_with_current_scene(self, model):
+    def check_collision_with_current_scene(self, model, min_distance=0.0):
         """Check if there are any collisions between `model` and
         the meshes in the scene.
 
@@ -124,6 +124,9 @@ class CollisionChecker(object):
 
         `True`, if any collision is detected. `False`, otherwise.
         """
+        assert min_distance >= 0.0, \
+            'Min. distance to other objects must be equal or ' \
+            'greater than 0, provided={}'.format(min_distance)
         manager, objects = trimesh.collision.scene_to_collision(
             self._simulation_scenario)
 
@@ -146,6 +149,9 @@ class CollisionChecker(object):
                 if mesh.is_watertight:
                     if mesh.contains(scene_mesh.vertices).any():
                         return True
+            # Check for minimum distance to any object
+            if manager.min_distance_single(mesh) < min_distance:
+                return True
         return False
 
     def check_for_collisions(self):
