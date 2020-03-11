@@ -105,7 +105,8 @@ class RandomPoseEngine(Engine):
             constraints=None,
             policies=None,
             model_picker='random',
-            collision_checker=None):
+            collision_checker=None,
+            min_distance=0.0):
         Engine.__init__(
             self,
             assets_manager=assets_manager,
@@ -118,12 +119,15 @@ class RandomPoseEngine(Engine):
             'Model picking method options are {}'.format(
                 self._MODEL_PICKER)
         assert policies is not None, 'DoF configuration was not defined'
-
+        assert min_distance >= 0.0, \
+            'Min. distance between objects ' \
+            'must be equal or greater than 0'
         self._no_collision = no_collision
         self._max_num = dict()
         self._workspace = None
         self._model_picker = model_picker
         self._cached_footprints = dict()
+        self._min_distance = min_distance
 
         # Compute the footprint area of each object
         self._volumes = dict()
@@ -353,7 +357,7 @@ class RandomPoseEngine(Engine):
         """
         has_collision = \
             self._collision_checker.check_collision_with_current_scene(
-                model)
+                model, self._min_distance)
         return has_collision
 
     def run(self):
