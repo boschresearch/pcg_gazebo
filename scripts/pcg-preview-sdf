@@ -15,7 +15,7 @@
 # limitations under the License.
 import os
 from pcg_gazebo.simulation import SimulationModel, World
-from pcg_gazebo.parsers import parse_sdf
+from pcg_gazebo.parsers import parse_sdf, parse_xacro
 import argparse
 
 
@@ -35,10 +35,14 @@ if __name__ == '__main__':
 
     assert os.path.exists(args.filename), 'Invalid filename provided'
     assert args.filename.endswith('.sdf') or \
-        args.filename.endswith('.world'), \
-        'Support file extensions are .sdf and .world'
+        args.filename.endswith('.world') or \
+        args.filename.endswith('.xacro'), \
+        'Support file extensions are .sdf, .world and .xacro'
 
-    sdf = parse_sdf(args.filename)
+    if args.filename.endswith('.xacro'):
+        sdf = parse_xacro(args.filename, output_type='sdf')
+    else:
+        sdf = parse_sdf(args.filename)
 
     if sdf.xml_element_name == 'model':
         obj = SimulationModel.from_sdf(sdf)
