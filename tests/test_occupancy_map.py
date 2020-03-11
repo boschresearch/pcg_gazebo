@@ -161,8 +161,6 @@ class TestOccupancyGrid(unittest.TestCase):
                 x_limits=None,
                 y_limits=None,
                 z_limits=None,
-                step_x=0.01,
-                step_y=0.01,
                 n_processes=1,
                 mesh_type='collision',
                 ground_plane_models=['box_floor'])
@@ -187,8 +185,6 @@ class TestOccupancyGrid(unittest.TestCase):
                 x_limits=None,
                 y_limits=None,
                 z_limits=None,
-                step_x=0.01,
-                step_y=0.01,
                 n_processes=1,
                 mesh_type='collision')
 

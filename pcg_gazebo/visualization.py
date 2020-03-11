@@ -462,8 +462,6 @@ def plot_occupancy_grid(
         x_limits=None,
         y_limits=None,
         z_limits=None,
-        step_x=0.01,
-        step_y=0.01,
         n_processes=None,
         fig_size=(5, 5),
         fig_size_unit='cm',
@@ -536,8 +534,6 @@ def plot_occupancy_grid(
         x_limits=x_limits,
         y_limits=y_limits,
         z_limits=z_limits,
-        step_x=step_x,
-        step_y=step_y,
         n_processes=n_processes,
         mesh_type=mesh_type,
         ground_plane_models=ground_plane_models)
@@ -577,12 +573,12 @@ def plot_occupancy_grid(
 
     if occupancy_output is not None:
         if with_ground_plane:
-            ax.patch.set_facecolor(unavailable_color)
-            PCG_ROOT_LOGGER.info(
-                'Adding ground plane models as '
-                'free-space in the occupancy grid')
-
             if occupancy_output['ground_plane'] is not None:
+                ax.patch.set_facecolor(unavailable_color)
+                PCG_ROOT_LOGGER.info(
+                    'Adding ground plane models as '
+                    'free-space in the occupancy grid')
+
                 patch = descartes.PolygonPatch(
                     occupancy_output['ground_plane'],
                     facecolor=free_color,
@@ -628,6 +624,10 @@ def plot_occupancy_grid(
                         max_axis_y = max(
                             max_axis_y,
                             occupancy_output['ground_plane'].bounds[3])
+            else:
+                PCG_ROOT_LOGGER.info(
+                    'Ignoring ground plane from the occupancy grid')
+                ax.set_facecolor(free_color)
         else:
             PCG_ROOT_LOGGER.info(
                 'Ignoring ground plane from the occupancy grid')
@@ -638,11 +638,6 @@ def plot_occupancy_grid(
                 PCG_ROOT_LOGGER.info('Adding static models as occupied areas')
 
                 for tag in occupancy_output['static']:
-                    if is_excluded(tag):
-                        PCG_ROOT_LOGGER.info(
-                            'Model {} is excluded from final map'.format(tag))
-                        continue
-
                     if occupancy_output['static'][tag].is_empty:
                         PCG_ROOT_LOGGER.warning(
                             'Model footprint <{}> is empty'.format(tag))
@@ -697,11 +692,6 @@ def plot_occupancy_grid(
             PCG_ROOT_LOGGER.info('Adding non-static models as occupied areas')
 
             for tag in occupancy_output['non_static']:
-                if is_excluded(tag):
-                    PCG_ROOT_LOGGER.info(
-                        'Model {} is excluded from final map'.format(tag))
-                    continue
-
                 if occupancy_output['non_static'][tag].is_empty:
                     PCG_ROOT_LOGGER.warning(
                         'Model footprint <{}> is empty'.format(tag))

@@ -68,8 +68,6 @@ def _get_model_limits(model, mesh_type='collision'):
 
 def get_occupied_area(
         model,
-        step_x,
-        step_y,
         z_levels=None,
         x_limits=None,
         y_limits=None,
@@ -139,16 +137,8 @@ def get_occupied_area(
         'Computing occupied area, model={}, x_limits={},'
         ' y_limits={}, z_limits={}'.format(
             model_name, x_limits, y_limits, z_limits))
-    PCG_ROOT_LOGGER.info(
-        'Generating horizontal rays with step_x={},'
-        ' step_y={}, z_levels={}, model={}'.format(
-            step_x, step_y, z_levels, model_name))
-
-    if np.abs(x_limits[1] - x_limits[0]) <= step_x:
-        step_x = np.abs(x_limits[1] - x_limits[0]) / 10.0
-
-    if np.abs(y_limits[1] - y_limits[0]) <= step_y:
-        step_y = np.abs(y_limits[1] - y_limits[0]) / 10.0
+    step_x = 0.01
+    step_y = 0.01
 
     if z_levels is None:
         n_levels = 5
@@ -279,6 +269,7 @@ def get_occupied_area(
         occupied_areas = occupied_areas.union(full_footprint)
         occupied_areas = occupied_areas.buffer(-max(step_x, step_y))
 
+    # TODO: Set x_limits and y_limits to the occupied area
     return occupied_areas
 
 
@@ -288,15 +279,13 @@ def _get_occupied_area_proc(args):
 
     occupied_areas = get_occupied_area(
         model,
-        args[1],
-        args[2],
-        args[3],
+        z_levels=args[1],
         x_limits=None,
         y_limits=None,
         z_limits=None,
-        model_name=args[4],
-        mesh_type=args[5],
-        is_ground_plane=args[6])
+        model_name=args[2],
+        mesh_type=args[3],
+        is_ground_plane=args[4])
     return occupied_areas
 
 
@@ -306,8 +295,6 @@ def generate_occupancy_grid(
         x_limits=None,
         y_limits=None,
         z_limits=None,
-        step_x=0.1,
-        step_y=0.1,
         n_processes=10,
         mesh_type='collision',
         ground_plane_models=None):
@@ -399,8 +386,6 @@ def generate_occupancy_grid(
             non_gp_models.append(
                 [
                     models[tag].to_sdf(),
-                    step_x,
-                    step_y,
                     z_levels,
                     tag,
                     mesh_type,
@@ -451,24 +436,33 @@ def generate_occupancy_grid(
         # Add model to ground plane model group
         ground_plane_group.add_model(tag, models[tag])
 
-        model_occupied_area = get_occupied_area(
-            models[tag],
-            step_x,
-            step_y,
+    if ground_plane_group.n_models > 0:
+        occupancy_output['static']['ground_plane_models'] = get_occupied_area(
+            ground_plane_group,
             z_levels,
             mesh_type=mesh_type,
             is_ground_plane=False)
-        occupancy_output['static'][tag] = model_occupied_area
 
-    if ground_plane_group.n_models > 0:
-        model_occupied_area = get_occupied_area(
-            ground_plane_group,
-            step_x,
-            step_y,
-            z_levels,
-            mesh_type=mesh_type,
-            is_ground_plane=True)
-        occupancy_output['ground_plane'] = model_occupied_area
+        if ground_plane_group.n_models > 0:
+            model_occupied_area = get_occupied_area(
+                ground_plane_group,
+                z_levels,
+                mesh_type=mesh_type,
+                is_ground_plane=True)
+            # Check if the places occupied by the ground plane models
+            # are equal to the computed free space
+            diff = model_occupied_area.difference(
+                occupancy_output['static']['ground_plane_models'])
+            if model_occupied_area.almost_equals(
+                    occupancy_output['static']['ground_plane_models'],
+                    decimal=3) or diff.area < 1e-3:
+                PCG_ROOT_LOGGER.info(
+                    'The areas for free space are equivalent to the '
+                    'occupied areas by the ground plane occupied '
+                    'areas. Setting limited ground plane to None')
+                occupancy_output['ground_plane'] = None
+            else:
+                occupancy_output['ground_plane'] = model_occupied_area
 
     PCG_ROOT_LOGGER.info('Computation of occupancy grid finished')
     return occupancy_output
