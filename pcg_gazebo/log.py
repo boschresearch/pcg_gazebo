@@ -79,7 +79,7 @@ def get_log_dir():
 
 
 def create_logger(name, log_filename=None, output_dir=None,
-                  log_level=logging.ERROR):
+                  log_level=logging.INFO):
     """Create new instance of the logger.
 
     > *Input arguments*

@@ -433,3 +433,37 @@ def is_array(obj):
     return isinstance(
         obj, collections.Iterable) and not isinstance(
         obj, str)
+
+
+def get_random_point_from_shape(geo):
+    from shapely.geometry import Point
+    min_x, min_y, max_x, max_y = geo.bounds
+    pnt = [
+        random.uniform(min_x, max_x),
+        random.uniform(min_y, max_y)
+    ]
+    while not geo.contains(Point(pnt)):
+        pnt = [
+            random.uniform(min_x, max_x),
+            random.uniform(min_y, max_y)
+        ]
+    return pnt
+
+
+def has_string_pattern(input_str, pattern):
+    if '*' not in pattern:
+        if input_str == pattern:
+            return True
+    if pattern.startswith('*') and not pattern.endswith('*'):
+        suffix = pattern.replace('*', '')
+        if input_str.endswith(suffix):
+            return True
+    if pattern.endswith('*') and not pattern.startswith('*'):
+        prefix = pattern.replace('*', '')
+        if input_str.startswith(prefix):
+            return True
+    if pattern.startswith('*') and pattern.endswith('*'):
+        pattern = pattern.replace('*', '')
+        if pattern in input_str:
+            return True
+    return False

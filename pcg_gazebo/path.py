@@ -53,7 +53,7 @@ class Path(object):
         self._absolute_uri = self.resolve_uri(uri)
         if self._absolute_uri is None:
             msg = 'URI could not be resolved, uri={}'.format(uri)
-            PCG_ROOT_LOGGER.warning(msg)
+            PCG_ROOT_LOGGER.info(msg)
         else:
             PCG_ROOT_LOGGER.info(
                 'URI {} resolved={}'.format(
