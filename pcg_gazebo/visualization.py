@@ -637,7 +637,7 @@ def plot_occupancy_grid(
             if len(occupancy_output['static']) > 0:
                 PCG_ROOT_LOGGER.info('Adding static models as occupied areas')
 
-                for tag in occupancy_output['static']:                    
+                for tag in occupancy_output['static']:
                     if occupancy_output['static'][tag].is_empty:
                         PCG_ROOT_LOGGER.warning(
                             'Model footprint <{}> is empty'.format(tag))
