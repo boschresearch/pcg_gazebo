@@ -65,7 +65,7 @@ if __name__ == '__main__':
         assert os.path.isfile(args.filename), \
             'Invalid URDF filename, file={}'.format(
                 args.filename)
-        if '.xacro' in args.filename:
+        if args.filename.endswith('.xacro'):
             urdf = parse_xacro(args.filename, output_type='urdf')
         else:
             urdf = parse_urdf(args.filename)
