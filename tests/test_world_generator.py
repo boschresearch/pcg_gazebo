@@ -339,18 +339,36 @@ class TestWorldGenerator(unittest.TestCase):
 
         self.assertTrue(generator.run_engines())
 
+        # Test if all models where generated
         self.assertEqual(generator.world.n_models, 15)
         self.assertEqual(len(generator.world.model_groups), 3)
         self.assertIn('default', generator.world.model_groups)
         self.assertIn('box_generated', generator.world.model_groups)
         self.assertIn('box_generated_1', generator.world.model_groups)
 
+        # Test export to world SDF file
         self.assertEqual(
             generator.export_world(
                 '/tmp',
                 'test.world'),
             '/tmp/test.world')
         self.assertTrue(os.path.isfile('/tmp/test.world'))
+
+        # Test export to mesh
+        export_formats = ['obj']
+        for f in export_formats:
+            for mesh_type in ['visual', 'collision']:
+                filename = mesh_type + generate_random_string(5)
+                generator.world.export_as_mesh(
+                    format=f,
+                    mesh_type=mesh_type,
+                    filename=filename,
+                    folder='/tmp')
+                self.assertTrue(
+                    os.path.isfile(os.path.join('/tmp', filename + '.' + f)))
+                self.assertGreater(
+                    os.path.getsize(
+                        os.path.join('/tmp', filename + '.' + f)), 0)
 
     def test_add_assets(self):
         generator = WorldGenerator()
