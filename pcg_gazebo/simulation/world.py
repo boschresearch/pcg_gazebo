@@ -831,8 +831,9 @@ class World(object):
         if ignore_models is None:
             ignore_models = list()
 
-        PCG_ROOT_LOGGER.info('Check if model <{}> is in free space, pose={}'.format(
-            model.name, pose.to_sdf()))
+        PCG_ROOT_LOGGER.info(
+            'Check if model <{}> is in free space, pose={}'.format(
+                model.name, pose.to_sdf()))
         test_model.pose = pose
 
         if static_collision_checker is None:
@@ -840,8 +841,9 @@ class World(object):
             collision_checker = CollisionChecker()
 
             # Add models to the collision checker
-            PCG_ROOT_LOGGER.info('Populating collision checker, # models={}'.format(len(
-                self.models)))
+            PCG_ROOT_LOGGER.info(
+                'Populating collision checker, # models={}'.format(
+                    len(self.models)))
             for tag in self.models:
                 for item in ignore_models:
                     if not has_string_pattern(self.models[tag].name, item):
@@ -856,7 +858,7 @@ class World(object):
         else:
             PCG_ROOT_LOGGER.info('Using static collision checker')
             has_collision = \
-                not static_collision_checker.check_collision_with_current_scene(
+                not static_collision_checker.check_collision_with_current_scene(  # noqa: E501
                     test_model)
             return has_collision
 
@@ -960,7 +962,7 @@ class World(object):
                 list(filtered_models.keys())))
 
         PCG_ROOT_LOGGER.info(filtered_models)
-        
+
         occupancy_output = generate_occupancy_grid(
             filtered_models,
             n_processes=4,
@@ -1193,8 +1195,7 @@ class World(object):
 
         if show_preview_2d:
             PCG_ROOT_LOGGER.info('Plotting free spots in 2D')
-            from ..visualization import plot_shapely_geometry, \
-                plot_footprints
+            from ..visualization import plot_shapely_geometry
             import matplotlib.pyplot as plt
 
             fig, ax = plot_shapely_geometry(

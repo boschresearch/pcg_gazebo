@@ -56,11 +56,13 @@ class CollisionChecker(object):
     def get_scenario(self):
         if self.n_meshes == 0:
             self._simulation_scenario = create_scene(self._scene_models)
-            PCG_ROOT_LOGGER.info('Collision scenario created, # meshes={}'.format(
-                self.n_meshes))
+            PCG_ROOT_LOGGER.info(
+                'Collision scenario created, # meshes={}'.format(
+                    self.n_meshes))
         else:
-            PCG_ROOT_LOGGER.info('Collision scenario already exists, # meshes={}'.format(
-                self.n_meshes))
+            PCG_ROOT_LOGGER.info(
+                'Collision scenario already exists, # meshes={}'.format(
+                    self.n_meshes))
 
         return self._simulation_scenario
 
