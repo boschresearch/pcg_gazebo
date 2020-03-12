@@ -25,7 +25,7 @@ with open(version_file, 'r') as f:
 
 requirements_required = set([
     'lxml',
-    'numpy',
+    'numpy>=1.18',
     'psutil',
     'yasha',
     'xmltodict',
