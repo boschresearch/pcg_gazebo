@@ -1665,6 +1665,8 @@ class SimulationModel(object):
 
     def get_bounds(self, mesh_type='collision'):
         meshes = self.get_meshes(mesh_type)
+        PCG_ROOT_LOGGER.info('Get model <{}> bounds, # meshes={}'.format(
+            self.name, len(meshes)))
 
         bounds = None
         for mesh in meshes:
@@ -1676,6 +1678,7 @@ class SimulationModel(object):
                     bounds[0, i] = min(bounds[0, i], cur_bounds[0, i])
                 for i in range(3):
                     bounds[1, i] = max(bounds[1, i], cur_bounds[1, i])
+        PCG_ROOT_LOGGER.info('Model <{}> bounds={}'.format(self.name, bounds))
         return bounds
 
     def spawn(

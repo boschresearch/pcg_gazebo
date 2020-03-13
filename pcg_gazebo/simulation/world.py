@@ -15,7 +15,7 @@
 from __future__ import print_function
 import os
 import numpy as np
-from shapely.geometry import Polygon, MultiPolygon
+from shapely.geometry import Polygon, MultiPolygon, MultiPoint
 from shapely.ops import unary_union
 from . import Light, SimulationModel, ModelGroup
 from .physics import Physics, ODE, Simbody, Bullet
@@ -617,6 +617,42 @@ class World(object):
             from trimesh.viewer import SceneViewer
             return SceneViewer(scene)
 
+    def export_as_mesh(
+            self,
+            mesh_type='collision',
+            add_pseudo_color=True,
+            filename=None,
+            folder=None,
+            format='obj'):
+        scene = self.create_scene(mesh_type, add_pseudo_color)
+
+        export_formats = ['obj']
+        if format not in export_formats:
+            PCG_ROOT_LOGGER.error(
+                'Invalid mesh export format, options={}'.format(
+                    export_formats))
+            return None
+        if folder is not None:
+            assert os.path.isdir(folder), \
+                'Invalid output folder, provided={}'.format(folder)
+        else:
+            folder = '/tmp'
+
+        if filename is not None:
+            assert is_string(filename), 'Filename is not a string'
+        else:
+            filename = 'world'
+
+        mesh_filename = os.path.join(
+            folder,
+            filename.split('.')[0] + '.' + format)
+
+        scene.export(
+            mesh_filename,
+            file_type=format)
+
+        return mesh_filename
+
     def plot_footprints(
             self,
             fig=None,
@@ -776,7 +812,9 @@ class World(object):
             ground_plane_models=ground_plane_models)
         return os.path.join(output_folder, output_filename)
 
-    def is_free_space(self, model, pose, ignore_models=None):
+    def is_free_space(self, model, pose, ignore_models=None,
+                      static_collision_checker=None,
+                      return_collision_checker=False):
         from ..generators import CollisionChecker
         test_model = None
         if is_string(model):
@@ -793,34 +831,52 @@ class World(object):
         if ignore_models is None:
             ignore_models = list()
 
+        PCG_ROOT_LOGGER.info(
+            'Check if model <{}> is in free space, pose={}'.format(
+                model.name, pose.to_sdf()))
         test_model.pose = pose
 
-        collision_checker = CollisionChecker()
+        if static_collision_checker is None:
+            PCG_ROOT_LOGGER.info('Creating a collision checker')
+            collision_checker = CollisionChecker()
 
-        # Add models to the collision checker
-        for tag in self.models:
-            for item in ignore_models:
-                if not has_string_pattern(self.models[tag].name, item):
-                    collision_checker.add_model(self.models[tag])
-
-        return not collision_checker.check_collision_with_current_scene(
-            test_model)
+            # Add models to the collision checker
+            PCG_ROOT_LOGGER.info(
+                'Populating collision checker, # models={}'.format(
+                    len(self.models)))
+            for tag in self.models:
+                for item in ignore_models:
+                    if not has_string_pattern(self.models[tag].name, item):
+                        collision_checker.add_model(self.models[tag])
+            has_collision = \
+                not collision_checker.check_collision_with_current_scene(
+                    test_model)
+            if return_collision_checker:
+                return has_collision, collision_checker
+            else:
+                return has_collision
+        else:
+            PCG_ROOT_LOGGER.info('Using static collision checker')
+            has_collision = \
+                not static_collision_checker.check_collision_with_current_scene(  # noqa: E501
+                    test_model)
+            return has_collision
 
     def get_bounds(self, mesh_type='collision'):
         from copy import deepcopy
         bounds = None
-
+        PCG_ROOT_LOGGER.info('Compute world <{}> bounds'.format(self.name))
         for tag in self.models:
-            meshes = self.models[tag].get_meshes(mesh_type)
-            for mesh in meshes:
-                if bounds is None:
-                    bounds = deepcopy(mesh.bounds)
-                else:
-                    cur_bounds = deepcopy(mesh.bounds)
-                    for i in range(3):
-                        bounds[0, i] = min(bounds[0, i], cur_bounds[0, i])
-                    for i in range(3):
-                        bounds[1, i] = max(bounds[1, i], cur_bounds[1, i])
+            model_bounds = self.models[tag].get_bounds()
+            if bounds is None:
+                bounds = deepcopy(model_bounds)
+            else:
+                cur_bounds = deepcopy(model_bounds)
+                for i in range(3):
+                    bounds[0, i] = min(bounds[0, i], cur_bounds[0, i])
+                for i in range(3):
+                    bounds[1, i] = max(bounds[1, i], cur_bounds[1, i])
+        PCG_ROOT_LOGGER.info('World <{}> bounds={}'.format(self.name, bounds))
         return bounds
 
     def get_free_space_polygon(
@@ -853,8 +909,7 @@ class World(object):
                     [x_limits[0], y_limits[0]]]
             )
 
-        scene = self.create_scene(ignore_models=ignore_models)
-        bounds = scene.bounds
+        bounds = self.get_bounds()
         if x_limits is not None:
             assert is_array(x_limits), 'X limits must be an array'
             assert x_limits[0] < x_limits[1], \
@@ -893,14 +948,6 @@ class World(object):
         for tag in self.models:
             if self.models[tag].is_ground_plane:
                 filtered_models[tag] = self.models[tag]
-            elif self.models[tag].static:
-                is_ignored = False
-                for item in ignore_models:
-                    if has_string_pattern(self.models[tag].name, item):
-                        is_ignored = True
-                        break
-                if not is_ignored:
-                    filtered_models[tag] = self.models[tag]
             else:
                 for item in ground_plane_models:
                     if has_string_pattern(self.models[tag].name, item):
@@ -909,6 +956,12 @@ class World(object):
 
         if len(filtered_models) == 0:
             return free_space_polygon
+
+        PCG_ROOT_LOGGER.info(
+            'List of models to compute free space polygon={}'.format(
+                list(filtered_models.keys())))
+
+        PCG_ROOT_LOGGER.info(filtered_models)
 
         occupancy_output = generate_occupancy_grid(
             filtered_models,
@@ -969,7 +1022,9 @@ class World(object):
             yaw_limits=None,
             free_space_min_area=5e-3,
             dofs=None,
-            return_free_polygon=False):
+            return_free_polygon=False,
+            show_preview_2d=False,
+            show_preview_3d=False):
         assert n_spots > 0, 'Number of free spots must be greater than zero'
         if is_string(model):
             test_model = SimulationModel.from_gazebo_model(model)
@@ -982,13 +1037,18 @@ class World(object):
                 ' ROS paths, or a SimulationModel object, received={}'.format(
                     type(model)))
 
-        scene = self.create_scene(ignore_models=ignore_models)
-        bounds = scene.bounds
+        PCG_ROOT_LOGGER.info(
+            'Compute free spaces for model <{}> in world <{}>'.format(
+                test_model.name, self.name))
+
         if z_limits is not None:
             assert z_limits[0] < z_limits[1], \
                 'Invalid Z limits, z_limits={}'.format(z_limits)
         else:
-            z_limits = [bounds[0, 2], bounds[1, 2]]
+            z_limits = [0, 1e4]
+
+        PCG_ROOT_LOGGER.info('Z limits to find free spaces={}'.format(
+            z_limits))
 
         if roll_limits is not None:
             assert roll_limits[0] < roll_limits[1], \
@@ -996,17 +1056,26 @@ class World(object):
         else:
             roll_limits = [-np.pi, np.pi]
 
+        PCG_ROOT_LOGGER.info('Roll limits in rad={}'.format(
+            roll_limits))
+
         if pitch_limits is not None:
             assert pitch_limits[0] < pitch_limits[1], \
                 'Invalid pitch limits, pitch_limits={}'.format(pitch_limits)
         else:
             pitch_limits = [-np.pi, np.pi]
 
+        PCG_ROOT_LOGGER.info('Pitch limits in rad={}'.format(
+            pitch_limits))
+
         if yaw_limits is not None:
             assert yaw_limits[0] < yaw_limits[1], \
                 'Invalid yaw limits, yaw_limits={}'.format(yaw_limits)
         else:
             yaw_limits = [-np.pi, np.pi]
+
+        PCG_ROOT_LOGGER.info('Yaw limits in rad={}'.format(
+            yaw_limits))
 
         active_dofs = list()
         if dofs is None:
@@ -1024,6 +1093,10 @@ class World(object):
             if 'y' not in active_dofs:
                 active_dofs.append('y')
 
+        assert len(active_dofs) > 0, 'List of active DoFs cannot be empty'
+
+        PCG_ROOT_LOGGER.info('Active DoFs={}'.format(active_dofs))
+
         footprints = test_model.get_footprint()
         combined_footprint = Footprint()
         for tag in footprints:
@@ -1031,8 +1104,10 @@ class World(object):
         model_footprint = combined_footprint.get_footprint_polygon()
 
         if model_footprint.is_empty:
-            PCG_ROOT_LOGGER.error('Model provieed has no valid footprint')
+            PCG_ROOT_LOGGER.error('Model provided has no valid footprint')
             return None
+
+        PCG_ROOT_LOGGER.info('Computing free space polygon')
 
         free_space_polygon = self.get_free_space_polygon(
             ground_plane_models=ground_plane_models,
@@ -1048,12 +1123,16 @@ class World(object):
                     x_limits, y_limits))
             return None
 
+        PCG_ROOT_LOGGER.info('Area of free space polygon='.format(
+            free_space_polygon.area))
+
         if model_footprint.area >= free_space_polygon.area:
             PCG_ROOT_LOGGER.error(
                 'Model is too big for the available free space')
             return None
 
         poses = list()
+        collision_checker = None
         while len(poses) < n_spots:
             pose = Pose()
             # Generate random point
@@ -1086,10 +1165,58 @@ class World(object):
 
             pose.rpy = [roll, pitch, yaw]
 
-            if self.is_free_space(
-                    test_model,
-                    pose,
-                    ignore_models=ignore_models):
-                poses.append(pose)
+            # Add the model pose to the computed pose
+            pose = pose + test_model.pose
 
-        return poses
+            PCG_ROOT_LOGGER.info('Testing pose={}'.format(pose.to_sdf()))
+
+            if collision_checker is None:
+                is_free_space, collision_checker = \
+                    self.is_free_space(
+                        test_model,
+                        pose,
+                        ignore_models=ignore_models,
+                        return_collision_checker=True)
+            else:
+                is_free_space = \
+                    self.is_free_space(
+                        test_model,
+                        pose,
+                        ignore_models=ignore_models,
+                        static_collision_checker=collision_checker,
+                        return_collision_checker=True)
+            if is_free_space:
+                PCG_ROOT_LOGGER.info('Storing free space pose={}'.format(
+                    pose.to_sdf()))
+                poses.append(pose)
+            else:
+                PCG_ROOT_LOGGER.info('Collision detected for pose={}'.format(
+                    pose.to_sdf()))
+
+        if show_preview_2d:
+            PCG_ROOT_LOGGER.info('Plotting free spots in 2D')
+            from ..visualization import plot_shapely_geometry
+            import matplotlib.pyplot as plt
+
+            fig, ax = plot_shapely_geometry(
+                polygon=free_space_polygon)
+            fig, ax = plot_shapely_geometry(
+                polygon=MultiPoint([[p.x, p.y] for p in poses]),
+                fig=fig,
+                ax=ax
+            )
+            plt.show()
+
+        if show_preview_3d:
+            PCG_ROOT_LOGGER.info('Plotting free spots in 3D')
+            scene = self.create_scene()
+            for p in poses:
+                temp_model = test_model.copy()
+                temp_model.pose = p
+                scene.add_geometry(temp_model.get_meshes())
+            scene.show()
+
+        if return_free_polygon:
+            return poses, free_space_polygon
+        else:
+            return poses

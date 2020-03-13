@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get -qq update
-        sudo apt-get install libspatialindex-dev pybind11-dev libgeos-dev -y -qq
+        sudo apt-get install libspatialindex-dev pybind11-dev libgeos-dev blender libfcl-dev -y -qq
     - name: Lint with flake8
       run: |
         pip install flake8 autopep8

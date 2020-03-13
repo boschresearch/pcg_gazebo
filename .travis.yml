@@ -10,10 +10,11 @@ matrix:
   include:    
     - python: "2.7"
     - python: "3.6"
+    - python: "3.7"
 
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get install libspatialindex-dev libgeos-dev blender -y
+- sudo apt-get install libspatialindex-dev libgeos-dev blender libfcl-dev -y
 - pip install setuptools
 - pip install flake8 autopep8
 
