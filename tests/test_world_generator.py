@@ -355,7 +355,7 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertTrue(os.path.isfile('/tmp/test.world'))
 
         # Test export to mesh
-        export_formats = ['obj']
+        export_formats = ['obj', 'dae', 'stl']
         for f in export_formats:
             for mesh_type in ['visual', 'collision']:
                 filename = mesh_type + generate_random_string(5)
