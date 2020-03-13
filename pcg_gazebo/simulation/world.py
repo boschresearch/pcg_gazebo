@@ -15,6 +15,7 @@
 from __future__ import print_function
 import os
 import numpy as np
+import trimesh
 from shapely.geometry import Polygon, MultiPolygon, MultiPoint
 from shapely.ops import unary_union
 from . import Light, SimulationModel, ModelGroup
@@ -621,12 +622,16 @@ class World(object):
             self,
             mesh_type='collision',
             add_pseudo_color=True,
+            format='dae',
             filename=None,
             folder=None,
-            format='obj'):
-        scene = self.create_scene(mesh_type, add_pseudo_color)
+            ignore_models=None):
+        if ignore_models is None:
+            ignore_models = list()
+        scene = self.create_scene(
+            mesh_type, add_pseudo_color, ignore_models=ignore_models)
 
-        export_formats = ['obj']
+        export_formats = ['obj', 'dae', 'stl']
         if format not in export_formats:
             PCG_ROOT_LOGGER.error(
                 'Invalid mesh export format, options={}'.format(
@@ -647,9 +652,24 @@ class World(object):
             folder,
             filename.split('.')[0] + '.' + format)
 
-        scene.export(
-            mesh_filename,
-            file_type=format)
+        if format == 'obj':
+            trimesh.exchange.export.export_mesh(
+                scene,
+                mesh_filename,
+                file_type=format,
+                include_color=True,
+                include_texture=True)
+        elif format == 'dae':
+            trimesh.exchange.export.export_mesh(
+                scene.dump(),
+                mesh_filename,
+                file_type=format)
+        elif format == 'stl':
+            mesh = trimesh.boolean.union(scene.dump())
+            trimesh.exchange.export.export_mesh(
+                mesh,
+                mesh_filename,
+                file_type=format)
 
         return mesh_filename
 
