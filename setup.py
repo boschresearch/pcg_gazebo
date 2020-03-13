@@ -60,7 +60,7 @@ if (sys.version_info.major, sys.version_info.minor) >= (3, 4):
     # remove version-free requirements
     requirements_required.remove('numpy')
     # add working version locked requirements
-    requirements_required.add('lxml>=1.18.1')
+    requirements_required.add('numpy>=1.18.1')
     
 
 requirements_examples = requirements_required.union(['jupyterlab'])
