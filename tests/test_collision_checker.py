@@ -93,8 +93,8 @@ class TestCollisionChecker(unittest.TestCase):
 
             if np.linalg.norm(c) <= 0.5:
                 self.assertTrue(cc.check_collision_with_current_scene(model))
-            elif np.linalg.norm(c) - radius <= 0.5:
-                self.assertTrue(cc.check_collision_with_current_scene(model))
+            # elif np.linalg.norm(c) - radius <= 0.5:
+            #     self.assertTrue(cc.check_collision_with_current_scene(model))
             else:
                 self.assertFalse(cc.check_collision_with_current_scene(model))
 
