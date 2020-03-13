@@ -30,7 +30,7 @@ requirements_required = set([
     'yasha',
     'xmltodict',
     'Jinja2',
-    'Shapely',
+    'shapely',
     'bokeh',
     'matplotlib',
     'descartes',
@@ -44,6 +44,17 @@ requirements_required = set([
     'scikit-image',
     'rospkg'
 ])
+
+# From trimesh: Python 3.4 support has been dropped from
+# upstream packages version lock those packages here so
+# install succeeds
+if (sys.version_info.major, sys.version_info.minor) <= (3, 4):
+    # remove version-free requirements
+    requirements_required.remove('lxml')
+    requirements_required.remove('shapely')
+    # add working version locked requirements
+    requirements_required.add('lxml==4.3.5')
+    requirements_required.add('shapely==1.6.4')
 
 requirements_examples = requirements_required.union(['jupyterlab'])
 
