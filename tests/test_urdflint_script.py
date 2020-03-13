@@ -14,20 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import print_function
-import pytest
+import unittest
+import subprocess
 import os
 
 
-@pytest.mark.script_launch_mode('subprocess')
-def test_run_linter_on_test_files(script_runner):
-    test_folder = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'urdf')
-    for filename in os.listdir(test_folder):
-        if '.urdf' not in filename:
-            continue
-        output = script_runner.run(
-            'pcg-urdflint', '--filename',
-            os.path.join(test_folder, filename))
+class TestURDFLintScrit(unittest.TestCase):
+    def test_run_linter_on_test_files(self):
+        test_folder = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'urdf')
+        for filename in os.listdir(test_folder):
+            if '.urdf' not in filename:
+                continue
+            subprocess.check_output(
+                ['pcg-urdflint', '--filename',
+                 os.path.join(test_folder, filename)])
 
-        assert output.success
+
+if __name__ == '__main__':
+    unittest.main()

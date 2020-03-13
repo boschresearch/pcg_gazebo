@@ -14,7 +14,8 @@
 # limitations under the License.
 import os
 import json
-import pytest
+import unittest
+import subprocess
 
 
 def load_notebook(file_obj):
@@ -188,35 +189,39 @@ def to_pass(line):
     return passed
 
 
-@pytest.mark.script_launch_mode('subprocess')
-def test_notebooks(script_runner):
-    examples_dir = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        '..',
-        'examples'
-    )
+class TestExamples(unittest.TestCase):
+    def test_notebooks(self):
+        examples_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            '..',
+            'examples'
+        )
 
-    notebook_blacklist = [
-        'gen_grid_map.ipynb'
-    ]
+        notebook_blacklist = [
+            'gen_grid_map.ipynb'
+        ]
 
-    for item in os.listdir(examples_dir):
-        filename = os.path.join(examples_dir, item)
+        for item in os.listdir(examples_dir):
+            filename = os.path.join(examples_dir, item)
 
-        if not os.path.exists(filename):
-            return
+            if not os.path.exists(filename):
+                return
 
-        if filename.lower().endswith('.ipynb'):
-            if item in notebook_blacklist:
+            if filename.lower().endswith('.ipynb'):
+                if item in notebook_blacklist:
+                    continue
+                if item.startswith('sim_') or item.startswith('tm_'):
+                    continue
+                with open(filename, 'r') as file_obj:
+                    script = load_notebook(file_obj)
+                print(filename)
+                exec(script, globals())
+            elif filename.lower().endswith('.py'):
+                output = subprocess.check_output(['python', filename])
+                assert output.returncode == 0
+            else:
                 continue
-            if item.startswith('sim_') or item.startswith('tm_'):
-                continue
-            with open(filename, 'r') as file_obj:
-                script = load_notebook(file_obj)
-            print(filename)
-            exec(script, globals())
-        elif filename.lower().endswith('.py'):
-            output = script_runner.run('python', filename)
-            assert output.success
-        else:
-            continue
+
+
+if __name__ == '__main__':
+    unittest.main()

@@ -14,72 +14,73 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from __future__ import print_function
-import pytest
+import unittest
+import subprocess
 from pcg_gazebo.parsers.urdf import create_urdf_element
 from pcg_gazebo.parsers import sdf2urdf, parse_sdf
 
 
-@pytest.mark.script_launch_mode('subprocess')
-def test_xml_input_random(script_runner):
-    urdf_elements = [
-        'mass',
-        'child',
-        'parent',
-        'origin',
-        'box',
-        'cylinder',
-        'sphere',
-        'mesh',
-        'limit',
-        'inertial',
-        'inertia',
-        'dynamics'
-    ]
-
-    for urdf_name in urdf_elements:
-        obj = create_urdf_element(urdf_name)
-        assert obj is not None
-        obj.random()
-        output = script_runner.run(
-            'pcg-urdf2sdf', '--xml', obj.to_xml_as_str(),
-            '--print')
-        assert output.success
-
-        urdf = parse_sdf(output.stdout)
-        assert urdf is not None
-
-        response_urdf = sdf2urdf(urdf)
-        assert obj == response_urdf
-
-
-@pytest.mark.script_launch_mode('subprocess')
-def test_xml_input_visual_collision(script_runner):
-    for urdf_tag in ['visual', 'collision']:
-        obj = create_urdf_element(urdf_tag)
-        assert obj is not None
-
-        obj.origin = create_urdf_element('origin')
-        obj.origin.random()
-        obj.geometry = create_urdf_element('geometry')
-
-        geometries = [
+class TestURDF2SDFScript(unittest.TestCase):
+    def test_xml_input_random(self):
+        urdf_elements = [
+            'mass',
+            'child',
+            'parent',
+            'origin',
             'box',
             'cylinder',
             'sphere',
-            'mesh'
+            'mesh',
+            'limit',
+            'inertial',
+            'inertia',
+            'dynamics'
         ]
 
-        for geo_name in geometries:
-            obj.geometry.reset(mode=geo_name)
-            obj.geometry.random()
+        for urdf_name in urdf_elements:
+            obj = create_urdf_element(urdf_name)
+            assert obj is not None
+            obj.random()
+            output = subprocess.check_output(
+                ['pcg-urdf2sdf', '--xml', obj.to_xml_as_str(),
+                 '--print'])
 
-            output = script_runner.run(
-                'pcg-urdf2sdf', '--xml', obj.to_xml_as_str(),
-                '--print')
-            assert output.success
-            urdf = parse_sdf(output.stdout)
+            urdf = parse_sdf(output.decode('utf-8'))
             assert urdf is not None
 
             response_urdf = sdf2urdf(urdf)
-
             assert obj == response_urdf
+
+    def test_xml_input_visual_collision(self):
+        for urdf_tag in ['visual', 'collision']:
+            obj = create_urdf_element(urdf_tag)
+            assert obj is not None
+
+            obj.origin = create_urdf_element('origin')
+            obj.origin.random()
+            obj.geometry = create_urdf_element('geometry')
+
+            geometries = [
+                'box',
+                'cylinder',
+                'sphere',
+                'mesh'
+            ]
+
+            for geo_name in geometries:
+                obj.geometry.reset(mode=geo_name)
+                obj.geometry.random()
+
+                output = subprocess.check_output(
+                    ['pcg-urdf2sdf', '--xml', obj.to_xml_as_str(),
+                     '--print'])
+                urdf = parse_sdf(output.decode('utf-8'))
+                assert urdf is not None
+
+                response_urdf = sdf2urdf(urdf)
+
+                assert obj == response_urdf
+
+
+if __name__ == '__main__':
+    unittest.main()
