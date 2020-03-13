@@ -8,6 +8,7 @@ RUN apt-get update && \
     libgeos-dev \
     wget \
     pybind11-dev \
+    blender \
     pandoc -y
 
 RUN pip3 install flake8 autopep8
