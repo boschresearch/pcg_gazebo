@@ -128,7 +128,7 @@ PCG_ROOT_LOGGER = create_logger('pcg_gazebo')
 
 
 def set_logging_level(level):
-    levels = ['INFO', 'CRITICAL', 'WARNING', 'INFO', 'DEBUG', 'NOTSET']
+    levels = ['INFO', 'CRITICAL', 'WARNING', 'ERROR', 'DEBUG', 'NOTSET']
     assert level in levels, 'Invalid logging level, options={}'.format(levels)
 
     PCG_ROOT_LOGGER.setLevel(getattr(logging, level))
