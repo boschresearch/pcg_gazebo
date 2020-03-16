@@ -16,9 +16,8 @@ import numpy as np
 import trimesh
 from multiprocessing.pool import Pool
 from shapely.geometry import Polygon, MultiPolygon, \
-    LineString, MultiLineString, Point
+    LineString, MultiLineString
 from shapely.ops import unary_union, polygonize
-import random
 from ..log import PCG_ROOT_LOGGER
 from ..visualization import create_scene
 from ..simulation import SimulationModel, ModelGroup
@@ -165,17 +164,6 @@ def get_occupied_area(
         'height range, model={}, # levels before={}, # levels'
         ' after={}'.format(model_name, n_levels, z_levels.size))
 
-    def _get_random_pos(g):
-        min_x, min_y, max_x, max_y = g.bounds
-        pnt = Point(
-            random.uniform(min_x, max_x),
-            random.uniform(min_y, max_y))
-        while not geo.contains(pnt):
-            pnt = Point(
-                random.uniform(min_x, max_x),
-                random.uniform(min_y, max_y))
-        return pnt
-
     def _is_interior_polygon(current_mesh, current_geo):
         if not isinstance(current_geo, (Polygon, MultiPolygon)):
             return False
@@ -190,28 +178,28 @@ def get_occupied_area(
                     z = model_z_limits[1] - 0.01
                 ray_directions = list()
                 ray_origins = list()
-                for theta in np.linspace(0, np.pi, 10):
+
+                point = current_geo.representative_point()
+
+                n_theta = 15
+                for theta in np.linspace(0, np.pi, n_theta):
                     ray_directions.append(
                         [np.cos(theta), np.sin(theta), 0])
-                    if current_geo.area < 1e-3:
-                        point = current_geo.centroid
-                    else:
-                        point = _get_random_pos(current_geo)
                     ray_origins.append(
-                        [
-                            point.xy[0][0],
-                            point.xy[1][0],
-                            z
-                        ]
+                        [point.xy[0][0], point.xy[1][0], z]
                     )
 
-                for d, o in zip(ray_directions, ray_origins):
-                    locations = current_mesh.ray.intersects_location(
-                        ray_origins=[o],
-                        ray_directions=[d])
-                    if len(locations[0]) % 2 != 0:
+                locations = current_mesh.ray.intersects_location(
+                    ray_origins=ray_origins,
+                    ray_directions=ray_directions)
+
+                unique, counts = np.unique(
+                    locations[1], return_counts=True)
+                for c in counts:
+                    if c % 2 != 0:
                         inside_mesh = True
                         break
+
                 if inside_mesh:
                     break
 
@@ -221,6 +209,7 @@ def get_occupied_area(
     occupied_areas = list()
     meshes = model.get_meshes(mesh_type)
     filtered_geoms = list()
+
     for mesh in meshes:
         if model_z_limits[0] in z_levels:
             z_levels = np.delete(
@@ -295,7 +284,7 @@ def generate_occupancy_grid(
         x_limits=None,
         y_limits=None,
         z_limits=None,
-        n_processes=10,
+        n_processes=None,
         mesh_type='collision',
         ground_plane_models=None):
     if len(models) == 0:
@@ -453,10 +442,11 @@ def generate_occupancy_grid(
             # are equal to the computed free space
             diff = model_occupied_area.difference(
                 occupancy_output['static']['ground_plane_models'])
+
             if model_occupied_area.almost_equals(
                     occupancy_output['static']['ground_plane_models'],
                     decimal=3) or diff.area < 1e-3:
-                PCG_ROOT_LOGGER.info(
+                print(
                     'The areas for free space are equivalent to the '
                     'occupied areas by the ground plane occupied '
                     'areas. Setting limited ground plane to None')
