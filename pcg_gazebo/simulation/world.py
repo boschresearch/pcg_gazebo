@@ -788,8 +788,6 @@ class World(object):
             x_limits=None,
             y_limits=None,
             z_limits=None,
-            step_x=0.01,
-            step_y=0.01,
             n_processes=None,
             fig_size=(5, 5),
             fig_size_unit='cm',
@@ -819,8 +817,6 @@ class World(object):
             x_limits=x_limits,
             y_limits=y_limits,
             z_limits=z_limits,
-            step_x=step_x,
-            step_y=step_y,
             n_processes=n_processes,
             fig_size=fig_size,
             fig_size_unit=fig_size_unit,
@@ -1044,8 +1040,14 @@ class World(object):
             dofs=None,
             return_free_polygon=False,
             show_preview_2d=False,
-            show_preview_3d=False):
+            show_preview_3d=False,
+            verbose=True,
+            max_num_tests=None):
         assert n_spots > 0, 'Number of free spots must be greater than zero'
+        if max_num_tests is not None:
+            assert max_num_tests > 0, \
+                'Stopping criteria to stop trying to find a random' \
+                ' free spot must be greater than 0'
         if is_string(model):
             test_model = SimulationModel.from_gazebo_model(model)
         elif isinstance(model, SimulationModel):
@@ -1153,7 +1155,15 @@ class World(object):
 
         poses = list()
         collision_checker = None
+        n_tries = 0
         while len(poses) < n_spots:
+            if max_num_tests is not None:
+                if n_tries >= max_num_tests:
+                    PCG_ROOT_LOGGER.warning(
+                        'Max. number of free random spots exceeded={},'
+                        ' # spots found={}'.format(
+                            max_num_tests, len(poses)))
+                    break
             pose = Pose()
             # Generate random point
             xy = get_random_point_from_shape(free_space_polygon)
@@ -1209,9 +1219,11 @@ class World(object):
                 PCG_ROOT_LOGGER.info('Storing free space pose={}'.format(
                     pose.to_sdf()))
                 poses.append(pose)
+                n_tries = 0
             else:
                 PCG_ROOT_LOGGER.info('Collision detected for pose={}'.format(
                     pose.to_sdf()))
+                n_tries += 1
 
         if show_preview_2d:
             PCG_ROOT_LOGGER.info('Plotting free spots in 2D')
