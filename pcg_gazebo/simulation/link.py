@@ -19,13 +19,14 @@ import collections
 from .properties import Inertial, Collision, Visual, \
     Pose, Footprint, Plugin
 from .sensors import Sensor
+from .entity import Entity
 from ..log import PCG_ROOT_LOGGER
 from ..parsers.sdf import create_sdf_element
 from ..parsers.sdf_config import create_sdf_config_element
 from ..utils import is_string
 
 
-class Link(object):
+class Link(Entity):
     """Representation of a simulated `link` or a single-link `model`.
 
     > *Input arguments*
@@ -49,21 +50,19 @@ class Link(object):
                  gravity=True,
                  visuals=None,
                  collisions=None):
+        super(Link, self).__init__(
+            name=name, pose=pose)
         assert isinstance(name, str), 'Name must be a string'
         assert len(name) > 0, 'Name cannot be an empty string'
         self._ros_namespace = None
         self._life_timeout = life_timeout
         self._creation_time = creation_time
 
-        self._logger = PCG_ROOT_LOGGER
-
         self._delete_model_func = None
         self._is_init = False
         self._properties = dict()
 
         # Initialize link parameters
-        self._name = name
-        self._pose = Pose()
         self._inertial = None
         self._static = False
         self._self_collide = False
@@ -93,7 +92,7 @@ class Link(object):
                 elif isinstance(collision, Collision):
                     self.add_collision(collision)
                 else:
-                    self._logger.error(
+                    PCG_ROOT_LOGGER.error(
                         'Invalid collision element input={}'.format(collision))
 
         if visuals is not None:
@@ -103,7 +102,7 @@ class Link(object):
                 elif isinstance(visual, Visual):
                     self.add_visual(visual)
                 else:
-                    self._logger.error(
+                    PCG_ROOT_LOGGER.error(
                         'Invalid visual element input={}'.format(visual))
 
     def __str__(self):
@@ -287,38 +286,6 @@ class Link(object):
         return link
 
     @property
-    def name(self):
-        """`str`: Object name"""
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        assert is_string(value), \
-            'Name must be a string'
-        assert len(value) > 0, 'Name cannot be an empty string'
-        self._name = value
-
-    @property
-    def pose(self):
-        """`pcg_gazebo.simulation.properties.Pose`: Pose of the object"""
-        return self._pose
-
-    @pose.setter
-    def pose(self, vec):
-        if isinstance(vec, Pose):
-            self._pose = vec
-        else:
-            assert isinstance(vec, collections.Iterable), \
-                'Input vector must be iterable'
-            assert len(vec) == 6 or len(vec) == 7, \
-                'Input vector must have either 6 or 7 elements'
-            for item in vec:
-                assert isinstance(item, float) or isinstance(item, int), \
-                    'Each pose element must be either a float or an integer'
-
-            self._pose = Pose(pos=vec[0:3], rot=vec[3::])
-
-    @property
     def inertial(self):
         """`pcg_gazebo.simulation.properties.Inertial`:
         Description of the object's moments of inertia.
@@ -413,6 +380,16 @@ class Link(object):
         List of visual models
         """
         return self._visuals
+
+    @property
+    def has_mesh(self):
+        for visual in self._visuals:
+            if visual.geometry.is_mesh:
+                return True
+        for collision in self._collisions:
+            if collision.geometry.is_mesh:
+                return True
+        return False
 
     def enable_collision(self):
         """Enable the inclusion of the collision models
@@ -521,7 +498,7 @@ class Link(object):
         `False` if another visual with the same name already exists.
         """
         if self.has_visual(name):
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Visual with name {} already exists in link {}'.format(
                     name, self.name))
             return False
@@ -568,7 +545,7 @@ class Link(object):
         `False` if another collision with the same name already exists.
         """
         if self.has_collision(name):
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Collision with name {} already exists in link {}'.format(
                     name, self.name))
             return False
@@ -670,7 +647,6 @@ class Link(object):
         # Create a link for the plane, initially empty
         link = create_sdf_element('link')
         link.name = self._name
-        link.static = self.static
         link.kinematic = self.kinematic
         link.gravity = self.gravity
         link.self_collide = self.self_collide
@@ -756,7 +732,6 @@ class Link(object):
             link.pose = Pose.from_sdf(sdf.pose)
         link.self_collide = \
             False if sdf.self_collide is None else sdf.self_collide.value
-        link.static = False if sdf.static is None else sdf.static.value
         link.kinematic = \
             False if sdf.kinematic is None else sdf.kinematic.value
         link.gravity = \
@@ -849,13 +824,13 @@ class Link(object):
         sdf_config.sdfs[-1].value = output_sdf_file
 
         if not os.path.isdir(output_dir):
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Output directory does not exist, dir={}'.format(output_dir))
             return False
 
         output_model_dir = os.path.join(output_dir, name)
         if os.path.isdir(output_model_dir):
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'A model with the same name already exists in output'
                 ' directory, dir={}'.format(output_dir))
             return False
@@ -897,7 +872,7 @@ class Link(object):
         `bool`: `True`, if sensor could be added to link.
         """
         if name in self._sensors:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Sensor with name {} already exists for link {}'.format(
                     name, self.name))
             return False
@@ -1073,15 +1048,8 @@ class Link(object):
                     bounds[1, i] = max(bounds[1, i], cur_bounds[1, i])
         return bounds
 
-    def create_scene(self, mesh_type='collision', add_pseudo_color=True):
+    def create_scene(self, mesh_type='collision', add_pseudo_color=True,
+                     add_axis=True):
         from ..visualization import create_scene
-        return create_scene([self], mesh_type, add_pseudo_color)
-
-    def show(self, mesh_type='collision', add_pseudo_color=True):
-        from trimesh.viewer.notebook import in_notebook
-        scene = self.create_scene(mesh_type, add_pseudo_color)
-        if not in_notebook():
-            scene.show()
-        else:
-            from trimesh.viewer import SceneViewer
-            return SceneViewer(scene)
+        return create_scene(
+            [self], mesh_type, add_pseudo_color, add_axis=add_axis)

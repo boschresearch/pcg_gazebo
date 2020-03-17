@@ -17,34 +17,19 @@ from copy import deepcopy
 from .properties import Pose
 from .model import SimulationModel
 from .light import Light
+from .entity import Entity
 from ..log import PCG_ROOT_LOGGER
-from ..utils import is_string
 
 
-class ModelGroup(object):
+class ModelGroup(Entity):
     def __init__(self, name='group', pose=[0, 0, 0, 0, 0, 0],
                  is_ground_plane=False):
-        self._name = ''
-        self._pose = Pose()
+        super(ModelGroup, self).__init__(
+            name=name, pose=pose)
         self._models = dict()
         self._lights = dict()
         # Flag to indicate if the model is a ground plane
         self._is_ground_plane = is_ground_plane
-
-        # Set model group input parameters
-        self.name = name
-        self.pose = pose
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        assert is_string(value), \
-            'Model name should be a string'
-        assert len(value) > 0, 'Model name cannot be an empty string'
-        self._name = value
 
     @property
     def prefix(self):
@@ -61,27 +46,6 @@ class ModelGroup(object):
     def is_ground_plane(self, flag):
         assert isinstance(flag, bool), 'Input must be a boolean'
         self._is_ground_plane = flag
-
-    @property
-    def pose(self):
-        return self._pose
-
-    @pose.setter
-    def pose(self, vec):
-        if isinstance(vec, Pose):
-            self._pose = vec
-        else:
-            assert isinstance(vec, collections.Iterable), \
-                'Input pose vector must be iterable'
-            assert len(vec) == 6 or len(vec) == 7, \
-                'Pose must be given as position and Euler angles (x, y, z, ' \
-                'roll, pitch, yaw) or position and quaternions (x, y, z, ' \
-                'qx, qy, qz, qw)'
-            for item in vec:
-                assert isinstance(item, float) or isinstance(item, int), \
-                    'All elements in pose vector must be a float or an integer'
-
-            self._pose = Pose(pos=vec[0:3], rot=vec[3::])
 
     @property
     def models(self):
@@ -108,6 +72,13 @@ class ModelGroup(object):
     def n_lights(self):
         """`int`: Number of lights"""
         return len(self._lights)
+
+    @property
+    def has_mesh(self):
+        for tag in self._models:
+            if self._models[tag].has_mesh:
+                return True
+        return False
 
     def copy(self):
         mg = ModelGroup(name=deepcopy(self._name))
@@ -332,15 +303,6 @@ class ModelGroup(object):
         return create_scene(
             list(self.get_models(with_group_prefix=True).values()),
             mesh_type, add_pseudo_color)
-
-    def show(self, mesh_type='collision', add_pseudo_color=True):
-        from trimesh.viewer.notebook import in_notebook
-        scene = self.create_scene(mesh_type, add_pseudo_color)
-        if not in_notebook():
-            scene.show()
-        else:
-            from trimesh.viewer import SceneViewer
-            return SceneViewer(scene)
 
     def get_model(self, name, with_group_prefix=True, use_group_pose=True):
         prefix = self.prefix if with_group_prefix else ''
