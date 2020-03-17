@@ -19,6 +19,7 @@ from . import properties
 from . import physics
 from .box import Box
 from .cylinder import Cylinder
+from .entity import Entity
 from .joint import Joint
 from .light import Light
 from .model_group import ModelGroup
@@ -343,6 +344,7 @@ __all__ = [
     'physics',
     'Box',
     'Cylinder',
+    'Entity',
     'Joint',
     'Light',
     'ModelGroup',
