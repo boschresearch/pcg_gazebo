@@ -657,8 +657,8 @@ class World(object):
                 scene,
                 mesh_filename,
                 file_type=format,
-                include_color=True,
-                include_texture=True)
+                include_color=False,
+                include_texture=False)
         elif format == 'dae':
             trimesh.exchange.export.export_mesh(
                 scene.dump(),
