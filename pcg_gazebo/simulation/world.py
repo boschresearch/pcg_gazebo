@@ -16,9 +16,10 @@ from __future__ import print_function
 import os
 import numpy as np
 import trimesh
+import datetime
 from shapely.geometry import Polygon, MultiPolygon, MultiPoint
 from shapely.ops import unary_union
-from . import Light, SimulationModel, ModelGroup
+from . import Light, SimulationModel, ModelGroup, Entity
 from .physics import Physics, ODE, Simbody, Bullet
 from .properties import Plugin, Pose, Footprint
 from ..parsers import parse_xacro, parse_sdf
@@ -29,7 +30,7 @@ from ..utils import is_string, is_array, get_random_point_from_shape, \
 from ..generators.occupancy import generate_occupancy_grid
 
 
-class World(object):
+class World(Entity):
     """Abstraction of Gazebo's world description. This class
     contains the settings configuring the world's
 
@@ -53,8 +54,7 @@ class World(object):
     _PHYSICS_ENGINES = ['ode', 'bullet', 'simbody']
 
     def __init__(self, name='default', gravity=[0, 0, -9.8], engine='ode'):
-        assert isinstance(name, str)
-        assert len(name) > 0
+        super(World, self).__init__(name=name)
         assert isinstance(gravity, list)
         assert len(gravity) == 3
         for elem in gravity:
@@ -83,15 +83,12 @@ class World(object):
         self._physics = value
 
     @property
-    def name(self):
-        """`str`: Name of the world"""
-        return self._name
+    def pose(self):
+        return None
 
-    @name.setter
-    def name(self, value):
-        assert isinstance(value, str)
-        assert len(value) > 0
-        self._name = value
+    @pose.setter
+    def pose(self, value):
+        pass
 
     @property
     def engine(self):
@@ -427,7 +424,7 @@ class World(object):
             return self._model_groups[group].light_exists(tag)
 
     def to_sdf(self, type='world', with_default_ground_plane=True,
-               with_default_sun=True):
+               with_default_sun=True, sdf_version='1.6'):
         """Convert the world description into as `pcg_gazebo` SDF
         element.
 
@@ -487,6 +484,7 @@ class World(object):
 
         sdf = create_sdf_element('sdf')
         sdf.world = world
+        sdf.sdf_version = sdf_version
 
         return sdf
 
@@ -584,7 +582,7 @@ class World(object):
         return world
 
     def create_scene(self, mesh_type='collision', add_pseudo_color=True,
-                     ignore_models=None):
+                     ignore_models=None, add_axis=True):
         """Return a `trimesh.Scene` with all the world's models.
 
         > *Input arguments*
@@ -607,16 +605,8 @@ class World(object):
         return create_scene(
             [self.models[tag] for tag in self.models if not _is_ignored(tag)],
             mesh_type,
-            add_pseudo_color)
-
-    def show(self, mesh_type='collision', add_pseudo_color=True):
-        from trimesh.viewer.notebook import in_notebook
-        scene = self.create_scene(mesh_type, add_pseudo_color)
-        if not in_notebook():
-            scene.show()
-        else:
-            from trimesh.viewer import SceneViewer
-            return SceneViewer(scene)
+            add_pseudo_color,
+            add_axis=add_axis)
 
     def export_as_mesh(
             self,
@@ -1252,3 +1242,67 @@ class World(object):
             return poses, free_space_polygon
         else:
             return poses
+
+    def export_to_file(
+            self, output_dir=None, filename=None,
+            with_default_ground_plane=True, with_default_sun=True,
+            models_output_dir=None, overwrite=True, sdf_version='1.6'):
+        """Export world to an SDF file that can be used by Gazebo.
+
+        > *Input arguments*
+
+        * `output_dir` (*type:* `str`, *default:* `None`): Path
+        to output directory to store the world file.
+        * `filename` (*type:* `str`, *default:* `None`): Name of the
+        SDF world file
+        * `with_default_ground_plane` (*type:* `bool`, *default:*
+        `True`): Add the default ground plane model to the world before
+        exporting it
+        * `with_default_sun` (*type:* `bool`, *default:* `True`): Add
+        the default sun model to the world before exporting it
+
+        > *Returns*
+
+        Full name of the exported SDF world file as a `str`
+        """
+        assert output_dir is not None, 'Output directory cannot be None'
+
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+            PCG_ROOT_LOGGER.info(
+                'Output directory {} created'.format(output_dir))
+
+        if filename is None:
+            timestamp = datetime.datetime.now().isoformat()
+            timestamp = timestamp.replace(':', '_')
+            world_filename = '{}_gazebo.world'.format(timestamp)
+        elif isinstance(filename, str):
+            world_filename = filename
+            if '.world' not in world_filename:
+                world_filename += '.world'
+        else:
+            PCG_ROOT_LOGGER.error('Invalid world filename={}'.format(filename))
+            return None
+
+        for tag in self.models:
+            if self.models[tag].has_mesh:
+                assert models_output_dir is not None, \
+                    'Models export directory cannot be None'
+                assert os.path.isdir(models_output_dir), \
+                    'Models export directory is invalid, dir={}'.format(
+                        models_output_dir)
+                self.models[tag].to_gazebo_model(
+                    sdf_version=sdf_version,
+                    output_dir=models_output_dir,
+                    overwrite=overwrite,
+                    copy_resources=True)
+
+        full_world_filename = os.path.join(output_dir, world_filename)
+        sdf = self.to_sdf(
+            type='sdf',
+            sdf_version=sdf_version,
+            with_default_ground_plane=with_default_ground_plane,
+            with_default_sun=with_default_sun)
+        sdf.export_xml(os.path.join(output_dir, world_filename))
+        PCG_ROOT_LOGGER.info('World stored in {}'.format(full_world_filename))
+        return full_world_filename
