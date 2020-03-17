@@ -24,7 +24,6 @@ from .visual import Visual
 from .plugin import Plugin
 from .sensor import Sensor
 from .self_collide import SelfCollide
-from .static import Static
 
 
 class Link(XMLBase):
@@ -45,8 +44,7 @@ class Link(XMLBase):
         visual=dict(creator=Visual, n_elems='+', optional=True),
         sensor=dict(creator=Sensor, n_elems='+', optional=True),
         plugin=dict(creator=Plugin, n_elems='+', optional=True),
-        self_collide=dict(creator=SelfCollide, default=[False], optional=True),
-        static=dict(creator=Static, default=[False], optional=True)
+        self_collide=dict(creator=SelfCollide, default=[False], optional=True)
     )
 
     def __init__(self):
@@ -97,14 +95,6 @@ class Link(XMLBase):
     @kinematic.setter
     def kinematic(self, value):
         self._add_child_element('kinematic', value)
-
-    @property
-    def static(self):
-        return self._get_child_element('static')
-
-    @static.setter
-    def static(self, value):
-        self._add_child_element('static', value)
 
     @property
     def mass(self):

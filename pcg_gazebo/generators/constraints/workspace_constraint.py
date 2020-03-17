@@ -13,10 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from .constraint import Constraint
-from ...utils import is_string
+from ...utils import is_string, get_random_point_from_shape
 import collections
-import random
-from shapely.geometry import Polygon, LineString, Point, MultiPoint
+from shapely.geometry import Polygon, LineString, Point, \
+    MultiPoint, MultiPolygon
 
 
 class WorkspaceConstraint(Constraint):
@@ -96,7 +96,8 @@ class WorkspaceConstraint(Constraint):
         'volume',
         'multi_line',
         'multi_point',
-        'circle']
+        'circle',
+        'polygon']
 
     def __init__(self, geometry=None, frame='world', holes=None):
         Constraint.__init__(self)
@@ -194,13 +195,19 @@ class WorkspaceConstraint(Constraint):
          are: `line`, `area`, `volume`, `multi_line`, `multi_point`, `circle`
         * `description` (*type:* `dict`): Arguments to describe the geometry
         """
-        assert isinstance(description, dict), \
-            'Description information must be a dictionary'
-        if 'points' in description:
-            return self._generate_geometry_from_points(type, **description)
-        elif type == 'circle' and \
-                'center' in description and 'radius' in description:
-            return self._generate_circle(**description)
+        if isinstance(description, dict):
+            if 'points' in description:
+                return self._generate_geometry_from_points(type, **description)
+            elif type == 'circle' and \
+                    'center' in description and 'radius' in description:
+                return self._generate_circle(**description)
+            else:
+                raise NotImplementedError()
+        elif type == 'polygon' and \
+                isinstance(description, (Polygon, MultiPolygon)):
+            assert not description.is_empty, 'Polygon is empty'
+            assert description.area > 0, 'Polygon area is zero'
+            return description
         else:
             raise NotImplementedError()
 
@@ -248,19 +255,21 @@ class WorkspaceConstraint(Constraint):
 
     def get_random_position(self):
         """Return a random position that belongs to the workspace"""
-        if self._geometry_type in ['area', 'circle']:
-            geo = self.get_geometry()
-            min_x, min_y, max_x, max_y = geo.bounds
-            pnt = Point(
-                random.uniform(min_x, max_x),
-                random.uniform(min_y, max_y))
-            while not geo.contains(pnt):
-                pnt = Point(
-                    random.uniform(min_x, max_x),
-                    random.uniform(min_y, max_y))
-            return pnt
-        else:
-            return None
+        return Point(
+            get_random_point_from_shape(self.get_geometry()))
+        # if self._geometry_type in ['area', 'circle']:
+        #     geo = self.get_geometry()
+        #     min_x, min_y, max_x, max_y = geo.bounds
+        #     pnt = Point(
+        #         random.uniform(min_x, max_x),
+        #         random.uniform(min_y, max_y))
+        #     while not geo.contains(pnt):
+        #         pnt = Point(
+        #             random.uniform(min_x, max_x),
+        #             random.uniform(min_y, max_y))
+        #     return pnt
+        # else:
+        #     return None
 
     def contains_point(self, point):
         """Return True if `point` is part of the workspace.

@@ -21,6 +21,7 @@ from .properties import Pose, Inertial, Footprint, Plugin, \
     Visual, Collision
 from .link import Link
 from .joint import Joint
+from .entity import Entity
 from .sensors import IMU, Ray, Contact, Camera
 from ..parsers.sdf import create_sdf_element, is_sdf_element
 from ..parsers import sdf2urdf, urdf2sdf
@@ -29,19 +30,11 @@ from ..utils import is_string
 
 
 # FIXME: Add parsing of light sources and actors
-class SimulationModel(object):
-    def __init__(self, name='model', parent='world', creation_time=None,
-                 life_timeout=None, is_ground_plane=False):
-        self._life_timeout = life_timeout
-        self._creation_time = creation_time
-
-        self._logger = PCG_ROOT_LOGGER
-
-        self._properties = dict()
-        # Name under which the model will be spawned
-        self._name = name
-        # Pose of the model wrt to world
-        self._pose = Pose()
+class SimulationModel(Entity):
+    def __init__(self, name='model', parent='world', is_ground_plane=False,
+                 pose=[0, 0, 0, 0, 0, 0]):
+        super(SimulationModel, self).__init__(
+            name=name, pose=pose)
         # If true, model will be static in the simulation
         self._static = False
         self._allow_auto_disable = False
@@ -65,22 +58,10 @@ class SimulationModel(object):
         # List of plugins
         self._plugins = dict()
 
-        self._logger.info('New model created, name={}'.format(self._name))
+        PCG_ROOT_LOGGER.info('New model created, name={}'.format(self._name))
 
     def __str__(self):
         return self.to_sdf().to_xml_as_str(pretty_print=True)
-
-    @property
-    def name(self):
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        assert is_string(value), \
-            'Model name should be a string'
-        assert len(value) > 0, \
-            'Model name cannot be an empty string'
-        self._name = value
 
     @property
     def parent(self):
@@ -148,27 +129,6 @@ class SimulationModel(object):
         self._allow_auto_disable = bool(flag)
 
     @property
-    def pose(self):
-        return self._pose
-
-    @pose.setter
-    def pose(self, vec):
-        if isinstance(vec, Pose):
-            self._pose = vec
-        else:
-            assert isinstance(vec, collections.Iterable), \
-                'Input pose vector must be iterable'
-            assert len(vec) == 6 or len(vec) == 7, \
-                'Pose must be given as position and Euler angles (x, y, z, ' \
-                'roll, pitch, yaw) or position and quaternions (x, y, z, ' \
-                'qx, qy, qz, qw)'
-            for item in vec:
-                assert isinstance(item, float) or isinstance(item, int), \
-                    'All elements in pose vector must be a float or an integer'
-
-            self._pose = Pose(pos=vec[0:3], rot=vec[3::])
-
-    @property
     def links(self):
         return self._links
 
@@ -195,6 +155,13 @@ class SimulationModel(object):
     @property
     def plugins(self):
         return self._plugins
+
+    @property
+    def has_mesh(self):
+        for tag in self._links:
+            if self._links[tag].has_mesh:
+                return True
+        return False
 
     def set_as_ground_plane(self):
         self._is_ground_plane = True
@@ -307,24 +274,25 @@ class SimulationModel(object):
         assert isinstance(collision_parameters,
                           dict), 'Collision geometry parameters must be a dict'
 
-        self._logger.info('[{}] Creating cuboid link <{}>'.format(
+        PCG_ROOT_LOGGER.info('[{}] Creating cuboid link <{}>'.format(
             self.name, link_name))
 
         if joint_name is not None:
             if not is_string(joint_name):
                 msg = '[{}] Joint name must be a string, provided={}'.format(
                     self.name, joint_name)
-                self._logger.info(msg)
+                PCG_ROOT_LOGGER.info(msg)
                 raise ValueError(msg)
 
         if link_name in self._links:
-            self._logger.error('[{}] Link with name {} already exist'.format(
-                self.name, link_name))
+            PCG_ROOT_LOGGER.error(
+                '[{}] Link with name {} already exist'.format(
+                    self.name, link_name))
             return False
 
         if joint_name is not None:
             if parent is not None and joint_name in self._joints:
-                self._logger.error(
+                PCG_ROOT_LOGGER.error(
                     '[{}] Joint with name {} already exists'.format(
                         self.name, joint_name))
                 return False
@@ -332,11 +300,12 @@ class SimulationModel(object):
         link = Link(name=link_name)
         if mass > 0:
             link.inertial = Inertial.create_cuboid_inertia(mass, *size)
-            self._logger.info('[{}] Setting mass={}, size={}, link={}'.format(
-                self.name, mass, size, link_name))
+            PCG_ROOT_LOGGER.info(
+                '[{}] Setting mass={}, size={}, link={}'.format(
+                    self.name, mass, size, link_name))
 
         link.pose = pose
-        self._logger.info(
+        PCG_ROOT_LOGGER.info(
             '[{}] Link {} pose={}'.format(
                 self.name, link_name, pose))
         if add_visual:
@@ -346,7 +315,7 @@ class SimulationModel(object):
             if mesh_filename is None:
                 visual_input['geometry_type'] = 'box'
                 visual_input['geometry_args'] = dict(size=size)
-                self._logger.info(
+                PCG_ROOT_LOGGER.info(
                     '[{}] Adding box visual geometry, size={}'.format(
                         self.name, size))
             else:
@@ -355,7 +324,7 @@ class SimulationModel(object):
                     uri=mesh_filename,
                     scale=mesh_scale
                 )
-                self._logger.info(
+                PCG_ROOT_LOGGER.info(
                     '[{}] Adding mesh visual geometry,'
                     ' uri={}, scale={}'.format(
                         self.name, mesh_filename, mesh_scale))
@@ -368,7 +337,7 @@ class SimulationModel(object):
             if color is not None:
                 if color == 'random':
                     link.get_visual_by_name('visual').set_color()
-                    self._logger.info(
+                    PCG_ROOT_LOGGER.info(
                         '[{}] Setting random color={},'
                         ' link_name={}'.format(
                             self.name, link.get_visual_by_name(
@@ -376,7 +345,7 @@ class SimulationModel(object):
                             link_name))
                 elif color == 'xkcd':
                     link.get_visual_by_name('visual').set_xkcd_color()
-                    self._logger.info(
+                    PCG_ROOT_LOGGER.info(
                         '[{}] Setting random xkcd color={},'
                         ' link_name={}'.format(
                             self.name, link.get_visual_by_name(
@@ -384,7 +353,7 @@ class SimulationModel(object):
                             link_name))
                 elif is_string(color):
                     link.get_visual_by_name('visual').set_xkcd_color(color)
-                    self._logger.info(
+                    PCG_ROOT_LOGGER.info(
                         '[{}] Setting xkcd color={}, link_name={}'.format(
                             self.name,
                             link.get_visual_by_name(
@@ -393,7 +362,7 @@ class SimulationModel(object):
                 elif isinstance(color, collections.Iterable) and \
                         len(list(color)) == 4:
                     link.get_visual_by_name('visual').set_color(*color)
-                    self._logger.info(
+                    PCG_ROOT_LOGGER.info(
                         '[{}] Setting RGBA color={}, link_name={}'.format(
                             self.name,
                             link.get_visual_by_name(
@@ -413,7 +382,7 @@ class SimulationModel(object):
                 collision_input.update(collision_parameters)
 
             link.add_collision(Collision(**collision_input))
-            self._logger.info(
+            PCG_ROOT_LOGGER.info(
                 '[{}] Adding box collision geometry, size={}'.format(
                     self.name, size))
 
@@ -423,7 +392,7 @@ class SimulationModel(object):
                 parent=parent,
                 child=link_name,
                 joint_type=joint_type)
-            self._logger.info(
+            PCG_ROOT_LOGGER.info(
                 '[{}] Added joint {}'.format(
                     self.name, joint_name))
 
@@ -457,24 +426,24 @@ class SimulationModel(object):
         assert isinstance(collision_parameters,
                           dict), 'Collision geometry parameters must be a dict'
 
-        self._logger.info('[{}] Creating spherical link {}'.format(
+        PCG_ROOT_LOGGER.info('[{}] Creating spherical link {}'.format(
             self.name, link_name))
 
         if joint_name is not None:
             if not is_string(joint_name):
                 msg = 'Joint name must be a string, provided={}'.format(
                     joint_name)
-                self._logger.info(msg)
+                PCG_ROOT_LOGGER.info(msg)
                 raise ValueError(msg)
 
         if link_name in self._links:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Link with name {} already exist in model {}'.format(
                     link_name, self.name))
             return False
 
         if parent is not None and joint_name in self._joints:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Joint with name {} already exists in model {}'.format(
                     joint_name, self.name))
             return False
@@ -491,7 +460,7 @@ class SimulationModel(object):
             if mesh_filename is None:
                 visual_input['geometry_type'] = 'sphere'
                 visual_input['geometry_args'] = dict(radius=radius)
-                self._logger.info(
+                PCG_ROOT_LOGGER.info(
                     '[{}] Adding sphere visual geometry, radius={}'.format(
                         self.name, radius))
             else:
@@ -500,7 +469,7 @@ class SimulationModel(object):
                     uri=mesh_filename,
                     scale=mesh_scale
                 )
-                self._logger.info(
+                PCG_ROOT_LOGGER.info(
                     '[{}] Adding mesh visual geometry,'
                     ' uri={}, scale={}'.format(
                         self.name, mesh_filename, mesh_scale))
@@ -534,7 +503,7 @@ class SimulationModel(object):
                 collision_input.update(collision_parameters)
 
             link.add_collision(Collision(**collision_input))
-            self._logger.info(
+            PCG_ROOT_LOGGER.info(
                 '[{}] Adding sphere collision geometry, size={}'.format(
                     self.name, radius))
 
@@ -576,24 +545,24 @@ class SimulationModel(object):
         assert isinstance(collision_parameters,
                           dict), 'Collision geometry parameters must be a dict'
 
-        self._logger.info('Adding cylindrical link {} to model {}'.format(
+        PCG_ROOT_LOGGER.info('Adding cylindrical link {} to model {}'.format(
             link_name, self.name))
 
         if joint_name is not None:
             if not is_string(joint_name):
                 msg = 'Joint name must be a string, provided={}'.format(
                     joint_name)
-                self._logger.info(msg)
+                PCG_ROOT_LOGGER.info(msg)
                 raise ValueError(msg)
 
         if link_name in self._links:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Link with name {} already exist in model {}'.format(
                     link_name, self.name))
             return False
 
         if parent is not None and joint_name in self._joints:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Joint with name {} already exists in model {}'.format(
                     joint_name, self.name))
             return False
@@ -613,7 +582,7 @@ class SimulationModel(object):
                 visual_input['geometry_args'] = dict(
                     radius=radius,
                     length=length)
-                self._logger.info(
+                PCG_ROOT_LOGGER.info(
                     '[{}] Adding cylinder visual geometry,'
                     ' radius={}, length={}'.format(
                         self.name, radius, length))
@@ -623,7 +592,7 @@ class SimulationModel(object):
                     uri=mesh_filename,
                     scale=mesh_scale
                 )
-                self._logger.info(
+                PCG_ROOT_LOGGER.info(
                     '[{}] Adding mesh visual geometry,'
                     ' uri={}, scale={}'.format(
                         self.name, mesh_filename, mesh_scale))
@@ -659,7 +628,7 @@ class SimulationModel(object):
                 collision_input.update(collision_parameters)
 
             link.add_collision(Collision(**collision_input))
-            self._logger.info(
+            PCG_ROOT_LOGGER.info(
                 '[{}] Adding cylinder collision geometry,'
                 ' radius={}, length={}'.format(
                     self.name, radius, length))
@@ -697,17 +666,19 @@ class SimulationModel(object):
             visual_parameters=dict(),
             collision_parameters=dict()):
         if name in self.links:
-            self._logger.error('Link with name {} already exists'.format(name))
+            PCG_ROOT_LOGGER.error('Link with name {} already exists'.format(
+                name))
             return False
 
         if link is None:
-            self._logger.info(
+            PCG_ROOT_LOGGER.info(
                 'Creating a new link, model_name={}, link_name={}'.format(
                     self.name, name))
             link = Link(name=name)
 
             if visual_mesh is not None:
-                self._logger.info('Creating a link with the meshes provided')
+                PCG_ROOT_LOGGER.info(
+                    'Creating a link with the meshes provided')
                 link = Link.create_link_from_mesh(
                     name=name,
                     visual_mesh=visual_mesh,
@@ -728,7 +699,7 @@ class SimulationModel(object):
             assert isinstance(link, Link), \
                 'Input link is not a valid simulation' \
                 ' object, provided={}'.format(link)
-            self._logger.info('Link structure already provided')
+            PCG_ROOT_LOGGER.info('Link structure already provided')
             link.name = name
         self._links[name] = link
         PCG_ROOT_LOGGER.info('[{}] Add link <{}>'.format(self.name, name))
@@ -751,7 +722,7 @@ class SimulationModel(object):
 
     def add_model(self, name, model=None):
         if name in self.models:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Nested model with name {} already exists'.format(name))
             return False
 
@@ -786,20 +757,14 @@ class SimulationModel(object):
             parent='',
             child='',
             joint_type='',
-            pose=[
-                0,
-                0,
-                0,
-                0,
-                0,
-                0],
+            pose=[0, 0, 0, 0, 0, 0],
             axis_limits=dict(),
             axis_xyz=None,
             axis_dynamics=dict(),
             joint=None,
             use_parent_model_frame=False):
         if name in self._joints:
-            self._logger.error(
+            PCG_ROOT_LOGGER.error(
                 'Joint with name {} already exists'.format(name))
             return False
 
@@ -865,8 +830,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'spherical':
                 assert 'radius' in kwargs, 'Sphere radius was not provided'
@@ -881,8 +847,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'cylindrical':
                 assert 'radius' in kwargs, 'Cylinder radius was not provided'
@@ -893,8 +860,9 @@ class SimulationModel(object):
                         pose=pose, add_collision=add_collision,
                         add_visual=add_visual, mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale, parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             else:
                 raise AttributeError('Invalid link shape')
@@ -976,8 +944,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'spherical':
                 assert 'radius' in kwargs, 'Sphere radius was not provided'
@@ -992,8 +961,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'cylindrical':
                 assert 'radius' in kwargs, 'Cylinder radius was not provided'
@@ -1004,8 +974,9 @@ class SimulationModel(object):
                         pose=pose, add_collision=add_collision,
                         add_visual=add_visual, mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale, parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             else:
                 raise AttributeError('Invalid link shape')
@@ -1085,8 +1056,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'spherical':
                 assert 'radius' in kwargs, 'Sphere radius was not provided'
@@ -1101,8 +1073,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'cylindrical':
                 assert 'radius' in kwargs, 'Cylinder radius was not provided'
@@ -1113,8 +1086,9 @@ class SimulationModel(object):
                         pose=pose, add_collision=add_collision,
                         add_visual=add_visual, mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale, parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             else:
                 raise AttributeError('Invalid link shape')
@@ -1205,8 +1179,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'spherical':
                 assert 'radius' in kwargs, 'Sphere radius was not provided'
@@ -1221,8 +1196,9 @@ class SimulationModel(object):
                         mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale,
                         parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             elif link_shape == 'cylindrical':
                 assert 'radius' in kwargs, 'Cylinder radius was not provided'
@@ -1233,8 +1209,9 @@ class SimulationModel(object):
                         pose=pose, add_collision=add_collision,
                         add_visual=add_visual, mesh_filename=mesh_filename,
                         mesh_scale=mesh_scale, parent=parent):
-                    self._logger.error('Failed to create new contact sensor'
-                                       ' link, link_name={}'.format(link_name))
+                    PCG_ROOT_LOGGER.error(
+                        'Failed to create new contact sensor'
+                        ' link, link_name={}'.format(link_name))
                     return False
             else:
                 raise AttributeError('Invalid link shape')
@@ -1433,7 +1410,7 @@ class SimulationModel(object):
         return model
 
     def to_urdf(self):
-        self._logger.info('Exporting model <{}> as URDF'.format(self.name))
+        PCG_ROOT_LOGGER.info('Exporting model <{}> as URDF'.format(self.name))
         model_sdf = self.to_sdf()
         return sdf2urdf(model_sdf)
 
@@ -1502,13 +1479,13 @@ class SimulationModel(object):
             msg = 'Mesh type to compute the footprints' \
                 ' must be either collision or visual' \
                 ' geometries, provided={}'.format(mesh_type)
-            self._logger.error(msg)
+            PCG_ROOT_LOGGER.error(msg)
             raise ValueError(msg)
 
         if pose_offset is not None:
             if not isinstance(pose_offset, Pose):
                 msg = 'Invalid pose property object'
-                self._logger.error(msg)
+                PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
         else:
             pose_offset = Pose()
@@ -1517,7 +1494,7 @@ class SimulationModel(object):
             if not isinstance(z_limits, collections.Iterable):
                 msg = 'Z limits input has to be a list, provided={}'.format(
                     z_limits)
-                self._logger.error(msg)
+                PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
 
         combined_pose = pose_offset + self._pose
@@ -1547,7 +1524,7 @@ class SimulationModel(object):
             footprints[self.name] = \
                 combined_model_footprint.get_footprint_polygon()
 
-        self._logger.info(
+        PCG_ROOT_LOGGER.info(
             'Footprint computed for model <{}>'.format(
                 self.name))
         return footprints
@@ -1575,13 +1552,13 @@ class SimulationModel(object):
             msg = 'Mesh type to compute the footprints' \
                 ' must be either collision or visual' \
                 ' geometries, provided={}'.format(mesh_type)
-            self._logger.error(msg)
+            PCG_ROOT_LOGGER.error(msg)
             raise ValueError(msg)
 
         if pose_offset is not None:
             if not isinstance(pose_offset, Pose):
                 msg = 'Invalid pose property object'
-                self._logger.error(msg)
+                PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
         else:
             pose_offset = Pose()
@@ -1599,18 +1576,11 @@ class SimulationModel(object):
 
         return meshes
 
-    def create_scene(self, mesh_type='collision', add_pseudo_color=True):
+    def create_scene(self, mesh_type='collision', add_pseudo_color=True,
+                     add_axis=True):
         from ..visualization import create_scene
-        return create_scene([self], mesh_type, add_pseudo_color)
-
-    def show(self, mesh_type='collision', add_pseudo_color=True):
-        from trimesh.viewer.notebook import in_notebook
-        scene = self.create_scene(mesh_type, add_pseudo_color)
-        if not in_notebook():
-            scene.show()
-        else:
-            from trimesh.viewer import SceneViewer
-            return SceneViewer(scene)
+        return create_scene(
+            [self], mesh_type, add_pseudo_color, add_axis=add_axis)
 
     def plot_footprint(
             self,
@@ -1702,20 +1672,20 @@ class SimulationModel(object):
         assert timeout >= 0, 'Timeout should be equal or greater than zero'
         start_time = time()
         while not gazebo_proxy.is_init() and time() - start_time < timeout:
-            self._logger.info('Waiting for Gazebo to start...')
+            PCG_ROOT_LOGGER.info('Waiting for Gazebo to start...')
             sleep(0.5)
 
         if not is_gazebo_running(
                 ros_master_uri=gazebo_proxy.ros_config.ros_master_uri):
-            self._logger.error('Gazebo is not running!')
+            PCG_ROOT_LOGGER.error('Gazebo is not running!')
             return False
 
         if replace and robot_namespace in gazebo_proxy.get_model_names():
-            self._logger.info('Deleting existing model first')
+            PCG_ROOT_LOGGER.info('Deleting existing model first')
             if gazebo_proxy.delete_model(robot_namespace):
-                self._logger.info('Done')
+                PCG_ROOT_LOGGER.info('Done')
             else:
-                self._logger.error('Failed to delete existing model')
+                PCG_ROOT_LOGGER.error('Failed to delete existing model')
                 return False
 
         sdf = self.to_sdf(type='model')

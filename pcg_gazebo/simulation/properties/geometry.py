@@ -63,6 +63,10 @@ class Geometry(object):
     def __str__(self):
         return self.to_sdf().to_xml_as_str(pretty_print=True)
 
+    @property
+    def is_mesh(self):
+        return self._geo_type == 'mesh'
+
     def get_samples(self):
         pnts = None
         if self.get_type() == 'sphere':

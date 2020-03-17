@@ -24,6 +24,7 @@ with open(version_file, 'r') as f:
     __version__ = eval(f.read().strip().split('=')[-1])
 
 requirements_required = set([
+    'progress',
     'lxml',
     'numpy',
     'psutil',
@@ -153,6 +154,7 @@ setup(
     },
     scripts=[
         'scripts/pcg-generate-occupancy-map',
+        'scripts/pcg-generate-sample-world-with-walls',
         'scripts/pcg-generate-world',
         'scripts/pcg-list-gazebo-models',
         'scripts/pcg-preview-sdf',

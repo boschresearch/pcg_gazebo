@@ -12,8 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import os
-import datetime
 from time import sleep, time
 from .. import visualization
 from ..log import PCG_ROOT_LOGGER
@@ -730,8 +728,10 @@ class WorldGenerator:
                 isinstance(engine, Bullet):
             self._world.physics = engine
 
-    def export_world(self, output_dir=None, filename=None,
-                     with_default_ground_plane=True, with_default_sun=True):
+    def export_world(
+            self, output_dir=None, filename=None,
+            with_default_ground_plane=True, with_default_sun=True,
+            models_output_dir=None, overwrite=True, sdf_version='1.6'):
         """Export world to an SDF file that can be used by Gazebo.
 
         > *Input arguments*
@@ -751,40 +751,15 @@ class WorldGenerator:
         Full name of the exported SDF world file as a `str`
         """
         if output_dir is None:
-            world_dir = self._output_world_dir
-        elif isinstance(output_dir, str):
-            world_dir = output_dir
-        else:
-            PCG_ROOT_LOGGER.error(
-                'Directory path must be a string, provided={}, type={}'.format(
-                    output_dir, type(output_dir)))
-            return None
-
-        if not os.path.isdir(world_dir):
-            os.makedirs(world_dir)
-            PCG_ROOT_LOGGER.info(
-                'Output directory {} created'.format(world_dir))
-
-        if filename is None:
-            timestamp = datetime.datetime.now().isoformat()
-            timestamp = timestamp.replace(':', '_')
-            world_filename = '{}_gazebo.world'.format(timestamp)
-        elif isinstance(filename, str):
-            world_filename = filename
-            if '.world' not in world_filename:
-                world_filename += '.world'
-        else:
-            PCG_ROOT_LOGGER.error('Invalid world filename={}'.format(filename))
-            return None
-
-        full_world_filename = os.path.join(world_dir, world_filename)
-        sdf = self._world.to_sdf(
-            type='sdf',
+            output_dir = self._output_world_dir
+        return self.world.export_to_file(
+            output_dir=output_dir,
+            filename=filename,
             with_default_ground_plane=with_default_ground_plane,
-            with_default_sun=with_default_sun)
-        sdf.export_xml(os.path.join(world_dir, world_filename))
-        PCG_ROOT_LOGGER.info('World stored in {}'.format(full_world_filename))
-        return full_world_filename
+            with_default_sun=with_default_sun,
+            models_output_dir=models_output_dir,
+            overwrite=overwrite,
+            sdf_version=sdf_version)
 
     def plot_results(self, fig=None, fig_width=1000, fig_height=800,
                      footprint_geometry='collision', engine='bokeh'):

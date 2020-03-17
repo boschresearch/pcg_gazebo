@@ -417,16 +417,18 @@ def plot_footprints(
 
 
 def create_scene(
-        models,
+        entities,
         mesh_type='collision',
         add_pseudo_color=False,
-        alpha=0.5):
+        alpha=0.5,
+        add_axis=True):
     scene = trimesh.scene.Scene()
-    scene.add_geometry(trimesh.creation.axis())
+    if add_axis:
+        scene.add_geometry(trimesh.creation.axis())
 
-    if isinstance(models, list):
+    if isinstance(entities, list):
         meshes = list()
-        for item in models:
+        for item in entities:
             try:
                 new_meshes = item.get_meshes(mesh_type=mesh_type)
             except RuntimeWarning as ex:
@@ -436,7 +438,7 @@ def create_scene(
                 new_meshes = list()
             meshes = meshes + new_meshes
     else:
-        meshes = models.get_meshes(mesh_type=mesh_type)
+        meshes = entities.get_meshes(mesh_type=mesh_type)
     if len(meshes) > 0:
         if add_pseudo_color:
             for i in range(len(meshes)):
