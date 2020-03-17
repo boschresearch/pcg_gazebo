@@ -49,12 +49,8 @@ class TestWorld(unittest.TestCase):
             world.get_free_space_polygon(
                 ground_plane_models=['walls'])
 
-        bounds = walls.get_bounds()
-        area = (bounds[1, 0] - bounds[0, 0]) * \
-            (bounds[1, 1] - bounds[0, 1])
-
         self.assertIsNotNone(free_space_polygon)
-        self.assertLessEqual(free_space_polygon.area, area)
+        self.assertGreater(free_space_polygon.area, 0)
 
     def test_find_random_spots(self):
         walls = extrude(
@@ -84,12 +80,8 @@ class TestWorld(unittest.TestCase):
         self.assertEqual(len(poses), 5)
         self.assertIsNotNone(free_space_polygon)
 
-        bounds = walls.get_bounds()
-        area = (bounds[1, 0] - bounds[0, 0]) * \
-            (bounds[1, 1] - bounds[0, 1])
-
         self.assertIsNotNone(free_space_polygon)
-        self.assertLessEqual(free_space_polygon.area, area)
+        self.assertGreater(free_space_polygon.area, 0)
 
 
 if __name__ == '__main__':
