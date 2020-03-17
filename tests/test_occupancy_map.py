@@ -165,9 +165,6 @@ class TestOccupancyGrid(unittest.TestCase):
                 mesh_type='collision',
                 ground_plane_models=['box_floor'])
 
-            print(world_gen.world.models)
-            print(n_boxes, n_cylinders)
-            print(occupancy_output)
             self.assertIsNotNone(occupancy_output)
             self.assertEqual(len(occupancy_output['non_static']), n_boxes)
             self.assertEqual(len(occupancy_output['static']), n_cylinders + 1)
@@ -176,7 +173,6 @@ class TestOccupancyGrid(unittest.TestCase):
             for tag in world_gen.world.models:
                 if tag != 'box_floor':
                     filtered_models[tag] = world_gen.world.models[tag]
-            print(filtered_models)
 
             # Without box floor
             occupancy_output = generate_occupancy_grid(
