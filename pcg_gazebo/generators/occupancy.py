@@ -181,6 +181,23 @@ def get_occupied_area(
 
                 point = current_geo.representative_point()
 
+                ray_directions = [
+                    [0, 0, 1],
+                    [0, 0, -1]
+                ]
+                ray_origins = \
+                    [
+                        [point.xy[0][0], point.xy[1][0], z]
+                        for _ in range(len(ray_directions))
+                    ]
+
+                locations = current_mesh.ray.intersects_location(
+                    ray_origins=ray_origins,
+                    ray_directions=ray_directions)
+
+                if len(locations[1]) == 0:
+                    return False
+
                 n_theta = 15
                 for theta in np.linspace(0, np.pi, n_theta):
                     ray_directions.append(
