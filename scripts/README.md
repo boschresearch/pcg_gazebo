@@ -6,9 +6,168 @@ Generates an occupancy grid map file in `.pgm` format from a `.world` file.
 The world can be provided either as a ROS topic or a file.
 Run `generate_occupancy_map -h` for more information.
 
+```bash
+pcg-generate-occupancy-map -h
+usage: Generate occupancy grid map from a SDF world file or the current scenario in Gazebo
+       [-h] [--world-file WORLD_FILE] [--input-topic INPUT_TOPIC] [--xml XML]
+       [--from-simulation] [--z-levels Z_LEVELS [Z_LEVELS ...]]
+       [--min-z MIN_Z] [--max-z MAX_Z] [--without-ground-plane]
+       [--occupied-color OCCUPIED_COLOR] [--free-color FREE_COLOR]
+       [--unavailable-color UNAVAILABLE_COLOR] [--output-dir OUTPUT_DIR]
+       [--output-filename OUTPUT_FILENAME] [--static-models-only] [--dpi DPI]
+       [--figure-width FIGURE_WIDTH] [--figure-height FIGURE_HEIGHT]
+       [--figure-size-unit FIGURE_SIZE_UNIT]
+       [--exclude-contains EXCLUDE_CONTAINS [EXCLUDE_CONTAINS ...]]
+       [--ground-plane-models GROUND_PLANE_MODELS [GROUND_PLANE_MODELS ...]]
+       [--map-x-limits MAP_X_LIMITS [MAP_X_LIMITS ...]]
+       [--map-y-limits MAP_Y_LIMITS [MAP_Y_LIMITS ...]] [--use-visual]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --world-file WORLD_FILE, -w WORLD_FILE
+                        SDF world filename
+  --input-topic INPUT_TOPIC
+                        Receive world XML file per ROS topic
+  --xml XML             Receive world XML as string
+  --from-simulation, -s
+                        Retrieve world description from the current Gazebo
+                        simulation
+  --z-levels Z_LEVELS [Z_LEVELS ...], -l Z_LEVELS [Z_LEVELS ...]
+                        Z levels to compute the grid map from
+  --min-z MIN_Z         Minimum height for the Z rays in the ray tracing grid
+  --max-z MAX_Z         Maximum height for the Z rays in the ray tracing grid
+  --without-ground-plane
+                        Ignore ground plane meshes from the map
+  --occupied-color OCCUPIED_COLOR
+                        Gray-scale color of the occupied cells
+  --free-color FREE_COLOR
+                        Gray-scale color of the free cells
+  --unavailable-color UNAVAILABLE_COLOR
+                        Gray-scale color of the unavailable cells
+  --output-dir OUTPUT_DIR
+                        Output directory to store the map
+  --output-filename OUTPUT_FILENAME
+                        Name of the output map file
+  --static-models-only  Uses only static models for the map construction
+  --dpi DPI             Figure DPI
+  --figure-width FIGURE_WIDTH
+                        Width of the figure
+  --figure-height FIGURE_HEIGHT
+                        Height of the figure
+  --figure-size-unit FIGURE_SIZE_UNIT
+                        Figure size unit [cm, m or inch]
+  --exclude-contains EXCLUDE_CONTAINS [EXCLUDE_CONTAINS ...]
+                        List of keywords for model names to be excluded from
+                        the map
+  --ground-plane-models GROUND_PLANE_MODELS [GROUND_PLANE_MODELS ...]
+                        List of models that will be considered ground plane
+  --map-x-limits MAP_X_LIMITS [MAP_X_LIMITS ...]
+                        X limits of the output map in meters
+  --map-y-limits MAP_Y_LIMITS [MAP_Y_LIMITS ...]
+                        Y limits of the output map in meters
+  --use-visual          Use visual meshes instead of collision
+```
+
+# `pcg-generate-sample-world-with-walls`
+
+Generates a single room with walls with the option to add mesh primitives (e.g. cuboids, cylinders and spheres) to populate it.
+The wall Gazebo model is per default stored in the local `$HOME/.gazebo/models` and the world file in `$HOME/.gazebo/worlds`, but both destinations can be configured.
+
+```bash
+pcg-generate-sample-world-with-walls -h
+usage: pcg-generate-sample-world-with-walls [-h] [--n-rectangles N_RECTANGLES]
+                                            [--n-points N_POINTS]
+                                            [--wall-thickness WALL_THICKNESS]
+                                            [--wall-height WALL_HEIGHT]
+                                            [--n-cubes N_CUBES]
+                                            [--n-cylinders N_CYLINDERS]
+                                            [--n-spheres N_SPHERES]
+                                            [--set-random-roll]
+                                            [--set-random-pitch]
+                                            [--x-room-range X_ROOM_RANGE]
+                                            [--y-room-range Y_ROOM_RANGE]
+                                            [--world-name WORLD_NAME]
+                                            [--export-world-dir EXPORT_WORLD_DIR]
+                                            [--export-models-dir EXPORT_MODELS_DIR]
+                                            [--preview]
+
+Generates a sample world with walls and objects as primitives
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --n-rectangles N_RECTANGLES, -r N_RECTANGLES
+                        Number of rectangles to merge to generate the room
+  --n-points N_POINTS, -p N_POINTS
+                        Number of points to triangulate to generate the room
+  --wall-thickness WALL_THICKNESS, -t WALL_THICKNESS
+                        Thickness of the walls
+  --wall-height WALL_HEIGHT, -g WALL_HEIGHT
+                        Height of the walls
+  --n-cubes N_CUBES, -c N_CUBES
+                        Number of cubes to place in the world
+  --n-cylinders N_CYLINDERS, -l N_CYLINDERS
+                        Number of cylinders to place in the world
+  --n-spheres N_SPHERES, -s N_SPHERES
+                        Number of spheres to place in the world
+  --set-random-roll     Set the roll angle of the placed objects with a random
+                        variable
+  --set-random-pitch    Set the pitch angle of the placed objects with a
+                        random variable
+  --x-room-range X_ROOM_RANGE, -x X_ROOM_RANGE
+                        Range in X to generate the rectangles or points
+  --y-room-range Y_ROOM_RANGE, -y Y_ROOM_RANGE
+                        Range in Y to generate the rectangles or points
+  --world-name WORLD_NAME, -n WORLD_NAME
+                        Name of output world
+  --export-world-dir EXPORT_WORLD_DIR
+                        Export the world
+  --export-models-dir EXPORT_MODELS_DIR
+                        Export the models generated
+  --preview             Show 3D preview of the created world
+
+Usage:
+    pcg-generate-sample-world-with-walls --n-rectangles 1
+    pcg-generate-sample-world-with-walls --n-rectangles 10
+    pcg-generate-sample-world-with-walls --n-points 20
+    pcg-generate-sample-world-with-walls --n-rectangles 10 --n-cubes 5 --n-spheres 5 --n-cylinders 5
+    pcg-generate-sample-world-with-walls --n-rectangles 10 --n-cubes 5 --n-spheres 5 --n-cylinders 5 --set-random-roll --set-random-pitch
+    pcg-generate-sample-world-with-walls --n-points 20 --n-cubes 10 --preview
+```
+
 # `pcg-generate-world`
 
 Generates a Gazebo world file from YAML configuration describing the rules for placement of objects, assets to be used and spatial constraints.
+
+```bash
+pcg-generate-world -h
+usage: Generate the world using the PCG model placement engines
+       [-h] [--config-file CONFIG_FILE]
+       [--output-world-file OUTPUT_WORLD_FILE] [--verbose] [--plot]
+       [--plot-width PLOT_WIDTH] [--plot-height PLOT_HEIGHT]
+       [--output-topic OUTPUT_TOPIC] [--with-sun] [--with-ground-plane]
+       [--run] [--physics PHYSICS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --config-file CONFIG_FILE
+                        Configuration file (YAML format) with the PCG engines
+                        specification and assets lists
+  --output-world-file OUTPUT_WORLD_FILE
+                        Output SDF world file
+  --verbose             Set the output of the world generator as verbose
+  --plot                Create bokeh plot of the object and workspace
+                        footprints
+  --plot-width PLOT_WIDTH
+                        Width of the plot
+  --plot-height PLOT_HEIGHT
+                        Height of the plot
+  --output-topic OUTPUT_TOPIC
+                        Optional output topic to publish the resulting XML
+  --with-sun            Add default sun model to world
+  --with-ground-plane   Add default ground_plane model to world
+  --run                 Run Gazebo with the generated world
+  --physics PHYSICS     Physics engine to start with Gazebo
+```
 
 > Examples
 
@@ -32,6 +191,18 @@ The input SDF file must contain either a world or a model.
 Beware that if the world or model includes another model or meshes using the prefixes `model://`, that
 the included models must be in the Gazebo resources path so that they can be also parsed.
 
+```bash
+pcg-preview-sdf -h
+usage: Parse a SDF file (.sdf or .world) and display its geometries and meshes
+       [-h] [--filename FILENAME] [--collision]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --filename FILENAME, -f FILENAME
+                        SDF file (.sdf or .world)
+  --collision, -c       View collision meshes
+```
+
 > Example
 
 ```bash
@@ -46,6 +217,18 @@ and shows a 3D preview of the geometries and meshes.
 Beware that if the model includes meshes and includes other XACRO files, they should also
 be reachable within the ROS paths so that the model can be parsed.
 
+```bash
+pcg-preview-urdf -h
+usage: Parse a URDF file and display its geometries and meshes. XACRO files can also be provided and will processed to generate the URDF files.
+       [-h] [--filename FILENAME] [--collision]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --filename FILENAME, -f FILENAME
+                        URDF or XACRO file
+  --collision, -c       View collision meshes
+``` 
+
 > Example
 
 ```bash
@@ -57,6 +240,31 @@ pcg-preview-urdf --filename URDF_OR_XACRO_FILENAME --collision  # Preview of the
 
 This tool can be called to retrieve information on SDF, URDF or SDF Config elements.
 They can be displayed in XML format or the script can list all the children and attributes of an XML element.
+
+```bash
+pcg-print-xml-element -h
+usage: pcg-print-xml-element [-h] [--sdf] [--urdf] [--sdf-config] [--tag TAG]
+                             [--list] [--xml] [--description]
+
+Print XML elements (SDF, URDF or SDF Config)
+
+optional arguments:
+  -h, --help         show this help message and exit
+  --sdf              Retrieve information on SDF element
+  --urdf             Retrieve information on URDF element
+  --sdf-config       Retrieve information on SDF Config element
+  --tag TAG, -t TAG  Name of the XML element
+  --list, -l         List tags of all elements available
+  --xml, -x          Output the element as XML
+  --description, -d  Print information on the children of the XML element
+
+Usage:
+    pcg-print-xml-element --sdf --list
+    pcg-print-xml-element --urdf --list
+    pcg-print-xml-element --sdf-config --list
+    pcg-print-xml-element --sdf --tag NAME --xml
+    pcg-print-xml-element --sdf --tag NAME --description
+```
 
 > Example 
 
@@ -73,6 +281,39 @@ pcg-print-xml-element --sdf --tag NAME --description
 Generates a file from a Jinja template. 
 Run `pcg-process-jinja-template -h` for more information.
 
+```bash
+pcg-process-jinja-template -h
+usage: pcg-process-jinja-template [-h] [--input-template INPUT_TEMPLATE]
+                                  [--param-file PARAM_FILE]
+                                  [--output-filename OUTPUT_FILENAME]
+                                  [--include-dir INCLUDE_DIR] [--param PARAM]
+                                  [--sdf] [--sdf-config] [--urdf]
+                                  [--merge-nested-models]
+
+Parse Jinja template
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --input-template INPUT_TEMPLATE, -i INPUT_TEMPLATE
+                        Input template file
+  --param-file PARAM_FILE, -f PARAM_FILE
+                        YAML file with parameters to be rendered in the final
+                        output
+  --output-filename OUTPUT_FILENAME, -o OUTPUT_FILENAME
+                        Output file to store the parsed file
+  --include-dir INCLUDE_DIR, -d INCLUDE_DIR
+                        Input directory for template modules
+  --param PARAM, -p PARAM
+                        Model parameter to be replaced in the template
+  --sdf                 Output template is a SDF file and will be verified
+  --sdf-config          Output template is a SDF model configuration file and
+                        will be verified
+  --urdf                Output template is an URDF file and will be verified
+  --merge-nested-models
+                        For SDF descriptions, merge nested models before
+                        generating final SDF, in case there are any
+```
+
 > Examples
 
 * [`gen_model_from_template` script](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/gen_model_from_template.sh)
@@ -82,6 +323,29 @@ Run `pcg-process-jinja-template -h` for more information.
 
 Runs a model factory function from the [creators](https://github.com/boschresearch/pcg_gazebo/blob/master/pcg_gazebo/generators/creators.py) module using a YAML file input with the model description.
 Run `pcg-run-model-factory -h` for more information.
+
+```bash
+pcg-run-model-factory -h
+usage: Imports a YAML file with the description of a model and/or description of the factory parameters to generate models procedurally
+       [-h] [--config-file CONFIG_FILE] [--config CONFIG] [--print]
+       [--store-model] [--store-dir STORE_DIR] [--overwrite] [--spawn]
+       [--spawn-random-positions]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --config-file CONFIG_FILE, -f CONFIG_FILE
+                        YAML file with the model generator configuration
+  --config CONFIG, -c CONFIG
+                        Enter the configuration in the JSON format as a string
+  --print               Print models as SDF
+  --store-model         Store the generated models as Gazebo models
+  --store-dir STORE_DIR
+                        Output directory to store the generated models
+  --overwrite           Overwrite models with the same name when storing
+  --spawn               Spawn the generated models if Gazebo is running
+  --spawn-random-positions
+                        Spawn models on random positions
+```
 
 > Examples
 
@@ -93,10 +357,59 @@ Run `pcg-run-model-factory -h` for more information.
 Converts a SDF file into an URDF file.
 Run `pcg-sdf2urdf -h` for more information.
 
+```bash
+pcg-sdf2urdf -h
+usage: pcg-sdf2urdf [-h] [--param PARAM] [--filename FILENAME] [--xml XML]
+                    [--input-topic INPUT_TOPIC]
+                    [--output-filename OUTPUT_FILENAME]
+                    [--output-parameter OUTPUT_PARAMETER] [--print]
+                    [--verbose]
+
+Convert URDF to SDF file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --param PARAM, -p PARAM
+                        ROS parameter where the SDF robot description is
+                        stored
+  --filename FILENAME, -f FILENAME
+                        Filename name to the SDF robot description
+  --xml XML, -x XML     XML text input with the SDF robot description
+  --input-topic INPUT_TOPIC, -t INPUT_TOPIC
+                        ROS topic that will deliver the XML text input with
+                        the SDF robot description
+  --output-filename OUTPUT_FILENAME, -o OUTPUT_FILENAME
+                        Output file to store the converted URDF file
+  --output-parameter OUTPUT_PARAMETER, -r OUTPUT_PARAMETER
+                        Output ROS parameter to store the converted URDF file
+  --print               Print the file
+  --verbose, -v         Run on verbose mode
+```
+
 # `pcg-sdflint`
 
 Checks a SDF file for errors.
 Run `pcg-sdflint -h` for more information.
+
+```bash
+pcg-sdflint -h
+usage: pcg-sdflint [-h] [--param PARAM] [--filename FILENAME] [--xml XML]
+                   [--print] [--verbose]
+
+Linter for SDF file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --param PARAM, -p PARAM
+                        ROS parameter where the SDF robot description is
+                        stored
+  --filename FILENAME, -f FILENAME
+                        Filename name to the SDF robot description or XACRO
+                        filename to generate it
+  --xml XML, -x XML     XML text input with the SDF robot description
+  --print               Print the file
+  --verbose, -v         Run on verbose mode
+```
 
 # `pcg-spawn-sdf-model`
 
@@ -106,6 +419,30 @@ set to unpause after the model has been spawned.
 This script starts a ROS node and therefore `roscore` must be already running.
 Run `pcg-spawn-sdf-model -h` for more information.
 
+```bash
+pcg-spawn-sdf-model -h
+usage: pcg-spawn-sdf-model [-h] [--param_name PARAM_NAME]
+                           [--robot_name ROBOT_NAME] [--x X] [--y Y] [--z Z]
+                           [--roll ROLL] [--pitch PITCH] [--yaw YAW]
+                           [--unpause-simulation]
+
+Spawn SDF model after trigger
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --param_name PARAM_NAME
+                        Input parameter name where the SDF content is stored
+  --robot_name ROBOT_NAME
+                        Name of the robot model
+  --x X                 X coordinate of the spawning position in meters
+  --y Y                 Y coordinate of the spawning position in meters
+  --z Z                 Z coordinate of the spawning position in meters
+  --roll ROLL           Roll angle of the spawning position in radians
+  --pitch PITCH         Pitch angle of the spawning position in radians
+  --yaw YAW             Yaw angle of the spawning position in radians
+  --unpause-simulation  Unpause simulation once the model has been spawned
+```
+
 # `pcg-start-gazebo-world`
 
 Starts a Gazebo simulation from a `.world` file.
@@ -113,20 +450,111 @@ The `.world` file can be either provided as a file or through a ROS topic.
 This script can be used start a world only when description is available via topic.
 Run `pcg-start-gazebo-world -h` for more information.
 
+```bash
+pcg-start-gazebo-world -h
+usage: pcg-start-gazebo-world [-h] [--input_topic INPUT_TOPIC]
+                              [--input_world_filename INPUT_WORLD_FILENAME]
+                              [--physics PHYSICS] [--paused PAUSED]
+                              [--gui GUI]
+
+Start Gazebo world from file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --input_topic INPUT_TOPIC, -t INPUT_TOPIC
+                        ROS topic that will deliver the XML text input with
+                        the SDF robot description
+  --input_world_filename INPUT_WORLD_FILENAME, -f INPUT_WORLD_FILENAME
+                        Input
+  --physics PHYSICS     Name of the physics engine
+  --paused PAUSED       Start simulation paused
+  --gui GUI             Do not start Gazebo client
+```
+
 # `pcg-urdf2sdf`
 
 Converts an URDF file into a SDF file.
 Run `pcg-urdf2sdf -h` for more information.
+
+```bash
+pcg-urdf2sdf -h
+usage: pcg-urdf2sdf [-h] [--param PARAM] [--filename FILENAME] [--xml XML]
+                    [--input-topic INPUT_TOPIC]
+                    [--output-filename OUTPUT_FILENAME]
+                    [--output-parameter OUTPUT_PARAMETER]
+                    [--output-gazebo-model-path OUTPUT_GAZEBO_MODEL_PATH]
+                    [--create-gazebo-model] [--model-name MODEL_NAME]
+                    [--print] [--sdf-version SDF_VERSION] [--verbose]
+
+Convert SDF to URDF file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --param PARAM, -p PARAM
+                        ROS parameter where the URDF robot description is
+                        stored
+  --filename FILENAME, -f FILENAME
+                        Filename name to the URDF robot description
+  --xml XML, -x XML     XML text input with the URDF robot description
+  --input-topic INPUT_TOPIC, -t INPUT_TOPIC
+                        ROS topic that will deliver the XML text input with
+                        the URDF robot description
+  --output-filename OUTPUT_FILENAME, -o OUTPUT_FILENAME
+                        Output file to store the converted SDF file
+  --output-parameter OUTPUT_PARAMETER, -r OUTPUT_PARAMETER
+                        Output ROS parameter to store the converted SDF file
+  --output-gazebo-model-path OUTPUT_GAZEBO_MODEL_PATH, -gp OUTPUT_GAZEBO_MODEL_PATH
+                        Output path for the Gazebo model
+  --create-gazebo-model, -g
+                        Export SDF as a static Gazebo model
+  --model-name MODEL_NAME, -m MODEL_NAME
+                        Name of the model being generated
+  --print               Print the file
+  --sdf-version SDF_VERSION
+                        Version of the SDF file being generated
+  --verbose, -v         Run on verbose mode
+```
 
 # `pcg-urdflint`
 
 Checks an URDF file for errors. If a XACRO file is provided, it will be processed using the default `xacro` parser and the resulting URDF will be checked for errors.
 Run `pcg-urdflint -h` for more information.
 
+```bash
+pcg-urdflint -h
+usage: pcg-urdflint [-h] [--param PARAM] [--filename FILENAME] [--xml XML]
+                    [--print] [--verbose]
+
+Convert URDF to URDF file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --param PARAM, -p PARAM
+                        ROS parameter where the URDF robot description is
+                        stored
+  --filename FILENAME, -f FILENAME
+                        Filename name to the URDF robot description or XACRO
+                        file to generate it
+  --xml XML, -x XML     XML text input with the URDF robot description
+  --print               Print the file
+  --verbose, -v         Run on verbose mode
+```
+
 # `pcg-view-gazebo-model`
 
 Opens a static Gazebo model and displays its geometries.
 To see the tags of all Gazebo models available in your system, run `pcg-list-gazebo-models`.
+
+```bash
+pcg-view-gazebo-model -h
+usage: Open and display a Gazebo model [-h] [--model MODEL] [--collision]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --model MODEL, -m MODEL
+                        Gazebo model name
+  --collision, -c       View collision meshes
+```
 
 > Examples
 
@@ -139,3 +567,13 @@ $ pcg-view-gazebo-model --model MODEL_NAME --collision # To display the collisio
 
 Opens a mesh file and displays it.
 Run `pcg-view-mesh -h` for more information.
+
+```bash
+pcg-view-mesh -h
+usage: Open and display a mesh [-h] [--filename FILENAME]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --filename FILENAME, -f FILENAME
+                        Mesh filename
+```
