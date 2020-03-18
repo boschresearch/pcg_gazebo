@@ -160,9 +160,21 @@ if __name__ == '__main__':
                 delta_x_max=args.x_room_range / 2.,
                 delta_y_min=-1. * args.y_room_range / 2.,
                 delta_y_max=args.y_room_range / 2.)
+        else:
+            raise ValueError(
+                'Number of rectangles is invalid, provided={}'.format(
+                    args.n_rectangles))
     elif args.n_points is not None:
+        if args.n_points < 3:
+            raise ValueError(
+                'Number of points for triangulation must be at least 3,'
+                ' provided={}'.format(args.n_points))
         wall_polygon = random_points_to_triangulation(
             args.n_points)
+    else:
+        raise ValueError(
+            'No number of rectangles and no number of points for'
+            ' triangulation were provided')
 
     # Create the wall model based on the extruded
     # boundaries of the polygon
