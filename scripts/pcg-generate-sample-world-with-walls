@@ -43,7 +43,6 @@ if __name__ == '__main__':
     parser.add_argument(
         '--n-rectangles',
         '-r',
-        default=1,
         type=int,
         help='Number of rectangles to merge to generate the room')
     parser.add_argument(
