@@ -1014,12 +1014,8 @@ Description of the object's moments of inertia.</p>
 <h2 id="pcg_gazebo.simulation.Link.life_timeout">life_timeout</h2></p>
 <p><code>float</code>: Life timeout timestamp for this object,
 if it represents a single-link model</p>
-<h2 id="pcg_gazebo.simulation.Link.name">name</h2>
+<h2 id="pcg_gazebo.simulation.Link.self_collide">self_collide</h2>
 
-<p><code>str</code>: Object name
-<h2 id="pcg_gazebo.simulation.Link.pose">pose</h2></p>
-<p><code>pcg_gazebo.simulation.properties.Pose</code>: Pose of the object
-<h2 id="pcg_gazebo.simulation.Link.self_collide">self_collide</h2></p>
 <p><code>bool</code>: Self-collision flag
 <h2 id="pcg_gazebo.simulation.Link.static">static</h2></p>
 <p><code>bool</code>: Flag to indicate if object is static
@@ -1574,7 +1570,7 @@ Test if a light with name <code>tag</code> exists in the world description.</p>
 
 <h1 id="pcg_gazebo.simulation.SimulationModel">SimulationModel</h1>
 
-<div class="codehilite"><pre><span></span><span class="n">SimulationModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">creation_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">life_timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">is_ground_plane</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">SimulationModel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;model&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">is_ground_plane</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
 <h1 id="pcg_gazebo.simulation.Sphere">Sphere</h1>
@@ -1702,8 +1698,6 @@ physics engine, options are <code>ode</code>, <code>bullet</code> or <code>simbo
 <p><code>dict</code>: Model groups
 <h2 id="pcg_gazebo.simulation.World.models">models</h2></p>
 <p><code>dict</code>: Models
-<h2 id="pcg_gazebo.simulation.World.name">name</h2></p>
-<p><code>str</code>: Name of the world
 <h2 id="pcg_gazebo.simulation.World.physics">physics</h2></p>
 <p><code>pcg_gazebo.simulation.physics.Physics</code>: Physics engine instance
 <h2 id="pcg_gazebo.simulation.World.reset_physics">reset_physics</h2></p>
@@ -1888,7 +1882,7 @@ Test if a light with name <code>tag</code> exists in the world description.</p>
 <p><code>bool</code>: <code>True</code>, if light exists, <code>False</code>, otherwise.</p>
 <h2 id="pcg_gazebo.simulation.World.to_sdf">to_sdf</h2>
 
-<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">with_default_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default_sun</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">to_sdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">with_default_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default_sun</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">)</span>
 </pre></div>
 Convert the world description into as <code>pcg_gazebo</code> SDF
 element.</p>
@@ -1929,7 +1923,7 @@ SDF world element</li>
 <p><code>pcg_gazebo.parsers.sdf.World</code> instance.</p>
 <h2 id="pcg_gazebo.simulation.World.create_scene">create_scene</h2>
 
-<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">create_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">,</span> <span class="n">add_pseudo_color</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">create_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mesh_type</span><span class="o">=</span><span class="s1">&#39;collision&#39;</span><span class="p">,</span> <span class="n">add_pseudo_color</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore_models</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_axis</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 Return a <code>trimesh.Scene</code> with all the world's models.</p>
 <blockquote>
@@ -1996,6 +1990,29 @@ are <code>bokeh</code> and <code>matplotlib</code>.</li>
 <p><em>Returns</em></p>
 </blockquote>
 <p><code>matplotlib.pyplot.Figure</code> or <code>bokeh.plotting.Figure</code>.</p>
+<h2 id="pcg_gazebo.simulation.World.export_to_file">export_to_file</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">World</span><span class="o">.</span><span class="n">export_to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_default_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default_sun</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">models_output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">)</span>
+</pre></div>
+Export world to an SDF file that can be used by Gazebo.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>output_dir</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>None</code>): Path
+to output directory to store the world file.</li>
+<li><code>filename</code> (<em>type:</em> <code>str</code>, <em>default:</em> <code>None</code>): Name of the
+SDF world file</li>
+<li><code>with_default_ground_plane</code> (<em>type:</em> <code>bool</code>, <em>default:</em>
+<code>True</code>): Add the default ground plane model to the world before
+exporting it</li>
+<li><code>with_default_sun</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>True</code>): Add
+the default sun model to the world before exporting it</li>
+</ul>
+<blockquote>
+<p><em>Returns</em></p>
+</blockquote>
+<p>Full name of the exported SDF world file as a <code>str</code></p>
                 
                   
                 

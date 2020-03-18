@@ -948,7 +948,7 @@ Simulation model structure</li>
 </pre></div>
 Display the current collision check scenario using <code>pyglet</code>.
 <h2 id="pcg_gazebo.generators.CollisionChecker.check_collision_with_current_scene">check_collision_with_current_scene</h2></p>
-<p><div class="codehilite"><pre><span></span><span class="n">CollisionChecker</span><span class="o">.</span><span class="n">check_collision_with_current_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">CollisionChecker</span><span class="o">.</span><span class="n">check_collision_with_current_scene</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">min_distance</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
 </pre></div>
 Check if there are any collisions between <code>model</code> and
 the meshes in the scene.</p>
@@ -979,7 +979,7 @@ Check if there are any collisions amongst the meshes in the scene.</p>
 
 <h2 id="pcg_gazebo.generators.ConstraintsManager.add">add</h2>
 
-<p><div class="codehilite"><pre><span></span><span class="n">ConstraintsManager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">ConstraintsManager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">constraint_obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 Add a new positioning constraint class to the internal
 constraints list.</p>
@@ -999,7 +999,7 @@ to be created</li>
 
 <h2 id="pcg_gazebo.generators.EngineManager.add">add</h2>
 
-<p><div class="codehilite"><pre><span></span><span class="n">EngineManager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">engine_name</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">EngineManager</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">engine_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">models</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">engine_obj</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 Add a new model creator engine to the internal engines list.</p>
 <blockquote>
@@ -1501,7 +1501,7 @@ acceleration vector</li>
 </ul>
 <h2 id="pcg_gazebo.generators.WorldGenerator.export_world">export_world</h2>
 
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">export_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_default_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default_sun</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">export_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">with_default_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">with_default_sun</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">models_output_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sdf_version</span><span class="o">=</span><span class="s1">&#39;1.6&#39;</span><span class="p">)</span>
 </pre></div>
 Export world to an SDF file that can be used by Gazebo.</p>
 <blockquote>
