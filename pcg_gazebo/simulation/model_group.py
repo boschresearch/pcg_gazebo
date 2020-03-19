@@ -801,9 +801,8 @@ class ModelGroup(Entity):
         from ..task_manager import GazeboProxy, is_gazebo_running
         from time import sleep, time
 
-        if not isinstance(gazebo_proxy, GazeboProxy):
+        if gazebo_proxy is None:
             gazebo_proxy = GazeboProxy()
-
         if not nested:
             models = self.get_models(with_group_prefix=True)
             for tag in models:
@@ -822,7 +821,6 @@ class ModelGroup(Entity):
         else:
             sdf = self.to_sdf(type='sdf', use_include=False)
             assert sdf is not None, 'Could not convert model group to SDF'
-
             if robot_namespace is None:
                 robot_namespace = self.name
 
