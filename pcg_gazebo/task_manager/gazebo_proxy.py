@@ -364,9 +364,14 @@ class GazeboProxy(object):
         pose.orientation.z = rot[2]
         pose.orientation.w = rot[3]
 
-        return self._services['spawn_sdf_model'](
+        output = self._services['spawn_sdf_model'](
             robot_namespace,
             xml,
             robot_namespace,
             pose,
-            reference_frame).success
+            reference_frame)
+        if output.success:
+            PCG_ROOT_LOGGER.info(output.status_message)
+        else:
+            PCG_ROOT_LOGGER.error(output.status_message)
+        return output.success
