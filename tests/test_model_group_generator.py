@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 import unittest
 from pcg_gazebo.generators import ModelGroupGenerator
 from pcg_gazebo.generators.creators import box_factory
@@ -47,10 +48,8 @@ RANDOM_ENGINE = dict(
             config=[
                 dict(
                     dofs=['x', 'y'],
-                    policy=dict(
-                        name='workspace',
-                        args='cool_workspace'
-                    )
+                    tag='workspace',
+                    workspace='cool_workspace'
                 )
             ]
         )
@@ -137,7 +136,7 @@ class TestModelGroupGenerator(unittest.TestCase):
         self.assertTrue(generator.is_asset('box_floor'))
         self.assertTrue(generator.is_asset('box'))
 
-        generator.set_asset_as_ground_plane('box_floor')
+        generator.set_model_as_ground_plane('box_floor')
 
         # Run all engines and retrieve model group
         group = generator.run('test')
@@ -164,7 +163,7 @@ class TestModelGroupGenerator(unittest.TestCase):
             ]
         )
 
-        generator = ModelGroupGenerator.from_dict(config)
+        generator = ModelGroupGenerator(**config)
 
         self.assertTrue(generator.is_asset('box_floor'))
         self.assertTrue(generator.is_asset('box'))
@@ -172,6 +171,171 @@ class TestModelGroupGenerator(unittest.TestCase):
         group = generator.run('test')
         self.assertIsNotNone(group)
         self.assertEqual(group.n_models, 3)
+
+    def test_crate_example(self):
+        generator = ModelGroupGenerator('full_crate')
+
+        cur_dir = os.path.dirname(os.path.abspath(__file__))
+        visual_mesh_filename = os.path.join(
+            cur_dir,
+            '..',
+            'examples',
+            'meshes',
+            'crate.stl')
+        self.assertTrue(os.path.isfile(visual_mesh_filename))
+
+        generator.add_asset(
+            tag='crate',
+            description=dict(
+                type='mesh',
+                args=dict(
+                    visual_mesh='file://' + visual_mesh_filename,
+                    visual_mesh_scale=[1, 1, 1],
+                    use_approximated_collision=False,
+                    name='crate',
+                    color='xkcd'
+                )
+            )
+        )
+
+        random_scalar_inline = \
+            "max(0.05, 0.08 * __import__('numpy').random.random())"
+
+        generator.add_asset(
+            tag='crate_ball',
+            description=dict(
+                type='sphere',
+                args=dict(
+                    radius=random_scalar_inline,
+                    name='sphere',
+                    mass="max(0.1, __import__('numpy').random.random())",
+                    color='xkcd'
+                )
+            )
+        )
+
+        generator.add_asset(
+            tag='crate_cuboid',
+            description=dict(
+                type='box',
+                args=dict(
+                    size="0.08 * __import__('numpy').random.random(3)",
+                    name='cuboid',
+                    mass="max(0.01, __import__('numpy').random.random())",
+                    color='xkcd'
+                )
+            )
+        )
+
+        generator.add_asset(
+            tag='crate_cylinder',
+            description=dict(
+                type='cylinder',
+                args=dict(
+                    length=random_scalar_inline,
+                    radius=random_scalar_inline,
+                    name='cuboid',
+                    mass="max(0.01, __import__('numpy').random.random())",
+                    color='xkcd'
+                )
+            )
+        )
+
+        generator.add_constraint(
+            name='tangent_to_ground_plane',
+            type='tangent',
+            frame='world',
+            reference=dict(
+                type='plane',
+                args=dict(
+                    origin=[0, 0, 0],
+                    normal=[0, 0, 1]
+                )
+            )
+        )
+
+        generator.add_constraint(
+            name='crate_base',
+            type='workspace',
+            frame='world',
+            geometry=dict(
+                type='area',
+                description=dict(
+                    points=[
+                        [-0.5, -0.4, 0],
+                        [-0.5, 0.4, 0],
+                        [0.5, 0.4, 0],
+                        [0.5, -0.4, 0]
+                    ]
+                )
+            )
+        )
+
+        generator.add_engine(
+            tag='crate_engine',
+            engine_name='fixed_pose',
+            models=['crate'],
+            poses=[
+                [0, 0, 0, 0, 0, 0]
+            ],
+            constraints=[
+                dict(
+                    model='crate',
+                    constraint='tangent_to_ground_plane'
+                )
+            ]
+        )
+
+        num_models = dict(
+            crate_ball=4,
+            crate_cuboid=4,
+            crate_cylinder=4
+        )
+
+        generator.add_engine(
+            tag='fill_crate',
+            engine_name='random_pose',
+            models=list(num_models.keys()),
+            max_num=num_models,
+            model_picker='random',
+            no_collision=True,
+            policies=[
+                dict(
+                    models=list(num_models.keys()),
+                    config=[
+                        dict(
+                            dofs=['x', 'y'],
+                            tag='workspace',
+                            workspace='crate_base'
+                        ),
+                        dict(
+                            dofs=['z'],
+                            tag='uniform',
+                            mean=0.5,
+                            min=0.0,
+                            max=10.0
+                        ),
+                        dict(
+                            dofs=['roll', 'pitch', 'yaw'],
+                            tag='uniform',
+                            mean=0,
+                            min=-3.141592653589793,
+                            max=3.141592653589793
+                        )
+                    ]
+                )
+            ]
+        )
+
+        crate_model = generator.run(group_name='full_crate')
+
+        self.assertIsNotNone(crate_model)
+
+        n_models = 1
+        for tag in num_models:
+            n_models += num_models[tag]
+
+        self.assertEqual(crate_model.n_models, n_models)
 
 
 if __name__ == '__main__':
