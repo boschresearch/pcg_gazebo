@@ -151,7 +151,7 @@ class AssetsManager(_CollectionManager):
 
         * `tag` (*type:* `str`): Tag of the asset.
         """
-        if self.has_element(tag):
+        if tag in self._collection:
             if not isinstance(self._collection[tag], dict):
                 return False
             if 'type' not in self._collection[tag] or \
@@ -277,8 +277,8 @@ class AssetsManager(_CollectionManager):
                 PCG_ROOT_LOGGER.info('Added model factory <{}>'.format(tag))
             elif type in ['model_generator', 'light']:
                 if type == 'model_generator':
-                    self._collection[tag] = ModelGroupGenerator.from_dict(
-                        description)
+                    self._collection[tag] = ModelGroupGenerator(
+                        name=tag, **description)
                     PCG_ROOT_LOGGER.info(
                         'Added model group generator <{}>'.format(tag))
                 else:
@@ -306,7 +306,14 @@ class AssetsManager(_CollectionManager):
         `pcg_gazebo.simulation.ModelGroup`. `None`, if `tag` is invalid.
         """
         model = None
-        if self.is_model(tag) or self.is_light(tag):
+        if self.is_factory_input(tag):
+            from .creators import config2models
+            model = SimulationModel.from_sdf(
+                config2models(self._collection[tag])[0])
+            model.name = tag
+        elif self.is_model_group_generator(tag):
+            model = self._collection[tag].run(group_name=tag, *args, **kwargs)
+        elif self.is_model(tag) or self.is_light(tag):
             model = self._collection[tag].copy()
         elif self.is_model_group(tag):
             return self._collection[tag]
@@ -316,13 +323,7 @@ class AssetsManager(_CollectionManager):
                 model = SimulationModel.from_gazebo_model(tag)
             except ValueError:
                 model = ModelGroup.from_gazebo_model(tag)
-        elif self.is_model_group_generator(tag):
-            model = self._collection[tag].run(group_name=tag, *args, **kwargs)
-        elif self.is_factory_input(tag):
-            from .creators import config2models
-            model = SimulationModel.from_sdf(
-                config2models(self._collection[tag])[0])
-            model.name = tag
+
         if model is not None and not self.is_light(tag):
             model.is_ground_plane = self.is_ground_plane(tag)
         return model
@@ -389,6 +390,20 @@ class AssetsManager(_CollectionManager):
         """
         config = load_yaml(filename)
         self.from_dict(config)
+
+    def has_element(self, tag):
+        """Return `True` if an element for `tag` exists.
+
+        > *Input arguments*
+
+        * `tag` (*type:* `str`): Tag of the element.
+        """
+        from ..simulation import get_gazebo_model_names
+        if tag in self._collection:
+            return True
+        if tag in get_gazebo_model_names():
+            return True
+        return False
 
     @staticmethod
     def add_custom_gazebo_resource_path(dir_path):
