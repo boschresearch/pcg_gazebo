@@ -151,7 +151,7 @@ class AssetsManager(_CollectionManager):
 
         * `tag` (*type:* `str`): Tag of the asset.
         """
-        if self.has_element(tag):
+        if tag in self._collection:
             if not isinstance(self._collection[tag], dict):
                 return False
             if 'type' not in self._collection[tag] or \
