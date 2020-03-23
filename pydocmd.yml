@@ -400,8 +400,10 @@ generate:
 pages:
 - Home: index.md << README.md
 - Documentation:
+  - Advanced Installation: install.md << tutorials/install.md
   - Scripts: scripts.md << scripts/README.md
 - Tutorials:
+  - Single Room Generation: single_room_generation.md << tutorials/single_room_generation.md
   - Examples: examples.md << examples/README.md
 - API Documentation:
   - pcg_gazebo.log: reference/log.md

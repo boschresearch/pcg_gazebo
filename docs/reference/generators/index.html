@@ -188,7 +188,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../scripts/" class="md-tabs__link">
+        <a href="../../install/" class="md-tabs__link">
           Documentation
         </a>
       
@@ -201,7 +201,7 @@
   
     <li class="md-tabs__item">
       
-        <a href="../../examples/" class="md-tabs__link">
+        <a href="../../single_room_generation/" class="md-tabs__link">
           Tutorials
         </a>
       
@@ -302,6 +302,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../install/" title="Advanced Installation" class="md-nav__link">
+      Advanced Installation
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../scripts/" title="Scripts" class="md-nav__link">
       Scripts
     </a>
@@ -331,6 +343,18 @@
       </label>
       <ul class="md-nav__list" data-md-scrollfix>
         
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../../single_room_generation/" title="Single Room Generation" class="md-nav__link">
+      Single Room Generation
+    </a>
+  </li>
+
         
           
           
@@ -893,6 +917,17 @@ Load the assets from a YAML file.</p>
 <ul>
 <li><code>filename</code> (<em>type:</em> <code>str</code>): YAML filename.</li>
 </ul>
+<h2 id="pcg_gazebo.generators.AssetsManager.has_element">has_element</h2>
+
+<p><div class="codehilite"><pre><span></span><span class="n">AssetsManager</span><span class="o">.</span><span class="n">has_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+</pre></div>
+Return <code>True</code> if an element for <code>tag</code> exists.</p>
+<blockquote>
+<p><em>Input arguments</em></p>
+</blockquote>
+<ul>
+<li><code>tag</code> (<em>type:</em> <code>str</code>): Tag of the element.</li>
+</ul>
 <h1 id="pcg_gazebo.generators.CollisionChecker">CollisionChecker</h1>
 
 <p><div class="codehilite"><pre><span></span><span class="n">CollisionChecker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ignore_ground_plane</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1026,7 +1061,7 @@ Load the engines from a YAML file.</p>
 </ul>
 <h1 id="pcg_gazebo.generators.ModelGroupGenerator">ModelGroupGenerator</h1>
 
-<div class="codehilite"><pre><span></span><span class="n">ModelGroupGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;generator&#39;</span><span class="p">)</span>
+<div class="codehilite"><pre><span></span><span class="n">ModelGroupGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;generator&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 
 <h1 id="pcg_gazebo.generators.SingletonCollisionChecker">SingletonCollisionChecker</h1>
@@ -1070,7 +1105,7 @@ the <code>SingletonCollisionChecker</code> instance.</li>
 <p>A <code>SingletonCollisionChecker</code> instance</p>
 <h1 id="pcg_gazebo.generators.WorldGenerator">WorldGenerator</h1>
 
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gazebo_proxy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_world_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_model_dir</span><span class="o">=</span><span class="s1">&#39;/tmp/gazebo_models&#39;</span><span class="p">)</span>
+<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">gazebo_proxy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_world_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">output_model_dir</span><span class="o">=</span><span class="s1">&#39;/tmp/gazebo_models&#39;</span><span class="p">)</span>
 </pre></div>
 Generation of full Gazebo worlds, including physics engine configuration,
 modes and lights.</p>
@@ -1082,26 +1117,12 @@ modes and lights.</p>
 <em>default:</em> <code>None</code>): A <code>GazeboProxy</code> object to enable spawning of models
 and configuration of the simulation in runtime.</li>
 </ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.assets">assets</h2>
-
-<p>List of <code>pcg_gazebo.simulation.SimulationModel</code>: List of model
-assets that will be used of the world generation.</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.constraints">constraints</h2>
-
-<p><code>dict</code> of <code>pcg_gazebo.generators.constraints</code>: Dictionary with the
-positioning constraints.</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.engines">engines</h2>
-
-<p><code>dict</code> of <code>pcg_gazebo.generators.engines</code>: Dictionary with the
-model creation engines.</p>
 <h2 id="pcg_gazebo.generators.WorldGenerator.gazebo_proxy">gazebo_proxy</h2>
 
 <p><code>pcg_gazebo.task_manager.GazeboProxy</code>: Internal instance
 of the <code>GazeboProxy</code></p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.name">name</h2>
+<h2 id="pcg_gazebo.generators.WorldGenerator.world">world</h2>
 
-<p><code>str</code>: Name of the generated world
-<h2 id="pcg_gazebo.generators.WorldGenerator.world">world</h2></p>
 <p><code>pcg_gazebo.simulation.World</code>: World abstraction
 instance</p>
 <h2 id="pcg_gazebo.generators.WorldGenerator.init_gazebo_proxy">init_gazebo_proxy</h2>
@@ -1124,169 +1145,6 @@ Gazebo server</li>
 <li><code>gazebo_port</code> (<em>type:</em> <code>int</code>, <em>default:</em> <code>11345</code>): Port number of
 the Gazebo server</li>
 </ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_engine">add_engine</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">engine_name</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-Add a new model creator engine to the internal engines list.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>engine_name</code> (<em>type:</em> <code>str</code>): Name of the engine class
-to be created</li>
-<li><code>models</code> (<em>type:</em> list of <code>str</code>): Name of the models that
-will be assets to the created engine</li>
-<li><code>kwargs</code> (<em>type:</em> <code>dict</code>): Input arguments to the created engine.</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_constraint">add_constraint</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-Add a new positioning constraint class to the internal
-constraints list.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>name</code> (<em>type:</em> <code>str</code>): ID name for the constraint class instance</li>
-<li><code>type</code> (<em>type:</em> <code>str</code>): Name of the constraints class to be created</li>
-<li><code>kwargs</code> (<em>type:</em> <code>dict</code>): Input arguments for the constraint class
-to be created</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_asset">add_asset</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-</pre></div>
-Add a new model asset that can be used by the engines and
-added to the generated world.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>model</code> (<em>type:</em> <code>pcg_gazebo.simulation.SimulationModel</code>):
-Simulation model</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.set_model_as_ground_plane">set_model_as_ground_plane</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">set_model_as_ground_plane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
-</pre></div>
-Flag a model asset as part of the ground plane. This procedure will
-affect the collision checks during the automatic placement of models in
-the world using the placement engines.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>model_name</code> (<em>type:</em> <code>str</code>): Name of the model asset</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.get_asset">get_asset</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">get_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</pre></div>
-Return a simulation model asset.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the model asset.</li>
-</ul>
-<blockquote>
-<p><em>Returns</em></p>
-</blockquote>
-<p>The model asset as <code>pcg_gazebo.simulation.SimulationModel</code>.
-<code>None</code> if <code>name</code> cannot be found in the list of model assets.</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.get_constraint">get_constraint</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">get_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</pre></div>
-Return a positioning constraint configuration.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>param</code> (<em>type:</em> <code>data_type</code>, <em>default:</em> <code>data</code>):
-Parameter description</li>
-</ul>
-<blockquote>
-<p><em>Returns</em></p>
-</blockquote>
-<p>Description of return values</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_gazebo_model_as_asset">add_gazebo_model_as_asset</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_gazebo_model_as_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gazebo_model_name</span><span class="p">)</span>
-</pre></div>
-Create a model asset by importing a Gazebo model that already
-exists in the resources path of the catkin workspace. The model's
-SDF file will be parsed and converted into a
-<code>pcg_gazebo.simulation.SimulationModel</code> instance.</p>
-<p>Models that include lights can also be added, but will not be
-considered assets, they will just be included into the generated
-world SDF file.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>gazebo_model_name</code> (<em>type:</em> <code>str</code>): ID name from the Gazebo model
-to be imported</li>
-</ul>
-<blockquote>
-<p><em>Returns</em></p>
-</blockquote>
-<p><code>True</code> if Gazebo model could be included in the assets list.</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.is_asset">is_asset</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">is_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</pre></div>
-Return <code>True</code> if the model identified by the string <code>name</code>
-is part of the list of assets.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the model</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_model">add_model</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">poses</span><span class="p">)</span>
-</pre></div>
-Add an instance of <code>pcg_gazebo.simulation.SimulationModel</code> to
-the world in designed poses.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>model</code> (<em>type:</em> <code>pcg_gazebo.simulation.SimulationModel</code>):
-Parameter description</li>
-<li><code>poses</code> (<em>type:</em> <code>list</code>): List of 6D pose vectors</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_gazebo_model">add_gazebo_model</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_gazebo_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">pose</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-</pre></div>
-Add an existent Gazebo model to the world in designed poses.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>model_name</code> (<em>type:</em> <code>str</code>): ID name of the Gazebo model</li>
-<li><code>pose</code> (<em>type:</em> <code>list</code>): 6D pose vector</li>
-</ul>
-<h2 id="pcg_gazebo.generators.WorldGenerator.remove_asset">remove_asset</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">remove_asset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-</pre></div>
-Remove model asset from the list of assets.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>name</code> (<em>type:</em> <code>str</code>): Name of the model</li>
-</ul>
-<blockquote>
-<p><em>Returns</em></p>
-</blockquote>
-<p><code>True</code>, if model could be removed.</p>
 <h2 id="pcg_gazebo.generators.WorldGenerator.delete_model">delete_model</h2>
 
 <p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">delete_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
@@ -1302,21 +1160,6 @@ Delete a model from the currently running Gazebo instance</p>
 <p><em>Returns</em></p>
 </blockquote>
 <p><code>True</code> if the model could be deleted from the simulation.</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.add_lights_from_gazebo_model">add_lights_from_gazebo_model</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">add_lights_from_gazebo_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">)</span>
-</pre></div>
-Add light models to the generated world from a Gazebo model.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>model_name</code> (<em>type:</em> <code>str</code>): Name of the Gazebo model</li>
-</ul>
-<blockquote>
-<p><em>Returns</em></p>
-</blockquote>
-<p><code>True</code> if the lights could be parsed and added to the world.</p>
 <h2 id="pcg_gazebo.generators.WorldGenerator.from_dict">from_dict</h2>
 
 <p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
@@ -1466,23 +1309,6 @@ engine, options are <code>ode</code>, <code>bullet</code> and <code>simbody</cod
 <p><em>Returns</em></p>
 </blockquote>
 <p>An <code>pcg_gazebo.simulation.physics.Physics</code> object.</p>
-<h2 id="pcg_gazebo.generators.WorldGenerator.run_engines">run_engines</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">run_engines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attach_models</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-Run all the model placement engines and add the generated
-models in the internal instance of the world representation.</p>
-<blockquote>
-<p><em>Input arguments</em></p>
-</blockquote>
-<ul>
-<li><code>attach_models</code> (<em>type:</em> <code>bool</code>, <em>default:</em> <code>False</code>): Attach
-the generated models to the existent list of models in the world</li>
-</ul>
-<blockquote>
-<p><em>Returns</em></p>
-</blockquote>
-<p><code>True</code> if all engines ran successfully.</p>
 <h2 id="pcg_gazebo.generators.WorldGenerator.reset_world">reset_world</h2>
 
 <p><div class="codehilite"><pre><span></span><span class="n">WorldGenerator</span><span class="o">.</span><span class="n">reset_world</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;ode&#39;</span><span class="p">,</span> <span class="n">gravity</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.8</span><span class="p">])</span>
