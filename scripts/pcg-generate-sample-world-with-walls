@@ -302,8 +302,8 @@ if __name__ == '__main__':
                 mean=0,
                 min=-3.141592653589793,
                 max=3.141592653589793
-                )
-            ]
+            )
+        ]
     )
 
     # Set local constraints
