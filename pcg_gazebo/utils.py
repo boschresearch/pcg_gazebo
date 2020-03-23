@@ -21,10 +21,20 @@ import string
 import os
 import re
 import yaml
-import rospkg
 from jinja2 import FileSystemLoader, Environment, \
     BaseLoader, TemplateNotFound
 from .log import PCG_ROOT_LOGGER
+try:
+    import rospkg
+    ROS1_AVAILABLE = True
+except ImportError:
+    ROS1_AVAILABLE = False
+
+try:
+    import ament_index_python
+    ROS2_AVAILABLE = True
+except ImportError:
+    ROS2_AVAILABLE = False
 
 PCG_RESOURCES_ROOT_DIR = os.path.join(os.path.expanduser('~'), '.pcg')
 PCG_ROOT_FOLDER = os.path.dirname(os.path.abspath(__file__))
@@ -109,18 +119,15 @@ def yaml_find_ros_package(loader, node):
     using the `!find` function.
     """
 
-    import rospkg
     input_str = loader.construct_scalar(node)
     assert '/' in input_str, \
         'ROS package to be searched must be provided' \
         ' as <ros_package/<path_to_file>'
     ros_package = input_str.split('/')[0]
 
-    finder = rospkg.RosPack()
-    assert ros_package in finder.list(), \
-        'Could not find ROS package {}'.format(ros_package)
-
-    ros_package_path = finder.get_path(ros_package)
+    ros_package_path = get_ros_path(ros_package)
+    assert ros_package_path is not None, 'Invalid ROS package={}'.format(
+        ros_package)
     filename = input_str.replace(ros_package, ros_package_path)
 
     assert os.path.isfile(filename), 'Invalid filename={}'.format(filename)
@@ -187,13 +194,7 @@ class _AbsFileSystemLoader(BaseLoader):
 
 
 def _find_ros_package(pkg_name):
-    try:
-        pkg_path = rospkg.RosPack().get_path(pkg_name)
-    except rospkg.ResourceNotFound as ex:
-        PCG_ROOT_LOGGER.error(
-            'Error finding package {}, message={}'.format(
-                pkg_name, ex))
-        return None
+    pkg_path = get_ros_path(pkg_name)
     return pkg_path
 
 
@@ -230,12 +231,9 @@ def _parse_package_paths(xml):
     output_xml = xml
     for item in result:
         pkg_name = item.replace('package://', '').replace('/', '')
-        try:
-            pkg_path = rospkg.RosPack().get_path(pkg_name)
-        except rospkg.ResourceNotFound as ex:
-            PCG_ROOT_LOGGER.error(
-                'Error finding package {}, message={}'.format(
-                    pkg_name, ex))
+
+        pkg_path = get_ros_path(pkg_name)
+        if pkg_path is None:
             return None
 
         output_xml = output_xml.replace(item, 'file://' + pkg_path + '/')
@@ -244,14 +242,9 @@ def _parse_package_paths(xml):
     result = re.findall(r'\$\(find \w+\)', output_xml)
     for item in result:
         pkg_name = item.split()[1].replace(')', '')
-        try:
-            pkg_path = rospkg.RosPack().get_path(pkg_name)
-        except rospkg.ResourceNotFound as ex:
-            PCG_ROOT_LOGGER.error(
-                'Error finding package {}, message={}'.format(
-                    pkg_name, ex))
+        pkg_path = get_ros_path(pkg_name)
+        if pkg_path is None:
             return None
-
         output_xml = output_xml.replace(item, 'file://' + pkg_path + '/')
     return output_xml
 
@@ -467,3 +460,23 @@ def has_string_pattern(input_str, pattern):
         if pattern in input_str:
             return True
     return False
+
+
+def get_ros_path(pkg):
+    if not ROS1_AVAILABLE and not ROS2_AVAILABLE:
+        return None
+
+    ros_package_path = None
+    if ROS1_AVAILABLE:
+        try:
+            ros_package_path = rospkg.RosPack().get_path(pkg)
+        except rospkg.ResourceNotFound:
+            pass
+
+    if ROS2_AVAILABLE:
+        try:
+            ros_package_path = \
+                ament_index_python.get_package_share_directory(pkg)
+        except ament_index_python.PackageNotFoundError:
+            pass
+    return ros_package_path
