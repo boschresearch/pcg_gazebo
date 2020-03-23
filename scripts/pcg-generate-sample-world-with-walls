@@ -150,16 +150,20 @@ if __name__ == '__main__':
         if args.n_rectangles > 1:
             wall_polygon = random_rectangles(
                 n_rect=args.n_rectangles,
-                x_center_min=-1. * args.x_room_range / 2.,
+                x_center_min=-args.x_room_range / 2.,
                 x_center_max=args.x_room_range / 2.,
-                y_center_min=-1. * args.y_room_range / 2.,
-                y_center_max=args.y_room_range / 2.)
+                y_center_min=-args.y_room_range / 2.,
+                y_center_max=args.y_room_range / 2.,
+                delta_x_min=args.x_room_range / 2.,
+                delta_x_max=args.x_room_range,
+                delta_y_min=args.y_room_range / 2.,
+                delta_y_max=args.y_room_range)
         elif args.n_rectangles == 1:
             wall_polygon = random_rectangle(
-                delta_x_min=-1. * args.x_room_range / 2.,
-                delta_x_max=args.x_room_range / 2.,
-                delta_y_min=-1. * args.y_room_range / 2.,
-                delta_y_max=args.y_room_range / 2.)
+                delta_x_min=args.x_room_range / 2.,
+                delta_x_max=args.x_room_range,
+                delta_y_min=args.y_room_range / 2.,
+                delta_y_max=args.y_room_range)
         else:
             raise ValueError(
                 'Number of rectangles is invalid, provided={}'.format(
@@ -289,23 +293,17 @@ if __name__ == '__main__':
         config=[
             dict(
                 dofs=['x', 'y'],
-                policy=dict(
-                    name='workspace',
-                    args='room_workspace'
-                )
+                tag='workspace',
+                workspace='room_workspace'
             ),
             dict(
                 dofs=orientation_dofs,
-                policy=dict(
-                    name='uniform',
-                    args=dict(
-                        mean=0,
-                        min=-3.141592653589793,
-                        max=3.141592653589793
-                    )
+                tag='uniform',
+                mean=0,
+                min=-3.141592653589793,
+                max=3.141592653589793
                 )
-            )
-        ]
+            ]
     )
 
     # Set local constraints
