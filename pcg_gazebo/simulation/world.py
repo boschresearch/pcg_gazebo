@@ -1266,6 +1266,7 @@ class World(Entity):
         Full name of the exported SDF world file as a `str`
         """
         assert output_dir is not None, 'Output directory cannot be None'
+        from . import is_gazebo_model
 
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir)
@@ -1285,7 +1286,10 @@ class World(Entity):
             return None
 
         for tag in self.models:
-            if self.models[tag].has_mesh:
+            if self.models[tag].has_mesh and \
+                    not is_gazebo_model(self.models[tag].name):
+                if not overwrite:
+                    continue
                 assert models_output_dir is not None, \
                     'Models export directory cannot be None'
                 assert os.path.isdir(models_output_dir), \
