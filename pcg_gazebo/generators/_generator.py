@@ -17,7 +17,9 @@ from ..simulation import is_gazebo_model, SimulationModel, \
     Light, ModelGroup
 from .assets_manager import AssetsManager
 from .engine_manager import EngineManager
-from ..utils import generate_random_string, is_string, load_yaml
+from .random import init_random_state
+from ..utils import generate_random_string, is_string, \
+    load_yaml, is_integer
 
 
 class _Generator(object):
@@ -26,6 +28,7 @@ class _Generator(object):
         self._engines = EngineManager()
         self._simulation_entity = None
         self._name = None
+        self._seed = None
 
         # Set the name provided to the simulation
         # entity to be generated
@@ -43,6 +46,15 @@ class _Generator(object):
         assert len(value) > 0, \
             'Name cannot be an empty string'
         self._name = value
+
+    @property
+    def seed(self):
+        return self._seed
+
+    @seed.setter
+    def seed(self, value):
+        assert value is None or is_integer(value)
+        self._seed = value
 
     @property
     def assets(self):
