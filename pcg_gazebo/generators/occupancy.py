@@ -17,8 +17,7 @@ import trimesh
 from multiprocessing.pool import Pool
 from shapely.geometry import Polygon, MultiPolygon, \
     LineString
-from shapely.ops import unary_union, polygonize, linemerge, \
-    triangulate
+from shapely.ops import unary_union, polygonize, linemerge
 from ..log import PCG_ROOT_LOGGER
 from ..visualization import create_scene
 from ..simulation import SimulationModel, ModelGroup
