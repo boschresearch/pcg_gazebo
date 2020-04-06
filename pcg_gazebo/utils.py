@@ -23,7 +23,6 @@ import re
 import yaml
 from jinja2 import FileSystemLoader, Environment, \
     BaseLoader, TemplateNotFound
-from .log import PCG_ROOT_LOGGER
 try:
     import rospkg
     ROS1_AVAILABLE = True
@@ -207,6 +206,7 @@ def _find_sdf_template(name):
 
 
 def _find_relative_path(name, root_dir='.'):
+    from .log import PCG_ROOT_LOGGER
     full_path = os.path.abspath(os.path.join(root_dir, name))
     if os.path.exists(full_path):
         return os.path.abspath(full_path)
@@ -250,6 +250,7 @@ def _parse_package_paths(xml):
 
 
 def process_jinja_template(template, parameters=None, include_dir=None):
+    from .log import PCG_ROOT_LOGGER
     from .path import Path
 
     if not isinstance(parameters, dict):
