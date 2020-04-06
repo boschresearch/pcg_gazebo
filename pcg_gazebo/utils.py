@@ -16,7 +16,7 @@
 Useful functions for Jinja file processing and YAML file parser extensions.
 """
 from __future__ import print_function
-import random
+from . import random
 import string
 import os
 import re
@@ -331,7 +331,9 @@ def process_jinja_template(template, parameters=None, include_dir=None):
 
 
 def generate_random_string(size=3):
-    return ''.join(random.choice(string.ascii_letters) for i in range(size))
+    letters = string.ascii_letters
+    return ''.join(
+        letters[random.choice(range(len(letters)))] for i in range(size))
 
 
 def get_template_path(filename):
