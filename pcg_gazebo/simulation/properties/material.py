@@ -14,7 +14,7 @@
 # limitations under the License.
 
 import os
-import random
+from ... import random
 from ...parsers.sdf import create_sdf_element
 
 
@@ -91,17 +91,18 @@ class Material(object):
     def get_color_material(self, r=None, g=None, b=None, a=1):
         obj = create_sdf_element('material')
         if r is None or r < 0:
-            r = random.random()
+            r = random.rand()
         if g is None or g < 0:
-            g = random.random()
+            g = random.rand()
         if b is None or b < 0:
-            b = random.random()
+            b = random.rand()
         obj.ambient = [i for i in [r, g, b]] + [a]
         obj.diffuse = [i for i in [r, g, b]] + [a]
         return obj
 
     def get_random_xkcd_material_as_sdf(self):
-        color_name = random.choice(list(self._xkcd_colors.keys()))
+        k = list(self._xkcd_colors.keys())
+        color_name = k[random.choice(range(len(k)))]
         return self.get_xkcd_material_as_sdf(color_name)
 
     @staticmethod

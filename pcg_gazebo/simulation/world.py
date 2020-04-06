@@ -691,7 +691,8 @@ class World(Entity):
             line_style='solid',
             alpha=0.5,
             engine='matplotlib',
-            dpi=200):
+            dpi=200,
+            ground_plane_models=None):
         """Plot the mesh footprint projections on the XY plane.
 
         > *Input arguments*
