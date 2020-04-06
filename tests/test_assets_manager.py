@@ -265,7 +265,7 @@ class TestAssetManager(unittest.TestCase):
         self.assertTrue(manager.add(model, name))
         self.assertIn(name, manager.tags)
         self.assertIsInstance(manager.get(name), SimulationModel)
-        self.assertFalse(manager.add(model, name))
+        self.assertFalse(manager.add(model, name, overwrite=False))
 
         manager.reset()
         self.assertGreaterEqual(len(manager.tags), 0)

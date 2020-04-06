@@ -166,47 +166,39 @@ constraints:
 - name: cylinders
   type: workspace
   frame: world
-  geometry: 
-    type: area
-    description:
-      points: 
-      - [-15, -15, 0]
-      - [-15, -5, 0]
-      - [-5, -5, 0]
-      - [-5, -15, 0]
+  geometry_type: area    
+  points: 
+  - [-15, -15, 0]
+  - [-15, -5, 0]
+  - [-5, -5, 0]
+  - [-5, -15, 0]
 - name: spheres
   type: workspace
   frame: world
-  geometry: 
-    type: area
-    description:
-      points: 
-      - [5, -15, 0]
-      - [5, -5, 0]
-      - [15, -5, 0]
-      - [15, -15, 0]
+  geometry_type: area    
+  points: 
+  - [5, -15, 0]
+  - [5, -5, 0]
+  - [15, -5, 0]
+  - [15, -15, 0]
 - name: boxes
   type: workspace
   frame: world
-  geometry: 
-    type: area
-    description:
-      points: 
-      - [-5, 5, 0]
-      - [-5, 15, 0]
-      - [5, 15, 0]
-      - [5, 5, 0]
+  geometry_type: area    
+  points: 
+  - [-5, 5, 0]
+  - [-5, 15, 0]
+  - [5, 15, 0]
+  - [5, 5, 0]
 - name: mixed
   type: workspace
   frame: world
-  geometry: 
-    type: area
-    description:
-      points: 
-      - [-5, -5, 0]
-      - [-5, 5, 0]
-      - [5, 5, 0]
-      - [5, -5, 0]
+  geometry_type: area    
+  points: 
+  - [-5, -5, 0]
+  - [-5, 5, 0]
+  - [5, 5, 0]
+  - [5, -5, 0]
 - name: tangent_to_ground_plane
   type: tangent
   frame: world

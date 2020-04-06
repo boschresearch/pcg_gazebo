@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
@@ -14,8 +15,9 @@
 # limitations under the License.
 import unittest
 from pcg_gazebo.generators.creators import extrude, box
-from pcg_gazebo.generators.shapes import random_rectangles
+from pcg_gazebo.generators.shapes import random_rectangle
 from pcg_gazebo.simulation import World
+from pcg_gazebo import random
 
 
 class TestWorld(unittest.TestCase):
@@ -34,7 +36,9 @@ class TestWorld(unittest.TestCase):
 
     def test_compute_free_space(self):
         walls = extrude(
-            polygon=random_rectangles(),
+            polygon=random_rectangle(
+                delta_x_min=10,
+                delta_y_min=10),
             extrude_boundaries=True,
             height=2,
             thickness=0.1
@@ -54,7 +58,9 @@ class TestWorld(unittest.TestCase):
 
     def test_find_random_spots(self):
         walls = extrude(
-            polygon=random_rectangles(),
+            polygon=random_rectangle(
+                delta_x_min=10,
+                delta_y_min=10),
             extrude_boundaries=True,
             height=2,
             thickness=0.1
@@ -68,16 +74,17 @@ class TestWorld(unittest.TestCase):
         box_model = box(
             size=[0.05, 0.05, 0.05], pose=[0, 0, 0.025, 0, 0, 0])
 
+        n_spots = random.randint(2, 5)
         poses, free_space_polygon = \
             world.get_random_free_spots(
                 box_model,
-                n_spots=5,
+                n_spots=n_spots,
                 ground_plane_models='walls',
                 dofs=['x', 'y', 'yaw'],
                 return_free_polygon=True
             )
 
-        self.assertEqual(len(poses), 5)
+        self.assertEqual(len(poses), n_spots)
         self.assertIsNotNone(free_space_polygon)
 
         self.assertIsNotNone(free_space_polygon)

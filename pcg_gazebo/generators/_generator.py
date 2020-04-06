@@ -17,7 +17,9 @@ from ..simulation import is_gazebo_model, SimulationModel, \
     Light, ModelGroup
 from .assets_manager import AssetsManager
 from .engine_manager import EngineManager
-from ..utils import generate_random_string, is_string, load_yaml
+from ..random import init_random_state
+from ..utils import generate_random_string, is_string, \
+    load_yaml, is_integer
 
 
 class _Generator(object):
@@ -26,6 +28,7 @@ class _Generator(object):
         self._engines = EngineManager()
         self._simulation_entity = None
         self._name = None
+        self._seed = None
 
         # Set the name provided to the simulation
         # entity to be generated
@@ -43,6 +46,15 @@ class _Generator(object):
         assert len(value) > 0, \
             'Name cannot be an empty string'
         self._name = value
+
+    @property
+    def seed(self):
+        return self._seed
+
+    @seed.setter
+    def seed(self, value):
+        assert value is None or is_integer(value)
+        self._seed = value
 
     @property
     def assets(self):
@@ -313,12 +325,15 @@ class _Generator(object):
         if self._simulation_entity is None:
             self.init()
 
+        init_random_state(self._seed)
+
         if self._engines.size == 0:
             PCG_ROOT_LOGGER.warning('No engines found')
             return False
         if not attach_models:
             self._simulation_entity.reset_models()
             PCG_ROOT_LOGGER.info('List of models is now empty')
+        self._engines.reset_engines()
 
         models = list()
         # Run the fixed pose engines first
@@ -370,8 +385,15 @@ class _Generator(object):
             'Input configuration must be provided as a dictionary'
 
         if 'name' in config:
+            assert is_string(config['name']), 'Name must be a string'
             self.name = config['name']
             PCG_ROOT_LOGGER.info('Generator name: {}'.format(self._name))
+
+        if 'seed' in config:
+            assert is_integer(config['seed']), 'Seed must be an integer'
+            self.seed = config['seed']
+            PCG_ROOT_LOGGER.info('Generator random seed: {}'.format(
+                self._seed))
 
         if 'ground_plane' in config:
             for tag in config['ground_plane']:

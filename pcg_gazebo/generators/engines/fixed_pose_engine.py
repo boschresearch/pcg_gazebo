@@ -52,13 +52,14 @@ class FixedPoseEngine(Engine):
             collision_checker=collision_checker)
 
         if models is not None:
-            assert len(
-                models) == 1, 'The fixed pose engine can use only one model'
+            assert len(models) == 1, \
+                'The fixed pose engine can use only one model'
 
-            if poses is not None:
-                assert isinstance(poses, list), 'Input poses must be a list'
-                for pose in poses:
-                    self.add_pose(pose)
+        if poses is not None:
+            assert isinstance(poses, list), \
+                'Input poses must be a list'
+            for pose in poses:
+                self.add_pose(pose)
 
     def __str__(self):
         msg = 'Engine: {}\n'.format(self._LABEL)

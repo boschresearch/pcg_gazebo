@@ -62,6 +62,11 @@ class CollisionChecker(object):
             self.get_scenario())
         return manager
 
+    def reset_all(self):
+        self._simulation_scenario = trimesh.scene.Scene()
+        self._scene_models = list()
+        self._fixed_models = list()
+
     def reset_scenario(self):
         """Remove all meshes from collision check scene."""
         self._simulation_scenario = trimesh.scene.Scene()

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
@@ -13,9 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 import json
 import unittest
 import subprocess
+import matplotlib.pyplot as plt
 
 
 def load_notebook(file_obj):
@@ -191,6 +194,8 @@ def to_pass(line):
 
 class TestExamples(unittest.TestCase):
     def test_notebooks(self):
+        if sys.version_info.major == 2:
+            return
         examples_dir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             '..',
@@ -214,8 +219,11 @@ class TestExamples(unittest.TestCase):
                     continue
                 with open(filename, 'r') as file_obj:
                     script = load_notebook(file_obj)
-                print(filename)
+                print('-' for _ in range(20))
+                print('Notebook: ', filename)
                 exec(script, globals())
+                plt.close('all')
+                print('-' for _ in range(20))
             elif filename.lower().endswith('.py'):
                 output = subprocess.check_output(['python', filename])
                 assert output.returncode == 0

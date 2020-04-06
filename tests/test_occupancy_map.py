@@ -71,17 +71,13 @@ WORKSPACE = dict(
     name='ws',
     type='workspace',
     frame='world',
-    geometry=dict(
-        type='area',
-        description=dict(
-            points=[
-                [-30, -30, 0],
-                [-30, 30, 0],
-                [30, 30, 0],
-                [30, -30, 0],
-            ]
-        )
-    )
+    geometry_type='area',
+    points=[
+        [-30, -30, 0],
+        [-30, 30, 0],
+        [30, 30, 0],
+        [30, -30, 0],
+    ]
 )
 
 

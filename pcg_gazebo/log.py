@@ -19,8 +19,7 @@ import logging
 import os
 import sys
 import datetime
-import random
-import string
+from .utils import generate_random_string
 
 
 # Output root directory for log file
@@ -30,7 +29,7 @@ PCG_LOG_DIR_ROOT = os.path.join(os.path.expanduser('~'), '.pcg', 'logs')
 PCG_LOG_DIR = os.path.join(
     PCG_LOG_DIR_ROOT,
     datetime.datetime.now().isoformat().replace(':', '_') + '_{}'.format(
-        ''.join(random.choice(string.ascii_letters) for i in range(3))))
+        generate_random_string(3)))
 
 
 def update_log_dir(add_timestamp=True):
@@ -48,10 +47,7 @@ def update_log_dir(add_timestamp=True):
             datetime.datetime.now().isoformat().replace(
                 ':',
                 '_') +
-            '_{}'.format(
-                ''.join(
-                    random.choice(
-                        string.ascii_letters) for i in range(3))))
+            '_{}'.format(generate_random_string(3)))
     else:
         PCG_LOG_DIR = PCG_LOG_DIR_ROOT
 

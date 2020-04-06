@@ -34,6 +34,14 @@ class EngineManager(_CollectionManager):
     def constraints_manager(self):
         return self._constraints_manager
 
+    @property
+    def collision_checker(self):
+        return self._collision_checker
+
+    def reset_engines(self):
+        for tag in self._collection:
+            self._collection[tag].reset()
+
     def add(self, tag, engine_name=None, models=None, engine_obj=None,
             **kwargs):
         """Add a new model creator engine to the internal engines list.

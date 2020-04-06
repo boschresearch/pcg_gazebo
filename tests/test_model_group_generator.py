@@ -15,36 +15,56 @@
 # limitations under the License.
 import os
 import unittest
+import numpy as np
+from pcg_gazebo.utils import generate_random_string
 from pcg_gazebo.generators import ModelGroupGenerator
 from pcg_gazebo.generators.creators import box_factory
+from pcg_gazebo import random
 
+
+BOX_MODEL = box_factory(
+    size=[
+        [1, 1, 1]
+    ],
+    mass=1,
+    use_permutation=True,
+    name='box'
+)[0]
+BOX_MODEL.name = 'box_' + generate_random_string(5)
+
+BOX_FLOOR_MODEL = box_factory(
+    size=[
+        [1, 1, 0.01]
+    ],
+    mass=1,
+    use_permutation=True,
+    name='box_floor'
+)[0]
+BOX_FLOOR_MODEL.name = 'box_floor_' + generate_random_string(5)
 
 FIXED_ENGINE = dict(
     tag='add_fixed_models',
     engine_name='fixed_pose',
-    models=['box_floor'],
+    models=[BOX_FLOOR_MODEL.name],
     poses=[
         [0, 0, 0, 0, 0, 0]
     ]
 )
 
+NUM_BOXES = dict()
+NUM_BOXES[BOX_MODEL.name] = 2
+
 RANDOM_ENGINE = dict(
     tag='add_random_objects',
     engine_name='random_pose',
-    models=[
-        'box'
-    ],
-    model_picker='size',
+    models=[BOX_MODEL.name],
+    model_picker='random',
     max_area=0.9,
     no_collision=True,
-    max_num=dict(
-        box=2,
-    ),
+    max_num=NUM_BOXES,
     policies=[
         dict(
-            models=[
-                'box'
-            ],
+            models=[BOX_MODEL.name],
             config=[
                 dict(
                     dofs=['x', 'y'],
@@ -66,24 +86,18 @@ WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict(
-        type='area',
-        description=dict(
-          points=[
-              [-6, -4, 0],
-              [-3, -4, 0],
-              [-3, 0, 0],
-              [-6, 0, 0]
-          ]
-        )
-    ),
+    geometry_type='area',
+    points=[
+        [-6, -4, 0],
+        [-3, -4, 0],
+        [-3, 0, 0],
+        [-6, 0, 0]
+    ],
     holes=[
         dict(
             type='circle',
-            description=dict(
-                center=[-5, 0, 0],
-                radius=0.2
-            )
+            center=[-5, 0, 0],
+            radius=0.2
         )
     ]
 )
@@ -101,42 +115,115 @@ TANGENT_CONSTRAINT = dict(
     )
 )
 
-BOX_MODEL = box_factory(
-    size=[
-        [1, 1, 1]
-    ],
-    mass=1,
-    use_permutation=True,
-    name='box'
-)[0]
-BOX_MODEL.name = 'box'
-
-BOX_FLOOR_MODEL = box_factory(
-    size=[
-        [1, 1, 0.01]
-    ],
-    mass=1,
-    use_permutation=True,
-    name='box_floor'
-)[0]
-BOX_FLOOR_MODEL.name = 'box_floor'
-
 
 class TestModelGroupGenerator(unittest.TestCase):
+    def test_generator_seed(self):
+        generator = ModelGroupGenerator()
+        # Set random generator's seed
+        generator.seed = np.random.randint(low=0, high=10000)
+
+        box_name = 'box_' + generate_random_string(5)
+        random_box = dict(
+            type='box',
+            args=dict(
+                size="__import__('pcg_gazebo').random.rand(3)",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=box_name
+            )
+        )
+        self.assertTrue(generator.add_asset(
+            random_box,
+            tag=box_name,
+            type='factory'))
+
+        cylinder_name = 'cyl_' + generate_random_string(5)
+        random_cyl = dict(
+            type='cylinder',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                length="__import__('pcg_gazebo').random.rand()",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=cylinder_name
+            )
+        )
+        self.assertTrue(generator.add_asset(random_cyl, tag=cylinder_name))
+
+        sphere_name = 'sphere_' + generate_random_string(5)
+        random_sphere = dict(
+            type='sphere',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=sphere_name
+            )
+        )
+        self.assertTrue(generator.add_asset(random_sphere, tag=sphere_name))
+
+        workspace_name = generate_random_string(5)
+        self.assertTrue(generator.add_constraint(
+            name=workspace_name,
+            type='workspace',
+            geometry_type='circle',
+            radius=100,
+            center=[0, 0]))
+
+        num_models = dict()
+        num_models[box_name] = random.randint(1, 3)
+        num_models[cylinder_name] = random.randint(1, 3)
+        num_models[sphere_name] = random.randint(1, 3)
+
+        total_num_models = 0
+        for tag in num_models:
+            total_num_models += num_models[tag]
+
+        engine_name = generate_random_string(5)
+        self.assertTrue(generator.add_engine(
+            tag=engine_name,
+            engine_name='random_pose',
+            models=list(num_models.keys()),
+            model_picker='random',
+            no_collision=True,
+            max_num=num_models,
+            policies=[
+                dict(
+                    models=list(num_models.keys()),
+                    config=[
+                        dict(
+                            dofs=['x', 'y'],
+                            tag='workspace',
+                            workspace=workspace_name
+                        )
+                    ]
+                )
+            ]
+        ))
+
+        ref = generator.run('test')
+        self.assertIsNotNone(ref)
+        self.assertEqual(ref.n_models, total_num_models)
+
+        for _ in range(3):
+            model = generator.run('test')
+            self.assertIsNotNone(model)
+            self.assertEqual(
+                ref.to_sdf('model'),
+                model.to_sdf('model')
+            )
+
     def test_add_engines_and_constraints_as_obj(self):
-        # Add individually
+        # Add constraints, engines and assets individually
         generator = ModelGroupGenerator()
         self.assertTrue(generator.add_constraint(**TANGENT_CONSTRAINT))
         self.assertTrue(generator.add_constraint(**WORKSPACE_CONSTRAINT))
+        self.assertTrue(generator.add_asset(BOX_FLOOR_MODEL))
+        self.assertTrue(generator.add_asset(BOX_MODEL))
         self.assertTrue(generator.add_engine(**FIXED_ENGINE))
         self.assertTrue(generator.add_engine(**RANDOM_ENGINE))
-        self.assertTrue(generator.add_asset(BOX_MODEL))
-        self.assertTrue(generator.add_asset(BOX_FLOOR_MODEL))
 
-        self.assertTrue(generator.is_asset('box_floor'))
-        self.assertTrue(generator.is_asset('box'))
+        self.assertTrue(generator.is_asset(BOX_FLOOR_MODEL.name))
+        self.assertTrue(generator.is_asset(BOX_MODEL.name))
 
-        generator.set_model_as_ground_plane('box_floor')
+        generator.set_model_as_ground_plane(BOX_FLOOR_MODEL.name)
 
         # Run all engines and retrieve model group
         group = generator.run('test')
@@ -147,7 +234,7 @@ class TestModelGroupGenerator(unittest.TestCase):
         # Add as configuration
         config = dict(
             assets=dict(
-                ground_plane=['box_floor'],
+                ground_plane=[BOX_FLOOR_MODEL.name],
                 assets=[
                     dict(description=BOX_FLOOR_MODEL),
                     dict(description=BOX_MODEL),
@@ -165,10 +252,11 @@ class TestModelGroupGenerator(unittest.TestCase):
 
         generator = ModelGroupGenerator(**config)
 
-        self.assertTrue(generator.is_asset('box_floor'))
-        self.assertTrue(generator.is_asset('box'))
+        self.assertTrue(generator.is_asset(BOX_FLOOR_MODEL.name))
+        self.assertTrue(generator.is_asset(BOX_MODEL.name))
 
         group = generator.run('test')
+        print(group.to_sdf())
         self.assertIsNotNone(group)
         self.assertEqual(group.n_models, 3)
 
@@ -258,17 +346,13 @@ class TestModelGroupGenerator(unittest.TestCase):
             name='crate_base',
             type='workspace',
             frame='world',
-            geometry=dict(
-                type='area',
-                description=dict(
-                    points=[
-                        [-0.5, -0.4, 0],
-                        [-0.5, 0.4, 0],
-                        [0.5, 0.4, 0],
-                        [0.5, -0.4, 0]
-                    ]
-                )
-            )
+            geometry_type='area',
+            points=[
+                [-0.5, -0.4, 0],
+                [-0.5, 0.4, 0],
+                [0.5, 0.4, 0],
+                [0.5, -0.4, 0]
+            ]
         )
 
         generator.add_engine(
@@ -334,7 +418,6 @@ class TestModelGroupGenerator(unittest.TestCase):
         n_models = 1
         for tag in num_models:
             n_models += num_models[tag]
-
         self.assertEqual(crate_model.n_models, n_models)
 
 

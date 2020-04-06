@@ -24,6 +24,8 @@ except ImportError as ex:
 try:
     from matplotlib import pyplot as plt
     from matplotlib import cm
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
     import descartes
     MATPLOTLIB_AVAILABLE = True
 except ImportError as ex:
@@ -42,7 +44,8 @@ def _get_footprints(inputs):
     return fp
 
 
-def get_axes(fig=None, engine='matplotlib', fig_width=20, fig_height=15):
+def get_axes(fig=None, engine='matplotlib', fig_width=20, fig_height=15,
+             projection=None):
     if fig is None:
         fig = get_figure(engine=engine, fig_width=fig_width,
                          fig_height=fig_height)
@@ -53,7 +56,7 @@ def get_axes(fig=None, engine='matplotlib', fig_width=20, fig_height=15):
         fig_width = 15 if engine == 'matplotlib' else 800
 
     if engine == 'matplotlib':
-        ax = fig.add_subplot(111)
+        ax = fig.add_subplot(111, projection=projection)
     else:
         ax = None
     return fig, ax
@@ -83,6 +86,52 @@ def get_figure(engine='matplotlib', fig_width=20, fig_height=15):
     else:
         fig = figure(plot_width=fig_width, plot_height=fig_height)
     return fig
+
+
+def plot_mesh(
+        mesh,
+        fig=None,
+        ax=None,
+        alpha=0.5,
+        line_width=2,
+        color=None,
+        line_style='solid',
+        fig_width=20,
+        fig_height=15,
+        marker_style='o',
+        grid=True):
+    assert MATPLOTLIB_AVAILABLE, \
+        'To plot mesh edges, matplotlib must be available'
+    if ax is None:
+        fig, ax = get_axes(
+            fig=fig,
+            engine='matplotlib',
+            fig_width=fig_width,
+            fig_height=fig_height,
+            projection='3d')
+
+    pc = Poly3DCollection(
+        [[mesh.vertices[i] for i in face] for face in mesh.faces])
+    pc.set_alpha(alpha)
+    pc.set_facecolor(color)
+    pc.set_edgecolor(color)
+
+    edges = mesh.vertices[mesh.edges]
+    ax.add_collection3d(pc)
+    ax.plot(
+        edges[:, :, 0].flatten(),
+        edges[:, :, 1].flatten(),
+        edges[:, :, 2].flatten(),
+        color=color,
+        alpha=alpha,
+        linewidth=line_width,
+        zorder=2,
+        marker=marker_style,
+        linestyle=line_style
+    )
+
+    ax.grid(grid)
+    return fig, ax
 
 
 def plot_shapely_geometry(
@@ -138,7 +187,9 @@ def plot_shapely_geometry(
                 label=legend)
             ax.add_patch(patch)
         elif isinstance(polygon, MultiPolygon):
-            for geo in polygon.geoms:
+            colors = cm.get_cmap(
+                'viridis')(np.linspace(0, 1, len(polygon.geoms)))
+            for geo, color in zip(polygon.geoms, colors):
                 fig, ax = plot_shapely_geometry(
                     fig=fig,
                     ax=ax,
@@ -162,7 +213,9 @@ def plot_shapely_geometry(
                 linewidth=line_width,
                 zorder=2)
         elif isinstance(polygon, MultiLineString):
-            for geo in polygon.geoms:
+            colors = cm.get_cmap(
+                'viridis')(np.linspace(0, 1, len(polygon.geoms)))
+            for geo, color in zip(polygon.geoms, colors):
                 fig, ax = plot_shapely_geometry(
                     fig=fig,
                     ax=ax,
@@ -221,16 +274,30 @@ def plot_workspace(
 
     geo = workspace.get_geometry()
 
-    fig, ax = plot_shapely_geometry(
-        polygon=geo,
-        fig=fig,
-        ax=ax,
-        alpha=alpha,
-        line_width=line_width,
-        legend=legend if legend is not None else 'workspace',
-        color=color,
-        line_style=line_style,
-        use_matplotlib=use_matplotlib)
+    if isinstance(geo, trimesh.base.Trimesh):
+        fig, ax = plot_mesh(
+            mesh=geo,
+            fig=fig,
+            ax=ax,
+            alpha=alpha,
+            line_width=line_width,
+            color=color,
+            line_style=line_style,
+            fig_width=fig_width,
+            fig_height=fig_height,
+            marker_style='o',
+            grid=True)
+    else:
+        fig, ax = plot_shapely_geometry(
+            polygon=geo,
+            fig=fig,
+            ax=ax,
+            alpha=alpha,
+            line_width=line_width,
+            legend=legend if legend is not None else 'workspace',
+            color=color,
+            line_style=line_style,
+            use_matplotlib=use_matplotlib)
 
     return fig, ax
 
@@ -523,7 +590,8 @@ def plot_occupancy_grid(
     filtered_models = dict()
     for tag in models:
         if not is_excluded(tag):
-            if models[tag].is_ground_plane and not with_ground_plane:
+            if (models[tag].is_ground_plane or tag in ground_plane_models) \
+                    and not with_ground_plane:
                 continue
             if not models[tag].static and static_models_only:
                 continue

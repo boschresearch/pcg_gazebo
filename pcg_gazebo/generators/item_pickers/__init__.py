@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,55 +12,51 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Pose generator engine definitions that compute the pose of the
-models according to pre-defined rules.
-"""
-from .engine import Engine
-from .fixed_pose_engine import FixedPoseEngine
-from .random_pose_engine import RandomPoseEngine
-from .pattern_engine import PatternEngine
+from ._picker import _Picker
+from .random_picker import RandomPicker  # noqa: F401
+from .size_picker import SizePicker  # noqa: F401
+from .roulette_wheel_picker import RouletteWheelPicker  # noqa: F401
 
 
-def create_engine(tag, **kwargs):
-    """Engine factory that returns the engine according
-    to its `LABEL` definition. It returns `None` if the engine name
+def create_picker(tag, **kwargs):
+    """Picker factory that returns the picker according
+    to its `LABEL` definition. It returns `None` if the picker name
     is invalid.
 
     > *Input parameters*
 
-    * `tag` (*type:* `str`): Name of the engine class
-    * `kwargs`: Inputs for the engine class constructor
+    * `tag` (*type:* `str`): Name of the picker class
+    * `kwargs`: Inputs for the picker class constructor
     """
     import inspect
     from ...log import PCG_ROOT_LOGGER
 
-    for obj in Engine.__subclasses__():
+    for obj in _Picker.__subclasses__():
         if inspect.isclass(obj):
-            if issubclass(obj, Engine):
+            if issubclass(obj, _Picker):
                 if tag == obj._LABEL:
                     PCG_ROOT_LOGGER.info(
-                        'Creating engine: {}'.format(
+                        'Creating picker: {}'.format(
                             obj._LABEL))
                     return obj(**kwargs)
-    PCG_ROOT_LOGGER.error('Engine {} does not exist'.format(tag))
+    PCG_ROOT_LOGGER.error('Picker {} does not exist'.format(tag))
     return None
 
 
-def get_engine_tags():
+def get_picker_tags():
     import inspect
     tags = list()
-    for obj in Engine.__subclasses__():
+    for obj in _Picker.__subclasses__():
         if inspect.isclass(obj):
-            if issubclass(obj, Engine):
+            if issubclass(obj, _Picker):
                 tags.append(obj._LABEL)
     return tags
 
 
-__all__ = [
-    'create_engine',
-    'get_engine_tags',
-    'Engine',
-    'FixedPoseEngine',
-    'RandomPoseEngine',
-    'PatternEngine'
+___all__ = [
+    'create_picker',
+    'get_picker_tags',
+    'RandomPicker',
+    'SizePicker',
+    'RouletteWheelPicker'
 ]

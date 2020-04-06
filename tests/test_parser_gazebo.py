@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #

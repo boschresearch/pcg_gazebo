@@ -238,7 +238,7 @@ def get_gazebo_model_ros_pkg(name):
         return None
 
 
-def is_gazebo_model(name):
+def is_gazebo_model(name, include_custom_paths=False):
     """Test if a model with the identifier `name` is a Gazebo
     model that is found in the resources path.
 
@@ -254,7 +254,9 @@ def is_gazebo_model(name):
         # Try reloading the models
         load_gazebo_models()
     if name in GAZEBO_MODELS:
-        if is_in_custom_gazebo_resources_path(GAZEBO_MODELS[name]['path']):
+        if not include_custom_paths and \
+                is_in_custom_gazebo_resources_path(
+                    GAZEBO_MODELS[name]['path']):
             return False
         else:
             return True

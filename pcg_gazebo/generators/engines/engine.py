@@ -17,6 +17,7 @@ from ...simulation.properties import Pose
 from ...log import PCG_ROOT_LOGGER
 from ..assets_manager import AssetsManager
 from ..constraints_manager import ConstraintsManager
+from ..item_pickers import create_picker
 from ..collision_checker import SingletonCollisionChecker, \
     CollisionChecker
 from ..rules import create_rule
@@ -27,29 +28,23 @@ class Engine(object):
     of computing poses for models in the world and performing collision
     checks within the scenario before the final world is generated.
     This class includes methods common to all derived engine classes.
-
-    > *Input arguments*
-
-    * `callback_fcn_get_constraint` (*type:* `callable`, *default:* `None`):
-    Handle to a function or a lambda function that returns a
-    `pcg_gazebo.constraints.Constraint` associated with a tag name.
-    * `models` (*type:* `list`, *default:* `None`): List of
-    models names as `str` relative to the models that the
-    engine will have as assets.
-    * `constraints` (*type:* `list`, *default:* `None`):
-    List of local constraint configurations that will be applied on
-    to the engine's model assets.
     """
     _LABEL = None
 
     def __init__(self, assets_manager=None, constraints_manager=None,
-                 models=None, constraints=None, collision_checker=None):
+                 models=None, constraints=None, collision_checker=None,
+                 model_picker=None, as_model_group=False, **kwargs):
         if models is None:
             self._models = list()
         else:
             assert isinstance(models, list), \
                 'Input models must be a string of model names'
             self._models = models
+
+        assert isinstance(as_model_group, bool), \
+            'Flag as_model_group must be a boolean,' \
+            ' provided={}, type={}'.format(
+                as_model_group, type(as_model_group))
 
         self._poses = dict()
 
@@ -60,6 +55,8 @@ class Engine(object):
         self._local_constraints = dict()
 
         self._rules = list()
+
+        self._as_model_group = as_model_group
 
         if constraints is not None:
             for c in constraints:
@@ -89,6 +86,15 @@ class Engine(object):
         else:
             self._constraints_manager = ConstraintsManager.get_instance()
 
+        if model_picker is not None:
+            self._model_picker = create_picker(
+                model_picker, items=models, **kwargs)
+            assert self._model_picker is not None, \
+                'Invalid item picker tag, provided={}, input={}'.format(
+                    model_picker, kwargs)
+        else:
+            self._model_picker = None
+
     def __str__(self):
         raise NotImplementedError()
 
@@ -111,6 +117,14 @@ class Engine(object):
         """
         return self._poses
 
+    @property
+    def collision_checker(self):
+        return self._collision_checker
+
+    @property
+    def model_picker(self):
+        return self._model_picker
+
     def _test_repeated_rule_dofs(self):
         dofs = ['x', 'y', 'z', 'roll', 'pitch', 'yaw']
         for item in self._rules:
@@ -124,6 +138,11 @@ class Engine(object):
                         raise ValueError(
                             'Randomization policies have repeated DoFs'
                             ', dof={}'.format(dof))
+
+    def reset(self):
+        self._collision_checker.reset_all()
+        if self._model_picker is not None:
+            self._model_picker.reset()
 
     def add_rule(self, models, config):
         assert isinstance(config, list)

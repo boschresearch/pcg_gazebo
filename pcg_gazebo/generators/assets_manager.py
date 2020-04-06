@@ -168,7 +168,8 @@ class AssetsManager(_CollectionManager):
             tag=None,
             type=None,
             parameters=None,
-            include_dir=None):
+            include_dir=None,
+            overwrite=True):
         """Add new asset to the collection.
 
         > *Input arguments*
@@ -191,7 +192,7 @@ class AssetsManager(_CollectionManager):
         """
         from ..parsers import parse_sdf, parse_urdf, urdf2sdf
         from .model_group_generator import ModelGroupGenerator
-        if self.has_element(tag):
+        if self.has_element(tag) and not overwrite:
             PCG_ROOT_LOGGER.warning(
                 'Asset with tag <{}> already exists, tags='.format(
                     tag, self.tags))
