@@ -62,9 +62,11 @@ def triangulate_points(points):
     return unary_union(triangulate(pp))
 
 
-def circle(x_center=0, y_center=0, radius=1):
+def circle(center, radius=1):
+    assert len(center) in [2, 3], \
+        'Center of circle must have 2 or 3 elements'
     assert radius > 0, 'Radius must be greater than zero'
-    center = Point(x_center, y_center)
+    center = Point(*center)
     return center.buffer(radius)
 
 
