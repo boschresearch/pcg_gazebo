@@ -215,10 +215,8 @@ if __name__ == '__main__':
         name='room_workspace',
         type='workspace',
         frame='world',
-        geometry=dict(
-            type='polygon',
-            description=free_space_polygon
-        )
+        geometry_type='polygon',
+        polygon=free_space_polygon
     )
 
     # Add constraint to place all object
