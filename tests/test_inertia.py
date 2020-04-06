@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
-import random
+from pcg_gazebo import random
 from pcg_gazebo.simulation.properties import Inertial
 
 
@@ -108,8 +108,8 @@ class TestPCGGeneratorInertial(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 Inertial.create_hollow_sphere_inertia(*test_input)
 
-        mass = random.random()
-        radius = random.random()
+        mass = random.rand()
+        radius = random.rand()
         ref_inertia = get_solid_sphere_inertia(mass, radius)
 
         inertia = Inertial.create_solid_sphere_inertia(mass, radius)
@@ -134,8 +134,8 @@ class TestPCGGeneratorInertial(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 Inertial.create_hollow_sphere_inertia(*test_input)
 
-        mass = random.random()
-        radius = random.random()
+        mass = random.rand()
+        radius = random.rand()
         ref_inertia = get_hollow_sphere_inertia(mass, radius)
 
         inertia = Inertial.create_hollow_sphere_inertia(mass, radius)
@@ -161,10 +161,10 @@ class TestPCGGeneratorInertial(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 Inertial.create_ellipsoid_inertia(*test_input)
 
-        mass = random.random()
-        axis_length_x = random.random()
-        axis_length_y = random.random()
-        axis_length_z = random.random()
+        mass = random.rand()
+        axis_length_x = random.rand()
+        axis_length_y = random.rand()
+        axis_length_z = random.rand()
 
         ref_inertia = get_ellipsoid_inertia(
             mass, axis_length_x, axis_length_y, axis_length_z)
@@ -194,10 +194,10 @@ class TestPCGGeneratorInertial(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 Inertial.create_cuboid_inertia(*test_input)
 
-        mass = random.random()
-        length_x = random.random()
-        length_y = random.random()
-        length_z = random.random()
+        mass = random.rand()
+        length_x = random.rand()
+        length_y = random.rand()
+        length_z = random.rand()
 
         ref_inertia = get_cuboid_inertia(
             mass, length_x, length_y, length_z)
@@ -227,9 +227,9 @@ class TestPCGGeneratorInertial(unittest.TestCase):
                 Inertial.create_centered_rod_inertia(*test_input)
 
         inputs = [
-            [random.random(), random.random(), [1, 0, 0]],
-            [random.random(), random.random(), [0, 1, 0]],
-            [random.random(), random.random(), [0, 0, 1]]
+            [random.rand(), random.rand(), [1, 0, 0]],
+            [random.rand(), random.rand(), [0, 1, 0]],
+            [random.rand(), random.rand(), [0, 0, 1]]
         ]
 
         for test_input in inputs:

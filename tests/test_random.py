@@ -15,7 +15,7 @@
 # limitations under the License.
 import unittest
 from pcg_gazebo.utils import is_scalar, is_array, is_integer
-from pcg_gazebo.generators import random
+from pcg_gazebo import random
 
 
 class TestRandom(unittest.TestCase):
@@ -27,6 +27,7 @@ class TestRandom(unittest.TestCase):
             self.assertEqual(random.PCG_RANDOM_SEED, seed)
 
             # Test rand
+            random.init_random_state(seed)
             ref = [random.rand() for _ in range(5)]
 
             for _ in range(3):
@@ -47,13 +48,14 @@ class TestRandom(unittest.TestCase):
 
             # Test choice
             values = [random.rand() for _ in range(10)]
-            ref = [random.choice(values) for _ in range(10)]
+            random.init_random_state(seed)
+            ref = [random.choice(values) for _ in range(5)]
             for _ in range(3):
                 random.init_random_state(seed)
                 self.assertEqual(random.PCG_RANDOM_SEED, seed)
                 self.assertEqual(
                     ref,
-                    [random.choice(values) for _ in range(10)])
+                    [random.choice(values) for _ in range(5)])
 
     def test_rand(self):
         # Test default output

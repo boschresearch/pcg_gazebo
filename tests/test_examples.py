@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
@@ -16,6 +17,7 @@ import os
 import json
 import unittest
 import subprocess
+import matplotlib.pyplot as plt
 
 
 def load_notebook(file_obj):
@@ -214,8 +216,11 @@ class TestExamples(unittest.TestCase):
                     continue
                 with open(filename, 'r') as file_obj:
                     script = load_notebook(file_obj)
-                print(filename)
+                print('-' for _ in range(20))
+                print('Notebook: ', filename)
                 exec(script, globals())
+                plt.close('all')
+                print('-' for _ in range(20))
             elif filename.lower().endswith('.py'):
                 output = subprocess.check_output(['python', filename])
                 assert output.returncode == 0

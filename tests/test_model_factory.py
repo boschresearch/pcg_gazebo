@@ -14,11 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
-import random
-import string
 import numpy as np
 import os
 import shutil
+from pcg_gazebo import random
+from pcg_gazebo.utils import generate_random_string
 from pcg_gazebo.generators.creators import create_models_from_config, extrude
 from pcg_gazebo.simulation.properties import Material, Pose
 from pcg_gazebo.simulation import SimulationModel
@@ -26,15 +26,12 @@ from pcg_gazebo.path import Path
 from shapely.geometry import Polygon, MultiPoint, LineString
 
 
-def _get_random_string(size=3):
-    return ''.join(random.choice(string.ascii_letters) for i in range(size))
-
-
 def _get_colors():
+    color_names = list(Material.get_xkcd_colors_list().keys())
     return [None, 'xkcd', 'random'] + \
-        [random.choice(list(Material.get_xkcd_colors_list().keys()))
+        [color_names[random.choice(range(len(color_names)))]
          for _ in range(2)] + \
-        [[random.random() for _ in range(4)] for _ in range(2)]
+        [[random.rand() for _ in range(4)] for _ in range(2)]
 
 
 def _delete_generated_meshes(sdf):
@@ -53,11 +50,108 @@ def _delete_generated_meshes(sdf):
 
 
 class TestModelFactory(unittest.TestCase):
+    def test_box_after_random_seed(self):
+        box_name = generate_random_string(5)
+
+        seed = random.randint(0, 10000)
+        random.init_random_state(seed)
+        random_box = dict(
+            type='box',
+            args=dict(
+                size="__import__('pcg_gazebo').random.rand(3)",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=box_name
+            )
+        )
+
+        ref = create_models_from_config([random_box])[0]
+
+        for _ in range(3):
+            random.init_random_state(seed)
+            model = create_models_from_config([random_box])[0]
+            self.assertEqual(ref.to_sdf(), model.to_sdf())
+
+        random.init_random_state(seed)
+        refs = create_models_from_config(
+            [random_box for _ in range(3)])
+
+        for _ in range(3):
+            random.init_random_state(seed)
+            models = create_models_from_config(
+                [random_box for _ in range(3)])
+            for r, m in zip(refs, models):
+                self.assertEqual(r.to_sdf(), m.to_sdf())
+
+    def test_sphere_after_random_seed(self):
+        sphere_name = generate_random_string(5)
+
+        seed = random.randint(0, 10000)
+        random.init_random_state(seed)
+        random_sphere = dict(
+            type='sphere',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=sphere_name
+            )
+        )
+
+        ref = create_models_from_config([random_sphere])[0]
+
+        for _ in range(3):
+            random.init_random_state(seed)
+            model = create_models_from_config([random_sphere])[0]
+            self.assertEqual(ref.to_sdf(), model.to_sdf())
+
+        random.init_random_state(seed)
+        refs = create_models_from_config(
+            [random_sphere for _ in range(3)])
+
+        for _ in range(3):
+            random.init_random_state(seed)
+            models = create_models_from_config(
+                [random_sphere for _ in range(3)])
+            for r, m in zip(refs, models):
+                self.assertEqual(r.to_sdf(), m.to_sdf())
+
+    def test_cylinder_after_random_seed(self):
+        cyl_name = generate_random_string(5)
+
+        seed = random.randint(0, 10000)
+        random.init_random_state(seed)
+        random_cyl = dict(
+            type='cylinder',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                length="__import__('pcg_gazebo').random.rand()",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=cyl_name
+            )
+        )
+
+        ref = create_models_from_config([random_cyl])[0]
+
+        for _ in range(3):
+            random.init_random_state(seed)
+            model = create_models_from_config([random_cyl])[0]
+            self.assertEqual(ref.to_sdf(), model.to_sdf())
+
+        random.init_random_state(seed)
+        refs = create_models_from_config(
+            [random_cyl for _ in range(3)])
+
+        for _ in range(3):
+            random.init_random_state(seed)
+            models = create_models_from_config(
+                [random_cyl for _ in range(3)])
+            for r, m in zip(refs, models):
+                self.assertEqual(r.to_sdf(), m.to_sdf())
+
     def test_static_box_model(self):
         for color in _get_colors():
-            name = _get_random_string(3)
-            pose = [random.random() for _ in range(6)]
-            size = [random.random() for _ in range(3)]
+            name = generate_random_string(3)
+            pose = [random.rand() for _ in range(6)]
+            size = [random.rand() for _ in range(3)]
             model_config = [
                 dict(
                     type='box',
@@ -82,7 +176,7 @@ class TestModelFactory(unittest.TestCase):
                             kd=random.uniform(0, 10),
                             max_vel=random.uniform(0, 0.1),
                             min_depth=random.uniform(0, 0.1),
-                            split_impulse=random.choice([True, False]),
+                            split_impulse=False,
                             split_impulse_penetration_threshold=-0.01,
                             restitution_coefficient=random.uniform(0, 1),
                             threshold=random.uniform(0, 1)
@@ -165,10 +259,10 @@ class TestModelFactory(unittest.TestCase):
 
     def test_dynamic_box_model(self):
         for color in _get_colors():
-            name = _get_random_string(3)
-            pose = [random.random() for _ in range(6)]
-            size = [random.random() for _ in range(3)]
-            mass = random.random()
+            name = generate_random_string(3)
+            pose = [random.rand() for _ in range(6)]
+            size = [random.rand() for _ in range(3)]
+            mass = random.rand()
             model_config = [
                 dict(
                     type='box',
@@ -194,7 +288,7 @@ class TestModelFactory(unittest.TestCase):
                             kd=random.uniform(0, 10),
                             max_vel=random.uniform(0, 0.1),
                             min_depth=random.uniform(0, 0.1),
-                            split_impulse=random.choice([True, False]),
+                            split_impulse=False,
                             split_impulse_penetration_threshold=-0.01,
                             restitution_coefficient=random.uniform(0, 1),
                             threshold=random.uniform(0, 1)
@@ -290,11 +384,11 @@ class TestModelFactory(unittest.TestCase):
         for color in _get_colors():
             n_sizes = random.randint(2, 5)
             n_masses = random.randint(2, 5)
-            name = _get_random_string(3)
-            sizes = [[random.random() for _ in range(3)]
+            name = generate_random_string(3)
+            sizes = [[random.rand() for _ in range(3)]
                      for _ in range(n_sizes)]
-            pose = [random.random() for _ in range(6)]
-            masses = [random.random() for _ in range(n_masses)]
+            pose = [random.rand() for _ in range(6)]
+            masses = [random.rand() for _ in range(n_masses)]
             model_config = [
                 dict(
                     type='box_factory',
@@ -357,11 +451,11 @@ class TestModelFactory(unittest.TestCase):
     def test_box_factory_fixed_args_no_permutation(self):
         for color in _get_colors():
             n_models = random.randint(2, 5)
-            name = _get_random_string(3)
-            sizes = [[random.random() for _ in range(3)]
+            name = generate_random_string(3)
+            sizes = [[random.rand() for _ in range(3)]
                      for _ in range(n_models)]
-            pose = [random.random() for _ in range(6)]
-            masses = [random.random() for _ in range(n_models)]
+            pose = [random.rand() for _ in range(6)]
+            masses = [random.rand() for _ in range(n_models)]
             model_config = [
                 dict(
                     type='box_factory',
@@ -425,11 +519,11 @@ class TestModelFactory(unittest.TestCase):
         for color in _get_colors():
             n_sizes = random.randint(2, 5)
             n_masses = random.randint(2, 5)
-            name = _get_random_string(3)
+            name = generate_random_string(3)
             sizes = "__import__('numpy').random.random(({}, 3))".format(
                 n_sizes)
             masses = "__import__('numpy').linspace(1, 10, {})".format(n_masses)
-            pose = [random.random() for _ in range(6)]
+            pose = [random.rand() for _ in range(6)]
             model_config = [
                 dict(
                     type='box_factory',
@@ -489,12 +583,12 @@ class TestModelFactory(unittest.TestCase):
     def text_box_forced_permutation(self):
         n_sizes = 2
         n_masses = 3
-        name = _get_random_string(3)
+        name = generate_random_string(3)
 
         # Test with lambda functions
         sizes = "__import__('numpy').random.random(({}, 3))".format(n_sizes)
         masses = "__import__('numpy').linspace(1, 10, {})".format(n_masses)
-        pose = [random.random() for _ in range(6)]
+        pose = [random.rand() for _ in range(6)]
         model_config = [
             dict(
                 type='box_factory',
@@ -513,9 +607,9 @@ class TestModelFactory(unittest.TestCase):
         self.assertEqual(len(models), n_sizes * n_masses)
 
         # Test with fixed arguments
-        sizes = [[random.random() for _ in range(3)] for _ in range(n_sizes)]
-        masses = [random.random() for _ in range(n_masses)]
-        pose = [random.random() for _ in range(6)]
+        sizes = [[random.rand() for _ in range(3)] for _ in range(n_sizes)]
+        masses = [random.rand() for _ in range(n_masses)]
+        pose = [random.rand() for _ in range(6)]
         model_config = [
             dict(
                 type='box_factory',
@@ -535,10 +629,10 @@ class TestModelFactory(unittest.TestCase):
 
     def test_static_cylinder_model(self):
         for color in _get_colors():
-            name = _get_random_string(3)
-            pose = [random.random() for _ in range(6)]
-            radius = random.random()
-            length = random.random()
+            name = generate_random_string(3)
+            pose = [random.rand() for _ in range(6)]
+            radius = random.rand()
+            length = random.rand()
             model_config = [
                 dict(
                     type='cylinder',
@@ -564,7 +658,7 @@ class TestModelFactory(unittest.TestCase):
                             kd=random.uniform(0, 10),
                             max_vel=random.uniform(0, 0.1),
                             min_depth=random.uniform(0, 0.1),
-                            split_impulse=random.choice([True, False]),
+                            split_impulse=False,
                             split_impulse_penetration_threshold=-0.01,
                             restitution_coefficient=random.uniform(0, 1),
                             threshold=random.uniform(0, 1)
@@ -648,11 +742,11 @@ class TestModelFactory(unittest.TestCase):
 
     def test_dynamic_cylinder_model(self):
         for color in _get_colors():
-            name = _get_random_string(3)
-            pose = [random.random() for _ in range(6)]
-            radius = random.random()
-            length = random.random()
-            mass = random.random()
+            name = generate_random_string(3)
+            pose = [random.rand() for _ in range(6)]
+            radius = random.rand()
+            length = random.rand()
+            mass = random.rand()
             model_config = [
                 dict(
                     type='cylinder',
@@ -679,7 +773,7 @@ class TestModelFactory(unittest.TestCase):
                             kd=random.uniform(0, 10),
                             max_vel=random.uniform(0, 0.1),
                             min_depth=random.uniform(0, 0.1),
-                            split_impulse=random.choice([True, False]),
+                            split_impulse=False,
                             split_impulse_penetration_threshold=-0.01,
                             restitution_coefficient=random.uniform(0, 1),
                             threshold=random.uniform(0, 1)
@@ -781,11 +875,11 @@ class TestModelFactory(unittest.TestCase):
             n_radius = random.randint(2, 4)
             n_length = random.randint(2, 4)
             n_masses = random.randint(2, 4)
-            name = _get_random_string(3)
-            radius = [random.random() for _ in range(n_radius)]
-            length = [random.random() for _ in range(n_length)]
-            pose = [random.random() for _ in range(6)]
-            masses = [random.random() for _ in range(n_masses)]
+            name = generate_random_string(3)
+            radius = [random.rand() for _ in range(n_radius)]
+            length = [random.rand() for _ in range(n_length)]
+            pose = [random.rand() for _ in range(6)]
+            masses = [random.rand() for _ in range(n_masses)]
             model_config = [
                 dict(
                     type='cylinder_factory',
@@ -851,11 +945,11 @@ class TestModelFactory(unittest.TestCase):
     def test_cylinder_factory_fixed_args_no_permutation(self):
         for color in _get_colors():
             n_models = random.randint(2, 4)
-            name = _get_random_string(3)
-            radius = [random.random() for _ in range(n_models)]
-            length = [random.random() for _ in range(n_models)]
-            pose = [random.random() for _ in range(6)]
-            masses = [random.random() for _ in range(n_models)]
+            name = generate_random_string(3)
+            radius = [random.rand() for _ in range(n_models)]
+            length = [random.rand() for _ in range(n_models)]
+            pose = [random.rand() for _ in range(6)]
+            masses = [random.rand() for _ in range(n_models)]
             model_config = [
                 dict(
                     type='cylinder_factory',
@@ -923,13 +1017,13 @@ class TestModelFactory(unittest.TestCase):
             n_radius = random.randint(2, 4)
             n_length = random.randint(2, 4)
             n_masses = random.randint(2, 4)
-            name = _get_random_string(3)
+            name = generate_random_string(3)
 
             radius = "__import__('numpy').random.random({})".format(n_radius)
             length = "__import__('numpy').linspace(1, 10, {})".format(n_length)
             masses = "__import__('numpy').linspace(1, 10, {})".format(n_masses)
 
-            pose = [random.random() for _ in range(6)]
+            pose = [random.rand() for _ in range(6)]
             model_config = [
                 dict(
                     type='cylinder_factory',
@@ -991,14 +1085,14 @@ class TestModelFactory(unittest.TestCase):
         n_radius = 1
         n_masses = 2
         n_length = 3
-        name = _get_random_string(3)
+        name = generate_random_string(3)
 
         # Test with lambda functions
         radius = "__import__('numpy').random.random({})".format(n_radius)
         length = "__import__('numpy').random.random({})".format(n_length)
         masses = "__import__('numpy').linspace(1, 10, {})".format(n_masses)
 
-        pose = [random.random() for _ in range(6)]
+        pose = [random.rand() for _ in range(6)]
         model_config = [
             dict(
                 type='cylinder_factory',
@@ -1017,11 +1111,11 @@ class TestModelFactory(unittest.TestCase):
         self.assertEqual(len(models), n_radius * n_length * n_masses)
 
         # Test with fixed arguments
-        radius = [random.random() for _ in range(n_radius)]
-        length = [random.random() for _ in range(n_length)]
-        masses = [random.random() for _ in range(n_masses)]
+        radius = [random.rand() for _ in range(n_radius)]
+        length = [random.rand() for _ in range(n_length)]
+        masses = [random.rand() for _ in range(n_masses)]
 
-        pose = [random.random() for _ in range(6)]
+        pose = [random.rand() for _ in range(6)]
         model_config = [
             dict(
                 type='cylinder_factory',
@@ -1041,9 +1135,9 @@ class TestModelFactory(unittest.TestCase):
 
     def test_static_sphere_model(self):
         for color in _get_colors():
-            name = _get_random_string(3)
-            pose = [random.random() for _ in range(6)]
-            radius = random.random()
+            name = generate_random_string(3)
+            pose = [random.rand() for _ in range(6)]
+            radius = random.rand()
             model_config = [
                 dict(
                     type='sphere',
@@ -1068,7 +1162,7 @@ class TestModelFactory(unittest.TestCase):
                             kd=random.uniform(0, 10),
                             max_vel=random.uniform(0, 0.1),
                             min_depth=random.uniform(0, 0.1),
-                            split_impulse=random.choice([True, False]),
+                            split_impulse=False,
                             split_impulse_penetration_threshold=-0.01,
                             restitution_coefficient=random.uniform(0, 1),
                             threshold=random.uniform(0, 1)
@@ -1150,10 +1244,10 @@ class TestModelFactory(unittest.TestCase):
 
     def test_dynamic_sphere_model(self):
         for color in _get_colors():
-            name = _get_random_string(3)
-            pose = [random.random() for _ in range(6)]
-            radius = random.random()
-            mass = random.random()
+            name = generate_random_string(3)
+            pose = [random.rand() for _ in range(6)]
+            radius = random.rand()
+            mass = random.rand()
             model_config = [
                 dict(
                     type='sphere',
@@ -1179,7 +1273,7 @@ class TestModelFactory(unittest.TestCase):
                             kd=random.uniform(0, 10),
                             max_vel=random.uniform(0, 0.1),
                             min_depth=random.uniform(0, 0.1),
-                            split_impulse=random.choice([True, False]),
+                            split_impulse=True,
                             split_impulse_penetration_threshold=-0.01,
                             restitution_coefficient=random.uniform(0, 1),
                             threshold=random.uniform(0, 1)
@@ -1274,10 +1368,10 @@ class TestModelFactory(unittest.TestCase):
         for color in _get_colors():
             n_radius = random.randint(2, 4)
             n_masses = random.randint(2, 4)
-            name = _get_random_string(3)
-            radius = [random.random() for _ in range(n_radius)]
-            pose = [random.random() for _ in range(6)]
-            masses = [random.random() for _ in range(n_masses)]
+            name = generate_random_string(3)
+            radius = [random.rand() for _ in range(n_radius)]
+            pose = [random.rand() for _ in range(6)]
+            masses = [random.rand() for _ in range(n_masses)]
             model_config = [
                 dict(
                     type='sphere_factory',
@@ -1340,10 +1434,10 @@ class TestModelFactory(unittest.TestCase):
     def test_sphere_factory_fixed_args_no_permutation(self):
         for color in _get_colors():
             n_models = random.randint(2, 4)
-            name = _get_random_string(3)
-            radius = [random.random() for _ in range(n_models)]
-            pose = [random.random() for _ in range(6)]
-            masses = [random.random() for _ in range(n_models)]
+            name = generate_random_string(3)
+            radius = [random.rand() for _ in range(n_models)]
+            pose = [random.rand() for _ in range(6)]
+            masses = [random.rand() for _ in range(n_models)]
             model_config = [
                 dict(
                     type='sphere_factory',
@@ -1407,12 +1501,12 @@ class TestModelFactory(unittest.TestCase):
         for color in _get_colors():
             n_radius = random.randint(2, 4)
             n_masses = random.randint(2, 4)
-            name = _get_random_string(3)
+            name = generate_random_string(3)
 
             radius = "__import__('numpy').random.random({})".format(n_radius)
             masses = "__import__('numpy').linspace(1, 10, {})".format(n_masses)
 
-            pose = [random.random() for _ in range(6)]
+            pose = [random.rand() for _ in range(6)]
             model_config = [
                 dict(
                     type='sphere_factory',
@@ -1472,13 +1566,13 @@ class TestModelFactory(unittest.TestCase):
     def test_sphere_forced_permutation(self):
         n_radius = random.randint(2, 3)
         n_masses = 2 * n_radius
-        name = _get_random_string(3)
+        name = generate_random_string(3)
 
         # Test with lambda functions
         radius = "__import__('numpy').random.random({})".format(n_radius)
         masses = "__import__('numpy').linspace(1, 10, {})".format(n_masses)
 
-        pose = [random.random() for _ in range(6)]
+        pose = [random.rand() for _ in range(6)]
         model_config = [
             dict(
                 type='sphere_factory',
@@ -1496,10 +1590,10 @@ class TestModelFactory(unittest.TestCase):
         self.assertEqual(len(models), n_radius * n_masses)
 
         # Test with fixed arguments
-        radius = [random.random() for _ in range(n_radius)]
-        masses = [random.random() for _ in range(n_masses)]
+        radius = [random.rand() for _ in range(n_radius)]
+        masses = [random.rand() for _ in range(n_masses)]
 
-        pose = [random.random() for _ in range(6)]
+        pose = [random.rand() for _ in range(6)]
         model_config = [
             dict(
                 type='sphere_factory',
@@ -1521,10 +1615,10 @@ class TestModelFactory(unittest.TestCase):
         vertices = [(0, 0), (0, 2), (2, 2), (2, 0), (0, 0)]
         poly = Polygon(vertices)
 
-        name = _get_random_string(3)
-        pose = [random.random() for _ in range(6)]
-        mass = random.random()
-        height = random.random()
+        name = generate_random_string(3)
+        pose = [random.rand() for _ in range(6)]
+        mass = random.rand()
+        height = random.rand()
 
         model_config = [
             dict(
@@ -1562,7 +1656,7 @@ class TestModelFactory(unittest.TestCase):
                             pose=pose,
                             color=None,
                             extrude_boundaries=True,
-                            thickness=random.random(),
+                            thickness=random.rand(),
                             cap_style=cs,
                             join_style=js
                         )
@@ -1576,13 +1670,13 @@ class TestModelFactory(unittest.TestCase):
                     _delete_generated_meshes(model.to_sdf())
 
         # Create a mesh by dilating point
-        vertices = [(random.random() * 5, random.random() * 5)]
+        vertices = [(random.rand() * 5, random.rand() * 5)]
         poly = MultiPoint(vertices)
 
-        name = _get_random_string(3)
-        pose = [random.random() for _ in range(6)]
-        mass = random.random()
-        height = random.random()
+        name = generate_random_string(3)
+        pose = [random.rand() for _ in range(6)]
+        mass = random.rand()
+        height = random.rand()
 
         model_config = [
             dict(
@@ -1594,7 +1688,7 @@ class TestModelFactory(unittest.TestCase):
                     height=height,
                     pose=pose,
                     color=None,
-                    thickness=random.random()
+                    thickness=random.rand()
                 )
             )
         ]
@@ -1606,14 +1700,14 @@ class TestModelFactory(unittest.TestCase):
             _delete_generated_meshes(model.to_sdf())
 
         # Create a mesh by dilating a line
-        vertices = [(random.random() * 5, random.random() * 5)
+        vertices = [(random.rand() * 5, random.rand() * 5)
                     for _ in range(5)]
         poly = LineString(vertices)
 
-        name = _get_random_string(3)
-        pose = [random.random() for _ in range(6)]
-        mass = random.random()
-        height = random.random()
+        name = generate_random_string(3)
+        pose = [random.rand() for _ in range(6)]
+        mass = random.rand()
+        height = random.rand()
 
         for cs in cap_style:
             for js in join_style:
@@ -1629,7 +1723,7 @@ class TestModelFactory(unittest.TestCase):
                             color=None,
                             cap_style=cs,
                             join_style=js,
-                            thickness=random.random()
+                            thickness=random.rand()
                         )
                     )
                 ]
@@ -1641,7 +1735,7 @@ class TestModelFactory(unittest.TestCase):
                     _delete_generated_meshes(model.to_sdf())
 
     def test_invalid_polygon_extrude_inputs(self):
-        vertices = [(random.random() * 5, random.random() * 5)]
+        vertices = [(random.rand() * 5, random.rand() * 5)]
 
         model_config = [
             dict(
@@ -1649,7 +1743,7 @@ class TestModelFactory(unittest.TestCase):
                 args=dict(
                     polygon=MultiPoint(vertices),
                     thickness=0,
-                    height=random.random()
+                    height=random.rand()
                 )
             )
         ]
@@ -1662,10 +1756,10 @@ class TestModelFactory(unittest.TestCase):
         vertices = [(0, 0), (0, 2), (2, 2), (2, 0), (0, 0)]
         poly = Polygon(vertices)
 
-        name = _get_random_string(3)
-        pose = [random.random() for _ in range(6)]
-        mass = random.random()
-        height = 10 * random.random()
+        name = generate_random_string(3)
+        pose = [random.rand() for _ in range(6)]
+        mass = random.rand()
+        height = 10 * random.rand()
 
         model_config = dict(
             polygon=poly,

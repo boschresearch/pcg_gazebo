@@ -15,7 +15,7 @@
 # limitations under the License.
 import unittest
 import os
-import random
+from pcg_gazebo import random
 from pcg_gazebo.simulation import SimulationModel, ModelGroup
 from pcg_gazebo.simulation.physics import ODE, Simbody, Bullet
 from pcg_gazebo.generators import WorldGenerator
@@ -72,7 +72,7 @@ RANDOM_ENGINE = dict(
         'box',
         'box_floor'
     ],
-    model_picker='size',
+    model_picker='random',
     max_area=0.9,
     no_collision=True,
     max_num=dict(
@@ -108,24 +108,18 @@ WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict(
-        type='area',
-        description=dict(
-          points=[
-              [-6, -4, 0],
-              [-3, -4, 0],
-              [-3, 0, 0],
-              [-6, 0, 0]
-          ]
-        )
-    ),
+    geometry_type='area',
+    points=[
+        [-6, -4, 0],
+        [-3, -4, 0],
+        [-3, 0, 0],
+        [-6, 0, 0]
+    ],
     holes=[
         dict(
             type='circle',
-            description=dict(
-                center=[-5, 0, 0],
-                radius=0.2
-            )
+            center=[-5, 0, 0],
+            radius=0.2
         )
     ]
 )
@@ -167,6 +161,166 @@ TEST_MODEL_GROUP_GENERATOR = dict(
 
 
 class TestWorldGenerator(unittest.TestCase):
+    def test_init_from_world_sdf(self):
+        generator = WorldGenerator(
+            world_file=os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'worlds',
+                'test_pcg_example.world'))
+        self.assertIsNotNone(generator.world)
+        self.assertIsNotNone(generator.world.n_models, 2)
+        self.assertIsNotNone(generator.world.n_lights, 1)
+        self.assertIn('box', generator.world.models)
+        self.assertIn('ground_plane', generator.world.models)
+        self.assertIn('sun', generator.world.lights)
+
+        box_name = 'box_' + generate_random_string(5)
+        random_box = dict(
+            type='box',
+            args=dict(
+                size="__import__('pcg_gazebo').random.rand(3)",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=box_name
+            )
+        )
+        self.assertTrue(generator.add_asset(
+            random_box,
+            tag=box_name,
+            type='factory'))
+
+        workspace_name = generate_random_string(5)
+        self.assertTrue(generator.add_constraint(
+            name=workspace_name,
+            type='workspace',
+            geometry_type='circle',
+            radius=100,
+            center=[0, 0])
+        )
+
+        num_models = dict()
+        num_models[box_name] = random.randint(2, 5)
+
+        engine_name = generate_random_string(5)
+        self.assertTrue(generator.add_engine(
+            tag=engine_name,
+            engine_name='random_pose',
+            models=list(num_models.keys()),
+            model_picker='random',
+            no_collision=True,
+            max_num=num_models,
+            policies=[
+                dict(
+                    models=list(num_models.keys()),
+                    config=[
+                        dict(
+                            dofs=['x', 'y'],
+                            tag='workspace',
+                            workspace=workspace_name
+                        )
+                    ]
+                )
+            ]
+        ))
+
+        generator.run_engines(attach_models=True)
+
+        self.assertEqual(generator.world.n_models, num_models[box_name] + 2)
+        self.assertIn('box', generator.world.models)
+        self.assertIn('ground_plane', generator.world.models)
+        self.assertIn('sun', generator.world.lights)
+
+    def test_generator_seed(self):
+        generator = WorldGenerator()
+
+        # Set random generator's seed
+        generator.seed = random.randint(low=0, high=10000)
+
+        box_name = 'box_' + generate_random_string(5)
+        random_box = dict(
+            type='box',
+            args=dict(
+                size="__import__('pcg_gazebo').random.rand(3)",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=box_name
+            )
+        )
+        self.assertTrue(generator.add_asset(
+            random_box,
+            tag=box_name,
+            type='factory'))
+
+        cylinder_name = 'cyl_' + generate_random_string(5)
+        random_cyl = dict(
+            type='cylinder',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                length="__import__('pcg_gazebo').random.rand()",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=cylinder_name
+            )
+        )
+        self.assertTrue(generator.add_asset(random_cyl, tag=cylinder_name))
+
+        sphere_name = 'sphere_' + generate_random_string(5)
+        random_sphere = dict(
+            type='sphere',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=sphere_name
+            )
+        )
+        self.assertTrue(generator.add_asset(random_sphere, tag=sphere_name))
+
+        workspace_name = generate_random_string(5)
+        self.assertTrue(generator.add_constraint(
+            name=workspace_name,
+            type='workspace',
+            geometry_type='circle',
+            radius=100,
+            center=[0, 0]))
+
+        num_models = dict()
+        num_models[box_name] = random.randint(1, 3)
+        num_models[cylinder_name] = random.randint(1, 3)
+        num_models[sphere_name] = random.randint(1, 3)
+
+        total_num_models = 0
+        for tag in num_models:
+            total_num_models += num_models[tag]
+
+        engine_name = generate_random_string(5)
+        self.assertTrue(generator.add_engine(
+            tag=engine_name,
+            engine_name='random_pose',
+            models=list(num_models.keys()),
+            model_picker='random',
+            no_collision=True,
+            max_num=num_models,
+            policies=[
+                dict(
+                    models=list(num_models.keys()),
+                    config=[
+                        dict(
+                            dofs=['x', 'y'],
+                            tag='workspace',
+                            workspace=workspace_name
+                        )
+                    ]
+                )
+            ]
+        ))
+
+        generator.run_engines()
+        ref = generator.world.copy()
+        self.assertIsNotNone(ref)
+        self.assertEqual(ref.n_models, total_num_models)
+
+        for i in range(3):
+            generator.run_engines()
+            self.assertIsNotNone(generator.world)
+            self.assertEqual(ref, generator.world)
+
     def test_full_config_from_dict(self):
         wg_config = dict(
             assets=dict(
@@ -200,7 +354,7 @@ class TestWorldGenerator(unittest.TestCase):
                     models=[
                         'box'
                     ],
-                    model_picker='size',
+                    model_picker='random',
                     max_area=0.9,
                     no_collision=True,
                     max_num=dict(
@@ -229,7 +383,7 @@ class TestWorldGenerator(unittest.TestCase):
                     models=[
                         'box_generated'
                     ],
-                    model_picker='size',
+                    model_picker='random',
                     max_area=0.9,
                     no_collision=True,
                     max_num=dict(
@@ -265,33 +419,24 @@ class TestWorldGenerator(unittest.TestCase):
                     name='boxes_workspace',
                     type='workspace',
                     frame='world',
-                    geometry=dict(
-                        type='area',
-                        description=dict(
-                            points=[
-                                [-6, -4, 0],
-                                [-3, -4, 0],
-                                [-3, 0, 0],
-                                [-6, 0, 0]
-                            ]
-                        )
-                    )
-                ),
+                    geometry_type='area',
+                    points=[
+                        [-6, -4, 0],
+                        [-3, -4, 0],
+                        [-3, 0, 0],
+                        [-6, 0, 0]
+                    ]),
                 dict(
                     name='generated_boxes_workspace',
                     type='workspace',
                     frame='world',
-                    geometry=dict(
-                        type='area',
-                        description=dict(
-                            points=[
-                                [-100, -100, 0],
-                                [100, -100, 0],
-                                [100, 100, 0],
-                                [-100, 100, 0]
-                            ]
-                        )
-                    )
+                    geometry_type='area',
+                    points=[
+                        [-100, -100, 0],
+                        [100, -100, 0],
+                        [100, 100, 0],
+                        [-100, 100, 0]
+                    ]
                 )
             ]
         )
@@ -599,10 +744,10 @@ class TestWorldGenerator(unittest.TestCase):
         obj = SimulationModel(name)
         obj.add_cuboid_link(
             link_name='link',
-            size=[random.random() for _ in range(3)],
-            mass=random.random())
+            size=[random.rand() for _ in range(3)],
+            mass=random.rand())
 
-        pose = [random.random() for _ in range(6)]
+        pose = [random.rand() for _ in range(6)]
         generator.add_model(obj, [pose])
 
         self.assertTrue(generator.assets.is_model(name))

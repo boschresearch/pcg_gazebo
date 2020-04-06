@@ -15,6 +15,8 @@
 # limitations under the License.
 import unittest
 import numpy as np
+import os
+from pcg_gazebo.simulation import add_custom_gazebo_resource_path
 from pcg_gazebo.generators import EngineManager
 from pcg_gazebo.generators.engines import FixedPoseEngine, RandomPoseEngine
 from pcg_gazebo.generators.constraints import TangentConstraint, \
@@ -36,7 +38,7 @@ RANDOM_ENGINE = dict(
     models=[
         'test_box'
     ],
-    model_picker='size',
+    model_picker='random',
     max_area=0.9,
     no_collision=True,
     max_num=dict(
@@ -50,10 +52,8 @@ RANDOM_ENGINE = dict(
             config=[
                 dict(
                     dofs=['x', 'y'],
-                    policy=dict(
-                        name='workspace',
-                        args='cool_workspace'
-                    )
+                    tag='workspace',
+                    workspace='cool_workspace'
                 )
             ]
         )
@@ -70,24 +70,18 @@ WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict(
-        type='area',
-        description=dict(
-          points=[
-              [-6, -4, 0],
-              [-3, -4, 0],
-              [-3, 0, 0],
-              [-6, 0, 0]
-          ]
-        )
-    ),
+    geometry_type='area',
+    points=[
+        [-6, -4, 0],
+        [-3, -4, 0],
+        [-3, 0, 0],
+        [-6, 0, 0]
+    ],
     holes=[
         dict(
             type='circle',
-            description=dict(
-                center=[-5, 0, 0],
-                radius=0.2
-            )
+            center=[-5, 0, 0],
+            radius=0.2
         )
     ]
 )
@@ -108,6 +102,10 @@ TANGENT_CONSTRAINT = dict(
 
 class TestEnginesConstraintsManagers(unittest.TestCase):
     def test_add_engines(self):
+        add_custom_gazebo_resource_path(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'gazebo_models'))
         manager = EngineManager()
 
         manager.add(**FIXED_ENGINE)
@@ -127,6 +125,10 @@ class TestEnginesConstraintsManagers(unittest.TestCase):
         self.assertIsInstance(engine, RandomPoseEngine)
 
     def test_add_constraint(self):
+        add_custom_gazebo_resource_path(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'gazebo_models'))
         manager = EngineManager()
         manager.add_constraint(**WORKSPACE_CONSTRAINT)
         self.assertTrue(manager.has_constraint('cool_workspace'))
@@ -139,6 +141,10 @@ class TestEnginesConstraintsManagers(unittest.TestCase):
         self.assertIsInstance(const, TangentConstraint)
 
     def test_run_random_engine(self):
+        add_custom_gazebo_resource_path(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'gazebo_models'))
         manager = EngineManager()
         manager.add_constraint(**WORKSPACE_CONSTRAINT)
         self.assertTrue(manager.has_constraint('cool_workspace'))
@@ -164,6 +170,10 @@ class TestEnginesConstraintsManagers(unittest.TestCase):
         self.assertEqual(len(models), 2)
 
     def test_run_fixed_pose_engine(self):
+        add_custom_gazebo_resource_path(
+            os.path.join(
+                os.path.dirname(os.path.abspath(__file__)),
+                'gazebo_models'))
         manager = EngineManager()
 
         manager.add(**FIXED_ENGINE)

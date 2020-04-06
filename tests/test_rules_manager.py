@@ -1,4 +1,5 @@
-# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
+#!/usr/bin/env python
+# # Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,24 +25,18 @@ WORKSPACE_CONSTRAINT = dict(
     name='cool_workspace',
     type='workspace',
     frame='world',
-    geometry=dict(
-        type='area',
-        description=dict(
-          points=[
-              [-6, -4, 0],
-              [-3, -4, 0],
-              [-3, 0, 0],
-              [-6, 0, 0]
-          ]
-        )
-    ),
+    geometry_type='area',
+    points=[
+        [-6, -4, 0],
+        [-3, -4, 0],
+        [-3, 0, 0],
+        [-6, 0, 0]
+    ],
     holes=[
         dict(
             type='circle',
-            description=dict(
-                center=[-5, 0, 0],
-                radius=0.2
-            )
+            center=[-5, 0, 0],
+            radius=0.2
         )
     ]
 )
