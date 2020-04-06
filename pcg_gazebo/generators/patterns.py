@@ -13,49 +13,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import numpy as np
+from ..simulation.properties import Pose
 from ..log import PCG_ROOT_LOGGER
 
 
 def circular(
-    radius,
-    max_theta=2 *
-    np.pi,
-    step_theta=None,
-    step_radius=None,
-    n_elems_theta=None,
-    n_elems_radius=None,
-    pose_offset=[
-        0,
-        0,
-        0,
-        0,
-        0,
-        0]):
+        radius,
+        max_theta=2 * np.pi,
+        step_theta=None,
+        step_radius=None,
+        n_theta=None,
+        n_radius=None,
+        pose_offset=[0, 0, 0, 0, 0, 0]):
     poses = None
 
-    if radius <= 0:
-        PCG_ROOT_LOGGER.error(
-            'Radius must be greater than zero, provided={}'.format(radius))
-        return poses
+    assert radius > 0, \
+        'Radius must be greater than zero, provided={}'.format(
+            radius)
 
-    if max_theta <= 0 or max_theta > 2 * np.pi:
-        PCG_ROOT_LOGGER.error(
-            'max_theta must be greater than zero and smaller'
-            ' than 2 * pi, provided={}'.format(max_theta))
-        return poses
+    assert max_theta >= 0 and max_theta <= 2 * np.pi, \
+        'max_theta must be greater than zero and smaller' \
+        ' than 2 * pi, provided={}'.format(max_theta)
 
     if step_theta is not None:
+        assert step_theta > 0, \
+            'n_theta must be greater than zero, provided={}'.format(
+                n_theta)
         theta = np.arange(0, max_theta + step_theta, step_theta)
-    elif n_elems_theta is not None:
-        if n_elems_theta <= 0:
-            PCG_ROOT_LOGGER.error(
-                'n_elems_theta must be greater than zero, provided={}'.format(
-                    n_elems_theta))
-            return poses
-        theta = np.linspace(0, max_theta, n_elems_theta)
+    elif n_theta is not None:
+        assert n_theta > 0, \
+            'Number of angle samples must be greater than 0, ' \
+            'provided={}'.format(n_theta)
+        if max_theta == 2 * np.pi:
+            m = max_theta - max_theta / n_theta
+        else:
+            m = max_theta
+        theta = np.linspace(0, m, n_theta)
     else:
-        PCG_ROOT_LOGGER.error('No input to theta sampling was provided')
-        return poses
+        raise ValueError('No sampling method provided for theta')
 
     if step_radius is not None:
         if step_radius <= 0:
@@ -63,28 +58,40 @@ def circular(
                 step_radius)
             PCG_ROOT_LOGGER.error(msg)
             return poses
-        r = np.arange(0, radius + step_radius, step_radius)
+        r = np.arange(step_radius, radius + step_radius, step_radius)
         r = r[np.nonzero(r > 0)[0]]
-    elif n_elems_radius is not None:
-        if n_elems_radius <= 0:
-            PCG_ROOT_LOGGER.error(
-                'n_elems_radius must be greater than zero, provided={}'.format(
-                    n_elems_radius))
-            return poses
-        r = np.linspace(0, radius, n_elems_radius)
-        r = r[np.nonzero(r > 0)[0]]
-    else:
+    elif n_radius is not None:
+        assert n_radius > 0, \
+            'n_radius must be greater than zero, provided={}'.format(
+                n_radius)
+        if n_radius == 1:
+            r = np.array([radius])
+        else:
+            r = np.linspace(float(radius) / n_radius, radius, n_radius)
+            r = r[np.nonzero(r > 0)[0]]
+    elif radius > 0:
         r = np.array([radius])
+    else:
+        raise ValueError('Invalid radius input')
 
     tt, rr = np.meshgrid(theta, r)
-
     tt = tt.flatten()
     rr = rr.flatten()
 
-    poses = np.zeros((tt.size, 6))
-    poses[:, 0] = rr * np.cos(tt)
-    poses[:, 1] = rr * np.sin(tt)
-    # TODO: Apply pose offset to all poses
+    poses = list()
+    if isinstance(pose_offset, Pose):
+        offset = pose_offset
+    else:
+        offset = Pose(pos=pose_offset[0:3], rot=pose_offset[3::])
+
+    for i in range(tt.size):
+        poses.append(
+            Pose(
+                pos=[
+                    rr[i] * np.cos(tt[i]),
+                    rr[i] * np.sin(tt[i]),
+                    0]))
+        poses[-1] = offset + poses[-1]
 
     return poses
 
@@ -94,15 +101,9 @@ def rectangular(
         y_length=None,
         step_x=None,
         step_y=None,
-        n_elems_x=None,
-        n_elems_y=None,
-        pose_offset=[
-            0,
-            0,
-            0,
-            0,
-            0,
-            0],
+        n_x=None,
+        n_y=None,
+        pose_offset=[0, 0, 0, 0, 0, 0],
         center=False):
 
     poses = None
@@ -126,16 +127,16 @@ def rectangular(
 
             x = np.arange(0, x_length + step_x, step_x)
             y = np.arange(0, y_length + step_y, step_y)
-        elif None not in [n_elems_x, n_elems_y]:
-            if n_elems_x <= 0:
-                PCG_ROOT_LOGGER.error('n_elems_x must be greater than zero')
+        elif None not in [n_x, n_y]:
+            if n_x <= 0:
+                PCG_ROOT_LOGGER.error('n_x must be greater than zero')
                 return poses
-            if n_elems_y <= 0:
-                PCG_ROOT_LOGGER.error('n_elems_y must be greater than zero')
+            if n_y <= 0:
+                PCG_ROOT_LOGGER.error('n_y must be greater than zero')
                 return poses
 
-            x = np.linspace(0, x_length, n_elems_x)
-            y = np.linspace(0, y_length, n_elems_y)
+            x = np.linspace(0, x_length, n_x)
+            y = np.linspace(0, y_length, n_y)
         else:
             PCG_ROOT_LOGGER.error(
                 'No valid options where chosen to'
@@ -151,13 +152,103 @@ def rectangular(
         xx = xx.flatten()
         yy = yy.flatten()
 
-        poses = np.zeros((xx.size, 6))
+        if isinstance(pose_offset, Pose):
+            offset = pose_offset
+        else:
+            offset = Pose(pos=pose_offset[0:3], rot=pose_offset[3::])
 
-        poses[:, 0] = xx
-        poses[:, 1] = yy
-        # TODO: Apply pose offset to all poses
-
+        poses = list()
+        for i in range(xx.size):
+            poses.append(Pose(pos=[xx[i], yy[i], 0]))
+            poses[-1] = offset + poses[-1]
     else:
-        PCG_ROOT_LOGGER.error('x_length or y_length were not provided')
+        raise ValueError('x_length or y_length were not provided')
+
+    return poses
+
+
+def cuboid(
+        x_length=None,
+        y_length=None,
+        z_length=None,
+        step_x=None,
+        step_y=None,
+        step_z=None,
+        n_x=None,
+        n_y=None,
+        n_z=None,
+        pose_offset=[0, 0, 0, 0, 0, 0],
+        center=False):
+
+    poses = None
+    if None not in [x_length, y_length, z_length]:
+        if None not in [step_x, step_y, step_z]:
+            if step_x <= 0:
+                PCG_ROOT_LOGGER.error('step_x must be greater than zero')
+                return poses
+            if step_y <= 0:
+                PCG_ROOT_LOGGER.error('step_y must be greater than zero')
+                return poses
+            if step_z <= 0:
+                PCG_ROOT_LOGGER.error('step_z must be greater than zero')
+                return poses
+
+            if step_x > x_length:
+                PCG_ROOT_LOGGER.error(
+                    'step_x should be equal or smaller than x_length')
+                return poses
+            if step_y > y_length:
+                PCG_ROOT_LOGGER.error(
+                    'step_y should be equal or smaller than y_length')
+                return poses
+            if step_z > z_length:
+                PCG_ROOT_LOGGER.error(
+                    'step_z should be equal or smaller than z_length')
+                return poses
+
+            x = np.arange(0, x_length + step_x, step_x)
+            y = np.arange(0, y_length + step_y, step_y)
+            z = np.arange(0, z_length + step_z, step_z)
+        elif None not in [n_x, n_y, n_z]:
+            if n_x <= 0:
+                PCG_ROOT_LOGGER.error('n_x must be greater than zero')
+                return poses
+            if n_y <= 0:
+                PCG_ROOT_LOGGER.error('n_y must be greater than zero')
+                return poses
+            if n_z <= 0:
+                PCG_ROOT_LOGGER.error('n_z must be greater than zero')
+                return poses
+
+            x = np.linspace(0, x_length, n_x)
+            y = np.linspace(0, y_length, n_y)
+            z = np.linspace(0, z_length, n_z)
+        else:
+            raise ValueError(
+                'No valid options where chosen to'
+                ' generate the rectangular pattern')
+
+        if center:
+            x = x - (x.max() - x.min()) / 2
+            y = y - (y.max() - y.min()) / 2
+            z = z - (z.max() - z.min()) / 2
+
+        xx, yy, zz = np.meshgrid(x, y, z)
+
+        xx = xx.flatten()
+        yy = yy.flatten()
+        zz = zz.flatten()
+
+        if isinstance(pose_offset, Pose):
+            offset = pose_offset
+        else:
+            offset = Pose(pos=pose_offset[0:3], rot=pose_offset[3::])
+
+        poses = list()
+        for i in range(xx.size):
+            poses.append(Pose(pos=[xx[i], yy[i], zz[i]]))
+            poses[-1] = offset + poses[-1]
+    else:
+        raise ValueError('x_length, y_length or z_length were not provided')
 
     return poses
