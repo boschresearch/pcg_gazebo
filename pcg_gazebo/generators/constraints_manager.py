@@ -42,13 +42,11 @@ class ConstraintsManager(_CollectionManager):
         new_constraint = create_constraint(type, **kwargs)
         if self.has_element(name):
             if self._collection[name] != new_constraint:
-                PCG_ROOT_LOGGER.error(
+                PCG_ROOT_LOGGER.warning(
                     'Constraint with name <{}> already'
-                    ' exists and has different parameters'.format(
+                    ' exists and has different parameters,'
+                    ' existing constraint will be overwritten'.format(
                         name))
-                return False
-            else:
-                return True
         if constraint_obj is not None and \
                 isinstance(constraint_obj, Constraint):
             self._collection[name] = constraint_obj
