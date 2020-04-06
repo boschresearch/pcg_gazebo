@@ -16,8 +16,9 @@ import numpy as np
 import trimesh
 from multiprocessing.pool import Pool
 from shapely.geometry import Polygon, MultiPolygon, \
-    LineString, MultiLineString
-from shapely.ops import unary_union, polygonize
+    LineString
+from shapely.ops import unary_union, polygonize, linemerge, \
+    triangulate
 from ..log import PCG_ROOT_LOGGER
 from ..visualization import create_scene
 from ..simulation import SimulationModel, ModelGroup
@@ -140,7 +141,7 @@ def get_occupied_area(
     step_y = 0.01
 
     if z_levels is None:
-        n_levels = 5
+        n_levels = 10
         z_levels = np.linspace(z_limits[0], z_limits[1], n_levels)
 
     if is_ground_plane:
@@ -246,27 +247,38 @@ def get_occupied_area(
             plane_normal=plane_normal,
             heights=z_levels)
         sections = [s for s in sections if s is not None]
-
-        lines = list()
+        polys = list()
         for section in sections:
+            lines = list()
             for poly in section.entities:
                 line = LineString(
                     section.vertices[poly.points])
                 lines.append(line)
-        footprint_lines = unary_union(MultiLineString(lines))
-        geoms = MultiPolygon(list(polygonize(footprint_lines)))
+            boundaries = linemerge(lines)
 
+            polygons_from_boundaries = MultiPolygon(polygonize(boundaries))
+
+            if polygons_from_boundaries.area == 0:
+                polys = polys + triangulate(boundaries)
+            else:
+                polys = polys + list(polygonize(boundaries))
+
+        polys = MultiPolygon(polys)
         if not is_ground_plane:
-            for geo in geoms:
-                if _is_interior_polygon(mesh, geo):
-                    filtered_geoms.append(geo)
+            for i in range(len(polys.geoms)):
+                if _is_interior_polygon(mesh, polys.geoms[i]):
+                    filtered_geoms.append(polys.geoms[i])
             occupied_areas.append(MultiPolygon(filtered_geoms))
         else:
-            occupied_areas.append(geoms)
+            if polys.area > 0:
+                occupied_areas.append(polys)
 
-    occupied_areas = unary_union(
-        [geo.buffer(max(step_x, step_y) / 2) for geo in occupied_areas])
-    occupied_areas = occupied_areas.buffer(-max(step_x, step_y) / 2)
+    if len(occupied_areas) > 1:
+        occupied_areas = unary_union(
+            [geo.buffer(max(step_x, step_y) / 2) for geo in occupied_areas])
+        occupied_areas = occupied_areas.buffer(-max(step_x, step_y) / 2)
+    else:
+        occupied_areas = unary_union(occupied_areas[0])
 
     if is_ground_plane:
         dilated_footprint = occupied_areas.buffer(max(step_x, step_y))
@@ -274,7 +286,12 @@ def get_occupied_area(
             list(polygonize(dilated_footprint.boundary)))
         occupied_areas = occupied_areas.union(full_footprint)
         occupied_areas = occupied_areas.buffer(-max(step_x, step_y))
-
+    if occupied_areas.is_empty:
+        PCG_ROOT_LOGGER.warning(
+            'Footprint for model {} could not be '
+            'computed for z_levels={}, model Z limits={}'.format(
+                model.name, z_levels, model_z_limits))
+        return None
     # TODO: Set x_limits and y_limits to the occupied area
     return occupied_areas
 
@@ -412,6 +429,7 @@ def generate_occupancy_grid(
                         ' for the given parameters'.format(model_name))
                     continue
                 model_occupied_areas.append(model_occupied_area)
+
                 if _is_ground_plane(models[model_name]):
                     continue
                 elif models[model_name].static:
