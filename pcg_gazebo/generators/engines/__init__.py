@@ -46,8 +46,19 @@ def create_engine(tag, **kwargs):
     return None
 
 
+def get_engine_tags():
+    import inspect
+    tags = list()
+    for obj in Engine.__subclasses__():
+        if inspect.isclass(obj):
+            if issubclass(obj, Engine):
+                tags.append(obj._LABEL)
+    return tags
+
+
 __all__ = [
     'create_engine',
+    'get_engine_tags',
     'Engine',
     'FixedPoseEngine',
     'RandomPoseEngine',
