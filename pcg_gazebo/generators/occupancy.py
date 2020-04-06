@@ -258,10 +258,12 @@ def get_occupied_area(
 
             polygons_from_boundaries = MultiPolygon(polygonize(boundaries))
 
-            if polygons_from_boundaries.area == 0:
-                polys = polys + triangulate(boundaries)
-            else:
+            if mesh.is_watertight and polygons_from_boundaries.area > 0:
                 polys = polys + list(polygonize(boundaries))
+            else:
+                p = boundaries.envelope.difference(boundaries.buffer(1e-3))
+                for geo in p.geoms:
+                    polys.append(geo.buffer(1e-3))
 
         polys = MultiPolygon(polys)
         if not is_ground_plane:
