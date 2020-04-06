@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 import json
 import unittest
 import subprocess
@@ -193,6 +194,8 @@ def to_pass(line):
 
 class TestExamples(unittest.TestCase):
     def test_notebooks(self):
+        if sys.version_info.major == 2:
+            return
         examples_dir = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
             '..',
