@@ -12,12 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 from time import sleep, time
 from .. import visualization
 from ..log import PCG_ROOT_LOGGER
 from ._generator import _Generator
-from ..utils import load_yaml
+from ..utils import load_yaml, is_string, process_jinja_template
 from ..task_manager import GazeboProxy, is_gazebo_running
+from ..parsers import parse_sdf, parse_xacro
 from ..parsers.sdf import create_sdf_element, is_sdf_element
 from ..simulation import World
 from ..simulation.physics import ODE, Simbody, Bullet
@@ -36,8 +38,10 @@ class WorldGenerator(_Generator):
     """
 
     def __init__(self, name='default', gazebo_proxy=None,
-                 output_world_dir=None, output_model_dir='/tmp/gazebo_models'):
-        super(WorldGenerator, self).__init__(name=name)
+                 output_world_dir=None,
+                 output_model_dir='/tmp/gazebo_models',
+                 **kwargs):
+        super(WorldGenerator, self).__init__(name=name, **kwargs)
         if gazebo_proxy is not None:
             assert isinstance(gazebo_proxy, GazeboProxy)
             self._gazebo_proxy = gazebo_proxy
@@ -49,8 +53,9 @@ class WorldGenerator(_Generator):
             'Output path for the Gazebo world files: {}'.format(
                 self._output_world_dir))
 
-        # Set of world descriptions
-        self.init()
+        # Set of world descriptions, if none exists
+        if self._simulation_entity is None:
+            self.init()
 
     def __str__(self):
         msg = 'PCG Generator\n'
@@ -253,6 +258,9 @@ class WorldGenerator(_Generator):
                 physics_args = dict()
             self._simulation_entity.reset_physics(
                 engine=physics_engine, **physics_args)
+
+        if 'world_file' in config:
+            self.init_from_sdf(config['world_file'])
 
     def spawn_model(self, model, robot_namespace, pos=[0, 0, 0], rot=[0, 0, 0],
                     reference_frame='world', timeout=30, replace=False):
@@ -457,29 +465,28 @@ class WorldGenerator(_Generator):
                 line_width=2,
                 engine=engine)
 
-        # if engine == 'matplotlib':
-        #     ax = fig.gca()
-        #     ax.axis('equal')
-        #     ax.grid(True)
-        #     ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-        #     ax.autoscale(enable=True, axis='both', tight=True)
-
         PCG_ROOT_LOGGER.info('Plotting footprints: finished')
 
         return fig
 
     def init_from_sdf(self, sdf_input):
+        print('is file=', os.path.isfile(sdf_input))
         if is_sdf_element(sdf_input):
             sdf = sdf_input
+        elif is_string(sdf_input) and os.path.isfile(sdf_input):
+            if sdf_input.endswith('.xacro'):
+                sdf = parse_xacro(sdf_input, output_type='sdf')
+            elif sdf_input.endswith('.sdf') or sdf_input.endswith('.world'):
+                sdf = parse_sdf(sdf_input)
+            else:
+                raise ValueError(
+                    'Invalid input world file, filename={}'.format(sdf_input))
         else:
-            from ..parsers import parse_sdf
             sdf = parse_sdf(sdf_input)
 
         self._simulation_entity = World.from_sdf(sdf)
 
     def init_from_jinja(self, jinja_filename, params=dict()):
-        from ..utils import process_jinja_template
-        from ..parsers import parse_sdf
         output_xml = process_jinja_template(jinja_filename, parameters=params)
         sdf = parse_sdf(output_xml)
 
