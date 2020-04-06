@@ -72,6 +72,15 @@ class World(Entity):
     def __str__(self):
         return self.to_sdf().to_xml_as_str(pretty_print=True)
 
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
+
+    def __eq__(self, other):
+        if not isinstance(other, World):
+            return False
+        return self.to_sdf() == other.to_sdf()
+
     @property
     def physics(self):
         """`pcg_gazebo.simulation.physics.Physics`: Physics engine instance"""
@@ -146,6 +155,10 @@ class World(Entity):
     def model_groups(self):
         """`dict`: Model groups"""
         return self._model_groups
+
+    def copy(self):
+        world = World.from_sdf(self.to_sdf())
+        return world
 
     def set_as_ground_plane(self, model_name):
         if '/' not in model_name and 'default' in self._model_groups:
@@ -423,8 +436,8 @@ class World(Entity):
         else:
             return self._model_groups[group].light_exists(tag)
 
-    def to_sdf(self, type='world', with_default_ground_plane=True,
-               with_default_sun=True, sdf_version='1.6'):
+    def to_sdf(self, type='world', with_default_ground_plane=False,
+               with_default_sun=False, sdf_version='1.6'):
         """Convert the world description into as `pcg_gazebo` SDF
         element.
 
@@ -1287,14 +1300,8 @@ class World(Entity):
 
         for tag in self.models:
             if self.models[tag].has_mesh and \
-                    not is_gazebo_model(self.models[tag].name):
-                if not overwrite:
-                    continue
-                assert models_output_dir is not None, \
-                    'Models export directory cannot be None'
-                assert os.path.isdir(models_output_dir), \
-                    'Models export directory is invalid, dir={}'.format(
-                        models_output_dir)
+                    not is_gazebo_model(
+                        self.models[tag].name, include_custom_paths=True):
                 self.models[tag].to_gazebo_model(
                     sdf_version=sdf_version,
                     output_dir=models_output_dir,

@@ -31,6 +31,15 @@ class ModelGroup(Entity):
         # Flag to indicate if the model is a ground plane
         self._is_ground_plane = is_ground_plane
 
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
+
+    def __eq__(self, other):
+        if not isinstance(other, SimulationModel):
+            return False
+        return self.to_sdf('model') == other.to_sdf('model')
+
     @property
     def prefix(self):
         prefix = ''
@@ -187,7 +196,7 @@ class ModelGroup(Entity):
         `bool`: `True`, if model directed by the `include` element
         could be parsed and added to the world.
         """
-        from . import get_gazebo_model_sdf
+        from . import get_gazebo_model_sdf, is_gazebo_model
         model_name = include.uri.value.replace('model://', '')
         try:
             model = SimulationModel.from_gazebo_model(model_name)
@@ -203,17 +212,21 @@ class ModelGroup(Entity):
                 name = model_name
             return self.add_model(name, model)
         except ValueError:
-            sdf = get_gazebo_model_sdf(model_name)
-            if sdf.lights is not None:
-                PCG_ROOT_LOGGER.info(
-                    'Loading model {} as light'
-                    ' source model'.format(model_name))
-                for light in sdf.lights:
-                    light = Light.from_sdf(light)
-                    self.add_light(light.name, light)
+            if model_name == 'sun' and not is_gazebo_model('sun'):
+                from ..generators.components import Sun
+                self.add_light('sun', Sun())
+            else:
+                sdf = get_gazebo_model_sdf(model_name)
+                if sdf.lights is not None:
                     PCG_ROOT_LOGGER.info(
-                        'Added light {} from included model {}'.format(
-                            light.name, model_name))
+                        'Loading model {} as light'
+                        ' source model'.format(model_name))
+                    for light in sdf.lights:
+                        light = Light.from_sdf(light)
+                        self.add_light(light.name, light)
+                        PCG_ROOT_LOGGER.info(
+                            'Added light {} from included model {}'.format(
+                                light.name, model_name))
 
     def get_meshes(self, mesh_type='collision', pose_offset=None):
         if mesh_type not in ['collision', 'visual']:

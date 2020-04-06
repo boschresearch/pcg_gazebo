@@ -63,6 +63,15 @@ class SimulationModel(Entity):
     def __str__(self):
         return self.to_sdf().to_xml_as_str(pretty_print=True)
 
+    def __ne__(self, other):
+        result = self.__eq__(other)
+        return not result
+
+    def __eq__(self, other):
+        if not isinstance(other, SimulationModel):
+            return False
+        return self.to_sdf() == other.to_sdf()
+
     @property
     def parent(self):
         return self._parent
@@ -1386,28 +1395,33 @@ class SimulationModel(Entity):
 
     @staticmethod
     def from_gazebo_model(name):
-        from . import get_gazebo_model_sdf
-        PCG_ROOT_LOGGER.info('Importing a Gazebo model, name={}'.format(name))
-        # Update list of Gazebo models
-        sdf = get_gazebo_model_sdf(name)
+        from . import get_gazebo_model_sdf, is_gazebo_model
+        if name == 'ground_plane' and not is_gazebo_model('ground_plane'):
+            from ..generators.components import GroundPlane
+            return GroundPlane()
+        else:
+            PCG_ROOT_LOGGER.info(
+                'Importing a Gazebo model, name={}'.format(name))
+            # Update list of Gazebo models
+            sdf = get_gazebo_model_sdf(name)
 
-        if sdf is None:
-            msg = 'Gazebo model {} not found in the ROS paths'.format(name)
-            PCG_ROOT_LOGGER.error(msg)
-            raise ValueError(msg)
-        if sdf.models is None:
-            msg = 'No models found in Gazebo model {}'.format(name)
-            PCG_ROOT_LOGGER.warning(msg)
-            raise ValueError(msg)
-        if len(sdf.models) != 1:
-            msg = 'Imported SDF file should have one model only'
-            PCG_ROOT_LOGGER.error(msg)
-            raise ValueError(msg)
+            if sdf is None:
+                msg = 'Gazebo model {} not found in the ROS paths'.format(name)
+                PCG_ROOT_LOGGER.error(msg)
+                raise ValueError(msg)
+            if sdf.models is None:
+                msg = 'No models found in Gazebo model {}'.format(name)
+                PCG_ROOT_LOGGER.warning(msg)
+                raise ValueError(msg)
+            if len(sdf.models) != 1:
+                msg = 'Imported SDF file should have one model only'
+                PCG_ROOT_LOGGER.error(msg)
+                raise ValueError(msg)
 
-        model = SimulationModel.from_sdf(sdf.models[0])
-        model.is_gazebo_model = True
-        model._source_model_name = name
-        return model
+            model = SimulationModel.from_sdf(sdf.models[0])
+            model.is_gazebo_model = True
+            model._source_model_name = name
+            return model
 
     def to_urdf(self):
         PCG_ROOT_LOGGER.info('Exporting model <{}> as URDF'.format(self.name))
