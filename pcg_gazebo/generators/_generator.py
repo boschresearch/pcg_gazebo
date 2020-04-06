@@ -17,7 +17,7 @@ from ..simulation import is_gazebo_model, SimulationModel, \
     Light, ModelGroup
 from .assets_manager import AssetsManager
 from .engine_manager import EngineManager
-from .random import init_random_state
+from ..random import init_random_state
 from ..utils import generate_random_string, is_string, \
     load_yaml, is_integer
 
@@ -325,12 +325,15 @@ class _Generator(object):
         if self._simulation_entity is None:
             self.init()
 
+        init_random_state(self._seed)
+
         if self._engines.size == 0:
             PCG_ROOT_LOGGER.warning('No engines found')
             return False
         if not attach_models:
             self._simulation_entity.reset_models()
             PCG_ROOT_LOGGER.info('List of models is now empty')
+        self._engines.reset_engines()
 
         models = list()
         # Run the fixed pose engines first
@@ -382,8 +385,15 @@ class _Generator(object):
             'Input configuration must be provided as a dictionary'
 
         if 'name' in config:
+            assert is_string(config['name']), 'Name must be a string'
             self.name = config['name']
             PCG_ROOT_LOGGER.info('Generator name: {}'.format(self._name))
+
+        if 'seed' in config:
+            assert is_integer(config['seed']), 'Seed must be an integer'
+            self.seed = config['seed']
+            PCG_ROOT_LOGGER.info('Generator random seed: {}'.format(
+                self._seed))
 
         if 'ground_plane' in config:
             for tag in config['ground_plane']:
