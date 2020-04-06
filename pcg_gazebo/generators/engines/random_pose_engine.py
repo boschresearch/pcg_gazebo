@@ -13,9 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from .engine import Engine
-import numpy as np
-import random
-from copy import deepcopy
 from ...simulation.properties import Pose
 
 
@@ -91,8 +88,6 @@ class RandomPoseEngine(Engine):
 
     _LABEL = 'random_pose'
 
-    _MODEL_PICKER = ['random', 'size']
-
     def __init__(
             self,
             assets_manager=None,
@@ -113,11 +108,10 @@ class RandomPoseEngine(Engine):
             constraints_manager=constraints_manager,
             models=models,
             constraints=constraints,
-            collision_checker=collision_checker)
+            collision_checker=collision_checker,
+            model_picker=model_picker,
+            max_num=max_num)
 
-        assert model_picker in self._MODEL_PICKER, \
-            'Model picking method options are {}'.format(
-                self._MODEL_PICKER)
         assert policies is not None, 'DoF configuration was not defined'
         assert min_distance >= 0.0, \
             'Min. distance between objects ' \
@@ -125,25 +119,8 @@ class RandomPoseEngine(Engine):
         self._no_collision = no_collision
         self._max_num = dict()
         self._workspace = None
-        self._model_picker = model_picker
         self._cached_footprints = dict()
         self._min_distance = min_distance
-
-        # Compute the footprint area of each object
-        self._volumes = dict()
-
-        for name in self._models:
-            self._max_num[name] = -1
-
-            if self._assets_manager.is_model_group(name) or \
-                self._assets_manager.is_gazebo_model(name) or \
-                    self._assets_manager.is_model(name):
-                model = self._assets_manager.get(name)
-                self._volumes[name] = 0
-                for mesh in model.get_meshes():
-                    self._volumes[name] += mesh.volume
-            else:
-                self._volumes[name] = -1
 
         for item in policies:
             assert 'models' in item, \
@@ -151,17 +128,6 @@ class RandomPoseEngine(Engine):
                 ' config={}'.format(item)
             self.add_rule(**item)
 
-        if max_num is not None:
-            assert isinstance(max_num, dict), \
-                'Max. number of models input must be a dictionary'
-            for tag in max_num:
-                assert tag in self._models, \
-                    'Invalid input model in max_num input, tag={}'.format(tag)
-                assert max_num[tag] > 0, \
-                    'Max. number of models must be either greater than zero' \
-                    ', received={}'.format(
-                        max_num[tag])
-                self._max_num[tag] = max_num[tag]
         if constraints is not None:
             assert isinstance(constraints, list), \
                 'Constraints input must be provided as a list'
@@ -226,78 +192,6 @@ class RandomPoseEngine(Engine):
         `int`: Number of models
         """
         return self._counters[name]
-
-    def get_max_num_models(self, name):
-        """Return the defined maximum number of instances for a model.
-
-        > *Input arguments*
-
-        * `name` (*type:* `str`): Model name
-
-        > *Returns*
-
-        `int`: Maximum number of instances
-        """
-        return self._max_num[name]
-
-    def choose_model(self, models=None):
-        """Select the next model instance to be placed in the world.
-        This method is affected by the constructor input `model_picker`.
-        In case the `model_picker` option was set as `random`, a random
-        model will be chosen from the assets available. If it is `area`,
-        the models will be ordered by footprint size and the models are
-        chosen by an descending footprint size.
-
-        > *Returns*
-
-        `pcg_gazebo.simulation.SimulationModel`: Chosen model
-        """
-        if models is None:
-            models = deepcopy(self._models)
-        model = None
-
-        if self._model_picker == 'random':
-            model = random.choice(models)
-            if self.get_max_num_models(model) == self.get_num_models(model):
-                models.remove(model)
-                if len(models) == 0:
-                    return None
-                while len(models) > 0:
-                    model = random.choice(models)
-
-                    if self.get_max_num_models(
-                            model) == self.get_num_models(model):
-                        models.remove(model)
-                    else:
-                        break
-
-                if self.get_max_num_models(
-                        model) == self.get_num_models(model):
-                    return None
-        elif self._model_picker == 'size':
-            if len(models) == 1:
-                if self.get_max_num_models(
-                        models[0]) == self.get_num_models(
-                        models[0]):
-                    return None
-                else:
-                    return models[0]
-
-            volumes = list(self._volumes.values())
-            max_volume = np.max(volumes)
-
-            while model is None:
-                for tag in self._volumes:
-                    if self._volumes[tag] == max_volume:
-                        if self.get_max_num_models(
-                                tag) == self.get_num_models(tag):
-                            volumes.remove(max_volume)
-                            if len(volumes) == 0:
-                                return None
-                            max_volume = np.max(volumes)
-                        else:
-                            model = tag
-        return model
 
     def is_model_in_workspace(self, model):
         """Verify if the model is in the allowed workspace
@@ -375,6 +269,7 @@ class RandomPoseEngine(Engine):
 
         # Reset model counter
         self.reset_counter()
+        self.model_picker.reset()
 
         # Reset the collision checker scenario to fixed model scenario
         self._collision_checker.reset_to_fixed_model_scenario()
@@ -393,12 +288,14 @@ class RandomPoseEngine(Engine):
                 self._logger.info(
                     'Reset models list, max. number of collisions was reached')
                 self.reset_counter()
+                self.model_picker.reset()
                 self._collision_checker.reset_to_fixed_model_scenario()
                 models = list()
                 collision_counter = 0
                 model_reset_counter += 1
 
-            model_name = self.choose_model()
+            model_name = self.model_picker.get_selection()
+
             if model_name is None:
                 self._logger.info('Maximum number of models reached')
                 break
@@ -418,7 +315,6 @@ class RandomPoseEngine(Engine):
                 model.pose = self._get_random_pose(model_name)
                 self._logger.info('Generated random pose: {}'.format(
                     model.pose))
-
                 while not self.is_model_in_workspace(model):
                     self._logger.info(
                         'Model outside of the '
@@ -439,6 +335,8 @@ class RandomPoseEngine(Engine):
                             'counter={}'.format(
                                 model_name, collision_counter + 1))
                         collision_counter += 1
+                        # Decrease the model picker counter
+                        self.model_picker.counter[model.name] -= 1
                         continue
                     else:
                         collision_counter = 0
