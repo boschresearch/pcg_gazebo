@@ -29,6 +29,8 @@ class ModelGroupGenerator(_Generator):
         else:
             self._simulation_entity = ModelGroup(name=name)
 
+        self.engines.reset_engines()
+
     def run(self, group_name='default', pose=[0, 0, 0, 0, 0, 0]):
         self.init(group_name)
         self.run_engines()
