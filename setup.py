@@ -134,6 +134,7 @@ setup(
         'pcg_gazebo.generators.components',
         'pcg_gazebo.generators.constraints',
         'pcg_gazebo.generators.engines',
+        'pcg_gazebo.generators.item_pickers',
         'pcg_gazebo.generators.rules',
         'pcg_gazebo.parsers',
         'pcg_gazebo.parsers.gazebo',
