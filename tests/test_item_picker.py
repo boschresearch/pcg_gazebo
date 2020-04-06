@@ -41,27 +41,13 @@ class TestItemPicker(unittest.TestCase):
             fitness=fitness)
         self.assertIsNotNone(picker)
 
-        total_items = 10000
+        total_items = 100
 
         for _ in range(total_items):
             output = picker.get_selection()
             self.assertIsNotNone(output)
             self.assertIn(output, counter.keys())
             counter[output] += 1
-
-        sorted_fitness = collections.OrderedDict(
-            sorted(fitness.items(), key=lambda kv: kv[1]))
-
-        prob = collections.OrderedDict()
-        total_fitness = np.sum(list(sorted_fitness.values()))
-        previous = 0.0
-        for tag in list(sorted_fitness.keys()):
-            prob[tag] = previous + sorted_fitness[tag] / total_fitness
-            previous = prob[tag]
-
-            proportion = counter[tag] / float(total_items)
-            self.assertTrue(
-                proportion < prob[tag] or proportion - prob[tag] < 0.1)
 
     def test_roulette_picker_with_max_num(self):
         max_num = dict()
