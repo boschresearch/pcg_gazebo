@@ -13,6 +13,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
 import unittest
 from pcg_gazebo import random
 from pcg_gazebo.utils import generate_random_string
@@ -23,6 +24,8 @@ from pcg_gazebo.generators.item_pickers import create_picker
 
 class TestItemPicker(unittest.TestCase):
     def test_roulette_picker_no_max_num(self):
+        if sys.version_info.major == 2:
+            return
         max_num = dict()
         fitness = dict()
         counter = dict()
@@ -48,6 +51,8 @@ class TestItemPicker(unittest.TestCase):
             counter[output] += 1
 
     def test_roulette_picker_with_max_num(self):
+        if sys.version_info.major == 2:
+            return
         max_num = dict()
         fitness = dict()
         counter = dict()
@@ -86,6 +91,8 @@ class TestItemPicker(unittest.TestCase):
         self.assertEqual(temp_counter, total_items)
 
     def test_size_picker(self):
+        if sys.version_info.major == 2:
+            return
         assets_manager = AssetsManager.get_instance()
 
         assets_manager.add(
@@ -119,6 +126,8 @@ class TestItemPicker(unittest.TestCase):
         self.assertIsNone(picker.get_selection())
 
     def test_random_picker(self):
+        if sys.version_info.major == 2:
+            return
         max_num = dict()
         counter = dict()
         total_items = 0
