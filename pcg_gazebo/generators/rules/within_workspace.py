@@ -87,11 +87,11 @@ class WithinWorkspace(Rule):
 
         pose = Pose()
         point = self.workspace.get_random_position()
-        pose.x = point.xy[0][0]
-        pose.y = point.xy[1][0]
+        pose.x = point.coords[0][0]
+        pose.y = point.coords[0][1]
 
         if point.has_z and self.dofs['z']:
-            pose.z = 0
+            pose.z = point.coords[0][2]
         return pose
 
     @staticmethod
