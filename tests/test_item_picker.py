@@ -14,8 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import unittest
-import collections
-import numpy as np
 from pcg_gazebo import random
 from pcg_gazebo.utils import generate_random_string
 from pcg_gazebo.generators import AssetsManager
