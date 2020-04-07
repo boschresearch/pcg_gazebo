@@ -192,6 +192,12 @@ class TestModelGroupGenerator(unittest.TestCase):
                             dofs=['x', 'y'],
                             tag='workspace',
                             workspace=workspace_name
+                        ),
+                        dict(
+                            dofs=['roll', 'pitch', 'yaw'],
+                            tag='uniform',
+                            min=-2 * np.pi,
+                            max=2 * np.pi
                         )
                     ]
                 )

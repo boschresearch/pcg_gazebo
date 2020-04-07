@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import numpy as np
+from .. import random
 from shapely.geometry import Polygon, Point, \
     MultiPoint, LineString
 from shapely.ops import triangulate, unary_union
@@ -40,8 +40,8 @@ def random_rectangle(x_center=0, y_center=0, delta_x_min=2,
         delta_y_min > 0 and delta_y_max > 0
     assert delta_x_min < delta_x_max
     assert delta_y_min < delta_y_max
-    delta_x = max(delta_x_min, np.random.random() * delta_x_max)
-    delta_y = max(delta_y_min, np.random.random() * delta_y_max)
+    delta_x = max(delta_x_min, random.rand() * delta_x_max)
+    delta_y = max(delta_y_min, random.rand() * delta_y_max)
     return rectangle(x_center, y_center, delta_x, delta_y)
 
 
@@ -49,8 +49,8 @@ def random_points(n_points=10, x_min=-10, x_max=10, y_min=-10,
                   y_max=10):
     assert x_min < x_max, 'x_min must be lower than x_max'
     assert y_min < y_max, 'y_min must be lower than y_max'
-    x = np.random.random((n_points, )) * (x_max - x_min) + x_min
-    y = np.random.random((n_points, )) * (y_max - y_min) + y_min
+    x = random.rand((n_points, )) * (x_max - x_min) + x_min
+    y = random.rand((n_points, )) * (y_max - y_min) + y_min
     return MultiPoint([(xi, yi) for xi, yi in zip(x, y)])
 
 
@@ -92,8 +92,8 @@ def random_rectangles(
     rectangles = list()
     while len(rectangles) < n_rect:
         new_rect = random_rectangle(
-            np.random.random() * (x_center_max - x_center_min) + x_center_min,
-            np.random.random() * (y_center_max - y_center_min) + y_center_min,
+            random.rand() * (x_center_max - x_center_min) + x_center_min,
+            random.rand() * (y_center_max - y_center_min) + y_center_min,
             delta_x_min,
             delta_x_max,
             delta_y_min,
@@ -120,11 +120,11 @@ def random_orthogonal_lines(
     assert n_lines > 0, 'Number of lines must be greater than zero'
     lines = list()
     while len(lines) < n_lines:
-        start_x = np.random.random() * (x_max - x_min) + x_min
-        start_y = np.random.random() * (y_max - y_min) + y_min
-        length = max(line_min_length, np.random.random() * line_max_length)
+        start_x = random.rand() * (x_max - x_min) + x_min
+        start_y = random.rand() * (y_max - y_min) + y_min
+        length = max(line_min_length, random.rand() * line_max_length)
 
-        if np.random.randint(2) == 0:
+        if random.randint(2) == 0:
             end_x = start_x + length
             end_y = start_y
         else:

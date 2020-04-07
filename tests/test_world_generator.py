@@ -15,6 +15,7 @@
 # limitations under the License.
 import unittest
 import os
+import numpy as np
 from pcg_gazebo import random
 from pcg_gazebo.simulation import SimulationModel, ModelGroup
 from pcg_gazebo.simulation.physics import ODE, Simbody, Bullet
@@ -305,6 +306,12 @@ class TestWorldGenerator(unittest.TestCase):
                             dofs=['x', 'y'],
                             tag='workspace',
                             workspace=workspace_name
+                        ),
+                        dict(
+                            dofs=['roll', 'pitch', 'yaw'],
+                            tag='uniform',
+                            min=-2 * np.pi,
+                            max=2 * np.pi
                         )
                     ]
                 )

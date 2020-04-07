@@ -93,7 +93,8 @@ class CollisionChecker(object):
         * `model` (*type:* `pcg_gazebo.simulation.SimulationModel`):
         Simulation model structure
         """
-        if model.is_ground_plane and self._ignore_ground_plane:
+        if (model.is_ground_plane or model.name == 'ground_plane') and \
+                self._ignore_ground_plane:
             PCG_ROOT_LOGGER.info(
                 'Model <{}> is a ground plane,'
                 ' ignoring it for collision checking'.format(model.name))
@@ -110,7 +111,8 @@ class CollisionChecker(object):
         * `model` (*type:* `pcg_gazebo.simulation.SimulationModel`):
         Simulation model structure
         """
-        if model.is_ground_plane and self._ignore_ground_plane:
+        if (model.is_ground_plane or model.name == 'ground_plane') and \
+                self._ignore_ground_plane:
             return
         self._scene_models.append(model)
 
