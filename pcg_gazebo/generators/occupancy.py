@@ -166,7 +166,7 @@ def get_occupied_area(
 
     def _is_interior_polygon(current_mesh, current_geo, z=None):
         if not isinstance(current_geo, (Polygon, MultiPolygon)):
-            return False        
+            return False
         inside_mesh = False
         ray_directions = list()
         ray_origins = list()
@@ -192,7 +192,7 @@ def get_occupied_area(
 
         ray_directions = list()
         ray_origins = list()
-        
+
         n_theta = 360
         for theta in np.linspace(0, 2 * np.pi, n_theta):
             ray_directions.append(
@@ -210,7 +210,7 @@ def get_occupied_area(
 
         if unique.size != len(ray_directions):
             return False
-        
+
         for c in counts:
             if c % 2 != 0:
                 inside_mesh = True
@@ -220,7 +220,6 @@ def get_occupied_area(
     plane_normal = [0, 0, 1]
     occupied_areas = list()
     meshes = model.get_meshes(mesh_type)
-    filtered_geoms = list()
 
     for mesh in meshes:
         if model_z_limits[0] in z_levels:
@@ -252,7 +251,7 @@ def get_occupied_area(
             boundaries = linemerge(lines)
             section_boundaries.append(boundaries)
             p = boundaries.envelope.difference(boundaries.buffer(1e-3))
-            
+
             if isinstance(p, MultiPolygon):
                 for geo in p.geoms:
                     if _is_interior_polygon(mesh, geo, z):
@@ -261,7 +260,7 @@ def get_occupied_area(
                 polys.append(p)
 
         occupied_areas = occupied_areas + polys
-        
+
         if len(section_boundaries):
             for item in section_boundaries:
                 occupied_areas.append(item.buffer(1e-3))
@@ -288,7 +287,7 @@ def get_occupied_area(
                 model.name, z_levels, model_z_limits))
         return None
     # TODO: Set x_limits and y_limits to the occupied area
-    
+
     return occupied_areas
 
 
@@ -324,6 +323,7 @@ def generate_occupancy_grid(
 
     if ground_plane_models is None:
         ground_plane_models = list()
+
     def _is_ground_plane(model):
         if model.is_ground_plane:
             return True
