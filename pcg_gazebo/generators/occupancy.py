@@ -21,7 +21,7 @@ from shapely.ops import unary_union, polygonize, linemerge
 from ..log import PCG_ROOT_LOGGER
 from ..visualization import create_scene
 from ..simulation import SimulationModel, ModelGroup
-from ..utils import has_string_pattern
+from ..utils import has_string_pattern, get_random_point_from_shape
 
 
 def _get_model_limits(model, mesh_type='collision'):
@@ -164,68 +164,62 @@ def get_occupied_area(
         'height range, model={}, # levels before={}, # levels'
         ' after={}'.format(model_name, n_levels, z_levels.size))
 
-    def _is_interior_polygon(current_mesh, current_geo):
+    def _is_interior_polygon(current_mesh, current_geo, z=None):
         if not isinstance(current_geo, (Polygon, MultiPolygon)):
             return False
-        if is_ground_plane:
-            return True
-        else:
-            inside_mesh = False
-            for z in z_levels:
-                if z <= model_z_limits[0]:
-                    z = model_z_limits[0] + 0.01
-                elif z >= model_z_limits[1]:
-                    z = model_z_limits[1] - 0.01
-                ray_directions = list()
-                ray_origins = list()
+        inside_mesh = False
+        ray_directions = list()
+        ray_origins = list()
 
-                point = current_geo.representative_point()
+        point = get_random_point_from_shape(current_geo)
 
-                ray_directions = [
-                    [0, 0, 1],
-                    [0, 0, -1]
-                ]
-                ray_origins = \
-                    [
-                        [point.xy[0][0], point.xy[1][0], z]
-                        for _ in range(len(ray_directions))
-                    ]
+        ray_directions = [
+            [0, 0, 1],
+            [0, 0, -1]
+        ]
+        ray_origins = \
+            [
+                [point[0], point[1], z]
+                for _ in range(len(ray_directions))
+            ]
 
-                locations = current_mesh.ray.intersects_location(
-                    ray_origins=ray_origins,
-                    ray_directions=ray_directions)
+        locations = current_mesh.ray.intersects_location(
+            ray_origins=ray_origins,
+            ray_directions=ray_directions)
 
-                if len(locations[1]) == 0:
-                    return False
+        if len(locations[1]) == 0:
+            return False
 
-                n_theta = 15
-                for theta in np.linspace(0, np.pi, n_theta):
-                    ray_directions.append(
-                        [np.cos(theta), np.sin(theta), 0])
-                    ray_origins.append(
-                        [point.xy[0][0], point.xy[1][0], z]
-                    )
+        ray_directions = list()
+        ray_origins = list()
 
-                locations = current_mesh.ray.intersects_location(
-                    ray_origins=ray_origins,
-                    ray_directions=ray_directions)
+        n_theta = 360
+        for theta in np.linspace(0, 2 * np.pi, n_theta):
+            ray_directions.append(
+                [np.cos(theta), np.sin(theta), 0])
+            ray_origins.append(
+                [point[0], point[1], z]
+            )
 
-                unique, counts = np.unique(
-                    locations[1], return_counts=True)
-                for c in counts:
-                    if c % 2 != 0:
-                        inside_mesh = True
-                        break
+        locations = current_mesh.ray.intersects_location(
+            ray_origins=ray_origins,
+            ray_directions=ray_directions)
 
-                if inside_mesh:
-                    break
+        unique, counts = np.unique(
+            locations[1], return_counts=True)
 
-            return inside_mesh
+        if unique.size != len(ray_directions):
+            return False
+
+        for c in counts:
+            if c % 2 != 0:
+                inside_mesh = True
+                break
+        return inside_mesh
 
     plane_normal = [0, 0, 1]
     occupied_areas = list()
     meshes = model.get_meshes(mesh_type)
-    filtered_geoms = list()
 
     for mesh in meshes:
         if model_z_limits[0] in z_levels:
@@ -247,39 +241,38 @@ def get_occupied_area(
             heights=z_levels)
         sections = [s for s in sections if s is not None]
         polys = list()
-        for section in sections:
+        section_boundaries = list()
+        for section, z in zip(sections, z_levels):
             lines = list()
             for poly in section.entities:
                 line = LineString(
                     section.vertices[poly.points])
                 lines.append(line)
             boundaries = linemerge(lines)
+            section_boundaries.append(boundaries)
+            p = boundaries.envelope.difference(boundaries.buffer(1e-3))
 
-            polygons_from_boundaries = MultiPolygon(polygonize(boundaries))
-
-            if mesh.is_watertight and polygons_from_boundaries.area > 0:
-                polys = polys + list(polygonize(boundaries))
-            else:
-                p = boundaries.envelope.difference(boundaries.buffer(1e-3))
+            if isinstance(p, MultiPolygon):
                 for geo in p.geoms:
-                    polys.append(geo.buffer(1e-3))
+                    if _is_interior_polygon(mesh, geo, z):
+                        polys.append(geo.buffer(1e-3))
+            elif isinstance(p, Polygon):
+                polys.append(p)
 
-        polys = MultiPolygon(polys)
-        if not is_ground_plane:
-            for i in range(len(polys.geoms)):
-                if _is_interior_polygon(mesh, polys.geoms[i]):
-                    filtered_geoms.append(polys.geoms[i])
-            occupied_areas.append(MultiPolygon(filtered_geoms))
-        else:
-            if polys.area > 0:
-                occupied_areas.append(polys)
+        occupied_areas = occupied_areas + polys
+
+        if len(section_boundaries):
+            for item in section_boundaries:
+                occupied_areas.append(item.buffer(1e-3))
 
     if len(occupied_areas) > 1:
         occupied_areas = unary_union(
             [geo.buffer(max(step_x, step_y) / 2) for geo in occupied_areas])
         occupied_areas = occupied_areas.buffer(-max(step_x, step_y) / 2)
-    else:
+    elif len(occupied_areas) == 1:
         occupied_areas = unary_union(occupied_areas[0])
+    else:
+        return None
 
     if is_ground_plane:
         dilated_footprint = occupied_areas.buffer(max(step_x, step_y))
@@ -294,6 +287,7 @@ def get_occupied_area(
                 model.name, z_levels, model_z_limits))
         return None
     # TODO: Set x_limits and y_limits to the occupied area
+
     return occupied_areas
 
 
