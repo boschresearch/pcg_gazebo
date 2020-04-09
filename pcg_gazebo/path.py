@@ -116,7 +116,9 @@ class Path(object):
     def model_uri(self):
         from .simulation import get_gazebo_model_path
         if self._gazebo_model is None:
-            return None
+            self._resolve_gazebo_model()
+            if self._gazebo_model is None:
+                return None
         model_path = get_gazebo_model_path(self._gazebo_model)
         relative_path = self._absolute_uri.replace(model_path, '')
         prefix = 'model://{}'.format(self._gazebo_model)
