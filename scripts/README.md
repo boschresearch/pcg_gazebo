@@ -174,6 +174,60 @@ optional arguments:
 * [`launch_pcg_world` script](https://github.com/boschresearch/pcg_gazebo/blob/master/examples/launch_pcg_world.sh)
 * [Samples of world configuration files](https://github.com/boschresearch/pcg_gazebo/tree/master/examples/world_generator/worlds)
 
+# `pcg-inspect-asset`
+
+```bash
+pcg-inspect-asset -h
+usage: List all elements from a model or world [-h] [--filename FILENAME]
+                                               [--gazebo-model GAZEBO_MODEL]
+                                               [--print-xml]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --filename FILENAME, -f FILENAME
+  --gazebo-model GAZEBO_MODEL, -g GAZEBO_MODEL
+  --print-xml, -p
+```
+
+# `pcg-install-gazebo-assets`
+
+```bash
+pcg-install-gazebo-assets -h
+usage: pcg-install-gazebo-assets [-h] [--tarball TARBALL] [--dir DIR]
+                                 [--filename FILENAME]
+                                 [--models-path MODELS_PATH] [--add-timestamp]
+                                 [--prefix PREFIX] [--name NAME]
+
+Open and install Gazebo assets (media, models and world) in the default Gazebo resource paths <$HOME/.gazebo>
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --tarball TARBALL, -t TARBALL
+                        Filename of the tarball containing the simulation
+                        assets. The tarball must contain either (1) a Gazebo
+                        model, including at least model.config and model.sdf
+                        files or (2) a models and/or a worlds folder
+  --dir DIR, -d DIR     A folder containing (1) a Gazebo model, including at
+                        least model.config and model.sdf files or (2) a models
+                        and/or a worlds folder
+  --filename FILENAME, -f FILENAME
+                        A SDF, URDF or XACRO file to be installed as a Gazebo
+                        model or world
+  --models-path MODELS_PATH, -m MODELS_PATH
+                        Optional custom models path necessary for parsing the
+                        asset to be installed
+  --add-timestamp, -a   Adds timestamp to the asset name as a suffix
+  --prefix PREFIX, -p PREFIX
+                        Prefix string to be added to the asset name installed
+  --name NAME, -n NAME  New name of the asset to be installed
+
+Usage:
+        pcg-install-gazebo-assets --tarball FILENAME
+        pcg-install-gazebo-assets --filename FILENAME
+        pcg-install-gazebo-assets --dir FOLDER --prefix PREFIX --add-timestamp --name NEW_ASSET_NAME
+        pcg-install-gazebo-assets --tarball FILENAME --prefix PREFIX --add-timestamp
+```
+
 # `pcg-list-gazebo-models`
 
 Lists all the static Gazebo models found in the ROS paths and `$HOME/.gazebo/models`.
