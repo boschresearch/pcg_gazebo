@@ -1,0 +1,266 @@
+#!/usr/bin/env python
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+import os
+import tarfile
+import argparse
+import datetime
+import shutil
+from pcg_gazebo.simulation import is_gazebo_model, \
+    add_custom_gazebo_resource_path, SimulationModel, \
+    ModelGroup, World, Light
+from pcg_gazebo.parsers import parse_sdf, parse_xacro, \
+    parse_urdf, urdf2sdf
+
+GAZEBO_ROOT_PATH = os.path.join(
+    os.path.expanduser('~'), '.gazebo')
+GAZEBO_WORLD_PATH = os.path.join(GAZEBO_ROOT_PATH, 'worlds')
+GAZEBO_MODEL_PATH = os.path.join(GAZEBO_ROOT_PATH, 'models')
+
+
+def export_lights(sdf, name=None, prefix='', suffix=''):
+    assert sdf.xml_element_name == 'sdf'
+    assert name is not None, 'Model name cannot be None'
+
+    model_name = prefix + name + suffix
+    group = ModelGroup.from_sdf(sdf)
+    group.to_gazebo_model(
+        output_dir=GAZEBO_MODEL_PATH,
+        model_name=model_name,
+        overwrite=True)
+
+
+def export_light(sdf, name=None, prefix='', suffix=''):
+    assert sdf.xml_element_name == 'light'
+
+    light = Light.from_sdf(sdf)
+    light_name = name if name is not None else light.name
+    model_name = prefix + light_name + suffix
+    group = ModelGroup(model_name)
+    group.add_light(light)
+    group.to_gazebo_model(
+        output_dir=GAZEBO_MODEL_PATH,
+        model_name=model_name,
+        overwrite=True)
+
+
+def export_model_dir(dir, prefix='', suffix=''):
+    assert os.path.isdir(dir), 'Invalid directory'
+    if 'model.config' not in os.listdir(dir):
+        print('Directory {} does not contain a model, skipping...'.format(
+            dir))
+        return False
+
+    model_name = os.path.basename(dir)
+
+    model_name = prefix + model_name + suffix
+    new_model_path = os.path.join(GAZEBO_MODEL_PATH, model_name)
+    if not os.path.isdir(new_model_path):
+        shutil.copytree(dir, new_model_path)
+    else:
+        print('Destination model folder {} already exist, skipping...'.format(
+            new_model_path))
+
+    # Check if Gazebo model can now be found
+    assert is_gazebo_model(model_name), \
+        'Gazebo model {} cannot be found, removing folder {}'.format(
+            model_name, new_model_path)
+
+    print('Model {} exported to folder {}'.format(
+        model_name, os.path.join(GAZEBO_MODEL_PATH, model_name)))
+
+    return True
+
+
+def export_model(sdf, name=None, prefix='', suffix=''):
+    assert sdf.xml_element_name == 'model'
+    model = SimulationModel.from_sdf(sdf)
+
+    if name is not None:
+        model.name = name
+    model.name = prefix + model.name + suffix
+
+    model_dir = model.to_gazebo_model(
+        output_dir=GAZEBO_MODEL_PATH,
+        overwrite=True,
+        copy_resources=True)
+    assert model_dir is not None, \
+        'Could not export model {} as Gazebo model'.format(model.name)
+    print('Model {} exported to folder {}'.format(model.name, model_dir))
+
+
+def export_world(sdf, name=None, prefix='', suffix=''):
+    assert sdf.xml_element_name == 'world'
+
+    world = World.from_sdf(sdf)
+    assert world is not None
+    world.export_to_file(
+        output_dir=GAZEBO_WORLD_PATH,
+        filename=prefix + world.name + suffix + '.world',
+        with_default_ground_plane=False,
+        with_default_sun=False,
+        models_output_dir=GAZEBO_MODEL_PATH,
+        overwrite=True)
+
+
+def install_dir(folder, prefix='', suffix=''):
+    assert os.path.isdir(folder), 'Invalid input directory'
+
+    if os.path.isfile(os.path.join(folder, 'model.config')):
+        # The folder contains a model
+        export_model_dir(folder, prefix=prefix, suffix=suffix)
+
+    if os.path.isdir(os.path.join(folder, 'models')):
+        models_subdir = os.path.join(folder, 'models')
+
+        for item in os.listdir(models_subdir):
+            export_model_dir(
+                os.path.join(models_subdir, item))
+
+    if os.path.isdir(os.path.join(folder, 'worlds')):
+        world_dir = os.path.join(folder, 'worlds')
+        for item in os.listdir(world_dir):
+            if not os.path.isfile(os.path.join(world_dir, item)):
+                continue
+            if item.endswith('.world'):
+                world_name = prefix + \
+                    item.replace('.world', '') + suffix + '.world'
+                shutil.copy(
+                    os.path.join(world_dir, item),
+                    os.path.join(GAZEBO_WORLD_PATH, world_name))
+                print('World {} copied to {}'.format(
+                    os.path.join(world_dir, item),
+                    os.path.join(GAZEBO_WORLD_PATH, world_name)))
+
+
+if __name__ == '__main__':
+    description = \
+        'Open and install Gazebo assets (media, models' \
+        ' and world) in the default Gazebo resource ' \
+        'paths <$HOME/.gazebo>'
+    usage_text = '''Usage:
+        pcg-install-gazebo-assets --tarball FILENAME
+        pcg-install-gazebo-assets --filename FILENAME
+        pcg-install-gazebo-assets --dir FOLDER --prefix PREFIX --add-timestamp --name NEW_ASSET_NAME
+        pcg-install-gazebo-assets --tarball FILENAME --prefix PREFIX --add-timestamp
+    '''
+    parser = argparse.ArgumentParser(
+        description=description,
+        epilog=usage_text,
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+
+    parser.add_argument(
+        '--tarball', '-t',
+        type=str,
+        help='Filename of the tarball containing the simulation '
+             'assets. The tarball must contain either (1) a Gazebo '
+             'model, including at least model.config and model.sdf '
+             'files or (2) a models and/or a worlds folder')
+    parser.add_argument(
+        '--dir', '-d',
+        type=str,
+        help='A folder containing (1) a Gazebo model, '
+             'including at least model.config and model.sdf files '
+             'or (2) a models and/or a worlds folder')
+    parser.add_argument(
+        '--filename', '-f',
+        type=str,
+        help='A SDF, URDF or XACRO file to be installed as a '
+             'Gazebo model or world')
+    parser.add_argument(
+        '--models-path', '-m',
+        type=str,
+        help='Optional custom models path necessary for parsing'
+             ' the asset to be installed')
+    parser.add_argument(
+        '--add-timestamp', '-a',
+        action='store_true',
+        help='Adds timestamp to the asset name as a suffix')
+    parser.add_argument(
+        '--prefix', '-p',
+        type=str,
+        help='Prefix string to be added to the asset name installed')
+    parser.add_argument(
+        '--name', '-n',
+        type=str,
+        help='New name of the asset to be installed')
+
+    args = parser.parse_args()
+
+    if args.add_timestamp:
+        suffix = '_' + datetime.datetime.now().strftime(
+            '%Y-%m-%d_%H-%M-%S').replace(':', '_')
+    else:
+        suffix = ''
+
+    if args.prefix is not None:
+        prefix = args.prefix
+    else:
+        prefix = ''
+
+    if args.models_path is not None:
+        assert os.path.isdir(args.models_path), 'Invalid models path'
+        add_custom_gazebo_resource_path(args.models_path)
+
+    if args.filename is not None:
+        assert os.path.isfile(args.filename), 'Invalid input filename'
+        assert args.filename.endswith('.sdf') or \
+            args.filename.endswith('.world') or \
+            args.filename.endswith('.xacro') or \
+            args.filename.endswith('.urdf')
+
+        if args.filename is not None:
+            if args.filename.endswith('.sdf') or \
+                    args.filename.endswith('.world'):
+                sdf = parse_sdf(args.filename)
+            elif args.filename.endswith('.urdf'):
+                urdf = parse_xacro(args.filename, output_type='urdf')
+                sdf = urdf2sdf(urdf)
+            elif args.filename.endswith('.xacro'):
+                try:
+                    sdf = parse_xacro(args.filename, output_type='sdf')
+                except BaseException:
+                    urdf = parse_xacro(args.filename, output_type='urdf')
+                    sdf = urdf2sdf(urdf)
+
+            assert sdf is not None, 'SDF file could not be parsed'
+
+            if sdf.xml_element_name == 'sdf':
+                if sdf.models is not None and len(sdf.models) == 1:
+                    export_model(sdf.models[0], args.name, prefix, suffix)
+                elif sdf.world is not None:
+                    export_world(sdf.world, args.name, prefix, suffix)
+                elif sdf.lights is not None:
+                    export_lights(sdf, args.name, prefix, suffix)
+            elif sdf.xml_element_name == 'world':
+                export_world(sdf, args.name, prefix, suffix)
+            elif sdf.xml_element_name == 'model':
+                export_model(sdf, args.name, prefix, suffix)
+            elif sdf.xml_element_name == 'light':
+                export_light(sdf, args.name, prefix, suffix)
+    elif args.tarball is not None:
+        assert os.path.isfile(args.tarball), 'Invalid input tarball filename'
+
+        # Create temporary folder to extract the files to
+        with tarfile.open(args.tarball, 'r') as tf:
+            tf.extractall(path='/tmp', members=None)
+
+        folder = os.path.join(
+            '/tmp', os.path.basename(args.tarball).split('.')[0])
+        install_dir(folder, prefix=prefix, suffix=suffix)
+        shutil.rmtree(folder)
+
+    elif args.dir is not None:
+        install_dir(args.dir, prefix=prefix, suffix=suffix)

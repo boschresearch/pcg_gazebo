@@ -157,6 +157,8 @@ setup(
         'scripts/pcg-generate-occupancy-map',
         'scripts/pcg-generate-sample-world-with-walls',
         'scripts/pcg-generate-world',
+        'scripts/pcg-inspect-asset',
+        'scripts/pcg-install-gazebo-assets',
         'scripts/pcg-list-gazebo-models',
         'scripts/pcg-preview-sdf',
         'scripts/pcg-preview-urdf',

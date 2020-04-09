@@ -1,0 +1,270 @@
+#!/usr/bin/env python
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
+# For information on the respective copyright owner see the NOTICE file
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+from __future__ import print_function
+import os
+import argparse
+from pcg_gazebo.parsers import parse_sdf, parse_xacro, parse_urdf, \
+    urdf2sdf
+from pcg_gazebo.simulation import is_gazebo_model, get_gazebo_model_sdf
+
+TAB = ''.join(4 * ' ')
+
+
+def inspect_include(obj, tabs=''):
+    assert obj.xml_element_name == 'include'
+
+    print(tabs + 'Include: {}'.format(obj.uri.value))
+    print(tabs + '- Is static: {}'.format(
+        obj.static.value if obj.static is not None else False))
+    if obj.name is not None:
+        print(tabs + '- Name: {}'.format(obj.name.value))
+    if obj.pose is not None:
+        print(tabs + '- Pose (x, y, z, roll, pitch, yaw): {}'.format(
+            obj.pose.value))
+
+
+def inspect_geometry(obj, tabs=''):
+    assert obj.xml_element_name == 'geometry'
+
+    print(tabs + 'Geometry: {}'.format(obj.get_mode()))
+    if obj.box is not None:
+        print(tabs + '- Size: {}'.format(obj.box.size.value))
+    elif obj.cylinder is not None:
+        print(tabs + '- Radius: {}'.format(obj.cylinder.radius.value))
+        print(tabs + '- Length: {}'.format(obj.cylinder.length.value))
+    elif obj.sphere is not None:
+        print(tabs + '- Radius: {}'.format(obj.sphere.radius.value))
+    elif obj.mesh is not None:
+        print(tabs + '- URI: {}'.format(obj.mesh.uri.value))
+        print(tabs + '- Scale: {}'.format(obj.mesh.scale.value))
+    elif obj.plane is not None:
+        print(tabs + '- Size: {}'.format(obj.plane.size.value))
+        print(tabs + '- Normal: {}'.format(obj.plane.normal.value))
+
+
+def inspect_visual(obj, tabs=''):
+    assert obj.xml_element_name == 'visual'
+
+    print(tabs + 'Visual: {}'.format(obj.name))
+    inspect_geometry(obj.geometry, tabs + TAB)
+
+
+def inspect_collision(obj, tabs=''):
+    assert obj.xml_element_name == 'collision'
+
+    print(tabs + 'Collision: {}'.format(obj.name))
+    inspect_geometry(obj.geometry, tabs + TAB)
+
+
+def inspect_link(obj, tabs=''):
+    assert obj.xml_element_name == 'link'
+
+    print(tabs + 'Link: {}'.format(obj.name))
+    if obj.pose is not None:
+        print(tabs + '- Pose (x, y, z, roll, pitch, yaw): {}'.format(obj.pose.value))
+    print(tabs + '- Kinematic: {}'.format(
+        obj.kinematic.value if obj.kinematic is not None else False))
+
+    if obj.inertial is not None:
+        print(tabs + '- Mass [kg]: {}'.format(obj.inertial.mass.value))
+        if obj.inertial.inertia is not None:
+            print(tabs + '- Moments of inertia:')
+            print(tabs + TAB + '- IXX: {}'.format(obj.inertial.inertia.ixx.value))
+            print(tabs + TAB + '- IXY: {}'.format(obj.inertial.inertia.ixy.value))
+            print(tabs + TAB + '- IXZ: {}'.format(obj.inertial.inertia.ixz.value))
+            print(tabs + TAB + '- IYY: {}'.format(obj.inertial.inertia.iyy.value))
+            print(tabs + TAB + '- IYZ: {}'.format(obj.inertial.inertia.iyz.value))
+            print(tabs + TAB + '- IZZ: {}'.format(obj.inertial.inertia.izz.value))
+
+    if obj.visuals is not None:
+        print(tabs + '- Visuals ({})'.format(len(obj.visuals)))
+        for visual in obj.visuals:
+            inspect_visual(visual, tabs + TAB)
+
+    if obj.collisions is not None:
+        print(tabs + '- Collisions ({})'.format(len(obj.collisions)))
+        for collision in obj.collisions:
+            inspect_collision(collision, tabs + TAB)
+
+
+def inspect_plugin(obj, tabs=''):
+    assert obj.xml_element_name == 'plugin'
+
+    print(tabs + 'Plugin: {}'.format(obj.name))
+    print(tabs + '- Filename: {}'.format(obj.filename))
+
+    def _print_dict(_obj, _tabs):
+        for tag in _obj:
+            if isinstance(_obj[tag], dict):
+                print(_tabs + '- {}'.format(tag))
+                _print_dict(_obj[tag], _tabs + TAB)
+            else:
+                print(_tabs + '- {}: {}'.format(tag, _obj[tag]))
+
+    print(tabs + '- Parameters:')
+    _print_dict(obj.value, tabs + TAB)
+
+
+def inspect_light(obj, tabs=''):
+    assert obj.xml_element_name == 'light'
+
+    print(tabs + 'Light: {}'.format(obj.name))
+    if obj.pose is not None:
+        print(tabs + '- Pose (x, y, z, roll, pitch, yaw): {}'.format(
+            obj.pose.value))
+    print(tabs + '- Type: {}'.format(obj.type))
+
+
+def inspect_joint(obj, tabs=''):
+    assert obj.xml_element_name == 'joint'
+
+    print(tabs + 'Joint: {}'.format(obj.name))
+    print(tabs + '- Type: {}'.format(obj.type))
+    print(tabs + '- Parent: {}'.format(obj.parent.value))
+    print(tabs + '- Child: {}'.format(obj.child.value))
+
+    def _inspect_axis(_obj, _tabs):
+        print(_tabs + 'Axis {}'.format(
+            1 if _obj.xml_element_name == 'axis' else 2))
+        print(_tabs + '- Lower limit: {}'.format(
+            _obj.limit.lower.value))
+        print(_tabs + '- Upper limit: {}'.format(
+            _obj.limit.upper.value))
+        print(_tabs + '- Velocity: {}'.format(
+            _obj.limit.velocity.value if _obj.limit.velocity is not None else -1))
+        print(_tabs + '- Effort: {}'.format(
+            _obj.limit.effort.value if _obj.limit.effort is not None else -1))
+
+    if obj.axis is not None:
+        _inspect_axis(obj.axis, tabs + TAB)
+    if obj.axis2 is not None:
+        _inspect_axis(obj.axis2, tabs + TAB)
+
+
+def inspect_model(obj, tabs=''):
+    assert obj.xml_element_name == 'model'
+
+    print(tabs + 'Model: {}'.format(obj.name))
+    print(tabs + '- Is static: {}'.format(
+        obj.static.value if obj.static is not None else False))
+    print(tabs + '- Self-collide: {}'.format(
+        obj.self_collide.value if obj.self_collide is not None else False))
+    if obj.pose is not None:
+        print(tabs + '- Pose (x, y, z, roll, pitch, yaw): {}'.format(
+            obj.pose.value))
+
+    if obj.links is not None:
+        print(tabs + '- Links ({})'.format(len(obj.links)))
+        for link in obj.links:
+            inspect_link(link, tabs + TAB)
+
+    if obj.includes is not None:
+        print(tabs + '- Includes ({})'.format(len(obj.includes)))
+        for include in obj.includes:
+            inspect_include(include, tabs + TAB)
+
+    if obj.joints is not None:
+        print(tabs + '- Joints ({})'.format(len(obj.joints)))
+        for joint in obj.joints:
+            inspect_joint(joint, tabs + TAB)
+
+    if obj.plugins is not None:
+        print(tabs + '- Plugins ({})'.format(len(obj.plugins)))
+        for plugin in obj.plugins:
+            inspect_plugin(plugin, tabs + TAB)
+
+
+def inspect_world(obj, tabs=''):
+    assert obj.xml_element_name == 'world'
+
+    if obj.lights is not None:
+        print(tabs + '- Lights ({})'.format(len(obj.lights)))
+
+        for light in obj.lights:
+            inspect_light(light, tabs + TAB)
+
+    if obj.models is not None:
+        print(tabs + '- Models ({})'.format(len(obj.models)))
+        for model in obj.models:
+            inspect_model(model, tabs + TAB)
+
+    if obj.includes is not None:
+        print(tabs + '- Includes ({})'.format(len(obj.includes)))
+        for include in obj.includes:
+            inspect_include(include, tabs + TAB)
+
+    if obj.physics is not None:
+        print(tabs + '- Physics')
+
+
+if __name__ == '__main__':
+    description = 'List all elements from a model or world'
+    parser = argparse.ArgumentParser(
+        'List all elements from a model or world')
+    parser.add_argument('--filename', '-f', type=str)
+    parser.add_argument('--gazebo-model', '-g', type=str)
+    parser.add_argument('--print-xml', '-p', action='store_true')
+
+    args = parser.parse_args()
+
+    sdf = None
+    urdf = None
+    if args.filename:
+        assert os.path.exists(args.filename), 'Invalid filename provided'
+        assert args.filename.endswith('.sdf') or \
+            args.filename.endswith('.world') or \
+            args.filename.endswith('.xacro') or \
+            args.filename.endswith('.urdf'), \
+            'Support file extensions are .sdf, .world, .urdf and .xacro'
+
+        if args.filename.endswith('.sdf') or args.filename.endswith('.world'):
+            sdf = parse_sdf(args.filename)
+        elif args.filename.endswith('.urdf'):
+            urdf = parse_urdf(args.filename)
+        else:
+            try:
+                sdf = parse_xacro(args.filename, output_type='sdf')
+            except BaseException:
+                urdf = parse_xacro(args.filename, output_type='urdf')
+    elif args.gazebo_model:
+        assert is_gazebo_model(args.gazebo_model)
+        sdf = get_gazebo_model_sdf(args.gazebo_model)
+
+    if urdf is not None:
+        sdf = urdf2sdf(urdf)
+
+    if sdf.xml_element_name == 'sdf':
+        if sdf.models is not None:
+            print('# models = {}'.format(len(sdf.models)))
+            for model in sdf.models:
+                inspect_model(model)
+        if sdf.world is not None:
+            inspect_world(sdf.world)
+        if sdf.lights is not None:
+            print('# lights = {}'.format(len(sdf.lights)))
+            for light in sdf.lights:
+                inspect_light(light)
+    elif sdf.xml_element_name == 'model':
+        inspect_model(sdf)
+    elif sdf.xml_element_name == 'light':
+        inspect_light(sdf)
+    elif sdf.xml_element_name == 'world':
+        inspect_world(sdf)
+
+    if args.print_xml and urdf is None:
+        print(sdf)
+    elif args.print_xml and urdf is not None:
+        print(urdf)

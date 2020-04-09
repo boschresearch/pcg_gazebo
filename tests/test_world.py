@@ -79,7 +79,7 @@ class TestWorld(unittest.TestCase):
             world.get_random_free_spots(
                 box_model,
                 n_spots=n_spots,
-                ground_plane_models='walls',
+                ground_plane_models=['walls'],
                 dofs=['x', 'y', 'yaw'],
                 return_free_polygon=True
             )
