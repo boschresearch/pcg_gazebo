@@ -28,6 +28,7 @@ from ..log import PCG_ROOT_LOGGER
 from ..utils import is_string, is_array, get_random_point_from_shape, \
     has_string_pattern
 from ..generators.occupancy import generate_occupancy_grid
+from .. import random
 
 
 class World(Entity):
@@ -868,19 +869,19 @@ class World(Entity):
                 for item in ignore_models:
                     if not has_string_pattern(self.models[tag].name, item):
                         collision_checker.add_model(self.models[tag])
-            has_collision = \
+            no_collision = \
                 not collision_checker.check_collision_with_current_scene(
                     test_model)
             if return_collision_checker:
-                return has_collision, collision_checker
+                return no_collision, collision_checker
             else:
-                return has_collision
+                return no_collision
         else:
             PCG_ROOT_LOGGER.info('Using static collision checker')
-            has_collision = \
+            no_collision = \
                 not static_collision_checker.check_collision_with_current_scene(  # noqa: E501
                     test_model)
-            return has_collision
+            return no_collision
 
     def get_bounds(self, mesh_type='collision'):
         from copy import deepcopy
@@ -908,8 +909,14 @@ class World(Entity):
             free_space_min_area=5e-3):
         if ground_plane_models is None:
             ground_plane_models = list()
+        else:
+            assert is_array(ground_plane_models), \
+                'ground_plane_models must be a list'
         if ignore_models is None:
             ignore_models = list()
+        else:
+            assert is_array(ignore_models), \
+                'ignore_models must be a list'
 
         if self.n_models == 0:
             assert x_limits is not None, \
@@ -1177,24 +1184,24 @@ class World(Entity):
 
             # Computing Z component
             if z_limits is not None and 'z' in active_dofs:
-                pose.z = np.random.random() * (z_limits[1] - z_limits[0]) \
+                pose.z = random.rand() * (z_limits[1] - z_limits[0]) \
                     + z_limits[0]
 
             # Computing roll, pitch and yaw
             roll = 0
             if 'roll' in active_dofs:
-                roll = np.random.random() * (roll_limits[1] - roll_limits[0]) \
+                roll = random.rand() * (roll_limits[1] - roll_limits[0]) \
                     + roll_limits[0]
 
             pitch = 0
             if 'pitch' in active_dofs:
-                pitch = np.random.random() * \
+                pitch = random.rand() * \
                     (pitch_limits[1] - pitch_limits[0]) \
                     + pitch_limits[0]
 
             yaw = 0
             if 'yaw' in active_dofs:
-                yaw = np.random.random() * (yaw_limits[1] - yaw_limits[0]) \
+                yaw = random.rand() * (yaw_limits[1] - yaw_limits[0]) \
                     + yaw_limits[0]
 
             pose.rpy = [roll, pitch, yaw]
