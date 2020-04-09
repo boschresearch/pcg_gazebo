@@ -144,7 +144,8 @@ class Joint(object):
 
     def set_axis_xyz(self, xyz=[0, 0, 1], index=0):
         if self._type == 'fixed':
-            PCG_ROOT_LOGGER.warning('Axis vector is ignored for fixed joints')
+            PCG_ROOT_LOGGER.info(
+                'Axis vector is ignored for fixed joints')
             return False
         self._axis[index].set_axis(xyz)
         return True
@@ -157,10 +158,10 @@ class Joint(object):
             effort=-1,
             index=0):
         if self._type == 'fixed':
-            PCG_ROOT_LOGGER.warning('Fixed joints have no limits')
+            PCG_ROOT_LOGGER.info('Fixed joints have no limits')
             return False
         if index != 0 and self._type not in ['universal', 'revolute2']:
-            PCG_ROOT_LOGGER.warning(
+            PCG_ROOT_LOGGER.info(
                 'Only joints of types universal and revolute2')
             return False
 
@@ -170,7 +171,8 @@ class Joint(object):
     def set_axis_dynamics(self, damping=0, friction=0, spring_reference=0,
                           spring_stiffness=0, index=0):
         if self._type == 'fixed':
-            PCG_ROOT_LOGGER.warning('Fixed joints have no limits')
+            PCG_ROOT_LOGGER.info(
+                'Fixed joints have no dynamic parameters')
             return False
         if index != 0 and self._type not in ['universal', 'revolute2']:
             PCG_ROOT_LOGGER.warning(
