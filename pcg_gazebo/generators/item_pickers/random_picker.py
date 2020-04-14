@@ -27,7 +27,8 @@ class RandomPicker(_Picker):
     def get_selection(self):
         items = deepcopy(self.items)
         item = items[random.choice(range(len(items)))]
-        if self.get_max_num_items(item) == self.get_counter(item):
+        if self.get_max_num_items(item) is not None and \
+                self.get_max_num_items(item) == self.get_counter(item):
             items.remove(item)
             if len(items) == 0:
                 return None
