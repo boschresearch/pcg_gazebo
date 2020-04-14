@@ -30,6 +30,9 @@ class _Picker(object):
                     self._max_num[tag] = max_num[tag]
                 else:
                     self._max_num[tag] = None
+        else:
+            for tag in items:
+                self._max_num[tag] = None
 
         self._counter = dict()
 
@@ -55,9 +58,19 @@ class _Picker(object):
 
     def are_all_counters_max(self):
         for tag in self._counter:
+            if tag not in self._max_num:
+                return False
             if self._max_num[tag] is None:
                 return False
             if self._counter[tag] < self._max_num[tag]:
+                return False
+        return True
+
+    def are_all_counters_limited(self):
+        for tag in self._counter:
+            if tag not in self._max_num:
+                return False
+            if self._max_num[tag] is None or self._max_num[tag] < 0:
                 return False
         return True
 
@@ -70,7 +83,7 @@ class _Picker(object):
         self._counter[tag] += 1
 
     def set_max_num(self, tag, value):
-        assert value > 0
+        assert value > 0 or value is None
         self._max_num[tag] = value
         if tag not in self._items:
             self._items.append(tag)
@@ -80,7 +93,7 @@ class _Picker(object):
         if tag in self._max_num:
             return self._max_num[tag]
         else:
-            return -1
+            return None
 
     def reset(self):
         for tag in self._counter:
