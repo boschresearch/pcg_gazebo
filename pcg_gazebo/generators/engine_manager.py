@@ -67,7 +67,7 @@ class EngineManager(_CollectionManager):
             input_args['assets_manager'] = self._assets_manager
             input_args['constraints_manager'] = \
                 self._constraints_manager
-            input_args['collision_checker'] = self._collision_checker
+            input_args['collision_checker'] = CollisionChecker()
             self._collection[tag] = create_engine(engine_name, **input_args)
         PCG_ROOT_LOGGER.info(
             'New model creator engine added, type={}, tag={}'.format(

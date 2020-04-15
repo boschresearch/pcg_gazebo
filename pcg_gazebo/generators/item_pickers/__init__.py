@@ -56,6 +56,7 @@ def get_picker_tags():
 ___all__ = [
     'create_picker',
     'get_picker_tags',
+    '_Picker',
     'RandomPicker',
     'SizePicker',
     'RouletteWheelPicker'

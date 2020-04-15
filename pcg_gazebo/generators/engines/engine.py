@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import collections
+from ...simulation import SimulationModel, ModelGroup
 from ...simulation.properties import Pose
 from ...log import PCG_ROOT_LOGGER
 from ..assets_manager import AssetsManager
@@ -290,19 +291,25 @@ class Engine(object):
         if model not in self._models:
             self._models.append(model)
 
-    def set_fixed_pose_models(self, models):
-        """Function description
+    def set_fixed_pose_model(self, model):
+        """Set a model as a fixed model in the world
+        to populate the collision checker.
 
         > *Input arguments*
 
-        * `param` (*type:* `data_type`, *default:*`data`):
-        Parameter description
+        * `model` (*type:* `simulation.SimulationModel` or
+        `simulation.ModelGroup`): Simulation asset.
 
         > *Returns*
 
-        Description of return values
+        `True`, if model could be added to list of
+        fixed models.
         """
-        self._fixed_pose_models = models
+        if not isinstance(model, (SimulationModel, ModelGroup)):
+            return False
+        self._fixed_pose_models.append(model)
+        self._collision_checker.add_fixed_model(model)
+        return True
 
     def run(self):
         """This function should be implemented by the derived

@@ -86,6 +86,11 @@ def exclude_calls(
                  'wait',
                  'apply_body_wrench',
                  'rostopic',
+                 'plot_workspace',
+                 'plot_occupancy_grid',
+                 'plot_shapely_geometry',
+                 'plot_footprints',
+                 'ax.',
                  '?']):
     # The MIT License (MIT)
     #
@@ -192,43 +197,71 @@ def to_pass(line):
     return passed
 
 
+EXAMPLES_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    '..',
+    'examples'
+)
+
+
+def run_example(filename):
+    if not os.path.exists(filename):
+        return
+
+    if filename.lower().endswith('.ipynb'):
+        with open(filename, 'r') as file_obj:
+            script = load_notebook(file_obj)
+        print('-' for _ in range(20))
+        print('Notebook: ', filename)
+        exec(script, globals())
+        plt.close('all')
+        print('-' for _ in range(20))
+    elif filename.lower().endswith('.py'):
+        output = subprocess.check_output(['python', filename])
+        assert output.returncode == 0
+
+
 class TestExamples(unittest.TestCase):
-    def test_notebooks(self):
+    def test_generation_notebooks(self):
         if sys.version_info.major == 2:
             return
-        examples_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '..',
-            'examples'
-        )
 
-        notebook_blacklist = [
-            'gen_grid_map.ipynb'
+        notebooks = [
+            'gen_fixed_pose_engine.ipynb',
+            'gen_workspaces.ipynb'
         ]
 
-        for item in os.listdir(examples_dir):
-            filename = os.path.join(examples_dir, item)
+        for item in os.listdir(EXAMPLES_DIR):
+            if 'gen_' in item and item in notebooks:
+                filename = os.path.join(EXAMPLES_DIR, item)
+                run_example(filename)
 
-            if not os.path.exists(filename):
-                return
+    def test_sdf_notebooks(self):
+        if sys.version_info.major == 2:
+            return
 
-            if filename.lower().endswith('.ipynb'):
-                if item in notebook_blacklist:
-                    continue
-                if item.startswith('sim_') or item.startswith('tm_'):
-                    continue
-                with open(filename, 'r') as file_obj:
-                    script = load_notebook(file_obj)
-                print('-' for _ in range(20))
-                print('Notebook: ', filename)
-                exec(script, globals())
-                plt.close('all')
-                print('-' for _ in range(20))
-            elif filename.lower().endswith('.py'):
-                output = subprocess.check_output(['python', filename])
-                assert output.returncode == 0
-            else:
-                continue
+        for item in os.listdir(EXAMPLES_DIR):
+            if 'sdf_' in item:
+                filename = os.path.join(EXAMPLES_DIR, item)
+                run_example(filename)
+
+    def test_urdf_notebooks(self):
+        if sys.version_info.major == 2:
+            return
+
+        for item in os.listdir(EXAMPLES_DIR):
+            if 'urdf_' in item:
+                filename = os.path.join(EXAMPLES_DIR, item)
+                run_example(filename)
+
+    def test_python_scripts(self):
+        if sys.version_info.major == 2:
+            return
+
+        for item in os.listdir(EXAMPLES_DIR):
+            if item.lower().endswith('.py'):
+                filename = os.path.join(EXAMPLES_DIR, item)
+                run_example(filename)
 
 
 if __name__ == '__main__':

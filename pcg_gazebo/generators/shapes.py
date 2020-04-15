@@ -49,8 +49,8 @@ def random_points(n_points=10, x_min=-10, x_max=10, y_min=-10,
                   y_max=10):
     assert x_min < x_max, 'x_min must be lower than x_max'
     assert y_min < y_max, 'y_min must be lower than y_max'
-    x = random.rand((n_points, )) * (x_max - x_min) + x_min
-    y = random.rand((n_points, )) * (y_max - y_min) + y_min
+    x = random.rand(n_points) * (x_max - x_min) + x_min
+    y = random.rand(n_points) * (y_max - y_min) + y_min
     return MultiPoint([(xi, yi) for xi, yi in zip(x, y)])
 
 

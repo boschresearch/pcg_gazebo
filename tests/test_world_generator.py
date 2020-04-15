@@ -162,6 +162,93 @@ TEST_MODEL_GROUP_GENERATOR = dict(
 
 
 class TestWorldGenerator(unittest.TestCase):
+    def test_multiple_engines(self):
+        generator = WorldGenerator()
+        box_name = 'box_' + generate_random_string(5)
+
+        random_box = dict(
+            type='box',
+            args=dict(
+                size="__import__('pcg_gazebo').random.rand(3)",
+                mass="__import__('pcg_gazebo').random.rand()",
+                name=box_name
+            )
+        )
+        self.assertTrue(generator.add_asset(
+            random_box,
+            tag=box_name,
+            type='factory'))
+        self.assertIn(box_name, generator.assets.tags)
+
+        cyl_name = 'cyl_' + generate_random_string(5)
+        random_cyl = dict(
+            type='cylinder',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                length="__import__('pcg_gazebo').random.rand()",
+                name=cyl_name
+            )
+        )
+        self.assertTrue(generator.add_asset(
+            random_cyl,
+            tag=cyl_name,
+            type='factory'))
+        self.assertIn(cyl_name, generator.assets.tags)
+
+        sphere_name = 'sphere_' + generate_random_string(5)
+        random_sphere = dict(
+            type='sphere',
+            args=dict(
+                radius="__import__('pcg_gazebo').random.rand()",
+                name=sphere_name
+            )
+        )
+        self.assertTrue(generator.add_asset(
+            random_sphere,
+            tag=sphere_name,
+            type='factory'))
+        self.assertIn(sphere_name, generator.assets.tags)
+
+        workspace_name = generate_random_string(5)
+        self.assertTrue(generator.add_constraint(
+            name=workspace_name,
+            type='workspace',
+            geometry_type='circle',
+            radius=100,
+            center=[0, 0])
+        )
+
+        models = [box_name, cyl_name, sphere_name]
+        total_models = 0
+        for item in models:
+            max_num = dict()
+            max_num[item] = random.randint(1, 3)
+            total_models += max_num[item]
+            self.assertTrue(
+                generator.add_engine(
+                    tag=item + '_engine',
+                    engine_name='random_pose',
+                    models=[item],
+                    model_picker='random',
+                    no_collision=True,
+                    max_num=max_num,
+                    policies=[
+                        dict(
+                            models=[item],
+                            config=[
+                                dict(
+                                    dofs=['x', 'y'],
+                                    tag='workspace',
+                                    workspace=workspace_name
+                                )
+                            ]
+                        )
+                    ]
+                )
+            )
+        self.assertTrue(generator.run_engines())
+        self.assertEqual(len(generator.world.models), total_models)
+
     def test_init_from_world_sdf(self):
         generator = WorldGenerator(
             world_file=os.path.join(

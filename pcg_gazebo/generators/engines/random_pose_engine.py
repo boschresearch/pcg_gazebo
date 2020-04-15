@@ -277,7 +277,9 @@ class RandomPoseEngine(Engine):
         collision_counter = 0
         model_reset_counter = 0
         max_collision_per_iter = 50
-        max_num_model_resets = 10
+        max_num_model_resets = 10 if \
+            self.model_picker.are_all_counters_limited() \
+            else 1
 
         while True:
             if collision_counter == max_collision_per_iter:
@@ -285,14 +287,18 @@ class RandomPoseEngine(Engine):
                     self._logger.info(
                         'Unable to fit all models in the provided workspace')
                     break
-                self._logger.info(
-                    'Reset models list, max. number of collisions was reached')
-                self.reset_counter()
-                self.model_picker.reset()
-                self._collision_checker.reset_to_fixed_model_scenario()
-                models = list()
-                collision_counter = 0
-                model_reset_counter += 1
+                if not self.model_picker.are_all_counters_limited():
+                    self._logger.info(
+                        'Reset models list, max. number of'
+                        ' collisions was reached')
+                    self.reset_counter()
+                    self.model_picker.reset()
+                    self._collision_checker.reset_to_fixed_model_scenario()
+                    models = list()
+                    collision_counter = 0
+                    model_reset_counter += 1
+                else:
+                    break
 
             model_name = self.model_picker.get_selection()
 

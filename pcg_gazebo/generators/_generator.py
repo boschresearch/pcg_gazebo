@@ -356,8 +356,8 @@ class _Generator(object):
                 PCG_ROOT_LOGGER.info(
                     'Running engine, type={}'.format(
                         engine.label))
-                engine.set_fixed_pose_models(
-                    list(self._simulation_entity.models.values()))
+                for item in list(self._simulation_entity.models.values()):
+                    engine.set_fixed_pose_model(item)
                 models = engine.run()
                 if models is not None:
                     for model in models:
