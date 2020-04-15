@@ -396,7 +396,21 @@ generate:
   - pcg_gazebo.generators.engines.FixedPoseEngine++
   - pcg_gazebo.generators.engines.PatternEngine++
   - pcg_gazebo.generators.engines.RandomPoseEngine++
-  
+- reference/generators_item_pickers.md:
+  - pcg_gazebo.generators.item_pickers++
+  - pcg_gazebo.generators.item_pickers._Picker++
+  - pcg_gazebo.generators.item_pickers.RandomPicker++
+  - pcg_gazebo.generators.item_pickers.RouletteWheelPicker++
+  - pcg_gazebo.generators.item_pickers.SizePicker++
+- reference/generators_rules.md:
+  - pcg_gazebo.generators.rules++
+  - pcg_gazebo.generators.rules.FixedValue++
+  - pcg_gazebo.generators.rules.FromSet++
+  - pcg_gazebo.generators.rules.Random++
+  - pcg_gazebo.generators.rules.Rule++
+  - pcg_gazebo.generators.rules.Uniform++
+  - pcg_gazebo.generators.rules.WithinWorkspace++
+
 pages:
 - Home: index.md << README.md
 - Documentation:
@@ -428,6 +442,8 @@ pages:
     - pcg_gazebo.generators.components: reference/generators_components.md
     - pcg_gazebo.generators.constraints: reference/generators_constraints.md
     - pcg_gazebo.generators.engines: reference/generators_engines.md
+    - pcg_gazebo.generators.item_pickers: reference/generators_item_pickers.md
+    - pcg_gazebo.generators.rules: reference/generators_rules.md
 
 plugins:
   - search

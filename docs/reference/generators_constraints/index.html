@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
+      <meta name="generator" content="mkdocs-1.1, mkdocs-material-4.6.3">
     
     
       
@@ -40,12 +40,12 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/application.1b62728e.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/application.adb8469c.css">
       
       
     
     
-      <script src="../../assets/javascripts/modernizr.268332fc.js"></script>
+      <script src="../../assets/javascripts/modernizr.86422ebf.js"></script>
     
     
       
@@ -77,12 +77,16 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
+      <a href="#pcg_gazebogeneratorsconstraints" tabindex="0" class="md-skip">
+        Skip to content
+      </a>
+    
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex">
       <div class="md-flex__cell md-flex__cell--shrink">
-        <a href="../.." title="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
+        <a href="../.." title="Procedural Generation for Gazebo" aria-label="Procedural Generation for Gazebo" class="md-header-nav__button md-logo">
           
             <i class="md-icon"></i>
           
@@ -113,7 +117,7 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+      <input type="text" class="md-search__input" aria-label="search" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
       <label class="md-icon md-search__icon" for="__search"></label>
       <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
         &#xE5CD;
@@ -150,7 +154,7 @@
     </div>
   
   <div class="md-source__repository">
-    GitHub
+    boschresearch/pcg_gazebo
   </div>
 </a>
           </div>
@@ -258,7 +262,7 @@
     </div>
   
   <div class="md-source__repository">
-    GitHub
+    boschresearch/pcg_gazebo
   </div>
 </a>
     </div>
@@ -667,9 +671,118 @@
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
     
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        pcg_gazebo.generators.constraints
+      </label>
+    
     <a href="./" title="pcg_gazebo.generators.constraints" class="md-nav__link md-nav__link--active">
       pcg_gazebo.generators.constraints
     </a>
+    
+      
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pcg_gazebogeneratorsconstraints" class="md-nav__link">
+    pcg_gazebo.generators.constraints
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraint" class="md-nav__link">
+    Constraint
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tangentconstraint" class="md-nav__link">
+    TangentConstraint
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply_constraint" class="md-nav__link">
+    apply_constraint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workspaceconstraint" class="md-nav__link">
+    WorkspaceConstraint
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate_geometry" class="md-nav__link">
+    generate_geometry
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_bounds" class="md-nav__link">
+    get_bounds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_random_position" class="md-nav__link">
+    get_random_position
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contains_point" class="md-nav__link">
+    contains_point
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contains_polygons" class="md-nav__link">
+    contains_polygons
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_geometry" class="md-nav__link">
+    get_geometry
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
     
   </li>
 
@@ -682,6 +795,30 @@
   <li class="md-nav__item">
     <a href="../generators_engines/" title="pcg_gazebo.generators.engines" class="md-nav__link">
       pcg_gazebo.generators.engines
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_item_pickers/" title="pcg_gazebo.generators.item_pickers" class="md-nav__link">
+      pcg_gazebo.generators.item_pickers
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../generators_rules/" title="pcg_gazebo.generators.rules" class="md-nav__link">
+      pcg_gazebo.generators.rules
     </a>
   </li>
 
@@ -703,6 +840,117 @@
               </div>
             
             
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary">
+  
+  
+  
+    <label class="md-nav__title" for="__toc">Table of contents</label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pcg_gazebogeneratorsconstraints" class="md-nav__link">
+    pcg_gazebo.generators.constraints
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraint" class="md-nav__link">
+    Constraint
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tangentconstraint" class="md-nav__link">
+    TangentConstraint
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#apply_constraint" class="md-nav__link">
+    apply_constraint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#workspaceconstraint" class="md-nav__link">
+    WorkspaceConstraint
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#generate_geometry" class="md-nav__link">
+    generate_geometry
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_bounds" class="md-nav__link">
+    get_bounds
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_random_position" class="md-nav__link">
+    get_random_position
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contains_point" class="md-nav__link">
+    contains_point
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#contains_polygons" class="md-nav__link">
+    contains_polygons
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#get_geometry" class="md-nav__link">
+    get_geometry
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+      
+      
+      
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           <div class="md-content">
             <article class="md-content__inner md-typeset">
@@ -711,14 +959,14 @@
                   <a href="https://github.com/boschresearch/pcg_gazebo/edit/master/docs/reference/generators_constraints.md" title="Edit this page" class="md-icon md-content__icon">&#xE3C9;</a>
                 
                 
-                <h1 id="pcg_gazebo.generators.constraints">pcg_gazebo.generators.constraints</h1>
-
+                  <h1>pcg_gazebo.generators.constraints</h1>
+                
+                <h4 id="pcg_gazebogeneratorsconstraints">pcg_gazebo.generators.constraints<a class="headerlink" href="#pcg_gazebogeneratorsconstraints" title="Permanent link">&para;</a></h4>
 <p>Spatial constraints for the placement of simulation
 entities into the world.</p>
-<h1 id="pcg_gazebo.generators.constraints.Constraint">Constraint</h1>
-
-<p><div class="codehilite"><pre><span></span><span class="n">Constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</pre></div>
+<h4 id="constraint">Constraint<a class="headerlink" href="#constraint" title="Permanent link">&para;</a></h4>
+<p><div class="codehilite"><pre><span></span><code><span class="n">Constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div>
 Abstract constraint class.</p>
 <blockquote>
 <p><em>Attributes</em></p>
@@ -726,10 +974,9 @@ Abstract constraint class.</p>
 <ul>
 <li><code>LABEL</code> (<em>type:</em> <code>str</code>): Name of the constraint class.</li>
 </ul>
-<h1 id="pcg_gazebo.generators.constraints.TangentConstraint">TangentConstraint</h1>
-
-<p><div class="codehilite"><pre><span></span><span class="n">TangentConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
-</pre></div>
+<h4 id="tangentconstraint">TangentConstraint<a class="headerlink" href="#tangentconstraint" title="Permanent link">&para;</a></h4>
+<p><div class="codehilite"><pre><span></span><code><span class="n">TangentConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reference</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">)</span>
+</code></pre></div>
 Class that allows computation of the closes position
 for a model regarding a reference to have it placed tangent
 to the reference.
@@ -740,14 +987,14 @@ Reference can be a plane or another model, at the moment.</p>
 </ul>
 <p>To set a reference plane to which models will be placed tangently,
 the <code>reference</code> input must be provided as</p>
-<div class="codehilite"><pre><span></span><span class="n">reference</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">reference</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;plane&#39;</span><span class="p">,</span>
     <span class="n">args</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
         <span class="n">normal</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="c1"># A 3 element unit vector normal to the plane</span>
         <span class="n">origin</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># The 3D position of the origin of the plane</span>
         <span class="p">)</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <blockquote>
 <p><em>Attributes</em></p>
@@ -770,10 +1017,9 @@ for the tangent computation</li>
 of reference with respect to which the poses are going to be
 generated (<strong>not implemented</strong>)</li>
 </ul>
-<h2 id="pcg_gazebo.generators.constraints.TangentConstraint.apply_constraint">apply_constraint</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">TangentConstraint</span><span class="o">.</span><span class="n">apply_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-</pre></div>
+<h5 id="apply_constraint">apply_constraint<a class="headerlink" href="#apply_constraint" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">TangentConstraint</span><span class="o">.</span><span class="n">apply_constraint</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</code></pre></div>
 Compute and apply the tangent constraint for the
 provided model using the reference input.</p>
 <blockquote>
@@ -784,10 +1030,14 @@ provided model using the reference input.</p>
 Model entity to have its pose adapted so that it is placed
 tangent to the reference</li>
 </ul>
-<h1 id="pcg_gazebo.generators.constraints.WorkspaceConstraint">WorkspaceConstraint</h1>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-</pre></div>
+<h4 id="workspaceconstraint">WorkspaceConstraint<a class="headerlink" href="#workspaceconstraint" title="Permanent link">&para;</a></h4>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                    <span class="n">geometry_type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;world&#39;</span><span class="p">,</span>
+                    <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">pose</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
 Class that represents the spatial workspace where models are allowed in.
 The <code>geometry</code> input is a <code>dict</code> containing all the arguments necessary to
 generate the workspace geometry. For now, only 2D workspaces are supported.
@@ -797,7 +1047,7 @@ the input <code>geometry</code> and describe exclusion areas inside the workspac
 <ul>
 <li><code>area</code></li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">geometry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">geometry</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;area&#39;</span>
     <span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
         <span class="n">points</span><span class="o">=</span><span class="p">[</span>
@@ -808,12 +1058,12 @@ the input <code>geometry</code> and describe exclusion areas inside the workspac
                 <span class="n">vertices</span> <span class="n">of</span> <span class="n">the</span> <span class="n">plane</span> <span class="n">area</span>
     <span class="p">)</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <ul>
 <li><code>line</code></li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">geometry</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">geometry</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
     <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;line&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
         <span class="n">points</span><span class="o">=</span><span class="p">[</span>
@@ -823,19 +1073,19 @@ the input <code>geometry</code> and describe exclusion areas inside the workspac
            <span class="p">]</span>  <span class="c1"># List of 3D points that describe the line</span>
     <span class="p">)</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <ul>
 <li><code>circle</code></li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">geometry</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">geometry</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
     <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;circle&#39;</span>
     <span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
         <span class="n">radius</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="c1"># Radius of the circle</span>
         <span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># Center of the circle as a 3D point</span>
     <span class="p">)</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <p><strong>Others are still not implemented</strong></p>
 <blockquote>
@@ -858,10 +1108,9 @@ the frame of reference of the workspace (<strong>not implemented</strong>)</li>
 <li><code>holes</code> (<em>type:</em> <code>dict</code>, <em>default:</em> <code>None</code>): Geometries
 that represent exclusion areas inside the workspace</li>
 </ul>
-<h2 id="pcg_gazebo.generators.constraints.WorkspaceConstraint.generate_geometry">generate_geometry</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">generate_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">description</span><span class="p">)</span>
-</pre></div>
+<h5 id="generate_geometry">generate_geometry<a class="headerlink" href="#generate_geometry" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">generate_geometry</span><span class="p">(</span><span class="nb">type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
 Generate a <code>shapely</code> entity according to the geometry description
 provided. The input <code>type</code> containts the name of the geometry to
 be generated and the necessary arguments must be provided in the <code>dict</code>
@@ -871,7 +1120,7 @@ values in <code>type</code> are:</p>
 <ul>
 <li><code>area</code></li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
    <span class="n">points</span><span class="o">=</span><span class="p">[</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
@@ -879,28 +1128,28 @@ values in <code>type</code> are:</p>
        <span class="p">]</span>  <span class="c1"># List of 3D points that describe the</span>
             <span class="n">vertices</span> <span class="n">of</span> <span class="n">the</span> <span class="n">plane</span> <span class="n">area</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <ul>
 <li><code>line</code></li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
    <span class="n">points</span><span class="o">=</span><span class="p">[</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
        <span class="o">...</span>
        <span class="p">]</span>  <span class="c1"># List of 3D points that describe the line</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <ul>
 <li><code>circle</code></li>
 </ul>
-<div class="codehilite"><pre><span></span><span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+<div class="codehilite"><pre><span></span><code><span class="n">description</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
   <span class="n">center</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">6.8</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># Center of the circle</span>
   <span class="n">radius</span><span class="o">=</span><span class="mf">0.2</span>  <span class="c1"># Radius of the circle</span>
 <span class="p">)</span>
-</pre></div>
+</code></pre></div>
 
 <p><strong>Others are still not implemented</strong></p>
 <blockquote>
@@ -911,18 +1160,17 @@ values in <code>type</code> are:</p>
  are: <code>line</code>, <code>area</code>, <code>volume</code>, <code>multi_line</code>, <code>multi_point</code>, <code>circle</code></li>
 <li><code>description</code> (<em>type:</em> <code>dict</code>): Arguments to describe the geometry</li>
 </ul>
-<h2 id="pcg_gazebo.generators.constraints.WorkspaceConstraint.get_bounds">get_bounds</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</pre></div>
-Return the polygon bounds
-<h2 id="pcg_gazebo.generators.constraints.WorkspaceConstraint.get_random_position">get_random_position</h2></p>
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">get_random_position</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</pre></div>
-Return a random position that belongs to the workspace
-<h2 id="pcg_gazebo.generators.constraints.WorkspaceConstraint.contains_point">contains_point</h2></p>
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">contains_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">)</span>
-</pre></div>
+<h5 id="get_bounds">get_bounds<a class="headerlink" href="#get_bounds" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">get_bounds</span><span class="p">()</span>
+</code></pre></div>
+Return the polygon bounds</p>
+<h5 id="get_random_position">get_random_position<a class="headerlink" href="#get_random_position" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">get_random_position</span><span class="p">()</span>
+</code></pre></div>
+Return a random position that belongs to the workspace</p>
+<h5 id="contains_point">contains_point<a class="headerlink" href="#contains_point" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">contains_point</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+</code></pre></div>
 Return True if <code>point</code> is part of the workspace.</p>
 <blockquote>
 <p><em>Input arguments</em></p>
@@ -930,10 +1178,9 @@ Return True if <code>point</code> is part of the workspace.</p>
 <ul>
 <li><code>point</code> (<em>type:</em> <code>list</code> or <code>numpy.ndarray</code>): 2D point</li>
 </ul>
-<h2 id="pcg_gazebo.generators.constraints.WorkspaceConstraint.contains_polygons">contains_polygons</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">contains_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polygons</span><span class="p">)</span>
-</pre></div>
+<h5 id="contains_polygons">contains_polygons<a class="headerlink" href="#contains_polygons" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">contains_polygons</span><span class="p">(</span><span class="n">polygons</span><span class="p">)</span>
+</code></pre></div>
 Return True if polygons in the <code>polygons</code> list are part of the workspace.</p>
 <blockquote>
 <p><em>Input arguments</em></p>
@@ -941,10 +1188,9 @@ Return True if polygons in the <code>polygons</code> list are part of the worksp
 <ul>
 <li><code>polygons</code> (<em>type:</em> list of <code>shapely.Polygon</code>): List of polygons</li>
 </ul>
-<h2 id="pcg_gazebo.generators.constraints.WorkspaceConstraint.get_geometry">get_geometry</h2>
-
-<p><div class="codehilite"><pre><span></span><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-</pre></div>
+<h5 id="get_geometry">get_geometry<a class="headerlink" href="#get_geometry" title="Permanent link">&para;</a></h5>
+<p><div class="codehilite"><pre><span></span><code><span class="n">WorkspaceConstraint</span><span class="o">.</span><span class="n">get_geometry</span><span class="p">()</span>
+</code></pre></div>
 Return the workspace geometry</p>
                 
                   
@@ -1004,21 +1250,30 @@ Return the workspace geometry</p>
       <div class="md-footer-copyright">
         
         powered by
-        <a href="https://www.mkdocs.org">MkDocs</a>
+        <a href="https://www.mkdocs.org" target="_blank" rel="noopener">MkDocs</a>
         and
-        <a href="https://squidfunk.github.io/mkdocs-material/">
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
           Material for MkDocs</a>
       </div>
       
+  <div class="md-footer-social">
+    <link rel="stylesheet" href="../../assets/fonts/font-awesome.css">
+    
+      <a href="https://github.com/boschresearch" target="_blank" rel="noopener" title="github" class="md-footer-social__link fa fa-github"></a>
+    
+  </div>
+
     </div>
   </div>
 </footer>
       
     </div>
     
-      <script src="../../assets/javascripts/application.808e90bb.js"></script>
+      <script src="../../assets/javascripts/application.c33a9706.js"></script>
       
-      <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
+      <script>app.initialize({version:"1.1",url:{base:"../.."}})</script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
       
     
   </body>

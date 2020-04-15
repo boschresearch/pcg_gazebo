@@ -84,7 +84,8 @@ requirements_all = requirements_required.union(set([
     'pytest-console-scripts', 
     'pydoc-markdown', 
     'pypandoc', 
-    'mkdocs-material']))
+    'mkdocs-material',
+    'mkdocs-awesome-pages-plugin']))
 
 # `python setup.py --list-all > requirements.txt`
 if '--list-all' in sys.argv:
