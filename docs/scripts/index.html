@@ -385,6 +385,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pcg-populate-world" class="md-nav__link">
+    pcg-populate-world
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pcg-preview-sdf" class="md-nav__link">
     pcg-preview-sdf
   </a>
@@ -936,6 +943,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pcg-populate-world" class="md-nav__link">
+    pcg-populate-world
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pcg-preview-sdf" class="md-nav__link">
     pcg-preview-sdf
   </a>
@@ -1271,6 +1285,74 @@ Usage:
 <p>Example </p>
 </blockquote>
 <div class="codehilite"><pre><span></span><code>$ pcg-list-gazebo-models
+</code></pre></div>
+
+<h4 id="pcg-populate-world"><code>pcg-populate-world</code><a class="headerlink" href="#pcg-populate-world" title="Permanent link">&para;</a></h4>
+<div class="codehilite"><pre><span></span><code>pcg-populate-world -h
+usage: pcg-populate-world <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--world WORLD<span class="o">]</span> <span class="o">[</span>--config CONFIG<span class="o">]</span>
+                          <span class="o">[</span>--model MODEL <span class="o">[</span>MODEL ...<span class="o">]]</span> <span class="o">[</span>--num NUM <span class="o">[</span>NUM ...<span class="o">]]</span>
+                          <span class="o">[</span>--min-distance MIN_DISTANCE <span class="o">[</span>MIN_DISTANCE ...<span class="o">]]</span>
+                          <span class="o">[</span>--static STATIC <span class="o">[</span>STATIC ...<span class="o">]]</span>
+                          <span class="o">[</span>--export-filename EXPORT_FILENAME<span class="o">]</span>
+                          <span class="o">[</span>--custom-models-path CUSTOM_MODELS_PATH <span class="o">[</span>CUSTOM_MODELS_PATH ...<span class="o">]]</span>
+                          <span class="o">[</span>--random-roll<span class="o">]</span> <span class="o">[</span>--random-pitch<span class="o">]</span> <span class="o">[</span>--random-yaw<span class="o">]</span>
+                          <span class="o">[</span>--workspace WORKSPACE<span class="o">]</span> <span class="o">[</span>--tangent-to-ground<span class="o">]</span>
+                          <span class="o">[</span>--preview<span class="o">]</span>
+
+This script will either take a Gazebo world <span class="o">(</span>or use an empty one <span class="k">if</span> none is provided<span class="o">)</span> and populate it w
+ith models placed within a workspace.The workspace can be either provided as a <span class="nb">set</span> of 2D or 3D points, 
+the convex hull of the models in the world, or the free space found in the world grid map.
+
+optional arguments:
+  -h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
+  --world WORLD, -w WORLD
+                        Gazebo world as file or XML input to be populated
+  --config CONFIG, -c CONFIG
+                        YAML file with the configuration <span class="k">for</span> engines and
+                        models to be added to the world
+  --model MODEL <span class="o">[</span>MODEL ...<span class="o">]</span>, -m MODEL <span class="o">[</span>MODEL ...<span class="o">]</span>
+                        Name of Gazebo model to include in the world
+  --num NUM <span class="o">[</span>NUM ...<span class="o">]</span>, -n NUM <span class="o">[</span>NUM ...<span class="o">]</span>
+                        Number of elements to add to world <span class="o">(</span>use -1 <span class="k">if</span> no
+                        maximum limit is necessary<span class="o">)</span>
+  --min-distance MIN_DISTANCE <span class="o">[</span>MIN_DISTANCE ...<span class="o">]</span>, -d MIN_DISTANCE <span class="o">[</span>MIN_DISTANCE ...<span class="o">]</span>
+                        Minimum distance between objects <span class="o">(</span>either <span class="k">for</span> all
+                        models or per model
+  --static STATIC <span class="o">[</span>STATIC ...<span class="o">]</span>, -s STATIC <span class="o">[</span>STATIC ...<span class="o">]</span>
+                        Whether the model should be static or not
+  --export-filename EXPORT_FILENAME, -f EXPORT_FILENAME
+                        Name of the filename to <span class="nb">export</span> the generated world. If
+                        none is provided, the same filename with a datetime
+                        suffix will be used.
+  --custom-models-path CUSTOM_MODELS_PATH <span class="o">[</span>CUSTOM_MODELS_PATH ...<span class="o">]</span>, -p CUSTOM_MODELS_PATH <span class="o">[</span>CUSTOM_MODELS_PATH ...<span class="o">]</span>
+                        Custom folder containing Gazebo models
+  --random-roll         For random engines, the roll angle will also be
+                        randomized
+  --random-pitch        For random engines, the pitch angle will also be
+                        randomized
+  --random-yaw          For random engines, the yaw angle will also be
+                        randomized
+  --workspace WORKSPACE, -k WORKSPACE
+                        Name of model or <span class="nb">set</span> of coordinates provided as <span class="o">(</span><span class="m">1</span><span class="o">)</span>
+                        <span class="o">[(</span>x, y, z<span class="o">)</span>, <span class="o">(</span>x, y, z<span class="o">)</span>, ...<span class="o">]</span> <span class="k">for</span> a 3D workpace, <span class="o">(</span><span class="m">2</span><span class="o">)</span>
+                        <span class="o">[(</span>x, y<span class="o">)</span>, <span class="o">(</span>x, y<span class="o">)</span>, ...<span class="o">]</span> <span class="k">for</span> a 2D workspace, <span class="o">(</span><span class="m">3</span><span class="o">)</span> name of
+                        models in the provided world that delimit the
+                        workspace <span class="o">(</span>e.g. walls<span class="o">)</span>. <span class="o">(</span><span class="m">4</span><span class="o">)</span> <span class="s2">&quot;gridmap&quot;</span> to compute a
+                        grid map of the input world and place objects in the
+                        free space foundIf no workspace is defined and there
+                        is a world with models provided, the workspace will be
+                        the convex hull around all existing models. If no
+                        world is provided, an area of <span class="m">20</span> x <span class="m">20</span> m on the ground
+                        plane will be <span class="nb">set</span> as the workspace
+  --tangent-to-ground, -t
+                        Place all models tangent to the ground plane
+  --preview             Preview the workspace and generated world
+
+    pcg-populate-world --model MODEL_1 MODEL_2 --num <span class="m">3</span> <span class="m">3</span> --min-distance <span class="m">0</span>.2 --static <span class="m">1</span>  <span class="c1"># Models 1 and 2 must be Gazebo models</span>
+    pcg-populate-world --model random_box --num <span class="m">2</span>  <span class="c1"># Add two random boxes to an empty world</span>
+    pcg-populate-world --model random_box random_cylinder random_sphere --num -1 -1 -1 --tangent-to-ground  <span class="c1"># Add as many random boxes, cylinders and spheres as possible in the default workspace and place them tangent to the ground plane</span>
+    pcg-populate-world --model MESH_FILENAME --num <span class="m">1</span>  <span class="c1"># Add mesh as model in the world</span>
+    pcg-populate-world --world WORLD_FILE --model MODEL_1 --num <span class="m">5</span>  <span class="c1"># Add MODEL_1 to world loaded from file</span>
 </code></pre></div>
 
 <h4 id="pcg-preview-sdf"><code>pcg-preview-sdf</code><a class="headerlink" href="#pcg-preview-sdf" title="Permanent link">&para;</a></h4>

@@ -476,7 +476,7 @@ def generate_occupancy_grid(
             if model_occupied_area.almost_equals(
                     occupancy_output['static']['ground_plane_models'],
                     decimal=3) or diff.area < 1e-3:
-                print(
+                PCG_ROOT_LOGGER.info(
                     'The areas for free space are equivalent to the '
                     'occupied areas by the ground plane occupied '
                     'areas. Setting limited ground plane to None')

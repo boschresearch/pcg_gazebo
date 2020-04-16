@@ -161,6 +161,7 @@ setup(
         'scripts/pcg-inspect-asset',
         'scripts/pcg-install-gazebo-assets',
         'scripts/pcg-list-gazebo-models',
+        'scripts/pcg-populate-world',
         'scripts/pcg-preview-sdf',
         'scripts/pcg-preview-urdf',
         'scripts/pcg-print-xml-element',

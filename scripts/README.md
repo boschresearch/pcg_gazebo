@@ -238,6 +238,76 @@ Lists all the static Gazebo models found in the ROS paths and `$HOME/.gazebo/mod
 $ pcg-list-gazebo-models
 ```
 
+# `pcg-populate-world`
+
+```bash
+pcg-populate-world -h
+usage: pcg-populate-world [-h] [--world WORLD] [--config CONFIG]
+                          [--models MODEL [MODEL ...]] [--num NUM [NUM ...]]
+                          [--min-distance MIN_DISTANCE [MIN_DISTANCE ...]]
+                          [--static STATIC [STATIC ...]]
+                          [--export-filename EXPORT_FILENAME]
+                          [--custom-models-path CUSTOM_MODELS_PATH [CUSTOM_MODELS_PATH ...]]
+                          [--random-roll] [--random-pitch] [--random-yaw]
+                          [--workspace WORKSPACE] [--tangent-to-ground]
+                          [--preview]
+
+This script will either take a Gazebo world (or use an empty one if none is provided) and populate it w
+ith models placed within a workspace.The workspace can be either provided as a set of 2D or 3D points, 
+the convex hull of the models in the world, or the free space found in the world grid map.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --world WORLD, -w WORLD
+                        Gazebo world as file or XML input to be populated
+  --config CONFIG, -c CONFIG
+                        YAML file with the configuration for engines and
+                        models to be added to the world
+  --models MODEL [MODEL ...], -m MODEL [MODEL ...]
+                        Name of Gazebo model to include in the world
+  --num NUM [NUM ...], -n NUM [NUM ...]
+                        Number of elements to add to world (use -1 if no
+                        maximum limit is necessary)
+  --min-distance MIN_DISTANCE [MIN_DISTANCE ...], -d MIN_DISTANCE [MIN_DISTANCE ...]
+                        Minimum distance between objects (either for all
+                        models or per model
+  --static STATIC [STATIC ...], -s STATIC [STATIC ...]
+                        Whether the model should be static or not
+  --export-filename EXPORT_FILENAME, -f EXPORT_FILENAME
+                        Name of the filename to export the generated world. If
+                        none is provided, the same filename with a datetime
+                        suffix will be used.
+  --custom-models-path CUSTOM_MODELS_PATH [CUSTOM_MODELS_PATH ...], -p CUSTOM_MODELS_PATH [CUSTOM_MODELS_PATH ...]
+                        Custom folder containing Gazebo models
+  --random-roll         For random engines, the roll angle will also be
+                        randomized
+  --random-pitch        For random engines, the pitch angle will also be
+                        randomized
+  --random-yaw          For random engines, the yaw angle will also be
+                        randomized
+  --workspace WORKSPACE, -k WORKSPACE
+                        Name of model or set of coordinates provided as (1)
+                        [(x, y, z), (x, y, z), ...] for a 3D workpace, (2)
+                        [(x, y), (x, y), ...] for a 2D workspace, (3) name of
+                        models in the provided world that delimit the
+                        workspace (e.g. walls). (4) "gridmap" to compute a
+                        grid map of the input world and place objects in the
+                        free space foundIf no workspace is defined and there
+                        is a world with models provided, the workspace will be
+                        the convex hull around all existing models. If no
+                        world is provided, an area of 20 x 20 m on the ground
+                        plane will be set as the workspace
+  --tangent-to-ground, -t
+                        Place all models tangent to the ground plane
+  --preview             Preview the workspace and generated world
+
+    pcg-populate-world --model MODEL_1 MODEL_2 --num 3 3 --min-distance 0.2 --static 1  # Models 1 and 2 must be Gazebo models
+    pcg-populate-world --model random_box --num 2  # Add two random boxes to an empty world
+    pcg-populate-world --model random_box random_cylinder random_sphere --num -1 -1 -1 --tangent-to-ground  # Add as many random boxes, cylinders and spheres as possible in the default workspace and place them tangent to the ground plane
+    pcg-populate-world --model MESH_FILENAME --num 1  # Add mesh as model in the world
+    pcg-populate-world --world WORLD_FILE --model MODEL_1 --num 5  # Add MODEL_1 to world loaded from file
+```
+
 # `pcg-preview-sdf`
 
 Opens a SDF file (either `.sdf` or `.world`) and shows a 3D preview of the geometries and meshes.

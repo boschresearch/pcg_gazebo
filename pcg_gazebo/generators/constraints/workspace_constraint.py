@@ -22,6 +22,7 @@ from ...utils import is_string, get_random_point_from_shape, \
     is_array
 from ...transformations import quaternion_matrix
 from ...simulation.properties import Pose
+from ...simulation import Entity, SimulationModel
 import collections
 from shapely.geometry import Polygon, LineString, Point, \
     MultiPoint, MultiPolygon, MultiLineString
@@ -268,6 +269,44 @@ class WorkspaceConstraint(Constraint):
             return trimesh.creation.cylinder(
                 radius=kwargs['radius'],
                 height=kwargs['length'])
+        elif type == 'mesh':
+            if 'mesh' in kwargs:
+                if isinstance(kwargs['mesh'], trimesh.base.Trimesh):
+                    return kwargs['mesh']
+                elif isinstance(kwargs['mesh'], trimesh.scene.Scene):
+                    return kwargs['mesh'].convex_hull
+                else:
+                    raise ValueError('Invalid input mesh')
+            elif 'model' in kwargs:
+                if 'mesh_type' in kwargs:
+                    assert kwargs['mesh_type'] in ['collision', 'visual']
+                    mesh_type = kwargs['mesh_type']
+                else:
+                    mesh_type = 'collision'
+
+                if isinstance(kwargs['model'], SimulationModel):
+                    return kwargs['model'].create_scene(
+                        mesh_type=mesh_type).convex_hull
+                else:
+                    raise ValueError('Invalid input simulation model')
+            elif 'entity' in kwargs:
+                if 'mesh_type' in kwargs:
+                    assert kwargs['mesh_type'] in ['collision', 'visual']
+                    mesh_type = kwargs['mesh_type']
+                else:
+                    mesh_type = 'collision'
+
+                if isinstance(kwargs['entity'], Entity) and \
+                        not isinstance(kwargs['entity'], SimulationModel):
+                    return kwargs['entity'].create_scene(
+                        mesh_type=mesh_type,
+                        ignore_models=['ground_plane']).convex_hull
+            elif 'points' in kwargs:
+                points = np.array(kwargs['points'])
+                assert points.shape[1] == 3
+                assert points.shape[0] > 3
+                points = trimesh.points.PointCloud(points)
+                return points.convex_hull
         else:
             raise NotImplementedError(
                 'Invalid geometry type, provided={}'.format(type))
@@ -399,8 +438,10 @@ class WorkspaceConstraint(Constraint):
                 if convex_hull.contains(point):
                     return True
             return False
-        elif isinstance(trimesh.base.Trimesh):
-            return geo.contains(mesh.vertices)
+        elif isinstance(geo, trimesh.base.Trimesh):
+            return geo.contains(mesh.vertices).all()
+        else:
+            raise NotImplementedError()
 
     def add_hole(self, type, **kwargs):
         self._holes.append(self.generate_geometry(type, **kwargs))
