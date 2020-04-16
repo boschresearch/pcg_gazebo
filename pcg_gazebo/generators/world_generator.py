@@ -470,7 +470,6 @@ class WorldGenerator(_Generator):
         return fig
 
     def init_from_sdf(self, sdf_input):
-        print('is file=', os.path.isfile(sdf_input))
         if is_sdf_element(sdf_input):
             sdf = sdf_input
         elif is_string(sdf_input) and os.path.isfile(sdf_input):
