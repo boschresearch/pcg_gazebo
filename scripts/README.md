@@ -243,7 +243,7 @@ $ pcg-list-gazebo-models
 ```bash
 pcg-populate-world -h
 usage: pcg-populate-world [-h] [--world WORLD] [--config CONFIG]
-                          [--model MODEL [MODEL ...]] [--num NUM [NUM ...]]
+                          [--models MODEL [MODEL ...]] [--num NUM [NUM ...]]
                           [--min-distance MIN_DISTANCE [MIN_DISTANCE ...]]
                           [--static STATIC [STATIC ...]]
                           [--export-filename EXPORT_FILENAME]
@@ -263,7 +263,7 @@ optional arguments:
   --config CONFIG, -c CONFIG
                         YAML file with the configuration for engines and
                         models to be added to the world
-  --model MODEL [MODEL ...], -m MODEL [MODEL ...]
+  --models MODEL [MODEL ...], -m MODEL [MODEL ...]
                         Name of Gazebo model to include in the world
   --num NUM [NUM ...], -n NUM [NUM ...]
                         Number of elements to add to world (use -1 if no

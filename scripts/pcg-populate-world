@@ -134,11 +134,11 @@ if __name__ == '__main__':
         '3D points, the convex hull of the models in the world, or ' \
         'the free space found in the world grid map.'
     usage_text = '''
-    pcg-populate-world --model MODEL_1 MODEL_2 --num 3 3 --min-distance 0.2 --static 1  # Models 1 and 2 must be Gazebo models
-    pcg-populate-world --model random_box --num 2  # Add two random boxes to an empty world
-    pcg-populate-world --model random_box random_cylinder random_sphere --num -1 -1 -1 --tangent-to-ground  # Add as many random boxes, cylinders and spheres as possible in the default workspace and place them tangent to the ground plane
-    pcg-populate-world --model MESH_FILENAME --num 1  # Add mesh as model in the world
-    pcg-populate-world --world WORLD_FILE --model MODEL_1 --num 5  # Add MODEL_1 to world loaded from file
+    pcg-populate-world --models MODEL_1 MODEL_2 --num 3 3 --min-distance 0.2 --static 1  # Models 1 and 2 must be Gazebo models
+    pcg-populate-world --models random_box --num 2  # Add two random boxes to an empty world
+    pcg-populate-world --models random_box random_cylinder random_sphere --num -1 -1 -1 --tangent-to-ground  # Add as many random boxes, cylinders and spheres as possible in the default workspace and place them tangent to the ground plane
+    pcg-populate-world --models MESH_FILENAME --num 1  # Add mesh as model in the world
+    pcg-populate-world --world WORLD_FILE --models MODEL_1 --num 5  # Add MODEL_1 to world loaded from file
     '''
     parser = argparse.ArgumentParser(
         description=description,
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         help='YAML file with the configuration for engines '
              'and models to be added to the world')
     parser.add_argument(
-        '--model', '-m',
+        '--models', '-m',
         nargs='+', type=str,
         help='Name of Gazebo model to include in the world')
     parser.add_argument(
@@ -368,40 +368,40 @@ if __name__ == '__main__':
         ax.set_title('Workspace')
         plt.show()
 
-    if args.model is not None:
+    if args.models is not None:
         if args.min_distance is not None:
             if len(args.min_distance) == 1:
                 min_distance = [args.min_distance[0]
-                                for _ in range(len(args.model))]
+                                for _ in range(len(args.models))]
             else:
-                assert len(args.min_distance) == len(args.model), \
+                assert len(args.min_distance) == len(args.models), \
                     'Number of min. distance inputs must be equal ' \
                     'to number of models'
                 min_distance = args.min_distance
         else:
-            min_distance = [0 for _ in range(len(args.model))]
+            min_distance = [0 for _ in range(len(args.models))]
 
         if args.static is not None:
             if len(args.static) == 1:
-                static = [args.static[0] for _ in range(len(args.model))]
+                static = [args.static[0] for _ in range(len(args.models))]
             else:
-                assert len(args.static) == len(args.model), \
+                assert len(args.static) == len(args.models), \
                     'Number of static flags must be equal ' \
                     'to number of models'
                 static = args.static
         else:
-            static = [True for _ in range(len(args.model))]
+            static = [True for _ in range(len(args.models))]
 
         if args.num is not None:
             if len(args.num) == 1:
-                num = [args.num[0] for _ in range(len(args.model))]
+                num = [args.num[0] for _ in range(len(args.models))]
             else:
-                assert len(args.model) == len(args.num), \
+                assert len(args.models) == len(args.num), \
                     'List of models and number of elements' \
                     ' must have the same length'
                 num = args.num
         else:
-            num = [None for _ in range(len(args.model))]
+            num = [None for _ in range(len(args.models))]
 
         max_num = dict()
         constraints = list()
@@ -409,7 +409,7 @@ if __name__ == '__main__':
         use_random_picker = False
         model_names = list()
         for model, n, md, s in zip(
-                args.model, num, min_distance, static):
+                args.models, num, min_distance, static):
             if not is_gazebo_model(model):
                 # Add the model as a factory model description
                 model_names.append(add_factory_asset(model, is_static=s))
