@@ -622,6 +622,38 @@ class World(Entity):
             add_pseudo_color,
             add_axis=add_axis)
 
+    def to_model_group(self, include_models=None, ignore_models=None):
+        from . import ModelGroup
+        group = ModelGroup()
+
+        if include_models is None:
+            include_models = list(self.models.keys()) + \
+                list(self.lights.keys())
+
+        if ignore_models is None:
+            ignore_models = list()
+
+        def _is_included(name):
+            for item in include_models:
+                if has_string_pattern(name, item):
+                    return True
+            return False
+
+        def _is_ignored(name):
+            for item in ignore_models:
+                if has_string_pattern(name, item):
+                    return True
+            return False
+        for tag in self.models:
+            if _is_included(tag) and not _is_ignored(tag):
+                group.add_model(tag, self.models[tag])
+
+        for tag in self.lights:
+            if _is_included(tag) and not _is_ignored(tag):
+                group.add_light(tag, self.lights[tag])
+
+        return group
+
     def export_as_mesh(
             self,
             mesh_type='collision',
