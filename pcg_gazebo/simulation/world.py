@@ -1341,7 +1341,8 @@ class World(Entity):
         for tag in self.models:
             if self.models[tag].has_mesh and \
                     not is_gazebo_model(
-                        self.models[tag].name, include_custom_paths=True):
+                        self.models[tag].source_model_name,
+                        include_custom_paths=True):
                 self.models[tag].to_gazebo_model(
                     sdf_version=sdf_version,
                     output_dir=models_output_dir,
