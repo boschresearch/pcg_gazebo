@@ -19,6 +19,7 @@ from .model import SimulationModel
 from .light import Light
 from .entity import Entity
 from ..log import PCG_ROOT_LOGGER
+from ..utils import has_string_pattern
 
 
 class ModelGroup(Entity):
@@ -311,11 +312,13 @@ class ModelGroup(Entity):
                     bounds[1, i] = max(bounds[1, i], cur_bounds[1, i])
         return bounds
 
-    def create_scene(self, mesh_type='collision', add_pseudo_color=True):
+    def create_scene(self, mesh_type='collision', add_pseudo_color=True,
+                     ignore_models=None, add_axis=False):
         from ..visualization import create_scene
         return create_scene(
-            list(self.get_models(with_group_prefix=True).values()),
-            mesh_type, add_pseudo_color)
+            list(self.get_models(
+                with_group_prefix=True, ignore_models=ignore_models).values()),
+            mesh_type, add_pseudo_color, add_axis=add_axis)
 
     def get_model(self, name, with_group_prefix=True, use_group_pose=True):
         prefix = self.prefix if with_group_prefix else ''
@@ -347,10 +350,22 @@ class ModelGroup(Entity):
             output.name, self.name))
         return output
 
-    def get_models(self, with_group_prefix=True, use_group_pose=True):
+    def get_models(self, with_group_prefix=True, use_group_pose=True,
+                   ignore_models=None):
         prefix = self.prefix if with_group_prefix else ''
         output_models = dict()
+        if ignore_models is None:
+            ignore_models = list()
+
+        def _is_ignored(name):
+            for item in ignore_models:
+                if has_string_pattern(name, item):
+                    return True
+            return False
+
         for name in self._models:
+            if _is_ignored(name):
+                continue
             if isinstance(self._models[name], SimulationModel):
                 model = self.get_model(name, with_group_prefix, use_group_pose)
                 output_models[model.name] = model
