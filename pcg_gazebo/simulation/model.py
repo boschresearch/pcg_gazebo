@@ -1421,6 +1421,7 @@ class SimulationModel(Entity):
             model = SimulationModel.from_sdf(sdf.models[0])
             model.is_gazebo_model = True
             model._source_model_name = name
+            model.name = name
             return model
 
     def to_urdf(self):
