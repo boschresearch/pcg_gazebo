@@ -12,20 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLBase
-from ..types import XMLScalar
 from .linear import Linear
 from .constant import Constant
 from .quadratic import Quadratic
-
-
-class AttenuationRange(XMLScalar):
-    _NAME = 'range'
-    _TYPE = 'sdf'
-
-    def __init__(self, default=10):
-        XMLScalar.__init__(self, default=default)
+from .range import Range
 
 
 class Attenuation(XMLBase):
@@ -33,14 +24,14 @@ class Attenuation(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        range=dict(creator=AttenuationRange, default=[10]),
+        range=dict(creator=Range, default=['scalar', 10]),
         linear=dict(creator=Linear, default=[1, 0, 1]),
         constant=dict(creator=Constant, default=[1]),
         quadratic=dict(creator=Quadratic, default=[0])
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Attenuation, self).__init__()
         self.reset()
 
     @property
