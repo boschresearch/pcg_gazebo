@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from __future__ import print_function
 from copy import deepcopy
 import collections
@@ -21,7 +20,7 @@ import sys
 from lxml import etree
 from lxml.etree import Element, SubElement
 from ...log import PCG_ROOT_LOGGER
-from ...utils import is_scalar, is_boolean, is_array
+from ...utils import is_scalar, is_boolean, is_array, is_string
 from .. import convert_from_string
 
 if sys.version_info[0] == 2:
@@ -36,6 +35,7 @@ class XMLBase(object):
     _CHILDREN_CREATORS = dict()
     _ATTRIBUTES = dict()
     _ATTRIBUTES_VERSIONS = dict()
+    _ATTRIBUTES_MODES = dict()
     _MODES = list()
     _VALUE_OPTIONS = list()
     _FORMAT_VERSIONS = ['1.4', '1.5', '1.6']
@@ -189,6 +189,9 @@ class XMLBase(object):
     def _is_array(self, vec):
         return is_array(vec)
 
+    def _is_string(self, value):
+        return is_string(value)
+
     def _is_boolean(self, value):
         return is_boolean(value)
 
@@ -234,7 +237,15 @@ class XMLBase(object):
         elif self._CHILDREN_CREATORS[tag]['creator'] is not None:
             return self._CHILDREN_CREATORS[tag]['creator']
         else:
-            return type(self)
+            if self._TYPE == 'sdf':
+                from ..sdf import create_sdf_type
+                return create_sdf_type(tag)
+            elif self._TYPE == 'urdf':
+                from ..urdf import create_urdf_type
+                return create_urdf_type(tag)
+            elif self._TYPE == 'sdf_config':
+                from ..sdf_config import create_sdf_config_type
+                return create_sdf_config_type(tag)
 
     def _add_child_element(self, tag, value, use_as_if_duplicated=None):
         if not self._has_custom_elements:
@@ -378,8 +389,7 @@ class XMLBase(object):
                                         elem)
                                 obj._add_child_element(elem, subelem[elem])
                 elif obj.has_value():
-                    tag_blacklist = ['friction']
-                    if tag not in tag_blacklist:
+                    if not obj._has_type_mode():
                         assert len(obj._CHILDREN_CREATORS) == 0, \
                             'No value parameter found for <{}>, value={},' \
                             ' value type={}'.format(
@@ -415,17 +425,41 @@ class XMLBase(object):
             if self.is_child_and_attribute(obj._NAME):
                 self.attributes[obj._NAME] = obj.value
 
-            mode = self._get_child_element_mode(obj._NAME)
-            if mode is not None:
-                self._mode = mode
-                self._rm_child_elements_from_other_modes(mode)
+            modes = self._get_child_element_mode(obj._NAME)
+            if modes is not None:
+                if not isinstance(modes, list):
+                    modes = [modes]
+                if self._mode not in modes:
+                    self._mode = modes[0]
+                self._rm_child_elements_from_other_modes(obj._NAME)
 
-    def _rm_child_elements_from_other_modes(self, mode):
-        assert mode in self._MODES, \
-            'Mode {} is invalid, modes={}'.format(mode, self._MODES)
+    def _has_type_mode(self):
+        if len(self._MODES) == 0:
+            return False
+        for mode in self._MODES:
+            if mode in ['scalar', 'boolean', 'vector', 'string']:
+                return True
+        return False
+
+    def _rm_child_elements_from_other_modes(self, child_tag):
         new_children = dict()
+        modes = self._get_child_element_mode(child_tag)
+        if not isinstance(modes, list):
+            modes = [modes]
         for tag in self.children:
-            if self._get_child_element_mode(tag) in [None, mode]:
+            child_modes = self._get_child_element_mode(tag)
+            if not isinstance(child_modes, list) and \
+                    child_modes is not None:
+                child_modes = [child_modes]
+            copy_child = False
+            if child_modes is None:
+                copy_child = True
+            else:
+                for m in self._MODES:
+                    if m in modes and m in child_modes:
+                        copy_child = True
+                        break
+            if copy_child:
                 new_children[tag] = self.children[tag]
         self.children = new_children
 
@@ -510,12 +544,17 @@ class XMLBase(object):
                 if 'optional' in self._CHILDREN_CREATORS[tag]:
                     is_optional = self._CHILDREN_CREATORS[tag]['optional']
                 if 'mode' in self._CHILDREN_CREATORS[tag]:
-                    is_optional = is_optional or \
-                        self._CHILDREN_CREATORS[tag]['mode'] != self._mode
-
+                    if isinstance(self._CHILDREN_CREATORS[tag]['mode'], list):
+                        is_optional = is_optional or \
+                            self._mode not in \
+                            self._CHILDREN_CREATORS[tag]['mode']
+                    else:
+                        is_optional = is_optional or \
+                            self._CHILDREN_CREATORS[tag]['mode'] != self._mode
                 if child_name not in self.children and not is_optional:
                     PCG_ROOT_LOGGER.error(
-                        'Mandatory element {} not found'.format(child_name))
+                        '[{}] Mandatory element <{}> not found'.format(
+                            self._NAME, child_name))
                     return False
 
                 if child_name in self.children:
@@ -592,10 +631,12 @@ class XMLBase(object):
             pass
         else:
             self._mode = mode
-
         if len(self._ATTRIBUTES):
             self._attributes = dict()
             for k in self._ATTRIBUTES:
+                if k in self._ATTRIBUTES_MODES and self._mode is not None:
+                    if self._mode not in self._ATTRIBUTES_MODES[k]:
+                        continue
                 self._attributes[k] = self._ATTRIBUTES[k]
 
         if len(self._CHILDREN_CREATORS) > 0:
@@ -609,7 +650,12 @@ class XMLBase(object):
                 # mode provided
                 if self._mode is not None:
                     if 'mode' in self._CHILDREN_CREATORS[child]:
-                        if self._mode != \
+                        if isinstance(
+                                self._CHILDREN_CREATORS[child]['mode'], list):
+                            if self._mode not in \
+                                    self._CHILDREN_CREATORS[child]['mode']:
+                                continue
+                        elif self._mode != \
                                 self._CHILDREN_CREATORS[child]['mode']:
                             continue
 
@@ -627,7 +673,8 @@ class XMLBase(object):
                 else:
                     obj = creator()
 
-                if not obj.has_value():
+                if not obj.has_value() and \
+                        obj.xml_element_name != self.xml_element_name:
                     obj.reset(with_optional_elements=with_optional_elements)
 
                 if 'n_elems' in self._CHILDREN_CREATORS[child]:
@@ -767,7 +814,7 @@ class XMLBase(object):
             elif tag == 'attributes':
                 for att in sdf_data[tag]:
                     if not hasattr(self, att):
-                        PCG_ROOT_LOGGER.warning(
+                        print(
                             'WARNING: Attribute {} does'
                             ' not exist for {}'.format(
                                 att, self._NAME))

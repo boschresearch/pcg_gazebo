@@ -57,7 +57,7 @@ class XMLInteger(XMLBase):
 
         self._value = int(value)
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = self._default
         XMLBase.reset(self)
 
