@@ -17,6 +17,9 @@ from .uri import URI
 from .size import Size
 from .pos import Pos
 from .texture import Texture
+from .use_terrain_paging import UseTerrainPaging
+from .sampling import Sampling
+from .blend import Blend
 
 
 class Heightmap(XMLBase):
@@ -27,7 +30,11 @@ class Heightmap(XMLBase):
         uri=dict(creator=URI, default=['__default__']),
         size=dict(creator=Size, default=[[1, 1, 1]]),
         pos=dict(creator=Pos, default=[[0, 0, 0]]),
-        texture=dict(creator=Texture, nargs='+')
+        texture=dict(creator=Texture, nargs='+'),
+        blend=dict(creator=Blend, nargs='+'),
+        use_terrain_paging=dict(
+            creator=UseTerrainPaging, default=[False], optional=True),
+        sampling=dict(creator=Sampling, default=[2], optional=True)
     )
 
     def __init__(self):
@@ -59,8 +66,31 @@ class Heightmap(XMLBase):
         self._add_child_element('pos', value)
 
     @property
+    def use_terrain_paging(self):
+        return self._get_child_element('use_terrain_paging')
+
+    @use_terrain_paging.setter
+    def use_terrain_paging(self, value):
+        self._add_child_element('use_terrain_paging', value)
+
+    @property
+    def sampling(self):
+        return self._get_child_element('sampling')
+
+    @sampling.setter
+    def sampling(self, value):
+        self._add_child_element('sampling', value)
+
+    @property
     def textures(self):
         return self._get_child_element('texture')
 
     def add_texture(self, name=None, texture=None):
         self._add_child_element('texture', texture)
+
+    @property
+    def blends(self):
+        return self._get_child_element('blend')
+
+    def add_blend(self, name=None, blend=None):
+        self._add_child_element('blend', blend)
