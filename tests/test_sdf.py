@@ -15,7 +15,10 @@
 # limitations under the License.
 import sys
 import unittest
-from pcg_gazebo.parsers.sdf import create_sdf_element
+from pcg_gazebo.parsers.sdf import create_sdf_element, \
+    get_all_sdf_element_classes
+from pcg_gazebo.parsers.sdf_config import \
+    create_sdf_config_element, get_all_sdf_config_element_classes
 from pcg_gazebo.parsers.urdf import create_urdf_element
 
 INVALID_INERTIA_VALUES = [
@@ -164,7 +167,8 @@ SDF_BASIC_OBJ_NAMES = [
     'ixz',
     'iyy',
     'iyz',
-    'izz'
+    'izz',
+    'uri'
 ]
 
 VALID_BASIC_VALUES = dict(
@@ -214,7 +218,8 @@ VALID_BASIC_VALUES = dict(
     ixz=[-2, -1.5, -0.5, 0, 0.5, 1.5, 2.0],
     iyy=[0, 0.5, 1, 2.5, 10],
     iyz=[-2, -1.5, -0.5, 0, 0.5, 1.5, 2.0],
-    izz=[0, 0.5, 1, 2.5, 10]
+    izz=[0, 0.5, 1, 2.5, 10],
+    uri=['__default__', 'asdf']
 )
 
 VALID_OUTPUT_STRING = dict(
@@ -264,7 +269,8 @@ VALID_OUTPUT_STRING = dict(
     ixz=['-2.0', '-1.5', '-0.5', '0.0', '0.5', '1.5', '2.0'],
     iyy=['0.0', '0.5', '1.0', '2.5', '10.0'],
     iyz=['-2.0', '-1.5', '-0.5', '0.0', '0.5', '1.5', '2.0'],
-    izz=['0.0', '0.5', '1.0', '2.5', '10.0']
+    izz=['0.0', '0.5', '1.0', '2.5', '10.0'],
+    uri=['__default__', 'asdf']
 )
 
 INVALID_BASIC_VALUES = dict(
@@ -288,7 +294,7 @@ INVALID_BASIC_VALUES = dict(
     contact_max_correcting_vel=[-1, dict(), True, None, list(), 'a', [1, 2]],
     contact_surface_layer=[-1, dict(), True, None, list(), 'a', [1, 2]],
     damping=[-1, dict(), True, None, list(), 'a', [1, 2]],
-    diffuse=[-1, 2, dict(), None, True, list(), 'a',
+    diffuse=[-1, 2, dict(), None, True, list(),
              [1, 2], [True, False, None, 'a']],
     dissipation=[-1, dict(), True, None, list(), 'a', [1, 2]],
     dynamic_friction=[-1, dict(), True, None, list(), 'a', [1, 2]],
@@ -317,7 +323,8 @@ INVALID_BASIC_VALUES = dict(
     ixz=[dict(), True, None, list(), 'a', [1, 2]],
     iyy=[dict(), True, None, list(), 'a', [1, 2]],
     iyz=[dict(), True, None, list(), 'a', [1, 2]],
-    izz=[dict(), True, None, list(), 'a', [1, 2]]
+    izz=[dict(), True, None, list(), 'a', [1, 2]],
+    uri=[dict(), True, None, list(), [1, 2]]
 )
 
 DEFAULT_BASIC_VALUES = dict(
@@ -362,7 +369,8 @@ DEFAULT_BASIC_VALUES = dict(
     ixz=0,
     iyy=0,
     iyz=0,
-    izz=0
+    izz=0,
+    uri='__default__'
 )
 
 
@@ -532,7 +540,7 @@ class TestSDFParser(unittest.TestCase):
         #     'Invalid XML dump string, value=' + str(xml_str))
 
     def test_size(self):
-        sdf_obj = create_sdf_element('size', 3)
+        sdf_obj = create_sdf_element('size', [0, 0, 0])
 
         self.assertIsNotNone(sdf_obj, 'Invalid size object')
         # Check default values
@@ -600,7 +608,7 @@ class TestSDFParser(unittest.TestCase):
         # self.assertEqual(xml_str, '<size>0 0 0</size>',
         #     'Invalid XML dump string, value=' + str(xml_str))
 
-        sdf_obj = create_sdf_element('size', 2)
+        sdf_obj = create_sdf_element('size', [0, 0])
 
         self.assertIsNotNone(sdf_obj, 'Invalid size object')
         # Check default values
@@ -825,12 +833,12 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid(),
                         'Plane is not valid')
 
-        self.assertEqual(sdf_obj.size.value, [0, 0],
+        self.assertEqual(sdf_obj.size.value, [1, 1],
                          'Invalid initial value')
         self.assertEqual(sdf_obj.normal.value, [0, 0, 1],
                          'Invalid initial value')
 
-        invalid_values = [None, 'a', '2', -1, [0], [0, 0, 0, 0]]
+        invalid_values = [None, -1, [0], [0, 0, 0, 0]]
         for v in invalid_values:
             with self.assertRaises(AssertionError):
                 sdf_obj.size = v
@@ -839,14 +847,14 @@ class TestSDFParser(unittest.TestCase):
 
         sdf_obj.reset()
 
-        self.assertEqual(sdf_obj.size.value, [0, 0],
+        self.assertEqual(sdf_obj.size.value, [1, 1],
                          'Invalid initial value')
         self.assertEqual(sdf_obj.normal.value, [0, 0, 1],
                          'Invalid initial value')
         self.assertTrue(sdf_obj.is_valid(),
                         'Sphere object is invalid')
 
-        correct_str = '<plane><size>0 0</size>' \
+        correct_str = '<plane><size>1 1</size>' \
             '<normal>0 0 1</normal></plane>'
         xml_str = sdf_obj.to_xml_as_str()
         self.assertEqual(
@@ -1133,7 +1141,7 @@ class TestSDFParser(unittest.TestCase):
         # Check default values
         self.assertEqual(sdf_obj.xml_element_name, 'uri',
                          'Invalid SDF block uri')
-        self.assertEqual(sdf_obj.value, '',
+        self.assertEqual(sdf_obj.value, '__default__',
                          'Invalid initial value')
         self.assertEqual(len(sdf_obj.attributes), 0,
                          'URI should have no attributes')
@@ -1153,10 +1161,10 @@ class TestSDFParser(unittest.TestCase):
 
         # Test reset function
         sdf_obj.reset()
-        self.assertEqual(sdf_obj.value, '',
+        self.assertEqual(sdf_obj.value, '__default__',
                          'For valid uri, is_valid should be an empty string')
 
-        output_str = ''
+        output_str = '__default__'
         self.assertEqual(sdf_obj.get_formatted_value_as_str(),
                          output_str,
                          'Wrong formatted output string')
@@ -1248,7 +1256,7 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid(),
                         'Mesh object is invalid')
 
-        self.assertEqual(sdf_obj.uri.value, '',
+        self.assertEqual(sdf_obj.uri.value, '__default__',
                          'Invalid initial value')
         self.assertEqual(sdf_obj.scale.value, [1, 1, 1],
                          'Invalid initial value')
@@ -1264,7 +1272,7 @@ class TestSDFParser(unittest.TestCase):
 
         sdf_obj.reset()
 
-        self.assertEqual(sdf_obj.uri.value, '',
+        self.assertEqual(sdf_obj.uri.value, '__default__',
                          'Invalid initial value after reset')
         self.assertEqual(sdf_obj.scale.value, [1 for _ in range(3)],
                          'Invalid initial value after reset')
@@ -1889,7 +1897,7 @@ class TestSDFParser(unittest.TestCase):
         #     'Invalid XML dump string, value=' + str(xml_str))
 
     def test_collision(self):
-        sdf_obj = create_sdf_element('collision')
+        sdf_obj = create_sdf_element('collision', 'link')
 
         self.assertIsNotNone(sdf_obj, 'Invalid collision object')
         # Check default values
@@ -2366,7 +2374,8 @@ class TestSDFParser(unittest.TestCase):
         self.assertIn('uri', sdf_obj.children,
                       'Visual should have an URI item')
 
-        self.assertEqual(sdf_obj.uri.value, '', 'Invalid initial value')
+        self.assertEqual(
+            sdf_obj.uri.value, '__default__', 'Invalid initial value')
         sdf_obj.uri = 'test'
         self.assertEqual(sdf_obj.uri.value, 'test', 'Invalid value')
         self.assertTrue(sdf_obj.is_valid())
@@ -2631,7 +2640,7 @@ class TestSDFParser(unittest.TestCase):
                       'Physics must have an attribute <default>')
         self.assertIn('type', sdf_obj.attributes,
                       'Physics must have an attribute <type>')
-        self.assertEqual(len(sdf_obj.children), 4,
+        self.assertEqual(len(sdf_obj.children), 3,
                          'Physics should have 4 child elements')
         self.assertTrue(sdf_obj.is_valid(),
                         'Physics object should initially be valid')
@@ -2674,9 +2683,6 @@ class TestSDFParser(unittest.TestCase):
 
         sdf_obj.reset()
         self.assertEqual(sdf_obj.type, 'ode')
-        sdf_obj.type = 'dart'
-        self.assertEqual(sdf_obj.type, 'dart')
-        self.assertTrue(sdf_obj.is_valid())
         sdf_obj.type = 'bullet'
         self.assertEqual(sdf_obj.type, 'bullet')
         self.assertTrue(sdf_obj.is_valid())
@@ -2706,7 +2712,6 @@ class TestSDFParser(unittest.TestCase):
         self.assertTrue(sdf_obj.is_valid())
 
         sdf_obj.reset()
-        self.assertEqual(sdf_obj.max_contacts.value, 20)
         sdf_obj.max_contacts = 100
         self.assertEqual(sdf_obj.max_contacts.value, 100)
         self.assertTrue(sdf_obj.is_valid())
@@ -3250,6 +3255,7 @@ class TestSDFParser(unittest.TestCase):
         for value in VALID_ODE_FRICTION_MODEL_OPTIONS:
             sdf_obj.friction_model = value
             self.assertEqual(sdf_obj.friction_model.value, value)
+            print(sdf_obj._mode, sdf_obj.children)
             self.assertTrue(sdf_obj.is_valid(), 'Solver should be valid')
 
         sdf_obj.reset('bullet')
@@ -3271,15 +3277,8 @@ class TestSDFParser(unittest.TestCase):
                         tag),
                     DEFAULT_BULLET_SOLVER[tag]))
         self.assertTrue(sdf_obj.is_valid(), 'Solver should be valid')
-
         with self.assertRaises(AssertionError):
             sdf_obj.reset('test')
-        with self.assertRaises(AttributeError):
-            sdf_obj.friction_model = 'pyramid_model'
-        with self.assertRaises(AttributeError):
-            sdf_obj.precon_iters = 0
-        with self.assertRaises(AttributeError):
-            sdf_obj.use_dynamic_moi_rescaling = False
 
     def test_model(self):
         sdf_obj = create_sdf_element('model')
@@ -3384,6 +3383,32 @@ class TestSDFParser(unittest.TestCase):
 
         l2 = sdf_obj.urdf.get_link_by_name('link2')
         self.assertIsNotNone(l2, 'No link link2 found')
+
+    def test_reset_sdf(self):
+        for c in get_all_sdf_element_classes():
+            obj = create_sdf_element(c._NAME)
+            self.assertIsNotNone(obj)
+            if len(obj.modes):
+                for tag in obj.modes:
+                    obj.reset(mode=tag, with_optional_elements=True)
+                    self.assertTrue(obj.is_valid())
+            else:
+                print(obj.xml_element_name)
+                obj.reset(with_optional_elements=True)
+                self.assertTrue(obj.is_valid())
+
+    def test_reset_sdf_config(self):
+        for c in get_all_sdf_config_element_classes():
+            obj = create_sdf_config_element(c._NAME)
+            self.assertIsNotNone(obj)
+            if len(obj.modes):
+                for tag in obj.modes:
+                    obj.reset(mode=tag, with_optional_elements=True)
+                    self.assertTrue(obj.is_valid())
+            else:
+                print(obj.xml_element_name)
+                obj.reset(with_optional_elements=True)
+                self.assertTrue(obj.is_valid())
 
 
 if __name__ == '__main__':
