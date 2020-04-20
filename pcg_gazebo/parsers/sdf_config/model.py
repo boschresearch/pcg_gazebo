@@ -34,7 +34,7 @@ class Model(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Model, self).__init__()
         self.reset()
 
     @property
