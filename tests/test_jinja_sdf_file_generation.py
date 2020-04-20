@@ -60,7 +60,6 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
         )
 
         sdf = generate_sdf(test_case, params)
-
         self.assertIsNotNone(
             sdf,
             'SDF was not generated {} could not be parsed'.format(test_case))
@@ -69,6 +68,7 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
             'SDF element for file {} should be physics')
 
         # Test general physics properties
+        print(sdf)
         self.assertEqual(sdf.name, params['label'])
         self.assertEqual(sdf.default, '0')
         self.assertEqual(sdf.type, 'ode')
@@ -89,6 +89,7 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
         self.assertIsNone(sdf.simbody)
 
         # Test ODE default parameters
+        print('solver=', sdf.ode.solver._mode, sdf.ode.solver.children.keys())
         self.assertEqual(sdf.ode.solver.type.value, params['ode_solver_type'])
         self.assertTrue(
             np.isclose(
@@ -135,7 +136,7 @@ class TestJinjaSDFFileGeneration(unittest.TestCase):
         self.assertEqual(
             sdf.xml_element_name, 'physics',
             'SDF element for file {} should be physics')
-
+        print(sdf)
         # Test general physics properties
         self.assertEqual(sdf.name, 'default')
         self.assertEqual(sdf.default, '0')
