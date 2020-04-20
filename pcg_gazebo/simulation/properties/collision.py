@@ -52,7 +52,8 @@ class Collision(object):
                  poissons_ratio=None,
                  elastic_modulus=None):
 
-        self._sdf_collision = create_sdf_element('collision')
+        self._sdf_collision = create_sdf_element(
+            'collision', 'link')
         self._include_in_sdf = dict(
             max_contacts=True,
             pose=True,
@@ -617,7 +618,7 @@ class Collision(object):
 
     def to_sdf(self, resource_prefix='', model_folder=None,
                copy_resources=False):
-        collision = create_sdf_element('collision')
+        collision = create_sdf_element('collision', 'link')
         collision.name = self.name
         if len(resource_prefix) == 0:
             mesh_filename = self.name
