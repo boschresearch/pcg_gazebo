@@ -30,6 +30,7 @@ from .axis2 import Axis2
 from .background import Background
 from .bias_mean import BiasMean
 from .bias_stddev import BiasStdDev
+from .blend import Blend
 from .bounce import Bounce
 from .box import Box
 from .bullet import Bullet
@@ -144,6 +145,7 @@ from .mesh import Mesh
 from .min_angle import MinAngle
 from .min_depth import MinDepth
 from .min_dist import MinDist
+from .min_height import MinHeight
 from .min_step_size import MinStepSize
 from .model import Model
 from .mu import Mu
@@ -192,6 +194,7 @@ from .resolution import Resolution
 from .restitution_coefficient import RestitutionCoefficient
 from .rolling_friction import RollingFriction
 from .samples import Samples
+from .sampling import Sampling
 from .save import Save
 from .scale import Scale
 from .scan import Scan
@@ -249,6 +252,7 @@ from .use_dynamic_moi_rescaling import UseDynamicMOIRescaling
 from .use_model_frame import UseModelFrame
 from .use_parent_model_frame import UseParentModelFrame
 from .use_patch_radius import UsePatchRadius
+from .use_terrain_paging import UseTerrainPaging
 from .velocity import Velocity
 from .vertical_position import VerticalPosition
 from .vertical_velocity import VerticalVelocity
@@ -336,6 +340,7 @@ __all__ = [
     'Background',
     'BiasMean',
     'BiasStdDev',
+    'Blend',
     'Bounce',
     'Box',
     'Bullet',
@@ -450,6 +455,7 @@ __all__ = [
     'MinAngle',
     'MinDepth',
     'MinDist',
+    'MinHeight',
     'MinStepSize',
     'Model',
     'Mu',
@@ -496,6 +502,7 @@ __all__ = [
     'RestitutionCoefficient',
     'RollingFriction',
     'Samples',
+    'Sampling',
     'Save',
     'Scale',
     'Scan',
@@ -552,6 +559,7 @@ __all__ = [
     'UseModelFrame',
     'UseParentModelFrame',
     'UsePatchRadius',
+    'UseTerrainPaging',
     'Velocity',
     'Vertical',
     'VerticalPosition',
