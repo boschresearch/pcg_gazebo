@@ -22,6 +22,7 @@ from .sphere import Sphere
 from .mesh import Mesh
 from .plane import Plane
 from .polyline import Polyline
+from .heightmap import Heightmap
 
 
 class Geometry(XMLBase):
@@ -37,7 +38,8 @@ class Geometry(XMLBase):
         sphere=dict(creator=Sphere, mode='sphere', n_elems=1),
         plane=dict(creator=Plane, mode='plane', n_elems=1),
         mesh=dict(creator=Mesh, mode='mesh', n_elems=1),
-        polyline=dict(creator=Polyline, mode='polyline', n_elems=1)
+        polyline=dict(creator=Polyline, mode='polyline', n_elems=1),
+        heightmap=dict(creator=Heightmap, mode='heightmap', n_elems=1)
     )
 
     _MODES = [
@@ -48,7 +50,8 @@ class Geometry(XMLBase):
         'sphere',
         'plane',
         'mesh',
-        'polyline']
+        'polyline',
+        'heightmap']
 
     def __init__(self, mode='empty'):
         super(Geometry, self).__init__()
@@ -125,6 +128,15 @@ class Geometry(XMLBase):
     def polyline(self, value):
         self.reset(mode='polyline')
         self._add_child_element('polyline', value)
+
+    @property
+    def heightmap(self):
+        return self._get_child_element('heightmap')
+
+    @heightmap.setter
+    def heightmap(self, value):
+        self.reset(mode='heightmap')
+        self._add_child_element('heightmap', value)
 
     def random(self):
         try:
