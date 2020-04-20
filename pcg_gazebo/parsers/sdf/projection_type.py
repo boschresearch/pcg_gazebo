@@ -22,7 +22,7 @@ class ProjectionType(XMLString):
     _VALUE_OPTIONS = ['perspective', 'orthographic']
 
     def __init__(self, default='perspective'):
-        XMLString.__init__(self, default)
+        super(ProjectionType, self).__init__(default)
 
     def _set_value(self, value):
         assert value in self._VALUE_OPTIONS, \

@@ -20,4 +20,4 @@ class Color(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, default=[1, 1, 1, 1]):
-        XMLVector.__init__(self, 4)
+        super(Color, self).__init__(4)

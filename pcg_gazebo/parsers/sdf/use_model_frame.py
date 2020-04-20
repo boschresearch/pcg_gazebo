@@ -21,4 +21,4 @@ class UseModelFrame(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=False):
-        XMLBoolean.__init__(self, default)
+        super(UseModelFrame, self).__init__(default)

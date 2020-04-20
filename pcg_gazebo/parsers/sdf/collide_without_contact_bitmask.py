@@ -20,4 +20,4 @@ class CollideWithoutContactBitmask(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBoolean.__init__(self, default)
+        super(CollideWithoutContactBitmask, self).__init__(default)

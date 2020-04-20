@@ -30,7 +30,7 @@ class Spot(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Spot, self).__init__()
         self.reset()
 
     @property

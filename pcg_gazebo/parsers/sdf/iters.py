@@ -21,4 +21,4 @@ class Iters(XMLInteger):
     _TYPE = 'sdf'
 
     def __init__(self, default=50):
-        XMLInteger.__init__(self, default, min_value=1)
+        super(Iters, self).__init__(default, min_value=1)

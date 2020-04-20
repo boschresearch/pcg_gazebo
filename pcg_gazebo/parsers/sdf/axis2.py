@@ -36,7 +36,7 @@ class Axis2(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Axis2, self).__init__()
         self.reset()
 
     @property

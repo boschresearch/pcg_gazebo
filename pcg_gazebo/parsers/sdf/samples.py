@@ -21,9 +21,5 @@ class Samples(XMLInteger):
     _TYPE = 'sdf'
 
     def __init__(self, default=640):
-        XMLInteger.__init__(self, default)
-
-    def _set_value(self, value):
-        assert isinstance(value, int)
-        assert value > 0
-        XMLInteger._set_value(self, value)
+        super(Samples, self).__init__(
+            default, min_value=0)

@@ -27,7 +27,7 @@ class Bounce(XMLBase):
             creator=Threshold, default=[100000]))
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Bounce, self).__init__()
         self.reset()
 
     @property

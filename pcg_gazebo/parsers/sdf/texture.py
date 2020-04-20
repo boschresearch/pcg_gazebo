@@ -24,8 +24,8 @@ class Texture(XMLBase):
 
     _CHILDREN_CREATORS = dict(
         size=dict(creator=Size, default=[[10]]),
-        diffuse=dict(creator=Diffuse, default=['__diffuse__']),
-        normal=dict(creator=Normal, default=['__diffuse__'])
+        diffuse=dict(creator=Diffuse, default=['__default__']),
+        normal=dict(creator=Normal, default=['__default__'])
     )
 
     def __init__(self):

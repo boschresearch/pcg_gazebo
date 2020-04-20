@@ -22,7 +22,7 @@ class Center(XMLBase):
     _MODES = ['boolean', 'vector']
 
     def __init__(self, default=False):
-        XMLBase.__init__(self)
+        super(Center, self).__init__()
 
         assert self._is_boolean(default) or self._is_array(default), \
             'Input default value must be a boolean, a list or an array'
@@ -64,11 +64,12 @@ class Center(XMLBase):
         else:
             self._default = [0, 0]
             self._VALUE_TYPE = 'vector'
+            self._value = None
         self._value = self._default
 
     def is_valid(self):
         if not isinstance(self._value, type(self._default)):
-            print('Object must have a {}'.format(type(self._default)))
+            self.log.error('Object must have a {}'.format(type(self._default)))
             return False
         return True
 

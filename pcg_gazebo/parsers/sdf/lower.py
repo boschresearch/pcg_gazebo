@@ -21,4 +21,4 @@ class Lower(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=-1e16):
-        XMLScalar.__init__(self, default)
+        super(Lower, self).__init__(default)

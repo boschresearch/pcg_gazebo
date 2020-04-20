@@ -21,4 +21,4 @@ class MinAngle(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
+        super(MinAngle, self).__init__(default)

@@ -20,10 +20,5 @@ class PoissonsRatio(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.3):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= -1 and value <= 0.5, \
-            'Poissons ratio must lie between -1' \
-            ' and 0.5, received={}'.format(value)
-        XMLScalar._set_value(self, value)
+        super(PoissonsRatio, self).__init__(
+            default, min_value=-1, max_value=0.5)

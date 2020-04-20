@@ -20,12 +20,11 @@ class Specular(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, default=[0.1, 0.1, 0.1, 1]):
-        XMLVector.__init__(self, 4)
+        super(Specular, self).__init__(
+            4, min_value=0, max_value=1)
         self._default = default
         self._value = default
 
-    def _set_value(self, value):
-        assert self._is_numeric_vector(value, [0, 1]), \
-            'Input is not a valid specular vector'
-        value = list(value)
-        XMLVector._set_value(self, value)
+    def reset(self, mode=None, with_optional_elements=False):
+        self._value = self._default
+        XMLVector.reset(self)

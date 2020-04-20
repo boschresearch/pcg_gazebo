@@ -21,8 +21,8 @@ class Scale(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, size=3):
-        XMLVector.__init__(self, size)
+        super(Scale, self).__init__(size)
         self.value = [1 for _ in range(self._size)]
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = [1 for _ in range(self._size)]

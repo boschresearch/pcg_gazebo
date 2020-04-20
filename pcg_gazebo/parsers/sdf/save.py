@@ -30,7 +30,7 @@ class Save(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Save, self).__init__()
         self.reset()
 
     @property

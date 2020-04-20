@@ -31,7 +31,7 @@ class URDF(XMLBase):
             creator=Link,
             n_elems='+',
             optional=True,
-            model='model'),
+            mode='model'),
         mimic=dict(
             creator=Mimic,
             optional=True,
@@ -44,7 +44,7 @@ class URDF(XMLBase):
     _MODES = ['model', 'joint']
 
     def __init__(self, mode='model'):
-        XMLBase.__init__(self)
+        super(URDF, self).__init__()
         self.reset(mode=mode)
 
     @property

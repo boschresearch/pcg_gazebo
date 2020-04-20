@@ -74,7 +74,7 @@ class ODE(XMLBase):
     _MODES = ['physics', 'collision', 'contact', 'joint', 'torsional']
 
     def __init__(self, mode='physics'):
-        XMLBase.__init__(self)
+        super(ODE, self).__init__()
         self.reset(mode)
 
     @property

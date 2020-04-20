@@ -22,7 +22,7 @@ class ViewController(XMLString):
     _VALUE_OPTIONS = ['orbit', 'fps']
 
     def __init__(self, default='orbit'):
-        XMLString.__init__(self, default)
+        super(ViewController, self).__init__(default)
 
     def _set_value(self, value):
         assert value in self._VALUE_OPTIONS, \

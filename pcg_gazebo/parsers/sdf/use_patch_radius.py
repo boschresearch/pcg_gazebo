@@ -21,4 +21,4 @@ class UsePatchRadius(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBoolean.__init__(self, default)
+        super(UsePatchRadius, self).__init__(default)

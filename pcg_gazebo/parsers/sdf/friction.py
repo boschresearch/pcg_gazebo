@@ -12,11 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLBase
 from .ode import ODE
 from .bullet import Bullet
 from .torsional import Torsional
+from ... import random
 
 
 class Friction(XMLBase):
@@ -47,13 +47,14 @@ class Friction(XMLBase):
     _MODES = ['scalar', 'surface']
 
     def __init__(self, mode='scalar', default=1, min_value=0):
-        XMLBase.__init__(self, min_value=min_value)
-        if self._mode == 'scalar':
+        super(Friction, self).__init__(min_value=min_value)
+        if mode == 'scalar':
             self._default = default
             self._value = default
             self._VALUE_TYPE = 'scalar'
         else:
             self._default = 1.0
+            self._value = None
 
         self.reset(mode=mode)
 
@@ -151,7 +152,6 @@ class Friction(XMLBase):
 
     def random(self):
         if self._mode == 'scalar':
-            import random
-            self._set_value(random.random())
+            self._set_value(random.rand())
         else:
             XMLBase.random(self)

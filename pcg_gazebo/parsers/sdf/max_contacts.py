@@ -21,4 +21,4 @@ class MaxContacts(XMLInteger):
     _TYPE = 'sdf'
 
     def __init__(self, default=20):
-        XMLInteger.__init__(self, default, min_value=1)
+        super(MaxContacts, self).__init__(default, min_value=1)

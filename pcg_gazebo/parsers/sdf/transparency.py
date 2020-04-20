@@ -21,5 +21,5 @@ class Transparency(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default=0, min_value=0,
-                           max_value=1)
+        super(Transparency, self).__init__(
+            default=0, min_value=0, max_value=1)

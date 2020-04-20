@@ -51,7 +51,7 @@ class Geometry(XMLBase):
         'polyline']
 
     def __init__(self, mode='empty'):
-        XMLBase.__init__(self)
+        super(Geometry, self).__init__()
         self.reset(mode=mode)
 
     @property

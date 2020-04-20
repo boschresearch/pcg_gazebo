@@ -21,4 +21,4 @@ class MaxTransientVelocity(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.01):
-        XMLScalar.__init__(self, default)
+        super(MaxTransientVelocity, self).__init__(default)

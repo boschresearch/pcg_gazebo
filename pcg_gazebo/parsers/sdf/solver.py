@@ -41,7 +41,7 @@ class Solver(XMLBase):
     _MODES = ['ode', 'bullet']
 
     def __init__(self, engine='ode'):
-        XMLBase.__init__(self)
+        super(Solver, self).__init__()
         self.reset(mode=engine)
         if self._mode == 'ode':
             self.children['type'].value = 'quick'
@@ -86,59 +86,33 @@ class Solver(XMLBase):
 
     @property
     def precon_iters(self):
-        if self._mode == 'ode':
-            return self._get_child_element('precon_iters')
-        else:
-            return None
+        return self._get_child_element('precon_iters')
 
     @precon_iters.setter
     def precon_iters(self, value):
-        if self._mode == 'ode':
-            self._add_child_element('precon_iters', value)
-        else:
-            raise AttributeError()
+        if self._mode != 'ode':
+            self._mode = 'ode'
+        self._add_child_element('precon_iters', value)
 
     @property
     def use_dynamic_moi_rescaling(self):
-        if self._mode == 'ode':
-            return self._get_child_element('use_dynamic_moi_rescaling')
-        else:
-            return None
+        return self._get_child_element('use_dynamic_moi_rescaling')
 
     @use_dynamic_moi_rescaling.setter
     def use_dynamic_moi_rescaling(self, value):
-        if self._mode == 'ode':
-            return self._add_child_element('use_dynamic_moi_rescaling', value)
-        else:
-            raise AttributeError()
+        if self._mode != 'ode':
+            self._mode = 'ode'
+        self._add_child_element('use_dynamic_moi_rescaling', value)
 
     @property
     def friction_model(self):
-        if self._mode == 'ode':
-            return self._get_child_element('friction_model')
-        else:
-            return None
+        return self._get_child_element('friction_model')
 
     @friction_model.setter
     def friction_model(self, value):
-        if self._mode == 'ode':
-            self._add_child_element('friction_model', value)
-        else:
-            raise AttributeError()
-
-    def is_valid(self):
-        if self._mode == 'ode':
-            if len(self.children) != 7:
-                print('Number of child elements for ODE solver must be 7')
-                return False
-        else:
-            if len(self.children) != 4:
-                print('Number of child elements for ODE solver must be 4')
-                return False
-        is_valid = True
-        for child in self.children.values():
-            is_valid = is_valid and child.is_valid()
-        return is_valid
+        if self._mode != 'ode':
+            self._mode = 'ode'
+        self._add_child_element('friction_model', value)
 
     def reset(self, mode=None, with_optional_elements=False):
         XMLBase.reset(self, mode, with_optional_elements)

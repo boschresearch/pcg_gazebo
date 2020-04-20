@@ -29,7 +29,7 @@ class GUI(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(GUI, self).__init__()
         self.reset()
 
     @property

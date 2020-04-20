@@ -21,4 +21,4 @@ class Dissipation(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=100):
-        XMLScalar.__init__(self, default, min_value=0)
+        super(Dissipation, self).__init__(default, min_value=0)

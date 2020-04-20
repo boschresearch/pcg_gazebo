@@ -24,7 +24,7 @@ class Format(XMLString):
                       'BAYER_BGGR8', 'BAYER_GBRG8', 'BAYER_GRBG8']
 
     def __init__(self, default='R8G8B8'):
-        XMLString.__init__(self, default)
+        super(Format, self).__init__(default)
 
     def _set_value(self, value):
         assert value in self._VALUE_OPTIONS, 'Options are {}'.format(

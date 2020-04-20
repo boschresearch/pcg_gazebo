@@ -21,4 +21,4 @@ class Child(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self, default='none'):
-        XMLString.__init__(self, default)
+        super(Child, self).__init__(default)

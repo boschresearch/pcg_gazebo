@@ -21,8 +21,5 @@ class Resolution(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0, 'Input value must be equal or greater to zero'
-        XMLScalar._set_value(self, value)
+        super(Resolution, self).__init__(
+            default, min_value=0)

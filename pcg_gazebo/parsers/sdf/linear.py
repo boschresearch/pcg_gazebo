@@ -20,5 +20,6 @@ class Linear(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0, min_value=None, max_value=None):
-        XMLScalar.__init__(self, default, min_value=min_value,
-                           max_value=max_value)
+        super(Linear, self).__init__(
+            default, min_value=min_value,
+            max_value=max_value)

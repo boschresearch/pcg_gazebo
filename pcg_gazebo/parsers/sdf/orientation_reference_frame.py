@@ -26,7 +26,7 @@ class OrientationReferenceFrame(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(OrientationReferenceFrame, self).__init__()
         self.reset()
 
     @property

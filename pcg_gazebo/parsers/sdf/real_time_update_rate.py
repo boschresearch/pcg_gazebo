@@ -20,4 +20,5 @@ class RealTimeUpdateRate(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=1):
-        XMLScalar.__init__(self, default, min_value=0)
+        super(RealTimeUpdateRate, self).__init__(
+            default, min_value=0)

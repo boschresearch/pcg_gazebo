@@ -71,6 +71,7 @@ from .empty import Empty
 from .enable_wind import EnableWind
 from .end import End
 from .erp import ERP
+from .fade_dist import FadeDist
 from .falloff import FallOff
 from .far import Far
 from .fdir1 import FDir1
@@ -88,6 +89,7 @@ from .gravity import Gravity
 from .grid import Grid
 from .gui import GUI
 from .height import Height
+from .heightmap import Heightmap
 from .horizontal_fov import HorizontalFOV
 from .horizontal import Horizontal
 from .humidity import Humidity
@@ -174,6 +176,7 @@ from .plugin import Plugin
 from .point import Point
 from .poissons_ratio import PoissonsRatio
 from .polyline import Polyline
+from .pos import Pos
 from .pose import Pose
 from .precision import Precision
 from .precon_iters import PreConIters
@@ -229,6 +232,7 @@ from .sunrise import Sunrise
 from .sunset import Sunset
 from .surface_radius import SurfaceRadius
 from .surface import Surface
+from .texture import Texture
 from .threshold import Threshold
 from .time import Time
 from .topic import Topic
@@ -373,6 +377,7 @@ __all__ = [
     'EnableWind',
     'End',
     'ERP',
+    'FadeDist',
     'FallOff',
     'Far',
     'FDir1',
@@ -390,6 +395,7 @@ __all__ = [
     'Grid',
     'GUI',
     'Height',
+    'Heightmap',
     'Horizontal',
     'HorizontalFOV',
     'Humidity',
@@ -474,6 +480,7 @@ __all__ = [
     'Point',
     'PoissonsRatio',
     'Polyline',
+    'Pos',
     'Pose',
     'Precision',
     'PreConIters',
@@ -528,6 +535,7 @@ __all__ = [
     'Sunset',
     'Surface',
     'SurfaceRadius',
+    'Texture',
     'Threshold',
     'Time',
     'Topic',

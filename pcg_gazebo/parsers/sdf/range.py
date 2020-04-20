@@ -24,14 +24,14 @@ class Range(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        min=dict(creator=Min, default=[0]),
-        max=dict(creator=Max, default=[0]),
-        resolution=dict(creator=Resolution, default=[0])
+        min=dict(creator=Min, default=[0], mode='ray'),
+        max=dict(creator=Max, default=[0], mode='ray'),
+        resolution=dict(creator=Resolution, default=[0], mode='ray')
     )
 
     _MODES = ['scalar', 'ray']
 
-    def __init__(self, mode='scalar', default=10, min_value=0):
+    def __init__(self, mode='ray', default=10, min_value=0):
         super(Range, self).__init__(min_value=min_value)
         if mode == 'scalar':
             self._default = default

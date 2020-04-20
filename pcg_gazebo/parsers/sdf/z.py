@@ -26,7 +26,7 @@ class Z(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Z, self).__init__()
         self.reset()
 
     @property

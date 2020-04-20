@@ -20,15 +20,4 @@ class StdDev(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self):
-        XMLScalar.__init__(self)
-        self._description = dict(
-            default='For type "gaussian*", the standard deviation of the '
-                    'Gaussian distribution from which noise values are drawn'
-        )
-
-    def _set_value(self, value):
-        assert self._is_scalar(value), \
-            'Input value must be a float or an integer, provided={}, ' \
-            'type={}'.format(value, type(value))
-        assert value >= 0, 'Input value must be equal or greater than zero'
-        XMLScalar._set_value(self, value)
+        super(StdDev, self).__init__(min_value=0)

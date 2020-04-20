@@ -40,7 +40,8 @@ class Link(XMLBase):
         kinematic=dict(creator=Kinematic, n_elems=1, optional=True),
         inertial=dict(creator=Inertial, n_elems=1, optional=True),
         pose=dict(creator=Pose, n_elems=1, optional=True),
-        collision=dict(creator=Collision, n_elems='+', optional=True),
+        collision=dict(
+            creator=Collision, default=['link'], n_elems='+', optional=True),
         visual=dict(creator=Visual, n_elems='+', optional=True),
         sensor=dict(creator=Sensor, n_elems='+', optional=True),
         plugin=dict(creator=Plugin, n_elems='+', optional=True),
@@ -48,7 +49,7 @@ class Link(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Link, self).__init__()
         self.reset()
 
     @property

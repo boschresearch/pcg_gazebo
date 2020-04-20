@@ -30,7 +30,7 @@ class Shader(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Shader, self).__init__()
         self.reset()
 
     @property

@@ -68,7 +68,7 @@ class Bullet(XMLBase):
         # Solve circular dependency
         from .friction import Friction
         self._CHILDREN_CREATORS['friction']['creator'] = Friction
-        XMLBase.__init__(self)
+        super(Bullet, self).__init__()
         self.reset(mode)
 
     @property

@@ -97,10 +97,11 @@ class Physics(XMLBase):
 
     @name.setter
     def name(self, value):
-        if self._mode != 'joint':
-            assert isinstance(value, str)
-            assert len(value) > 0
-            self.attributes['name'] = value
+        if self._mode == 'joint':
+            self._mode = 'ode'
+        assert self._is_string(value)
+        assert len(value) > 0
+        self.attributes['name'] = value
 
     @property
     def default(self):
@@ -119,10 +120,11 @@ class Physics(XMLBase):
 
     @type.setter
     def type(self, value):
-        if self._mode != 'joint':
-            assert isinstance(value, str)
-            assert value in ['ode', 'bullet', 'dart', 'simbody']
-            self.attributes['type'] = value
+        assert isinstance(value, str)
+        assert value in ['ode', 'bullet', 'dart', 'simbody']
+        if self._mode != value:
+            self._mode = value
+        self.attributes['type'] = value
 
     @property
     def max_step_size(self):
@@ -130,6 +132,8 @@ class Physics(XMLBase):
 
     @max_step_size.setter
     def max_step_size(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('max_step_size', value)
 
     @property
@@ -138,6 +142,8 @@ class Physics(XMLBase):
 
     @real_time_factor.setter
     def real_time_factor(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('real_time_factor', value)
 
     @property
@@ -146,6 +152,8 @@ class Physics(XMLBase):
 
     @real_time_update_rate.setter
     def real_time_update_rate(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('real_time_update_rate', value)
 
     @property
@@ -154,6 +162,8 @@ class Physics(XMLBase):
 
     @max_contacts.setter
     def max_contacts(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('max_contacts', value)
 
     @property
@@ -162,6 +172,8 @@ class Physics(XMLBase):
 
     @ode.setter
     def ode(self, value):
+        if self._mode != 'ode':
+            self._mode = 'ode'
         self._add_child_element('ode', value)
 
     @property
@@ -170,6 +182,8 @@ class Physics(XMLBase):
 
     @bullet.setter
     def bullet(self, value):
+        if self._mode != 'bullet':
+            self._mode = 'bullet'
         self._add_child_element('bullet', value)
 
     @property
@@ -178,7 +192,19 @@ class Physics(XMLBase):
 
     @simbody.setter
     def simbody(self, value):
+        if self._mode != 'simbody':
+            self._mode = 'simbody'
         self._add_child_element('simbody', value)
+
+    @property
+    def provide_feedback(self):
+        return self._get_child_element('provide_feedback')
+
+    @provide_feedback.setter
+    def provide_feedback(self, value):
+        if self._mode != 'joint':
+            self._mode = 'joint'
+        self._add_child_element('provide_feedback', value)
 
     def reset(self, mode=None, with_optional_elements=False):
         if mode is not None:

@@ -21,4 +21,4 @@ class Velocity(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=-1):
-        XMLScalar.__init__(self, default)
+        super(Velocity, self).__init__(default)

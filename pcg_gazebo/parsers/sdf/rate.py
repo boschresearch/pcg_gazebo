@@ -32,7 +32,7 @@ class Rate(XMLBase):
     )
 
     def __init__(self, type='none'):
-        XMLBase.__init__(self)
+        super(Rate, self).__init__()
         self.reset()
 
     @property

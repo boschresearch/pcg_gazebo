@@ -21,4 +21,4 @@ class Effort(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=-1):
-        XMLScalar.__init__(self, default)
+        super(Effort, self).__init__(default)

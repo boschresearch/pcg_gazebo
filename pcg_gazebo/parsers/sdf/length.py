@@ -21,4 +21,4 @@ class Length(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self):
-        XMLScalar.__init__(self, min_value=0)
+        super(Length, self).__init__(min_value=0)

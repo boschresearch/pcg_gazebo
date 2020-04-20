@@ -21,9 +21,5 @@ class RollingFriction(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=1):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0 and value <= 1, \
-            'rolling_friction should be a value between 0 and 1'
-        XMLScalar._set_value(self, value)
+        super(RollingFriction, self).__init__(
+            default, min_value=0, max_value=1)

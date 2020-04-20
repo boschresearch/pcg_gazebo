@@ -26,12 +26,29 @@ class Collision(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        geometry=dict(creator=Geometry),
-        pose=dict(creator=Pose, n_elems=1, optional=True),
+        geometry=dict(
+            creator=Geometry,
+            mode='link'),
+        pose=dict(
+            creator=Pose,
+            n_elems=1,
+            mode='link',
+            optional=True),
         max_contacts=dict(
-            creator=MaxContacts, n_elems=1, default=[10], optional=True),
-        surface=dict(creator=Surface, optional=True),
-        laser_retro=dict(creator=LaserRetro, default=[0], optional=True)
+            creator=MaxContacts,
+            n_elems=1,
+            default=[10],
+            mode='link',
+            optional=True),
+        surface=dict(
+            creator=Surface,
+            mode='link',
+            optional=True),
+        laser_retro=dict(
+            creator=LaserRetro,
+            default=[0],
+            mode='link',
+            optional=True)
     )
 
     _ATTRIBUTES = dict(
@@ -40,14 +57,14 @@ class Collision(XMLBase):
 
     _MODES = ['string', 'link']
 
-    def __init__(self, mode='string', default='__default__'):
+    def __init__(self, mode='link', default='__default__'):
         super(Collision, self).__init__()
         if mode == 'string':
             self._default = default
             self._value = default
             self._VALUE_TYPE = 'string'
         else:
-            self._default = 1.0
+            self._default = '__default__'
             self._value = None
         self.reset(mode=mode)
 
@@ -133,7 +150,8 @@ class Collision(XMLBase):
         if self._mode == 'string':
             if not self._is_string(self._value):
                 self.log_error(
-                    'Invalid string object')
+                    'Invalid string object, value={}'.format(
+                        self._value))
                 return False
             else:
                 return True

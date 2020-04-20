@@ -30,7 +30,7 @@ class AngularVelocity(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(AngularVelocity, self).__init__()
         self.reset()
 
     @property

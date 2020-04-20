@@ -21,4 +21,4 @@ class AutoStart(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBoolean.__init__(self, default)
+        super(AutoStart, self).__init__(default)

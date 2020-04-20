@@ -30,7 +30,7 @@ class Surface(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Surface, self).__init__()
         self.reset()
 
     @property

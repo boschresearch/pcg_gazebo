@@ -20,5 +20,5 @@ class URI(XMLString):
     _NAME = 'uri'
     _TYPE = 'sdf'
 
-    def __init__(self, default=''):
-        XMLString.__init__(self, default)
+    def __init__(self, default='__default__'):
+        super(URI, self).__init__(default)

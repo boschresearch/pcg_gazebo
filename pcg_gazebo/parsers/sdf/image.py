@@ -40,7 +40,7 @@ class Image(XMLBase):
     _MODES = ['geometry', 'camera']
 
     def __init__(self, mode='geometry'):
-        XMLBase.__init__(self)
+        super(Image, self).__init__()
         self.reset(mode=mode)
 
     @property

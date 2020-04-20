@@ -20,10 +20,5 @@ class MeanSize(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0 and value <= 1, \
-            '[{}] Size must be in the interval [0, 1]'.format(
-                self.xml_element_name)
-        XMLScalar._set_value(self, value)
+        super(MeanSize, self).__init__(
+            default, min_value=0, max_value=1)

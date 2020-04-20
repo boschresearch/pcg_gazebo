@@ -12,44 +12,76 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from ..types import XMLBase
+from ...utils import generate_random_string
+from ... import random
 
-from ..types import XMLVector
 
-
-class Normal(XMLVector):
+class Normal(XMLBase):
     _NAME = 'normal'
     _TYPE = 'sdf'
 
-    def __init__(self):
-        XMLVector.__init__(self, 3)
-        self.value = [0, 0, 1]
+    _MODES = ['vector', 'string']
 
-    @property
-    def x(self):
-        return self.value[0]
+    def __init__(self, default=[0, 0, 1]):
+        super(Normal, self).__init__()
 
-    @x.setter
-    def x(self, value):
-        assert self._is_scalar(value)
-        self.value[0] = float(value)
+        assert self._is_numeric_vector(default) or \
+            self._is_string(default), \
+            'Input default value must be a string or an array'
+        if self._is_numeric_vector(default):
+            self._default = default
+            self._value = default
+            self._size = 3
+        else:
+            self._default = default
+            self._value = default
 
-    @property
-    def y(self):
-        return self.value[1]
+    def _set_value(self, value):
+        assert self._is_numeric_vector(value) or self._is_string(value), \
+            'Input default value must be a string or an array'
+        if self._is_numeric_vector(value):
+            assert self._is_numeric_vector(value, [0, 1]), \
+                'List must contain elements in the range [0, 1]'
+            assert len(value) == 3, 'List must have 4 elements'
+            self._value = list(value)
+            self._mode = 'vector'
+        else:
+            self._value = value
+            self._mode = 'string'
 
-    @y.setter
-    def y(self, value):
-        assert self._is_scalar(value)
-        self.value[1] = float(value)
+    def reset(self, mode='vector', with_optional_elements=False):
+        if mode is not None:
+            if mode not in self._MODES:
+                self.log_error(
+                    'Mode can either be boolean or vector',
+                    raise_exception=True,
+                    exception_type=AssertionError)
+            self._mode = mode
+        if self._mode == 'vector':
+            self._default = [0, 0, 1]
+            self._VALUE_TYPE = 'vector'
+        else:
+            self._default = '__default__'
+            self._VALUE_TYPE = 'string'
+        self._value = self._default
 
-    @property
-    def z(self):
-        return self.value[2]
+    def is_valid(self):
+        if not isinstance(self._value, type(self._default)):
+            self.log.error('Object must have a {}'.format(type(self._default)))
+            return False
+        return True
 
-    @z.setter
-    def z(self, value):
-        assert self._is_scalar(value)
-        self.value[2] = float(value)
+    def get_formatted_value_as_str(self):
+        assert self.is_valid(), 'Invalid type'
+        if self._is_string(self._value):
+            return '{}'.format(str(self._value))
+        else:
+            output_str = ' '.join(['{}'] * len(self._value))
+            return output_str.format(*self._value)
 
-    def reset(self):
-        self.value = [0, 0, 1]
+    def random(self):
+        if self._is_string(self._value):
+            self._set_value(generate_random_string(5))
+        else:
+            self._set_value([random.rand() for _ in range(self._size)])

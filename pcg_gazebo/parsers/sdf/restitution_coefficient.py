@@ -21,4 +21,5 @@ class RestitutionCoefficient(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
+        super(RestitutionCoefficient, self).__init__(
+            default)
