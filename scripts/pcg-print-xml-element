@@ -127,7 +127,11 @@ if __name__ == '__main__':
                     print('Children elements in mode <{}>:'.format(mode))
                     for tag in obj._CHILDREN_CREATORS:
                         if 'mode' in obj._CHILDREN_CREATORS[tag]:
-                            if obj._CHILDREN_CREATORS[tag]['mode'] != mode:
+                            if isinstance(
+                                    obj._CHILDREN_CREATORS[tag]['mode'], list):
+                                if mode not in obj._CHILDREN_CREATORS[tag]['mode']:
+                                    continue
+                            elif obj._CHILDREN_CREATORS[tag]['mode'] != mode:
                                 continue
                         msg = ' - <{}>:'.format(tag)
                         if 'optional' in obj._CHILDREN_CREATORS[tag]:
