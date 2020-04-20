@@ -254,11 +254,11 @@ def process_jinja_template(template, parameters=None, include_dir=None):
     from .path import Path
 
     if not isinstance(parameters, dict):
-        parameters = dict()
         PCG_ROOT_LOGGER.warning(
             'Input parameters to be replaced in the template'
             ' must be provided as a dictionary, received {}'
             ' instead'.format(type(parameters)))
+        parameters = dict()
 
     if not isinstance(template, str):
         PCG_ROOT_LOGGER.error(
