@@ -33,7 +33,7 @@ class Blend(XMLBase):
     @property
     def min_height(self):
         return self._get_child_element('min_height')
-    
+
     @min_height.setter
     def min_height(self, value):
         self._add_child_element('min_height', value)
