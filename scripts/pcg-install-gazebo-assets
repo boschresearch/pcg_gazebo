@@ -15,6 +15,7 @@
 # limitations under the License.
 import os
 import tarfile
+import logging
 import argparse
 import datetime
 import shutil
@@ -23,6 +24,7 @@ from pcg_gazebo.simulation import is_gazebo_model, \
     ModelGroup, World, Light
 from pcg_gazebo.parsers import parse_sdf, parse_xacro, \
     parse_urdf, urdf2sdf
+from pcg_gazebo.utils import generate_random_string
 
 GAZEBO_ROOT_PATH = os.path.join(
     os.path.expanduser('~'), '.gazebo')
@@ -59,8 +61,10 @@ def export_light(sdf, name=None, prefix='', suffix='', overwrite=False):
 def export_model_dir(dir, prefix='', suffix='', overwrite=False):
     assert os.path.isdir(dir), 'Invalid directory'
     if 'model.config' not in os.listdir(dir):
-        print('Directory {} does not contain a model, skipping...'.format(
-            dir))
+        logging.info(
+            'Directory {} does not contain a '
+            'model, skipping...'.format(
+                dir))
         return False
 
     model_name = os.path.basename(dir)
@@ -69,20 +73,22 @@ def export_model_dir(dir, prefix='', suffix='', overwrite=False):
     new_model_path = os.path.join(GAZEBO_MODEL_PATH, model_name)
 
     if os.path.isdir(new_model_path) and overwrite:
-        shutil.rmtree(ew_model_path)
+        shutil.rmtree(new_model_path)
 
     if not os.path.isdir(new_model_path):
         shutil.copytree(dir, new_model_path)
     else:
-        print('Destination model folder {} already exist, skipping...'.format(
-            new_model_path))
+        logging.info(
+            'Destination model folder {} already'
+            ' exist, skipping...'.format(
+                new_model_path))
 
     # Check if Gazebo model can now be found
     assert is_gazebo_model(model_name), \
         'Gazebo model {} cannot be found, removing folder {}'.format(
             model_name, new_model_path)
 
-    print('Model {} exported to folder {}'.format(
+    logging.info('Model {} exported to folder {}'.format(
         model_name, os.path.join(GAZEBO_MODEL_PATH, model_name)))
 
     return True
@@ -102,7 +108,8 @@ def export_model(sdf, name=None, prefix='', suffix='', overwrite=False):
         copy_resources=True)
     assert model_dir is not None, \
         'Could not export model {} as Gazebo model'.format(model.name)
-    print('Model {} exported to folder {}'.format(model.name, model_dir))
+    logging.info('Model {} exported to folder {}'.format(
+        model.name, model_dir))
 
 
 def export_world(sdf, name=None, prefix='', suffix=''):
@@ -120,7 +127,8 @@ def export_world(sdf, name=None, prefix='', suffix=''):
 
 
 def install_dir(folder, prefix='', suffix='', overwrite=False):
-    assert os.path.isdir(folder), 'Invalid input directory'
+    assert os.path.isdir(folder), \
+        'Invalid input directory, folder={}'.format(folder)
 
     if os.path.isfile(os.path.join(folder, 'model.config')):
         # The folder contains a model
@@ -145,7 +153,7 @@ def install_dir(folder, prefix='', suffix='', overwrite=False):
                 shutil.copy(
                     os.path.join(world_dir, item),
                     os.path.join(GAZEBO_WORLD_PATH, world_name))
-                print('World {} copied to {}'.format(
+                logging.info('World {} copied to {}'.format(
                     os.path.join(world_dir, item),
                     os.path.join(GAZEBO_WORLD_PATH, world_name)))
 
@@ -208,6 +216,17 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    # Configure logging
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format='%(asctime)s | %(levelname)s | %(module)s | %(message)s',
+        datefmt='%m-%d %H:%M',)
+
+    console = logging.StreamHandler()
+    console.setLevel(logging.ERROR)
+    # add the handler to the root logging
+    logging.getLogger('').addHandler(console)
+
     if args.add_timestamp:
         suffix = '_' + datetime.datetime.now().strftime(
             '%Y-%m-%d_%H-%M-%S').replace(':', '_')
@@ -224,6 +243,8 @@ if __name__ == '__main__':
         add_custom_gazebo_resource_path(args.models_path)
 
     if args.filename is not None:
+        logging.info('Installing asset from file: {}'.format(args.filename))
+
         assert os.path.isfile(args.filename), 'Invalid input filename'
         assert args.filename.endswith('.sdf') or \
             args.filename.endswith('.world') or \
@@ -263,20 +284,29 @@ if __name__ == '__main__':
             elif sdf.xml_element_name == 'light':
                 export_light(sdf, args.name, prefix, suffix, args.overwrite)
     elif args.tarball is not None:
+        logging.info('Installing assets from tarball: {}'.format(args.tarball))
         assert os.path.isfile(args.tarball), 'Invalid input tarball filename'
 
         # Create temporary folder to extract the files to
+        dest_folder = os.path.join('/tmp', generate_random_string(5))
+        logging.info('Extract tarball to temporary folder: {}'.format(
+            dest_folder))
+        os.makedirs(dest_folder)
+
         with tarfile.open(args.tarball, 'r') as tf:
-            tf.extractall(path='/tmp', members=None)
+            tf.extractall(path=dest_folder, members=None)
 
         folder = os.path.join(
-            '/tmp', os.path.basename(args.tarball).split('.')[0])
+            dest_folder, os.listdir(dest_folder)[0])
         install_dir(
             folder,
             prefix=prefix,
             suffix=suffix,
             overwrite=args.overwrite)
-        shutil.rmtree(folder)
+        shutil.rmtree(dest_folder)
+        logging.info('Temporary folder deleted: {}'.format(
+            folder))
 
     elif args.dir is not None:
+        logging.info('Installing assets from directory: {}'.format(args.dir))
         install_dir(args.dir, prefix=prefix, suffix=suffix)
