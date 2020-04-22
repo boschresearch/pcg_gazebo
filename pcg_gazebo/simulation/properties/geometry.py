@@ -19,11 +19,6 @@ import numpy as np
 from .mesh import Mesh
 from .footprint import Footprint
 from ...log import PCG_ROOT_LOGGER
-try:
-    from visualization_msgs.msg import Marker
-    CONVERT_TO_MARKER = True
-except ImportError:
-    CONVERT_TO_MARKER = False
 
 
 class Geometry(object):
@@ -355,41 +350,3 @@ class Geometry(object):
                 scale=sdf.mesh.scale.value,
                 load_mesh=False)
         return geo
-
-    def to_marker(self):
-        if not CONVERT_TO_MARKER:
-            return None
-        if self._sdf is None and self._mesh is None:
-            return None
-
-        marker = Marker()
-        if self._sdf:
-            if self._sdf._NAME == 'sphere':
-                marker.type = Marker.SPHERE
-                diameter = 2 * self.get_param('radius')
-                marker.scale.x = diameter
-                marker.scale.y = diameter
-                marker.scale.z = diameter
-            elif self._sdf._NAME == 'box':
-                marker.type = Marker.CUBE
-                size = self.get_param('size')
-                marker.scale.x = size[0]
-                marker.scale.y = size[1]
-                marker.scale.z = size[2]
-            elif self._sdf._NAME == 'cylinder':
-                marker.type = Marker.CYLINDER
-                diameter = 2 * self.get_param('radius')
-                marker.scale.x = diameter
-                marker.scale.y = diameter
-                marker.scale.z = self.get_param('length')
-            else:
-                return None
-        elif self._mesh:
-            marker.type = Marker.MESH_RESOURCE
-            marker.mesh_resource = 'file://' + self._mesh.filename
-            marker.scale.x = self._mesh.scale[0]
-            marker.scale.y = self._mesh.scale[1]
-            marker.scale.z = self._mesh.scale[2]
-            marker.mesh_use_embedded_materials = True
-
-        return marker
