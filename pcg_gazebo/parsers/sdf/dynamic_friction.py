@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLScalar
 
 
@@ -21,4 +20,4 @@ class DynamicFriction(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.9):
-        XMLScalar.__init__(self, default, min_value=0)
+        super(DynamicFriction, self).__init__(default, min_value=0)

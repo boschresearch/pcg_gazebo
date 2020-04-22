@@ -61,7 +61,7 @@ class Script(XMLBase):
     _MODES = ['material', 'actor']
 
     def __init__(self, mode='material'):
-        XMLBase.__init__(self)
+        super(Script, self).__init__()
         self.reset(mode=mode)
 
     @property

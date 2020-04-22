@@ -21,7 +21,7 @@ class LaserRetro(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
+        super(LaserRetro, self).__init__(default)
 
     def _set_value(self, value):
         assert value >= 0

@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLBase
 from .physics import Physics
 from .model import Model
@@ -44,7 +43,7 @@ class World(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(World, self).__init__()
         self.reset()
 
     @property

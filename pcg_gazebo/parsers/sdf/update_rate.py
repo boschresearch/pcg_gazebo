@@ -21,8 +21,4 @@ class UpdateRate(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0
-        XMLScalar._set_value(self, value)
+        super(UpdateRate, self).__init__(default)

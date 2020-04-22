@@ -31,7 +31,7 @@ class FDir1(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, default=[0, 0, 0]):
-        XMLVector.__init__(self, 3)
+        super(FDir1, self).__init__(3)
         self.reset()
 
     def _set_value(self, value):

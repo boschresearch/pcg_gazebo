@@ -21,4 +21,4 @@ class Path(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self, default='__default__'):
-        XMLString.__init__(self, default)
+        super(Path, self).__init__(default)

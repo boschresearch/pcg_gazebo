@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import random
+from ... import random
 from . import XMLBase
 import collections
 
@@ -22,7 +22,8 @@ class XMLVector(XMLBase):
     _VALUE_TYPE = 'vector'
 
     def __init__(self, size=None, min_value=None, max_value=None):
-        XMLBase.__init__(self, min_value=min_value, max_value=max_value)
+        super(XMLVector, self).__init__(
+            min_value=min_value, max_value=max_value)
         assert size is not None, 'Vector size cannot be None'
         assert isinstance(size, int), \
             '[{}] Vector size input must be an integer, received={}'.format(
@@ -60,7 +61,7 @@ class XMLVector(XMLBase):
                         self._NAME, self._max_value)
         self._value = list(value)
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = [0 for _ in range(self._size)]
         XMLBase.reset(self)
 
@@ -84,4 +85,4 @@ class XMLVector(XMLBase):
         return output_str.format(*[format(x, 'n') for x in self._value])
 
     def random(self):
-        self._set_value([random.random() for _ in range(self._size)])
+        self._set_value([random.rand() for _ in range(self._size)])

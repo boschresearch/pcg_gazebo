@@ -21,4 +21,4 @@ class CastShadows(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBoolean.__init__(self, default)
+        super(CastShadows, self).__init__(default)

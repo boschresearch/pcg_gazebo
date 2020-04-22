@@ -31,12 +31,5 @@ class Slip(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-        self._description = dict(
-            ode='(float) Force dependent slip direction 1 in collision local'
-                ' frame, between the range of [0,1]')
-
-    def _set_value(self, value):
-        assert isinstance(value, float) or isinstance(value, int)
-        assert value >= 0 and value <= 1
-        XMLScalar._set_value(self, value)
+        super(Slip, self).__init__(
+            default, min_value=0, max_value=1)

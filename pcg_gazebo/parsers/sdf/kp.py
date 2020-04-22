@@ -21,7 +21,7 @@ class Kp(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=1e12):
-        XMLScalar.__init__(self, default)
+        super(Kp, self).__init__(default)
 
     def _set_value(self, value):
         assert self._is_scalar(value), \

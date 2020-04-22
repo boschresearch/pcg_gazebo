@@ -21,4 +21,5 @@ class MinStepSize(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.0001):
-        XMLScalar.__init__(self, default, min_value=0)
+        super(MinStepSize, self).__init__(
+            default, min_value=0)

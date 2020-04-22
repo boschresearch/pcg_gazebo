@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLVector
 
 
@@ -21,12 +20,7 @@ class Ambient(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, default=[0, 0, 0, 1]):
-        XMLVector.__init__(self, 4)
+        super(Ambient, self).__init__(
+            4, min_value=0, max_value=1)
         self._default = default
         self._value = default
-
-    def _set_value(self, value):
-        assert self._is_array(value) and self._is_numeric_vector(
-            value, [0, 1]), 'Invalid ambient vector, value={}'.format(
-                value)
-        XMLVector._set_value(self, value)

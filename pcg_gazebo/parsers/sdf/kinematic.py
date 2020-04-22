@@ -21,4 +21,4 @@ class Kinematic(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=False):
-        XMLBoolean.__init__(self, default)
+        super(Kinematic, self).__init__(default)

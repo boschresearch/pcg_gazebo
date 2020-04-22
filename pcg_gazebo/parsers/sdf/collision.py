@@ -12,13 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLBase
 from .pose import Pose
 from .geometry import Geometry
 from .max_contacts import MaxContacts
 from .surface import Surface
 from .laser_retro import LaserRetro
+from ...utils import generate_random_string
 
 
 class Collision(XMLBase):
@@ -26,21 +26,47 @@ class Collision(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        geometry=dict(creator=Geometry),
-        pose=dict(creator=Pose, n_elems=1, optional=True),
+        geometry=dict(
+            creator=Geometry,
+            mode='link'),
+        pose=dict(
+            creator=Pose,
+            n_elems=1,
+            mode='link',
+            optional=True),
         max_contacts=dict(
-            creator=MaxContacts, n_elems=1, default=[10], optional=True),
-        surface=dict(creator=Surface, optional=True),
-        laser_retro=dict(creator=LaserRetro, default=[0], optional=True)
+            creator=MaxContacts,
+            n_elems=1,
+            default=[10],
+            mode='link',
+            optional=True),
+        surface=dict(
+            creator=Surface,
+            mode='link',
+            optional=True),
+        laser_retro=dict(
+            creator=LaserRetro,
+            default=[0],
+            mode='link',
+            optional=True)
     )
 
     _ATTRIBUTES = dict(
         name='collision'
     )
 
-    def __init__(self):
-        XMLBase.__init__(self)
-        self.reset()
+    _MODES = ['string', 'link']
+
+    def __init__(self, mode='link', default='__default__'):
+        super(Collision, self).__init__()
+        if mode == 'string':
+            self._default = default
+            self._value = default
+            self._VALUE_TYPE = 'string'
+        else:
+            self._default = '__default__'
+            self._value = None
+        self.reset(mode=mode)
 
     @property
     def name(self):
@@ -92,14 +118,54 @@ class Collision(XMLBase):
     def laser_retro(self, value):
         self._add_child_element('laser_retro', value)
 
+    def reset(self, mode=None, with_optional_elements=False):
+        if mode is not None:
+            if mode not in self._MODES:
+                self.log_error(
+                    'Mode can either be boolean or vector',
+                    raise_exception=True,
+                    exception_type=AssertionError)
+            self._mode = mode
+        if self._mode == 'string':
+            self.children = dict()
+            self._value = self._default
+            self._VALUE_TYPE = 'string'
+        else:
+            self._VALUE_TYPE = ''
+            self._value = None
+            XMLBase.reset(
+                self, mode=mode,
+                with_optional_elements=with_optional_elements)
+
+    def _set_value(self, value):
+        if self._mode != 'string':
+            self.reset(mode='string')
+        assert self._is_string(value), \
+            '[{}] Input value must be string for {},' \
+            ' received={}, type={}'.format(
+                self.xml_element_name, self._NAME, value, type(value))
+        self._value = str(value)
+
     def is_valid(self):
-        if len(self.attributes) != 1:
-            print('Collision should have at least one attribute')
-            return False
-        if 'name' not in self.attributes:
-            print('Collision should have an attribute <name>')
-            return False
-        if len(self.attributes['name']) == 0:
-            print('Collision name attribute is empty')
-            return False
-        return XMLBase.is_valid(self)
+        if self._mode == 'string':
+            if not self._is_string(self._value):
+                self.log_error(
+                    'Invalid string object, value={}'.format(
+                        self._value))
+                return False
+            else:
+                return True
+        else:
+            return XMLBase.is_valid(self)
+
+    def get_formatted_value_as_str(self):
+        if self._mode == 'string':
+            assert self.is_valid(), 'Invalid string value'
+            return '{}'.format(self._value)
+        return None
+
+    def random(self):
+        if self._mode == 'string':
+            self._set_value(generate_random_string(5))
+        else:
+            XMLBase.random(self)

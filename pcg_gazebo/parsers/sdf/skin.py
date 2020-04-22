@@ -27,7 +27,7 @@ class Skin(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Skin, self).__init__()
         self.reset()
 
     @property

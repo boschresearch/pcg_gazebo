@@ -184,10 +184,11 @@ class Sensor(XMLBase):
         return self._get_child_element('plugin')
 
     def reset(self, mode=None, with_optional_elements=False):
-        assert mode in self._MODES, \
-            'Invalid sensor type, received={}, options={}'.format(
-                mode, self._MODES)
-        self.attributes['type'] = mode
+        if mode is not None:
+            assert mode in self._MODES, \
+                'Invalid sensor type, received={}, options={}'.format(
+                    mode, self._MODES)
+            self.attributes['type'] = mode
         XMLBase.reset(self, mode, with_optional_elements)
 
     def add_plugin(self, name, plugin=None):

@@ -21,9 +21,5 @@ class MaxStepSize(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.001):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert self._is_scalar(value)
-        assert value > 0
-        XMLScalar._set_value(self, value)
+        super(MaxStepSize, self).__init__(
+            default, min_value=0)

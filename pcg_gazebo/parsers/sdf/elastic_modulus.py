@@ -20,7 +20,7 @@ class ElasticModulus(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=-1):
-        XMLScalar.__init__(self, default)
+        super(ElasticModulus, self).__init__(default)
 
     def _set_value(self, value):
         XMLScalar._set_value(self, value)

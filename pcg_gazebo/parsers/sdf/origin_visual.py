@@ -20,4 +20,4 @@ class OriginVisual(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBoolean.__init__(self, default)
+        super(OriginVisual, self).__init__(default)

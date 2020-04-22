@@ -21,4 +21,4 @@ class Loop(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=False):
-        XMLBoolean.__init__(self, default)
+        super(Loop, self).__init__(default)

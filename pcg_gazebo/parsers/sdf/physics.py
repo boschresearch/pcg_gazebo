@@ -21,6 +21,7 @@ from .max_contacts import MaxContacts
 from .ode import ODE
 from .bullet import Bullet
 from .simbody import Simbody
+from .provide_feedback import ProvideFeedback
 
 
 class Physics(XMLBase):
@@ -28,14 +29,42 @@ class Physics(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        max_step_size=dict(creator=MaxStepSize, default=[0.001]),
-        real_time_factor=dict(creator=RealTimeFactor, default=[1]),
-        real_time_update_rate=dict(creator=RealTimeUpdateRate, default=[1000]),
-        max_contacts=dict(creator=MaxContacts, default=[20]),
-        ode=dict(creator=ODE, mode='ode', optional=True, default=['physics']),
-        simbody=dict(creator=Simbody, mode='simbody', optional=True),
+        max_step_size=dict(
+            creator=MaxStepSize,
+            mode=['ode', 'bullet', 'simbody'],
+            default=[0.001]),
+        real_time_factor=dict(
+            creator=RealTimeFactor,
+            mode=['ode', 'bullet', 'simbody'],
+            default=[1]),
+        real_time_update_rate=dict(
+            creator=RealTimeUpdateRate,
+            mode=['ode', 'bullet', 'simbody'],
+            default=[1000]),
+        max_contacts=dict(
+            creator=MaxContacts,
+            mode=['ode', 'bullet', 'simbody'],
+            default=[20],
+            optional=True),
+        ode=dict(
+            creator=ODE, mode=['joint', 'ode'],
+            optional=True,
+            default=['physics']),
+        simbody=dict(
+            creator=Simbody,
+            default=['physics'],
+            mode=['joint', 'simbody'],
+            optional=True),
         bullet=dict(
-            creator=Bullet, mode='bullet', optional=True, default=['physics'])
+            creator=Bullet,
+            mode='bullet',
+            optional=True,
+            default=['physics']),
+        provide_feedback=dict(
+            creator=ProvideFeedback,
+            default=[False],
+            mode='joint',
+            optional=True)
     )
 
     _ATTRIBUTES = dict(
@@ -44,10 +73,22 @@ class Physics(XMLBase):
         type='ode'
     )
 
-    _MODES = ['ode', 'bullet', 'simbody']
+    _ATTRIBUTES_MODES = dict(
+        name=['ode', 'bullet', 'simbody'],
+        default=['ode', 'bullet', 'simbody'],
+        type=['ode', 'bullet', 'simbody']
+    )
+
+    _MODES = ['ode', 'bullet', 'simbody', 'joint']
 
     def __init__(self, mode='ode'):
-        XMLBase.__init__(self)
+        super(Physics, self).__init__()
+        if mode == 'joint':
+            self._CHILDREN_CREATORS['simbody']['default'] = ['joint']
+            self._CHILDREN_CREATORS['ode']['default'] = ['joint']
+        else:
+            self._CHILDREN_CREATORS['simbody']['default'] = ['physics']
+            self._CHILDREN_CREATORS['ode']['default'] = ['physics']
         self.reset(mode=mode)
 
     @property
@@ -56,7 +97,9 @@ class Physics(XMLBase):
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str)
+        if self._mode == 'joint':
+            self._mode = 'ode'
+        assert self._is_string(value)
         assert len(value) > 0
         self.attributes['name'] = value
 
@@ -79,6 +122,8 @@ class Physics(XMLBase):
     def type(self, value):
         assert isinstance(value, str)
         assert value in ['ode', 'bullet', 'dart', 'simbody']
+        if self._mode != value:
+            self._mode = value
         self.attributes['type'] = value
 
     @property
@@ -87,6 +132,8 @@ class Physics(XMLBase):
 
     @max_step_size.setter
     def max_step_size(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('max_step_size', value)
 
     @property
@@ -95,6 +142,8 @@ class Physics(XMLBase):
 
     @real_time_factor.setter
     def real_time_factor(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('real_time_factor', value)
 
     @property
@@ -103,6 +152,8 @@ class Physics(XMLBase):
 
     @real_time_update_rate.setter
     def real_time_update_rate(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('real_time_update_rate', value)
 
     @property
@@ -111,6 +162,8 @@ class Physics(XMLBase):
 
     @max_contacts.setter
     def max_contacts(self, value):
+        if self._mode not in ['ode', 'bullet', 'simbody']:
+            self._mode = 'ode'
         self._add_child_element('max_contacts', value)
 
     @property
@@ -119,6 +172,8 @@ class Physics(XMLBase):
 
     @ode.setter
     def ode(self, value):
+        if self._mode != 'ode':
+            self._mode = 'ode'
         self._add_child_element('ode', value)
 
     @property
@@ -127,6 +182,8 @@ class Physics(XMLBase):
 
     @bullet.setter
     def bullet(self, value):
+        if self._mode != 'bullet':
+            self._mode = 'bullet'
         self._add_child_element('bullet', value)
 
     @property
@@ -135,37 +192,31 @@ class Physics(XMLBase):
 
     @simbody.setter
     def simbody(self, value):
+        if self._mode != 'simbody':
+            self._mode = 'simbody'
         self._add_child_element('simbody', value)
 
+    @property
+    def provide_feedback(self):
+        return self._get_child_element('provide_feedback')
+
+    @provide_feedback.setter
+    def provide_feedback(self, value):
+        if self._mode != 'joint':
+            self._mode = 'joint'
+        self._add_child_element('provide_feedback', value)
+
     def reset(self, mode=None, with_optional_elements=False):
+        if mode is not None:
+            if mode == 'joint':
+                self._CHILDREN_CREATORS['simbody']['default'] = ['joint']
+                self._CHILDREN_CREATORS['ode']['default'] = ['joint']
+            else:
+                self._CHILDREN_CREATORS['simbody']['default'] = ['physics']
+                self._CHILDREN_CREATORS['ode']['default'] = ['physics']
         XMLBase.reset(self, mode, with_optional_elements)
         if mode is not None:
             assert isinstance(mode, str)
-            assert mode in ['ode', 'bullet', 'dart', 'simbody']
-            self.attributes['type'] = mode
-
-    def is_valid(self):
-        if len(self.attributes) != 3:
-            print('Physics should have three attributes')
-            return False
-        if 'name' not in self.attributes:
-            print('Physics should have an attribute <name>')
-            return False
-        if len(self.attributes['name']) == 0:
-            print('Physics name attribute is empty')
-            return False
-        if 'default' not in self.attributes:
-            print('Physics should have an attribute <default>')
-            return False
-        if 'type' not in self.attributes:
-            print('Physics should have an attribute <type>')
-            return False
-        if self.attributes['type'] not in ['ode', 'bullet', 'simbody', 'dart']:
-            print(
-                'Physics type attribute should be ode,'
-                ' bullet, simbody or dart')
-            return False
-        if len(self.children) < 4:
-            print('Physics should have at least 4 child elements')
-            return False
-        return XMLBase.is_valid(self)
+            if mode != 'joint':
+                assert mode in ['ode', 'bullet', 'dart', 'simbody']
+                self.attributes['type'] = mode

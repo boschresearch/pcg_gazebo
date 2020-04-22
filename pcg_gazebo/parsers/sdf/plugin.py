@@ -27,7 +27,7 @@ class Plugin(XMLCustom):
     )
 
     def __init__(self, default=dict()):
-        XMLCustom.__init__(self, default)
+        super(Plugin, self).__init__(default)
         self._has_custom_elements = True
         self.reset()
         self._value = dict()

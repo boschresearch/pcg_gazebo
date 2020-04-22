@@ -20,10 +20,4 @@ class Start(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0.0, '[{}] Input must be equal' \
-            ' or greater than zero'.format(
-                self.xml_element_name)
-        XMLScalar._set_value(self, value)
+        super(Start, self).__init__(default, min_value=0)

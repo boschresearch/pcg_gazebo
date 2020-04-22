@@ -41,7 +41,7 @@ class Constraints(XMLBase):
     _MODES = ['ode', 'bullet']
 
     def __init__(self, engine='ode'):
-        XMLBase.__init__(self)
+        super(Constraints, self).__init__()
         self.reset(mode=engine)
 
     @property

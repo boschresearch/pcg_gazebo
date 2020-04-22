@@ -38,7 +38,7 @@ class SDF(XMLBase):
     _VERSIONS = ['1.4', '1.5', '1.6']
 
     def __init__(self, mode='world'):
-        XMLBase.__init__(self)
+        super(SDF, self).__init__()
         self.reset(mode)
 
     @property

@@ -21,4 +21,4 @@ class Frame(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self, default=''):
-        XMLString.__init__(self, default)
+        super(Frame, self).__init__(default)

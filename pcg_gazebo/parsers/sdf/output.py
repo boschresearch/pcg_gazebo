@@ -21,4 +21,4 @@ class Output(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self, default='depths'):
-        XMLString.__init__(self, default)
+        super(Output, self).__init__(default)

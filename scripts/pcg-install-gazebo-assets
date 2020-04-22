@@ -30,7 +30,7 @@ GAZEBO_WORLD_PATH = os.path.join(GAZEBO_ROOT_PATH, 'worlds')
 GAZEBO_MODEL_PATH = os.path.join(GAZEBO_ROOT_PATH, 'models')
 
 
-def export_lights(sdf, name=None, prefix='', suffix=''):
+def export_lights(sdf, name=None, prefix='', suffix='', overwrite=False):
     assert sdf.xml_element_name == 'sdf'
     assert name is not None, 'Model name cannot be None'
 
@@ -39,10 +39,10 @@ def export_lights(sdf, name=None, prefix='', suffix=''):
     group.to_gazebo_model(
         output_dir=GAZEBO_MODEL_PATH,
         model_name=model_name,
-        overwrite=True)
+        overwrite=overwrite)
 
 
-def export_light(sdf, name=None, prefix='', suffix=''):
+def export_light(sdf, name=None, prefix='', suffix='', overwrite=False):
     assert sdf.xml_element_name == 'light'
 
     light = Light.from_sdf(sdf)
@@ -53,10 +53,10 @@ def export_light(sdf, name=None, prefix='', suffix=''):
     group.to_gazebo_model(
         output_dir=GAZEBO_MODEL_PATH,
         model_name=model_name,
-        overwrite=True)
+        overwrite=overwrite)
 
 
-def export_model_dir(dir, prefix='', suffix=''):
+def export_model_dir(dir, prefix='', suffix='', overwrite=False):
     assert os.path.isdir(dir), 'Invalid directory'
     if 'model.config' not in os.listdir(dir):
         print('Directory {} does not contain a model, skipping...'.format(
@@ -67,6 +67,10 @@ def export_model_dir(dir, prefix='', suffix=''):
 
     model_name = prefix + model_name + suffix
     new_model_path = os.path.join(GAZEBO_MODEL_PATH, model_name)
+
+    if os.path.isdir(new_model_path) and overwrite:
+        shutil.rmtree(ew_model_path)
+
     if not os.path.isdir(new_model_path):
         shutil.copytree(dir, new_model_path)
     else:
@@ -84,7 +88,7 @@ def export_model_dir(dir, prefix='', suffix=''):
     return True
 
 
-def export_model(sdf, name=None, prefix='', suffix=''):
+def export_model(sdf, name=None, prefix='', suffix='', overwrite=False):
     assert sdf.xml_element_name == 'model'
     model = SimulationModel.from_sdf(sdf)
 
@@ -94,7 +98,7 @@ def export_model(sdf, name=None, prefix='', suffix=''):
 
     model_dir = model.to_gazebo_model(
         output_dir=GAZEBO_MODEL_PATH,
-        overwrite=True,
+        overwrite=overwrite,
         copy_resources=True)
     assert model_dir is not None, \
         'Could not export model {} as Gazebo model'.format(model.name)
@@ -115,19 +119,20 @@ def export_world(sdf, name=None, prefix='', suffix=''):
         overwrite=True)
 
 
-def install_dir(folder, prefix='', suffix=''):
+def install_dir(folder, prefix='', suffix='', overwrite=False):
     assert os.path.isdir(folder), 'Invalid input directory'
 
     if os.path.isfile(os.path.join(folder, 'model.config')):
         # The folder contains a model
-        export_model_dir(folder, prefix=prefix, suffix=suffix)
+        export_model_dir(
+            folder, prefix=prefix, suffix=suffix, overwrite=overwrite)
 
     if os.path.isdir(os.path.join(folder, 'models')):
         models_subdir = os.path.join(folder, 'models')
 
         for item in os.listdir(models_subdir):
             export_model_dir(
-                os.path.join(models_subdir, item))
+                os.path.join(models_subdir, item), overwrite=overwrite)
 
     if os.path.isdir(os.path.join(folder, 'worlds')):
         world_dir = os.path.join(folder, 'worlds')
@@ -196,6 +201,10 @@ if __name__ == '__main__':
         '--name', '-n',
         type=str,
         help='New name of the asset to be installed')
+    parser.add_argument(
+        '--overwrite', '-o',
+        action='store_true',
+        help='Overwrite if assets already exists')
 
     args = parser.parse_args()
 
@@ -239,17 +248,20 @@ if __name__ == '__main__':
 
             if sdf.xml_element_name == 'sdf':
                 if sdf.models is not None and len(sdf.models) == 1:
-                    export_model(sdf.models[0], args.name, prefix, suffix)
+                    export_model(
+                        sdf.models[0], args.name, prefix, suffix, args.overwrite)
                 elif sdf.world is not None:
-                    export_world(sdf.world, args.name, prefix, suffix)
+                    export_world(
+                        sdf.world, args.name, prefix, suffix, args.overwrite)
                 elif sdf.lights is not None:
-                    export_lights(sdf, args.name, prefix, suffix)
+                    export_lights(
+                        sdf, args.name, prefix, suffix, args.overwrite)
             elif sdf.xml_element_name == 'world':
-                export_world(sdf, args.name, prefix, suffix)
+                export_world(sdf, args.name, prefix, suffix, args.overwrite)
             elif sdf.xml_element_name == 'model':
-                export_model(sdf, args.name, prefix, suffix)
+                export_model(sdf, args.name, prefix, suffix, args.overwrite)
             elif sdf.xml_element_name == 'light':
-                export_light(sdf, args.name, prefix, suffix)
+                export_light(sdf, args.name, prefix, suffix, args.overwrite)
     elif args.tarball is not None:
         assert os.path.isfile(args.tarball), 'Invalid input tarball filename'
 
@@ -259,7 +271,11 @@ if __name__ == '__main__':
 
         folder = os.path.join(
             '/tmp', os.path.basename(args.tarball).split('.')[0])
-        install_dir(folder, prefix=prefix, suffix=suffix)
+        install_dir(
+            folder,
+            prefix=prefix,
+            suffix=suffix,
+            overwrite=args.overwrite)
         shutil.rmtree(folder)
 
     elif args.dir is not None:

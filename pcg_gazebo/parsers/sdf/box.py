@@ -21,11 +21,11 @@ class Box(XMLBase):
     _NAME = 'box'
     _TYPE = 'sdf'
     _CHILDREN_CREATORS = dict(
-        size=dict(creator=Size, default=[3])
+        size=dict(creator=Size, default=[[0, 0, 0]])
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Box, self).__init__()
         self.reset()
 
     @property

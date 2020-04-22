@@ -27,12 +27,12 @@ class Ray(XMLBase):
         noise=dict(
             creator=Noise, default=['gaussian', 'child'],
             optional=True),
-        range=dict(creator=Range),
+        range=dict(creator=Range, default=['ray']),
         scan=dict(creator=Scan)
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Ray, self).__init__()
         self.reset()
 
     @property

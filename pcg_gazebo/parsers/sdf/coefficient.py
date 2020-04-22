@@ -20,7 +20,7 @@ class Coefficient(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=1):
-        XMLScalar.__init__(self, default)
+        super(Coefficient, self).__init__(default)
 
     def _set_value(self, value):
         assert self._is_scalar(value), 'Coefficient input is not a scalar'

@@ -23,12 +23,12 @@ class Plane(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
-        size=dict(creator=Size, default=[2]),
+        size=dict(creator=Size, default=[[1, 1]]),
         normal=dict(creator=Normal)
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Plane, self).__init__()
         self.reset()
 
     @property

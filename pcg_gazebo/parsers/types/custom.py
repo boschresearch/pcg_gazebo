@@ -48,7 +48,7 @@ class XMLCustom(XMLBase):
             xml_elem.text = output_str.format(*value)
         return xml_elem
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = self._default
         XMLBase.reset(self)
 

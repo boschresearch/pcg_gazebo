@@ -37,7 +37,7 @@ class XMLBoolean(XMLBase):
                 self.xml_element_name, self._TYPE, self._NAME, type(value))
         self._value = bool(value)
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = self._default
         XMLBase.reset(self)
 

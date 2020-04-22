@@ -21,4 +21,4 @@ class Mass(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self):
-        XMLScalar.__init__(self, min_value=1e-10)
+        super(Mass, self).__init__(min_value=1e-10)

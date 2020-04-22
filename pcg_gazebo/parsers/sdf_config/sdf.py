@@ -25,7 +25,7 @@ class SDF(XMLString):
     )
 
     def __init__(self, default='model.sdf'):
-        XMLString.__init__(self, default)
+        super(SDF, self).__init__(default)
         self.reset()
 
     @property

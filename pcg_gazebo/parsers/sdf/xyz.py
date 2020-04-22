@@ -21,9 +21,5 @@ class XYZ(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, default=[0, 0, 1]):
-        XMLVector.__init__(self, 3)
+        super(XYZ, self).__init__(3)
         self.value = default
-
-    def _set_value(self, value):
-        assert sum(value) == 1, 'XYZ should be an unit vector'
-        XMLVector._set_value(self, value)

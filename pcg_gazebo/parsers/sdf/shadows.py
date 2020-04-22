@@ -20,4 +20,4 @@ class Shadows(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBoolean.__init__(self, default)
+        super(Shadows, self).__init__(default)

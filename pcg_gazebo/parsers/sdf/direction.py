@@ -21,7 +21,7 @@ class Direction(XMLBase):
     _TYPE = 'sdf'
 
     def __init__(self, default=[0, 0, -1]):
-        XMLBase.__init__(self)
+        super(Direction, self).__init__()
         assert self._is_numeric_vector(default) or \
             self._is_scalar(default), \
             'Direction must be either an array or a scalar'

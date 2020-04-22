@@ -28,7 +28,7 @@ class Clip(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Clip, self).__init__()
         self.reset()
 
     @property

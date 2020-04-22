@@ -50,7 +50,7 @@ class Accel(XMLBase):
 
     def __init__(self):
         '''Class constructor'''
-        XMLBase.__init__(self)
+        super(Accel, self).__init__()
         self.reset()
 
     @property

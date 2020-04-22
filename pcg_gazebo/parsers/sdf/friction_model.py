@@ -23,7 +23,7 @@ class FrictionModel(XMLString):
     _VALUE_OPTIONS = ['pyramid_model', 'box_model', 'cone_model']
 
     def __init__(self):
-        XMLString.__init__(self, default='pyramid_model')
+        super(FrictionModel, self).__init__(default='pyramid_model')
 
     def _set_value(self, value):
         assert isinstance(value, str)

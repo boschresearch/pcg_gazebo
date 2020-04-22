@@ -20,7 +20,8 @@ class Angular(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
+        super(Angular, self).__init__(
+            default, min_value=0, max_value=1)
 
     def _set_value(self, value):
         assert self._is_scalar(value), \

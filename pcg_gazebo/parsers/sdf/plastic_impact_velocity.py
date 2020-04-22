@@ -21,8 +21,4 @@ class PlasticImpactVelocity(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.5):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0
-        XMLScalar._set_value(self, value)
+        super(PlasticImpactVelocity, self).__init__(default)

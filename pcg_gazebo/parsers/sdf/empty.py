@@ -21,7 +21,7 @@ class Empty(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self):
-        XMLString.__init__(self, '')
+        super(Empty, self).__init__('')
 
     def _set_value(self, value):
         pass

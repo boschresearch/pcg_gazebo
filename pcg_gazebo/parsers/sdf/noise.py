@@ -54,7 +54,7 @@ class Noise(XMLBase):
     )
 
     def __init__(self, type='none', use_type_as='attribute'):
-        XMLBase.__init__(self)
+        super(Noise, self).__init__()
         self.reset()
         self.type = 'none'
         self._description = dict(

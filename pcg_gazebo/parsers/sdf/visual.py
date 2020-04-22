@@ -40,7 +40,7 @@ class Visual(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Visual, self).__init__()
         self.reset()
 
     @property

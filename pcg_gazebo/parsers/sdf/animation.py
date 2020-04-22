@@ -29,7 +29,7 @@ class Animation(XMLBase):
                 creator=InterpolateX, default=[False], optional=True))
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Animation, self).__init__()
         self.reset()
 
     @property

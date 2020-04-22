@@ -21,4 +21,4 @@ class Type(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self, default=''):
-        XMLString.__init__(self, default)
+        super(Type, self).__init__(default)

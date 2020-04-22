@@ -21,7 +21,7 @@ class Gravity(XMLBase):
     _TYPE = 'sdf'
 
     def __init__(self, default=True):
-        XMLBase.__init__(self)
+        super(Gravity, self).__init__()
         assert self._is_boolean(default) or self._is_numeric_vector(default)
 
         if isinstance(default, collections.Iterable):
@@ -45,7 +45,7 @@ class Gravity(XMLBase):
                     assert isinstance(elem, float) or isinstance(elem, int)
             self._value = list(value)
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = self._default
 
     def is_valid(self):

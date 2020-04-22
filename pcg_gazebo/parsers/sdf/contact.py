@@ -12,8 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-from ..types import XMLBase, XMLString
+from ..types import XMLBase
 from .stiffness import Stiffness
 from .dissipation import Dissipation
 from .plastic_coef_restitution import PlasticCoefRestitution
@@ -33,14 +32,6 @@ from .collide_without_contact_bitmask import CollideWithoutContactBitmask
 from .category_bitmask import CategoryBitmask
 from .poissons_ratio import PoissonsRatio
 from .elastic_modulus import ElasticModulus
-
-
-class ContactCollisionName(XMLString):
-    _NAME = 'collision'
-    _TYPE = 'sdf'
-
-    def __init__(self, default='__default__'):
-        XMLString.__init__(self, default)
 
 
 class Contact(XMLBase):
@@ -81,9 +72,13 @@ class Contact(XMLBase):
             optional=True,
             mode='collision'),
         collision=dict(
-            creator=ContactCollisionName, mode='sensor'),
+            creator=None,
+            default=['string', '__default__'],
+            mode='sensor'),
         topic=dict(
-            creator=Topic, default=['__default_topic__'], mode='sensor'),
+            creator=Topic,
+            default=['__default_topic__'],
+            mode='sensor'),
         collide_bitmask=dict(
             creator=CollideBitmask,
             default=[65535],
@@ -119,7 +114,7 @@ class Contact(XMLBase):
     _MODES = ['simbody', 'collision', 'sensor']
 
     def __init__(self, mode='simbody'):
-        XMLBase.__init__(self)
+        super(Contact, self).__init__()
         self.reset(mode=mode)
 
     @property

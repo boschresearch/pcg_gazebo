@@ -21,7 +21,7 @@ class Precision(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self):
-        XMLScalar.__init__(self)
+        super(Precision, self).__init__()
 
     def _set_value(self, value):
         assert self._is_scalar(value)

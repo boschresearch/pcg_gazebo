@@ -23,7 +23,7 @@ class Localization(XMLString):
     _VALUE_OPTIONS = ['CUSTOM', 'NED', 'ENU', 'NWU', 'GRAV_UP', 'GRAV_DOWN']
 
     def __init__(self, default='CUSTOM'):
-        XMLString.__init__(self, default)
+        super(Localization, self).__init__(default)
 
     def _set_value(self, value):
         assert value in self._VALUE_OPTIONS, \

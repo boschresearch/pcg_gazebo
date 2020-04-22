@@ -31,7 +31,7 @@ class ForceTorque(XMLBase):
             default=['child_to_parent']))
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(ForceTorque, self).__init__()
         self.reset()
 
     @property

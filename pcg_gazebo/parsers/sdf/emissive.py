@@ -20,7 +20,7 @@ class Emissive(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, size=4):
-        XMLVector.__init__(self, size)
+        super(Emissive, self).__init__(size)
         self._default = [0, 0, 0, 1]
         self._value = [0, 0, 0, 1]
 

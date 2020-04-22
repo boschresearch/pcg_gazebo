@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from . import XMLBase
 from ...utils import is_string, generate_random_string
 
@@ -34,7 +33,7 @@ class XMLString(XMLBase):
                 self.xml_element_name, value, type(value))
         self._value = str(value)
 
-    def reset(self):
+    def reset(self, mode=None, with_optional_elements=False):
         self._value = self._default
         XMLBase.reset(self)
 

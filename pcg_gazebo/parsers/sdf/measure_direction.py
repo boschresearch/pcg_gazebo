@@ -23,7 +23,7 @@ class MeasureDirection(XMLString):
     _VALUE_OPTIONS = ['child_to_parent', 'parent_to_link']
 
     def __init__(self, default='child_to_parent'):
-        XMLString.__init__(self, default)
+        super(MeasureDirection, self).__init__(default)
 
     def _set_value(self, value):
         assert value in self._VALUE_OPTIONS, \

@@ -21,7 +21,7 @@ class Version(XMLString):
     _TYPE = 'sdf_config'
 
     def __init__(self, default='none'):
-        XMLString.__init__(self, default)
+        super(Version, self).__init__(default)
 
     def _set_value(self, value):
         self._value = str(value)

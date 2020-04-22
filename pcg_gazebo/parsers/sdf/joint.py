@@ -19,52 +19,9 @@ from .child import Child
 from .pose import Pose
 from .axis import Axis
 from .axis2 import Axis2
-from .ode import ODE
-from .simbody import Simbody
-from .provide_feedback import ProvideFeedback
 from .sensor import Sensor
 from .urdf import URDF
-
-
-class JointPhysics(XMLBase):
-    _NAME = 'physics'
-    _TYPE = 'sdf'
-
-    _CHILDREN_CREATORS = dict(
-        simbody=dict(
-            creator=Simbody, default=['joint'], optional=True),
-        ode=dict(
-            creator=ODE, default=['joint'], optional=True),
-        provide_feedback=dict(
-            creator=ProvideFeedback, default=[False], optional=True))
-
-    def __init__(self):
-        XMLBase.__init__(self)
-        self.reset()
-
-    @property
-    def simbody(self):
-        return self._get_child_element('simbody')
-
-    @simbody.setter
-    def simbody(self, value):
-        self._add_child_element('simbody', value)
-
-    @property
-    def ode(self):
-        return self._get_child_element('ode')
-
-    @ode.setter
-    def ode(self, value):
-        self._add_child_element('ode', value)
-
-    @property
-    def provide_feedback(self):
-        return self._get_child_element('provide_feedback')
-
-    @provide_feedback.setter
-    def provide_feedback(self, value):
-        self._add_child_element('provide_feedback', value)
+from .physics import Physics
 
 
 class Joint(XMLBase):
@@ -82,8 +39,8 @@ class Joint(XMLBase):
         pose=dict(creator=Pose, optional=True),
         axis=dict(creator=Axis, optional=True),
         axis2=dict(creator=Axis2, optional=True),
-        physics=dict(creator=JointPhysics, optional=True),
-        sensor=dict(creator=Sensor, optional=True),
+        physics=dict(creator=Physics, default=['joint'], optional=True),
+        sensor=dict(creator=Sensor, default=['force_torque'], optional=True),
         urdf=dict(creator=URDF, default=['joint'], optional=True)
     )
 

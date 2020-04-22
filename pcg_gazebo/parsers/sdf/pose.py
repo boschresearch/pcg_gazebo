@@ -25,7 +25,7 @@ class Pose(XMLVector):
     )
 
     def __init__(self):
-        XMLVector.__init__(self, 6)
+        super(Pose, self).__init__(6)
         self.reset()
 
     @property

@@ -31,7 +31,7 @@ class Sky(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Sky, self).__init__()
         self.reset()
 
     @property

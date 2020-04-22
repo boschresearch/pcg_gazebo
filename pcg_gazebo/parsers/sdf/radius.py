@@ -20,10 +20,4 @@ class Radius(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert self._is_scalar(value), \
-            'Radius must be a float or an integer'
-        assert value >= 0, 'Radius must be equal or greater than zero'
-        XMLScalar._set_value(self, value)
+        super(Radius, self).__init__(default, min_value=0)

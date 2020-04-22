@@ -28,7 +28,7 @@ class Author(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Author, self).__init__()
         self.reset()
 
     @property

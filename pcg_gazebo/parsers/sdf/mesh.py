@@ -30,7 +30,7 @@ class Mesh(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Mesh, self).__init__()
         self.reset()
 
     @property

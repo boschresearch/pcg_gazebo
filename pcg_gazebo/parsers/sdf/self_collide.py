@@ -12,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 from ..types import XMLBoolean
 
 
@@ -21,4 +20,4 @@ class SelfCollide(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=False):
-        XMLBoolean.__init__(self, default)
+        super(SelfCollide, self).__init__(default)

@@ -20,8 +20,5 @@ class Speed(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0.6):
-        XMLScalar.__init__(self, default)
-
-    def _set_value(self, value):
-        assert value >= 0.0, 'Speed must be equal or greater to zero'
-        XMLScalar._set_value(self, value)
+        super(Speed, self).__init__(
+            default, min_value=0)

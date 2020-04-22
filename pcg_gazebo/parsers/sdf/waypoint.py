@@ -28,7 +28,7 @@ class Waypoint(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Waypoint, self).__init__()
         self.reset()
 
     @property

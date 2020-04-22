@@ -54,7 +54,7 @@ class IMU(XMLBase):
                 '1.5']))
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(IMU, self).__init__()
         self.reset()
 
     @property

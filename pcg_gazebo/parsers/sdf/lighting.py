@@ -21,4 +21,4 @@ class Lighting(XMLBoolean):
     _TYPE = 'sdf'
 
     def __init__(self, default=False):
-        XMLBoolean.__init__(self, default)
+        super(Lighting, self).__init__(default)

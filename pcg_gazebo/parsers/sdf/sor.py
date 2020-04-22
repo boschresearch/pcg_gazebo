@@ -20,9 +20,5 @@ class Sor(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=1.3):
-        XMLScalar.__init__(self, default=default)
-
-    def _set_value(self, value):
-        assert self._is_scalar(value), 'Input is not a scalar'
-        assert value > 0
-        XMLScalar._set_value(self, value)
+        super(Sor, self).__init__(
+            default=default, min_value=0)

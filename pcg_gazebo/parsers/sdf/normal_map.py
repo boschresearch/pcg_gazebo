@@ -21,4 +21,4 @@ class NormalMap(XMLString):
     _TYPE = 'sdf'
 
     def __init__(self, default=''):
-        XMLString.__init__(self, default=default)
+        super(NormalMap, self).__init__(default=default)

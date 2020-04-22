@@ -21,4 +21,4 @@ class EMail(XMLString):
     _TYPE = 'sdf_config'
 
     def __init__(self, default='none'):
-        XMLString.__init__(self, default)
+        super(EMail, self).__init__(default)

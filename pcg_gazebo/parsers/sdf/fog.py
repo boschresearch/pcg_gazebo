@@ -33,7 +33,7 @@ class Fog(XMLBase):
     )
 
     def __init__(self, mode=''):
-        XMLBase.__init__(self)
+        super(Fog, self).__init__()
         self.reset(mode=mode)
 
     @property

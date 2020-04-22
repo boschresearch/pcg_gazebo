@@ -21,4 +21,4 @@ class Description(XMLString):
     _TYPE = 'sdf_config'
 
     def __init__(self, default='none'):
-        XMLString.__init__(self, default)
+        super(Description, self).__init__(default)

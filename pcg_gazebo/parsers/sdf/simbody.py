@@ -52,7 +52,7 @@ class Simbody(XMLBase):
     _MODES = ['physics', 'joint']
 
     def __init__(self, mode='physics'):
-        XMLBase.__init__(self)
+        super(Simbody, self).__init__()
         self.reset(mode=mode)
 
     @property

@@ -26,7 +26,7 @@ class DepthCamera(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(DepthCamera, self).__init__()
         self.reset()
 
     @property

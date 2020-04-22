@@ -30,6 +30,7 @@ from .axis2 import Axis2
 from .background import Background
 from .bias_mean import BiasMean
 from .bias_stddev import BiasStdDev
+from .blend import Blend
 from .bounce import Bounce
 from .box import Box
 from .bullet import Bullet
@@ -71,6 +72,7 @@ from .empty import Empty
 from .enable_wind import EnableWind
 from .end import End
 from .erp import ERP
+from .fade_dist import FadeDist
 from .falloff import FallOff
 from .far import Far
 from .fdir1 import FDir1
@@ -88,6 +90,7 @@ from .gravity import Gravity
 from .grid import Grid
 from .gui import GUI
 from .height import Height
+from .heightmap import Heightmap
 from .horizontal_fov import HorizontalFOV
 from .horizontal import Horizontal
 from .humidity import Humidity
@@ -142,6 +145,7 @@ from .mesh import Mesh
 from .min_angle import MinAngle
 from .min_depth import MinDepth
 from .min_dist import MinDist
+from .min_height import MinHeight
 from .min_step_size import MinStepSize
 from .model import Model
 from .mu import Mu
@@ -174,6 +178,7 @@ from .plugin import Plugin
 from .point import Point
 from .poissons_ratio import PoissonsRatio
 from .polyline import Polyline
+from .pos import Pos
 from .pose import Pose
 from .precision import Precision
 from .precon_iters import PreConIters
@@ -189,6 +194,7 @@ from .resolution import Resolution
 from .restitution_coefficient import RestitutionCoefficient
 from .rolling_friction import RollingFriction
 from .samples import Samples
+from .sampling import Sampling
 from .save import Save
 from .scale import Scale
 from .scan import Scan
@@ -229,6 +235,7 @@ from .sunrise import Sunrise
 from .sunset import Sunset
 from .surface_radius import SurfaceRadius
 from .surface import Surface
+from .texture import Texture
 from .threshold import Threshold
 from .time import Time
 from .topic import Topic
@@ -245,6 +252,7 @@ from .use_dynamic_moi_rescaling import UseDynamicMOIRescaling
 from .use_model_frame import UseModelFrame
 from .use_parent_model_frame import UseParentModelFrame
 from .use_patch_radius import UsePatchRadius
+from .use_terrain_paging import UseTerrainPaging
 from .velocity import Velocity
 from .vertical_position import VerticalPosition
 from .vertical_velocity import VerticalVelocity
@@ -332,6 +340,7 @@ __all__ = [
     'Background',
     'BiasMean',
     'BiasStdDev',
+    'Blend',
     'Bounce',
     'Box',
     'Bullet',
@@ -373,6 +382,7 @@ __all__ = [
     'EnableWind',
     'End',
     'ERP',
+    'FadeDist',
     'FallOff',
     'Far',
     'FDir1',
@@ -390,6 +400,7 @@ __all__ = [
     'Grid',
     'GUI',
     'Height',
+    'Heightmap',
     'Horizontal',
     'HorizontalFOV',
     'Humidity',
@@ -444,6 +455,7 @@ __all__ = [
     'MinAngle',
     'MinDepth',
     'MinDist',
+    'MinHeight',
     'MinStepSize',
     'Model',
     'Mu',
@@ -474,6 +486,7 @@ __all__ = [
     'Point',
     'PoissonsRatio',
     'Polyline',
+    'Pos',
     'Pose',
     'Precision',
     'PreConIters',
@@ -489,6 +502,7 @@ __all__ = [
     'RestitutionCoefficient',
     'RollingFriction',
     'Samples',
+    'Sampling',
     'Save',
     'Scale',
     'Scan',
@@ -528,6 +542,7 @@ __all__ = [
     'Sunset',
     'Surface',
     'SurfaceRadius',
+    'Texture',
     'Threshold',
     'Time',
     'Topic',
@@ -544,6 +559,7 @@ __all__ = [
     'UseModelFrame',
     'UseParentModelFrame',
     'UsePatchRadius',
+    'UseTerrainPaging',
     'Velocity',
     'Vertical',
     'VerticalPosition',

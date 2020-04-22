@@ -21,8 +21,5 @@ class SpringReference(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default=0)
-
-    def _set_value(self, value):
-        assert value >= 0
-        XMLScalar._set_value(self, value)
+        super(SpringReference, self).__init__(
+            default=0, min_value=0)

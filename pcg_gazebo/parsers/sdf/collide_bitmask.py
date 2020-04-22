@@ -20,4 +20,4 @@ class CollideBitmask(XMLInteger):
     _TYPE = 'sdf'
 
     def __init__(self, default=65535):
-        XMLInteger.__init__(self, default)
+        super(CollideBitmask, self).__init__(default)

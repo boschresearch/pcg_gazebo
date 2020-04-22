@@ -32,7 +32,7 @@ class Vertical(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Vertical, self).__init__()
         self.reset()
 
     @property

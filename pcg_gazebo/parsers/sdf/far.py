@@ -21,7 +21,7 @@ class Far(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default, min_value=0)
+        super(Far, self).__init__(default, min_value=0)
 
     def _set_value(self, value):
         XMLScalar._set_value(self, value)

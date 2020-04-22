@@ -45,7 +45,7 @@ class Limit(XMLBase):
     _MODES = ['axis', 'joint']
 
     def __init__(self, mode='axis'):
-        XMLBase.__init__(self)
+        super(Limit, self).__init__()
         self.reset(mode=mode)
 
     @property

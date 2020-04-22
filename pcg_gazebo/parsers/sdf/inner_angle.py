@@ -21,7 +21,7 @@ class InnerAngle(XMLScalar):
     _TYPE = 'sdf'
 
     def __init__(self, default=0):
-        XMLScalar.__init__(self, default)
+        super(InnerAngle, self).__init__(default)
 
     def _set_value(self, value):
         assert self._is_scalar(value), \

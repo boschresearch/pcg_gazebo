@@ -21,4 +21,4 @@ class Point(XMLVector):
     _TYPE = 'sdf'
 
     def __init__(self, vec_length=2):
-        XMLVector.__init__(self, vec_length)
+        super(Point, self).__init__(vec_length)

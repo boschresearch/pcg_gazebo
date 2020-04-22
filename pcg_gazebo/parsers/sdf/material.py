@@ -38,7 +38,7 @@ class Material(XMLBase):
     )
 
     def __init__(self):
-        XMLBase.__init__(self)
+        super(Material, self).__init__()
 
     @property
     def script(self):
