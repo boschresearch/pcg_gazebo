@@ -182,6 +182,7 @@ from .pos import Pos
 from .pose import Pose
 from .precision import Precision
 from .precon_iters import PreConIters
+from .projection_type import ProjectionType
 from .provide_feedback import ProvideFeedback
 from .quadratic import Quadratic
 from .radius import Radius
@@ -490,6 +491,7 @@ __all__ = [
     'Pose',
     'Precision',
     'PreConIters',
+    'ProjectionType',
     'ProvideFeedback',
     'Quadratic',
     'Radius',
