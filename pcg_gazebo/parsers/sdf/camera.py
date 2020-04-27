@@ -24,6 +24,7 @@ from .distortion import Distortion
 from .pose import Pose
 from .name import Name
 from .view_controller import ViewController
+from .projection_type import ProjectionType
 
 
 class Camera(XMLBase):
@@ -42,7 +43,8 @@ class Camera(XMLBase):
         distortion=dict(creator=Distortion, optional=True, mode='sensor'),
         pose=dict(creator=Pose, optional=True, mode='gui'),
         name=dict(creator=Name, optional=True, mode='gui'),
-        view_controller=dict(creator=ViewController, optional=True, mode='gui')
+        view_controller=dict(creator=ViewController, optional=True, mode='gui'),
+        projection_type=dict(creator=ProjectionType, optional=True, mode='gui')
     )
 
     _ATTRIBUTES = dict(
@@ -154,3 +156,13 @@ class Camera(XMLBase):
         if self._mode != 'gui':
             self.reset(mode='gui')
         self._add_child_element('view_controller', value)
+
+    @property
+    def projection_type(self):
+        return self._get_child_element('projection_type')
+
+    @projection_type.setter
+    def projection_type(self, value):
+        if self._mode != 'gui':
+            self.reset(mode='gui')
+        self._add_child_element('projection_type', value)
