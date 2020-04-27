@@ -41,7 +41,8 @@ class TestParseSDF(unittest.TestCase):
 
         # Exclude special cases
         exclude = ['empty', 'format', 'friction_model', 'collision',
-                   'measure_direction', 'localization', 'view_controller']
+                   'measure_direction', 'localization', 'view_controller',
+                   'projection_type']
 
         for tag in string_test_cases:
             if tag in exclude:
@@ -83,6 +84,15 @@ class TestParseSDF(unittest.TestCase):
         for value in values:
             sdf_str, expected_sdf = generate_string_test_obj(
                 'localization', value)
+            sdf = parse_sdf(sdf_str)
+            self.assertIsNotNone(sdf)
+            self.assertEqual(parse_sdf(sdf_str), expected_sdf)
+
+        # Add tests for projection_type
+        values = ['perspective', 'orthographic']
+        for value in values:
+            sdf_str, expected_sdf = generate_string_test_obj(
+                'projection_type', value)
             sdf = parse_sdf(sdf_str)
             self.assertIsNotNone(sdf)
             self.assertEqual(parse_sdf(sdf_str), expected_sdf)
