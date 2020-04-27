@@ -43,8 +43,10 @@ class Camera(XMLBase):
         distortion=dict(creator=Distortion, optional=True, mode='sensor'),
         pose=dict(creator=Pose, optional=True, mode='gui'),
         name=dict(creator=Name, optional=True, mode='gui'),
-        view_controller=dict(creator=ViewController, optional=True, mode='gui'),
-        projection_type=dict(creator=ProjectionType, optional=True, mode='gui')
+        view_controller=dict(
+            creator=ViewController, optional=True, mode='gui'),
+        projection_type=dict(
+            creator=ProjectionType, optional=True, mode='gui')
     )
 
     _ATTRIBUTES = dict(
