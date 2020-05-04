@@ -21,6 +21,12 @@ such Third Party IP, are set forth below.
       - [License](#license-4)
     - [<a name="kobuki_meshes">Kobuki meshes</a>](#kobuki-meshes)
       - [License](#license-5)
+    - [<a name="test_actor_relative_paths">`test_actor_relative_paths`</a>](#testactorrelativepaths)
+      - [License](#license-6)
+    - [<a name="test_actor_walking">`test_actor_walking`</a>](#testactorwalking)
+      - [License](#license-7)
+    - [<a name="gazebo-world-samples">Gazebo world samples</a>](#gazebo-world-samples)
+      - [License](#license-8)
 
 ## <a name="license-information">License information</a>
 
@@ -263,4 +269,114 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
 LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
+```
+
+### <a name="test_actor_relative_paths">`test_actor_relative_paths`</a>
+
+| Name | Data |
+| --- | --- |
+| Project name / Source | `actor - relative paths` |
+| Version | 1.0 |
+| URL | https://app.ignitionrobotics.org/chapulina/fuel/models/actor%20-%20relative%20paths |
+| License | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication |
+| Copyright | Copyright (c) 2019 chapulina |
+
+#### License
+
+```
+Copyright (c) chapulina
+
+No Copyright
+
+The person who associated a work with this deed has dedicated the work to the 
+public domain by waiving all of his or her rights to the work worldwide under 
+copyright law, including all related and neighboring rights, to the extent 
+allowed by law.
+
+You can copy, modify, distribute and perform the work, even for commercial 
+purposes, all without asking permission. See Other Information below.
+
+
+Other Information
+
+In no way are the patent or trademark rights of any person affected by CC0, 
+nor are the rights that other persons may have in the work or in how the work 
+is used, such as publicity or privacy rights.
+
+Unless expressly stated otherwise, the person who associated a work with this 
+deed makes no warranties about the work, and disclaims liability for all uses 
+of the work, to the fullest extent permitted by applicable law.
+
+When using or citing the work, you should not imply endorsement by the author 
+or the affirmer.
+```
+
+### <a name="test_actor_walking">`test_actor_walking`</a>
+
+| Name | Data |
+| --- | --- |
+| Project name / Source | `Walking actor` |
+| Version | 1.0 |
+| URL | https://app.ignitionrobotics.org/chapulina/fuel/models/Walking%20actor |
+| License | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication |
+| Copyright | Copyright (c) 2019 chapulina |
+
+#### License
+
+```
+Copyright (c) chapulina
+
+No Copyright
+
+The person who associated a work with this deed has dedicated the work to the 
+public domain by waiving all of his or her rights to the work worldwide under 
+copyright law, including all related and neighboring rights, to the extent 
+allowed by law.
+
+You can copy, modify, distribute and perform the work, even for commercial 
+purposes, all without asking permission. See Other Information below.
+
+
+Other Information
+
+In no way are the patent or trademark rights of any person affected by CC0, 
+nor are the rights that other persons may have in the work or in how the work 
+is used, such as publicity or privacy rights.
+
+Unless expressly stated otherwise, the person who associated a work with this 
+deed makes no warranties about the work, and disclaims liability for all uses 
+of the work, to the fullest extent permitted by applicable law.
+
+When using or citing the work, you should not imply endorsement by the author 
+or the affirmer.
+```
+
+### <a name="gazebo-world-samples">Gazebo world samples</a>
+
+| Name | Data |
+| --- | --- |
+| Project name / Source | Gazebo |
+| Version | 9.13 |
+| URL | https://github.com/osrf/gazebo/tree/gazebo9/worlds |
+| License | CC0 1.0 Universal (CC0 1.0) Public Domain Dedication |
+| Copyright | Copyright (c) 2019 chapulina |
+
+#### License
+
+```
+Software License Agreement (Apache License)
+
+Copyright (C) 2012 Open Source Robotics Foundation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 ```
