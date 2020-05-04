@@ -20,7 +20,8 @@ import sys
 from lxml import etree
 from lxml.etree import Element, SubElement
 from ...log import PCG_ROOT_LOGGER
-from ...utils import is_scalar, is_boolean, is_array, is_string
+from ...utils import is_scalar, is_boolean, is_array, \
+    is_string, is_integer
 from .. import convert_from_string
 
 if sys.version_info[0] == 2:
@@ -194,6 +195,9 @@ class XMLBase(object):
 
     def _is_boolean(self, value):
         return is_boolean(value)
+
+    def _is_integer(self, value):
+        return is_integer(value)
 
     def _set_value(self, value):
         raise NotImplementedError()
