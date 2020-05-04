@@ -17,6 +17,7 @@ from copy import deepcopy
 from .properties import Pose
 from .model import SimulationModel
 from .light import Light
+from .actor import Actor
 from .entity import Entity
 from ..log import PCG_ROOT_LOGGER
 from ..utils import has_string_pattern
@@ -28,6 +29,7 @@ class ModelGroup(Entity):
         super(ModelGroup, self).__init__(
             name=name, pose=pose)
         self._models = dict()
+        self._actors = dict()
         self._lights = dict()
         # Flag to indicate if the model is a ground plane
         self._is_ground_plane = is_ground_plane
@@ -68,6 +70,11 @@ class ModelGroup(Entity):
         return self._lights
 
     @property
+    def actors(self):
+        """`dict`: Actors"""
+        return self._actors
+
+    @property
     def n_models(self):
         """`int`: Number of models"""
         n_models = 0
@@ -84,6 +91,11 @@ class ModelGroup(Entity):
         return len(self._lights)
 
     @property
+    def n_actors(self):
+        """`int`: Number of actors"""
+        return len(self._actors)
+
+    @property
     def has_mesh(self):
         for tag in self._models:
             if self._models[tag].has_mesh:
@@ -96,6 +108,8 @@ class ModelGroup(Entity):
             mg._models[tag] = self._models[tag].copy()
         for tag in self._lights:
             mg._lights[tag] = self._lights[tag].copy()
+        for tag in self._actors:
+            mg._actors[tag] = self._actors[tag].copy()
         mg._is_ground_plane = deepcopy(self._is_ground_plane)
         mg._pose = deepcopy(self._pose)
         return mg
@@ -118,6 +132,14 @@ class ModelGroup(Entity):
     def reset_models(self):
         """Reset the list of models."""
         self._models = dict()
+
+    def reset_lights(self):
+        """Reset the list of lights."""
+        self._lights = dict()
+
+    def reset_actors(self):
+        """Reset the list of actors."""
+        self._actors = dict()
 
     def add_model(self, tag, model):
         """Add a model to the world.
@@ -154,7 +176,7 @@ class ModelGroup(Entity):
         return name
 
     def rm_model(self, tag):
-        """Remove model from world.
+        """Remove model from group.
 
         > *Input arguments*
 
@@ -183,6 +205,71 @@ class ModelGroup(Entity):
         `bool`: `True`, if model exists, `False`, otherwise.
         """
         return tag in self._models
+
+    def add_actor(self, tag, actor):
+        """Add an actor to the group.
+
+        > *Input arguments*
+
+        * `tag` (*type:* `str`): Actor's local name in the world. If
+        a actor with the same name already exists, the actor will be
+        created with a counter suffix in the format `_i`, `i` being
+        an integer.
+        * `actor` (*type:* `pcg_gazebo.simulation.Actor`):
+        Actor object
+
+        > *Returns*
+
+        `bool`: `True`, if model could be added to the world.
+        """
+        assert isinstance(actor, Actor), \
+            'Input model is not of type' \
+            ' Actor'
+        if self.actor_exists(tag):
+            # Add counter suffix to add actors with same name
+            i = 0
+            new_actor_name = '{}'.format(tag)
+            while self.actor_exists(new_actor_name):
+                i += 1
+                new_actor_name = '{}_{}'.format(tag, i)
+            name = new_actor_name
+        else:
+            name = tag
+
+        self._actors[name] = actor.copy()
+        self._actors[name].name = name
+        return name
+
+    def rm_actor(self, tag):
+        """Remove actor from group.
+
+        > *Input arguments*
+
+        * `tag` (*type:* `str`): Local name identifier of the
+        actor to be removed.
+
+        > *Returns*
+
+        `bool`: `True`, if actor could be removed, `False` if
+        no actor with name `tag` could be found in the world.
+        """
+        if tag in self._actors:
+            del self._actors[tag]
+            return True
+        return False
+
+    def actor_exists(self, tag):
+        """Test if a actor with name `tag` exists in the group description.
+
+        > *Input arguments*
+
+        * `tag` (*type:* `str`): Local name identifier of the actor.
+
+        > *Returns*
+
+        `bool`: `True`, if actor exists, `False`, otherwise.
+        """
+        return tag in self._actors
 
     def add_include(self, include):
         """Add a model via include method.
@@ -319,6 +406,52 @@ class ModelGroup(Entity):
             list(self.get_models(
                 with_group_prefix=True, ignore_models=ignore_models).values()),
             mesh_type, add_pseudo_color, add_axis=add_axis)
+
+    def get_actor(self, name, with_group_prefix=True, use_group_pose=True):
+        prefix = self.prefix if with_group_prefix else ''
+        if '/' not in name:
+            if name not in self._actors:
+                PCG_ROOT_LOGGER.warning('No actor {} found in group {}'.format(
+                    name, self.name))
+                return None
+
+            output = self._actors[name].copy()
+            if use_group_pose:
+                output.pose = self._pose + output.pose
+            output.name = prefix + output.name
+        else:
+            sub_group_name = name.split('/')[0]
+            if sub_group_name not in self._models:
+                PCG_ROOT_LOGGER.warning(
+                    '<{}> is not a model group in <{}>'.format(
+                        sub_group_name, self.name))
+                return None
+            output = self._models[sub_group_name].get_actor(
+                name=name.replace(sub_group_name + '/', ''),
+                with_group_prefix=True)
+            if use_group_pose:
+                output.pose = self._pose + output.pose
+            output.name = prefix + output.name
+        PCG_ROOT_LOGGER.info('Retrieving actor <{}> from group <{}>'.format(
+            output.name, self.name))
+        return output
+
+    def get_actors(self, with_group_prefix=True, use_group_pose=True):
+        prefix = self.prefix if with_group_prefix else ''
+        output_actors = dict()
+        for name in self._actors:
+            light = self.get_actor(name, with_group_prefix)
+            output_actors[light.name] = self.get_actor(
+                name, with_group_prefix, use_group_pose)
+        for tag in self._models:
+            if isinstance(self._models[tag], ModelGroup):
+                actors = self._models[tag].get_actors(
+                    with_group_prefix=True, use_group_pose=True)
+                for name in actors:
+                    actors[name].name = prefix + actors[name].name
+                    actors[name].pose = actors[name].pose + self._pose
+                    output_actors[actors[name].name] = actors[name]
+        return output_actors
 
     def get_model(self, name, with_group_prefix=True, use_group_pose=True):
         prefix = self.prefix if with_group_prefix else ''
