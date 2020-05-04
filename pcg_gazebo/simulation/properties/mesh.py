@@ -32,7 +32,7 @@ logger.disabled = True
 
 
 class Mesh(object):
-    def __init__(self, filename=None, load_mesh=False):
+    def __init__(self, filename=None, load_mesh=False, scale=[1, 1, 1]):
         self._uri = None
         self._filename = None
         if filename is not None:
@@ -43,9 +43,10 @@ class Mesh(object):
         self._mesh = None
         self._bounds = None
         self._center = None
-        self._scale = [1, 1, 1]
-
+        self._scale = None
         self._footprint_states = list()
+
+        self.scale = scale
 
         if load_mesh:
             self.load_mesh()
@@ -143,7 +144,9 @@ class Mesh(object):
     def scale(self, vec):
         assert isinstance(vec, collections.Iterable), 'Input is not an array'
         vec = list(vec)
-        assert len(vec) == 3, 'Input scale array must have 3 elements'
+        assert len(vec) == 3, \
+            'Input scale array must have 3 elements,' \
+            ' provided={}'.format(vec)
         for elem in vec:
             assert elem > 0, 'Scale vector' \
                 ' components must be greater than zero'

@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from .animation import Animation
 from .axis import Axis
 from .bounding_box import BoundingBox
 from .collision import Collision
@@ -25,9 +26,13 @@ from .mesh import Mesh
 from .noise import Noise
 from .plugin import Plugin
 from .pose import Pose
+from .script import Script
+from .trajectory import Trajectory
+from .waypoint import Waypoint
 
 
 __all__ = [
+    'Animation',
     'Axis',
     'BoundingBox',
     'Collision',
@@ -39,5 +44,8 @@ __all__ = [
     'Mesh',
     'Noise',
     'Plugin',
-    'Pose'
+    'Pose',
+    'Script',
+    'Trajectory',
+    'Waypoint'
 ]
