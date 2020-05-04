@@ -34,10 +34,12 @@ class Center(XMLBase):
                 'Input default vector is not a numeric vector'
             self._default = default
             self._value = default
+            self._VALUE_TYPE = 'vector'
         else:
             self._mode = 'boolean'
             self._default = bool(default)
             self._value = bool(default)
+            self._VALUE_TYPE = 'boolean'
 
     def _set_value(self, value):
         assert self._is_boolean(value) or self._is_array(value), \
@@ -69,7 +71,7 @@ class Center(XMLBase):
 
     def is_valid(self):
         if not isinstance(self._value, type(self._default)):
-            self.log.error('Object must have a {}'.format(type(self._default)))
+            self.log_error('Object must have a {}'.format(type(self._default)))
             return False
         return True
 

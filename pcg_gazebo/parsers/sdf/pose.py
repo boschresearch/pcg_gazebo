@@ -24,8 +24,9 @@ class Pose(XMLVector):
         frame=''
     )
 
-    def __init__(self):
+    def __init__(self, default=[0, 0, 0, 0, 0, 0]):
         super(Pose, self).__init__(6)
+        self.value = default
         self.reset()
 
     @property

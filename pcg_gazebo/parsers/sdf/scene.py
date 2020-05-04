@@ -19,6 +19,7 @@ from .background import Background
 from .shadows import Shadows
 from .grid import Grid
 from .origin_visual import OriginVisual
+from .fog import Fog
 
 
 class Scene(XMLBase):
@@ -31,7 +32,9 @@ class Scene(XMLBase):
         sky=dict(creator=Sky, optional=True),
         shadows=dict(creator=Shadows, default=[True], optional=True),
         grid=dict(creator=Grid, default=[True], optional=True),
-        origin_visual=dict(creator=OriginVisual, default=[True], optional=True)
+        origin_visual=dict(
+            creator=OriginVisual, default=[True], optional=True),
+        fog=dict(creator=Fog, optional=True)
     )
 
     def __init__(self):
@@ -85,3 +88,11 @@ class Scene(XMLBase):
     @origin_visual.setter
     def origin_visual(self, value):
         self._add_child_element('origin_visual', value)
+
+    @property
+    def fog(self):
+        return self._get_child_element('fog')
+
+    @fog.setter
+    def fog(self, value):
+        self._add_child_element('fog', value)

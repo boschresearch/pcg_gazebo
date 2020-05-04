@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,31 +13,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
-from .pose import Pose
 
 
-class Frame(XMLBase):
-    _NAME = 'frame'
+class Angle(XMLBase):
+    _NAME = 'angle'
     _TYPE = 'sdf'
 
     _ATTRIBUTES = dict(
-        name='__default__'
+        axis='0'
     )
 
-    _CHILDREN_CREATORS = dict(
-        pose=dict(creator=Pose, default=[[0, 0, 0, 0, 0, 0]], optional=True)
-    )
-
-    def __init__(self, default='__default__'):
-        super(Frame, self).__init__()
+    def __init__(self, default=0):
+        super(Angle, self).__init__()
         self.reset()
 
     @property
-    def name(self):
-        return self.attributes['name']
+    def axis(self):
+        return self.attributes['axis']
 
-    @name.setter
-    def name(self, value):
-        assert self._is_string(value), \
-            'Input name must be a string'
-        self.attributes['name'] = str(value)
+    @axis.setter
+    def axis(self, value):
+        assert self._is_scalar(value) and \
+            value >= 0, \
+            'Invalid axis input, provided={}'.format(
+                value)
+        if isinstance(value, float):
+            assert value.is_integer(), \
+                'Input must be an integer, provided={}'.format(
+                    value)
+        self.attributes['axis'] = int(value)

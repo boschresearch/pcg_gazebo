@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,31 +13,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
-from .pose import Pose
+from .linear_velocity import LinearVelocity
 
 
-class Frame(XMLBase):
-    _NAME = 'frame'
+class Wind(XMLBase):
+    _NAME = 'wind'
     _TYPE = 'sdf'
 
-    _ATTRIBUTES = dict(
-        name='__default__'
-    )
-
     _CHILDREN_CREATORS = dict(
-        pose=dict(creator=Pose, default=[[0, 0, 0, 0, 0, 0]], optional=True)
+        linear_velocity=dict(
+            creator=LinearVelocity,
+            default=[[0, 0, 0]],
+            optional=False)
     )
 
-    def __init__(self, default='__default__'):
-        super(Frame, self).__init__()
+    def __init__(self, mode=''):
+        super(Wind, self).__init__()
         self.reset()
 
     @property
-    def name(self):
-        return self.attributes['name']
+    def linear_velocity(self):
+        return self._get_child_element('linear_velocity')
 
-    @name.setter
-    def name(self, value):
-        assert self._is_string(value), \
-            'Input name must be a string'
-        self.attributes['name'] = str(value)
+    @linear_velocity.setter
+    def linear_velocity(self, value):
+        self._add_child_element('linear_velocity', value)

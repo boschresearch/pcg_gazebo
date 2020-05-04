@@ -15,12 +15,18 @@
 from ..types import XMLBase
 from .physics import Physics
 from .model import Model
+from .actor import Actor
 from .include import Include
 from .gravity import Gravity
 from .plugin import Plugin
 from .light import Light
 from .scene import Scene
 from .gui import GUI
+from .state import State
+from .spherical_coordinates import SphericalCoordinates
+from .wind import Wind
+from .magnetic_field import MagneticField
+from .atmosphere import Atmosphere
 
 
 class World(XMLBase):
@@ -28,14 +34,24 @@ class World(XMLBase):
     _TYPE = 'sdf'
 
     _CHILDREN_CREATORS = dict(
+        atmosphere=dict(creator=Atmosphere, optional=False),
+        wind=dict(creator=Wind, optional=False),
         physics=dict(creator=Physics),
         gravity=dict(creator=Gravity, default=[[0, 0, -9.8]]),
         model=dict(creator=Model, n_elems='+', optional=True),
+        actor=dict(creator=Actor, n_elems='+', optional=True),
         include=dict(creator=Include, n_elems='+', optional=True),
         plugin=dict(creator=Plugin, n_elems='+', optional=True),
         light=dict(creator=Light, n_elems='+', optional=True),
         scene=dict(creator=Scene, optional=True),
-        gui=dict(creator=GUI, optional=True)
+        gui=dict(creator=GUI, optional=True),
+        state=dict(creator=State, optional=True, n_elems='+'),
+        spherical_coordinates=dict(
+            creator=SphericalCoordinates, optional=True),
+        magnetic_field=dict(
+            creator=MagneticField,
+            default=[[6e-6, 2.3e-5, -4.2e-5]],
+            optional=True)
     )
 
     _ATTRIBUTES = dict(
@@ -65,6 +81,22 @@ class World(XMLBase):
         self._add_child_element('gui', value)
 
     @property
+    def atmosphere(self):
+        return self._get_child_element('atmosphere')
+
+    @atmosphere.setter
+    def atmosphere(self, value):
+        self._add_child_element('atmosphere', value)
+
+    @property
+    def wind(self):
+        return self._get_child_element('wind')
+
+    @wind.setter
+    def wind(self, value):
+        self._add_child_element('wind', value)
+
+    @property
     def scene(self):
         return self._get_child_element('scene')
 
@@ -89,6 +121,22 @@ class World(XMLBase):
         self._add_child_element('gravity', value)
 
     @property
+    def spherical_coordinates(self):
+        return self._get_child_element('spherical_coordinates')
+
+    @spherical_coordinates.setter
+    def spherical_coordinates(self, value):
+        self._add_child_element('spherical_coordinates', value)
+
+    @property
+    def magnetic_field(self):
+        return self._get_child_element('magnetic_field')
+
+    @magnetic_field.setter
+    def magnetic_field(self, value):
+        self._add_child_element('magnetic_field', value)
+
+    @property
     def models(self):
         return self._get_child_element('model')
 
@@ -103,6 +151,14 @@ class World(XMLBase):
     @property
     def lights(self):
         return self._get_child_element('light')
+
+    @property
+    def states(self):
+        return self._get_child_element('state')
+
+    @property
+    def actors(self):
+        return self._get_child_element('actor')
 
     def add_model(self, name, model=None):
         if self.models is not None:
@@ -162,6 +218,54 @@ class World(XMLBase):
             return None
         else:
             for elem in self.lights:
+                if elem.name == name:
+                    return elem
+        return None
+
+    def add_state(self, name, state=None):
+        if self.states is not None:
+            for elem in self.states:
+                if elem.world_name == name:
+                    print(
+                        'State element with name {}'
+                        ' already exists'.format(name))
+                    return
+        if state is not None:
+            self._add_child_element('state', state)
+        else:
+            state = State()
+            self._add_child_element('state', state)
+        self.children['state'][-1].world_name = name
+
+    def get_state_by_name(self, name):
+        if self.states is None:
+            return None
+        else:
+            for elem in self.states:
+                if elem.world_name == name:
+                    return elem
+        return None
+
+    def add_actor(self, name, actor=None):
+        if self.actors is not None:
+            for elem in self.actors:
+                if elem.name == name:
+                    print(
+                        'State element with name {}'
+                        ' already exists'.format(name))
+                    return
+        if actor is not None:
+            self._add_child_element('actor', actor)
+        else:
+            actor = Actor()
+            self._add_child_element('actor', actor)
+        self.children['actor'][-1].world_name = name
+
+    def get_actor_by_name(self, name):
+        if self.actors is None:
+            return None
+        else:
+            for elem in self.actors:
                 if elem.name == name:
                     return elem
         return None

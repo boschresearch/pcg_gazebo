@@ -55,7 +55,7 @@ class Collision(XMLBase):
         name='collision'
     )
 
-    _MODES = ['string', 'link']
+    _MODES = ['string', 'link', 'state']
 
     def __init__(self, mode='link', default='__default__'):
         super(Collision, self).__init__()

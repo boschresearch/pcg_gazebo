@@ -26,6 +26,10 @@ class Actor(XMLBase):
     _NAME = 'actor'
     _TYPE = 'sdf'
 
+    _ATTRIBUTES = dict(
+        name='actor'
+    )
+
     _CHILDREN_CREATORS = dict(
         script=dict(creator=Script, default=['actor']),
         skin=dict(creator=Skin, optional=True),
@@ -39,6 +43,16 @@ class Actor(XMLBase):
     def __init__(self):
         super(Actor, self).__init__()
         self.reset()
+
+    @property
+    def name(self):
+        return self.attributes['name']
+
+    @name.setter
+    def name(self, value):
+        assert self._is_string(value), 'Name must be a string'
+        assert len(value) > 0, 'Name cannot be empty'
+        self.attributes['name'] = value
 
     @property
     def pose(self):
