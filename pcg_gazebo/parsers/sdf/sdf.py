@@ -17,6 +17,7 @@ from ..types import XMLBase
 from .world import World
 from .model import Model
 from .light import Light
+from .actor import Actor
 
 
 class SDF(XMLBase):
@@ -28,12 +29,16 @@ class SDF(XMLBase):
     )
 
     _CHILDREN_CREATORS = dict(
-        world=dict(creator=World, optional=True),
-        model=dict(creator=Model, n_elems='+', optional=True),
-        light=dict(creator=Light, n_elems='+', optional=True)
+        world=dict(creator=World, optional=True, mode='world'),
+        model=dict(
+            creator=Model, n_elems='+', optional=True, mode='model'),
+        light=dict(
+            creator=Light, n_elems='+', optional=True, mode='model'),
+        actor=dict(
+            creator=Actor, n_elems='+', optional=True, mode='model')
     )
 
-    _MODES = ['world', 'model', 'light', 'actor']
+    _MODES = ['world', 'model']
 
     _VERSIONS = ['1.4', '1.5', '1.6']
 
@@ -54,6 +59,8 @@ class SDF(XMLBase):
 
     @property
     def world(self):
+        if self._mode != 'world':
+            self._mode = 'world'
         return self._get_child_element('world')
 
     @world.setter
@@ -68,7 +75,13 @@ class SDF(XMLBase):
     def lights(self):
         return self._get_child_element('light')
 
+    @property
+    def actors(self):
+        return self._get_child_element('actor')
+
     def add_model(self, name=None, model=None):
+        if self._mode != 'model':
+            self._mode = 'model'
         if model is None:
             model = Model()
         self._add_child_element('model', model)
@@ -76,8 +89,19 @@ class SDF(XMLBase):
             self.children['model'][-1].name = name
 
     def add_light(self, name=None, light=None):
+        if self._mode != 'model':
+            self._mode = 'model'
         if light is None:
             light = Light()
         self._add_child_element('light', light)
         if name is not None:
             self.children['light'][-1].name = name
+
+    def add_actor(self, name=None, actor=None):
+        if self._mode != 'model':
+            self._mode = 'model'
+        if actor is None:
+            actor = Actor()
+        self._add_child_element('actor', actor)
+        if name is not None:
+            self.children['actor'][-1].name = name

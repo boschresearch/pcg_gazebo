@@ -22,6 +22,7 @@ from .axis2 import Axis2
 from .sensor import Sensor
 from .urdf import URDF
 from .physics import Physics
+from .angle import Angle
 
 
 class Joint(XMLBase):
@@ -33,23 +34,43 @@ class Joint(XMLBase):
         type='revolute'
     )
 
+    _ATTRIBUTES_MODES = dict(
+        name=['state', 'model'],
+        type=['model']
+    )
+
     _CHILDREN_CREATORS = dict(
-        parent=dict(creator=Parent),
-        child=dict(creator=Child),
-        pose=dict(creator=Pose, optional=True),
-        axis=dict(creator=Axis, optional=True),
-        axis2=dict(creator=Axis2, optional=True),
-        physics=dict(creator=Physics, default=['joint'], optional=True),
-        sensor=dict(creator=Sensor, default=['force_torque'], optional=True),
-        urdf=dict(creator=URDF, default=['joint'], optional=True)
+        parent=dict(creator=Parent, mode='model'),
+        child=dict(creator=Child, mode='model'),
+        pose=dict(creator=Pose, optional=True, mode='model'),
+        axis=dict(creator=Axis, optional=True, mode='model'),
+        axis2=dict(creator=Axis2, optional=True, mode='model'),
+        physics=dict(
+            creator=Physics,
+            default=['joint'],
+            optional=True,
+            mode='model'),
+        sensor=dict(
+            creator=Sensor,
+            default=['force_torque'],
+            optional=True,
+            mode='model'),
+        urdf=dict(
+            creator=URDF,
+            default=['joint'],
+            optional=True,
+            mode='model'),
+        angle=dict(creator=Angle, n_elems='+', mode='state')
     )
 
     _JOINT_OPTIONS = ['revolute', 'revolute2', 'gearbox', 'prismatic',
                       'ball', 'screw', 'universal', 'fixed']
 
-    def __init__(self):
+    _MODES = ['state', 'model']
+
+    def __init__(self, mode='model'):
         XMLBase.__init__(self)
-        self.reset()
+        self.reset(mode=mode)
 
     @property
     def name(self):
@@ -79,6 +100,8 @@ class Joint(XMLBase):
 
     @parent.setter
     def parent(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('parent', value)
 
     @property
@@ -87,6 +110,8 @@ class Joint(XMLBase):
 
     @child.setter
     def child(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('child', value)
 
     @property
@@ -95,6 +120,8 @@ class Joint(XMLBase):
 
     @urdf.setter
     def urdf(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('urdf', value)
 
     @property
@@ -103,6 +130,8 @@ class Joint(XMLBase):
 
     @pose.setter
     def pose(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('pose', value)
 
     @property
@@ -111,6 +140,8 @@ class Joint(XMLBase):
 
     @axis.setter
     def axis(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('axis', value)
 
     @property
@@ -119,6 +150,8 @@ class Joint(XMLBase):
 
     @axis2.setter
     def axis2(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('axis2', value)
 
     @property
@@ -127,6 +160,8 @@ class Joint(XMLBase):
 
     @physics.setter
     def physics(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('physics', value)
 
     @property
@@ -135,4 +170,19 @@ class Joint(XMLBase):
 
     @sensor.setter
     def sensor(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('sensor', value)
+
+    @property
+    def angles(self):
+        return self._get_child_element('angle')
+
+    def add_angle(self, name=None, angle=None):
+        if self._mode != 'state':
+            self._mode = 'state'
+        if angle is not None:
+            self._add_child_element('angle', angle)
+        else:
+            angle = Angle()
+            self._add_child_element('angle', angle)

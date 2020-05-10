@@ -22,15 +22,31 @@ class Animation(XMLBase):
     _NAME = 'animation'
     _TYPE = 'sdf'
 
+    _ATTRIBUTES = dict(
+        name='__default__'
+    )
+
     _CHILDREN_CREATORS = dict(
         filename=dict(
-            creator=Filename, default=['__default__']), scale=dict(
-            creator=Scale, default=[1], optional=True), interpolate_x=dict(
-                creator=InterpolateX, default=[False], optional=True))
+            creator=Filename, default=['__default__']),
+        scale=dict(
+            creator=Scale, default=[1], optional=True),
+        interpolate_x=dict(
+            creator=InterpolateX, default=[False], optional=True))
 
     def __init__(self):
         super(Animation, self).__init__()
         self.reset()
+
+    @property
+    def name(self):
+        return self.attributes['name']
+
+    @name.setter
+    def name(self, value):
+        assert self._is_string(value), 'Name must be a string'
+        assert len(value) > 0, 'Name cannot be empty'
+        self.attributes['name'] = value
 
     @property
     def filename(self):

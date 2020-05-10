@@ -40,8 +40,7 @@ class Script(XMLBase):
         loop=dict(
             creator=Loop,
             mode='actor',
-            default=[True],
-            optional=True),
+            default=[True]),
         delay_start=dict(
             creator=DelayStart,
             mode='actor',
@@ -50,8 +49,7 @@ class Script(XMLBase):
         auto_start=dict(
             creator=AutoStart,
             mode='actor',
-            default=[True],
-            optional=True),
+            default=[True]),
         trajectory=dict(
             creator=Trajectory,
             mode='actor',

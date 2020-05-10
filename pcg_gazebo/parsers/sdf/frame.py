@@ -12,13 +12,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from ..types import XMLBase
+from .pose import Pose
 
-from ..types import XMLString
 
-
-class Frame(XMLString):
+class Frame(XMLBase):
     _NAME = 'frame'
     _TYPE = 'sdf'
 
-    def __init__(self, default=''):
-        super(Frame, self).__init__(default)
+    _ATTRIBUTES = dict(
+        name='__default__'
+    )
+
+    _CHILDREN_CREATORS = dict(
+        pose=dict(creator=Pose, default=[[0, 0, 0, 0, 0, 0]], optional=True)
+    )
+
+    def __init__(self, default='__default__'):
+        super(Frame, self).__init__()
+        self.reset()
+
+    @property
+    def name(self):
+        return self.attributes['name']
+
+    @name.setter
+    def name(self, value):
+        assert self._is_string(value), \
+            'Input name must be a string'
+        self.attributes['name'] = str(value)

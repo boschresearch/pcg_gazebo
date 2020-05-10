@@ -14,17 +14,15 @@
 # limitations under the License.
 from ..types import XMLBase
 from .camera import Camera
+from .fullscreen import Fullscreen
 
 
 class GUI(XMLBase):
     _NAME = 'gui'
     _TYPE = 'sdf'
 
-    _ATTRIBUTES = dict(
-        fullscreen='0'
-    )
-
     _CHILDREN_CREATORS = dict(
+        fullscreen=dict(creator=Fullscreen, default=[False], optional=True),
         camera=dict(creator=Camera, default=['gui'], optional=True)
     )
 
@@ -34,13 +32,11 @@ class GUI(XMLBase):
 
     @property
     def fullscreen(self):
-        return bool(int(self.attributes['fullscreen']))
+        return self._get_child_element('fullscreen')
 
     @fullscreen.setter
     def fullscreen(self, value):
-        assert self._is_boolean(
-            int(value)), 'Fullscreen input is not a boolean'
-        self.attributes['fullscreen'] = str(int(value))
+        self._add_child_element('fullscreen', value)
 
     @property
     def camera(self):

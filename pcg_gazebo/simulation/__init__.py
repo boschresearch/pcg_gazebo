@@ -17,6 +17,7 @@ entities that form a simulation in Gazebo.
 """
 from . import properties
 from . import physics
+from .actor import Actor
 from .box import Box
 from .cylinder import Cylinder
 from .entity import Entity
@@ -70,7 +71,8 @@ def add_custom_gazebo_resource_path(dir_path):
     global CUSTOM_GAZEBO_RESOURCE_PATHS
     if dir_path in CUSTOM_GAZEBO_RESOURCE_PATHS:
         PCG_ROOT_LOGGER.warning(
-            'Custom Gazebo resources path <{}> already exists'.join(dir_path))
+            'Custom Gazebo resources path <{}> already exists'.format(
+                dir_path))
     else:
         CUSTOM_GAZEBO_RESOURCE_PATHS.append(dir_path)
     return True
@@ -344,6 +346,7 @@ def get_gazebo_model_sdf(model_name, sdf_file='model.sdf'):
 __all__ = [
     'properties',
     'physics',
+    'Actor',
     'Box',
     'Cylinder',
     'Entity',

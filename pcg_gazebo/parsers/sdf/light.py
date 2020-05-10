@@ -21,6 +21,7 @@ from .specular import Specular
 from .attenuation import Attenuation
 from .direction import Direction
 from .spot import Spot
+from .frame import Frame
 
 
 class Light(XMLBase):
@@ -32,19 +33,28 @@ class Light(XMLBase):
         type='point'
     )
 
-    _CHILDREN_CREATORS = dict(
-        cast_shadows=dict(creator=CastShadows, default=[False]),
-        diffuse=dict(creator=Diffuse, default=[[1, 1, 1, 1]]),
-        specular=dict(creator=Specular, default=[[0.1, 0.1, 0.1, 1]]),
-        attenuation=dict(creator=Attenuation),
-        direction=dict(creator=Direction, default=[[0, 0, -1]]),
-        spot=dict(creator=Spot, optional=True),
-        pose=dict(creator=Pose, optional=True)
+    _ATTRIBUTES_MODES = dict(
+        name=['light', 'state'],
+        type=['light']
     )
 
-    def __init__(self):
+    _CHILDREN_CREATORS = dict(
+        cast_shadows=dict(creator=CastShadows, default=[False], mode='light'),
+        diffuse=dict(creator=Diffuse, default=[[1, 1, 1, 1]], mode='light'),
+        specular=dict(
+            creator=Specular, default=[[0.1, 0.1, 0.1, 1]], mode='light'),
+        attenuation=dict(creator=Attenuation, mode='light'),
+        direction=dict(creator=Direction, default=[[0, 0, -1]], mode='light'),
+        spot=dict(creator=Spot, optional=True, mode='light'),
+        pose=dict(creator=Pose, optional=True),
+        frame=dict(creator=Frame, optional=True, n_elems='+', mode='state')
+    )
+
+    _MODES = ['light', 'state']
+
+    def __init__(self, mode='light'):
         super(Light, self).__init__()
-        self.reset()
+        self.reset(mode=mode)
 
     @property
     def name(self):
@@ -65,6 +75,8 @@ class Light(XMLBase):
 
     @type.setter
     def type(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         assert is_string(value), 'Name should' \
             ' be a string, received={}, type={}'.format(
                 value, type(value))
@@ -88,6 +100,8 @@ class Light(XMLBase):
 
     @cast_shadows.setter
     def cast_shadows(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         self._add_child_element('cast_shadows', value)
 
     @property
@@ -96,6 +110,8 @@ class Light(XMLBase):
 
     @diffuse.setter
     def diffuse(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         self._add_child_element('diffuse', value)
 
     @property
@@ -104,6 +120,8 @@ class Light(XMLBase):
 
     @specular.setter
     def specular(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         self._add_child_element('specular', value)
 
     @property
@@ -112,6 +130,8 @@ class Light(XMLBase):
 
     @attenuation.setter
     def attenuation(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         self._add_child_element('attenuation', value)
 
     @property
@@ -120,6 +140,8 @@ class Light(XMLBase):
 
     @direction.setter
     def direction(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         self._add_child_element('direction', value)
 
     @property
@@ -128,4 +150,27 @@ class Light(XMLBase):
 
     @spot.setter
     def spot(self, value):
+        if self._mode != 'light':
+            self._mode = 'light'
         self._add_child_element('spot', value)
+
+    @property
+    def frames(self):
+        return self._get_child_element('frame')
+
+    def add_frame(self, name=None, frame=None):
+        if self._mode != 'state':
+            self._mode = 'state'
+        if self.frames is not None:
+            for elem in self.frames:
+                if elem.name == name:
+                    print(
+                        'Frame element with name {}'
+                        ' already exists'.format(name))
+                    return
+        if frame is not None:
+            self._add_child_element('frame', frame)
+        else:
+            frame = Frame()
+            self._add_child_element('frame', frame)
+        self._children['frame'][-1].name = name

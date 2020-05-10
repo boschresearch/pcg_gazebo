@@ -68,7 +68,7 @@ class Normal(XMLBase):
 
     def is_valid(self):
         if not isinstance(self._value, type(self._default)):
-            self.log.error('Object must have a {}'.format(type(self._default)))
+            self.log_error('Object must have a {}'.format(type(self._default)))
             return False
         return True
 

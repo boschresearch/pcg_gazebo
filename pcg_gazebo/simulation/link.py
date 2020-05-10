@@ -19,6 +19,7 @@ from .properties import Inertial, Collision, Visual, \
     Pose, Footprint, Plugin
 from .sensors import Sensor
 from .entity import Entity
+from .light import Light
 from ..log import PCG_ROOT_LOGGER
 from ..parsers.sdf import create_sdf_element
 from ..parsers.sdf_config import create_sdf_config_element
@@ -70,6 +71,7 @@ class Link(Entity):
         self._collisions = list()
         self._visuals = list()
         self._sensors = dict()
+        self._lights = dict()
         self._plugins = dict()
 
         self._include_in_sdf = dict(
@@ -685,6 +687,9 @@ class Link(Entity):
         for tag in self._plugins:
             link.add_plugin(tag, self._plugins[tag].to_sdf())
 
+        for tag in self._lights:
+            link.add_light(tag, self._lights[tag].to_sdf())
+
         if self._inertial is not None:
             link.inertial = self._inertial.to_sdf()
 
@@ -757,6 +762,12 @@ class Link(Entity):
                     raise AttributeError(
                         'Could not import sensor element {}'.format(
                             sensor.name))
+        if sdf.lights is not None:
+            for light in sdf.lights:
+                if not link.add_light(light.name, Light.from_sdf(light)):
+                    raise AttributeError(
+                        'Could not import light element {}'.format(
+                            light.name))
         return link
 
     def export_to_gazebo_model(
@@ -877,6 +888,16 @@ class Link(Entity):
             return False
 
         self._sensors[name] = sensor
+        return True
+
+    def add_light(self, name, light):
+        if name in self._lights:
+            PCG_ROOT_LOGGER.error(
+                'Light with name {} already exists for link {}'.format(
+                    name, self.name))
+            return False
+
+        self._lights[name] = light
         return True
 
     def add_plugin(self, name='', filename='', plugin=None, **kwargs):

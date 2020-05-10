@@ -24,6 +24,7 @@ from .pose import Pose
 from .joint import Joint
 from .plugin import Plugin
 from .urdf import URDF
+from .scale import Scale
 
 
 class Model(XMLBase):
@@ -34,22 +35,41 @@ class Model(XMLBase):
         name='model'
     )
 
-    _CHILDREN_CREATORS = dict(
-        link=dict(creator=Link, n_elems='+', optional=True),
-        joint=dict(creator=Joint, n_elems='+', optional=True),
-        include=dict(creator=Include, n_elems='+', optional=True),
-        pose=dict(creator=Pose, optional=True),
-        self_collide=dict(creator=SelfCollide, optional=True),
-        static=dict(creator=Static, optional=True),
-        allow_auto_disable=dict(creator=AllowAutoDisable, optional=True),
-        plugin=dict(creator=Plugin, n_elems='+', optional=True),
-        model=dict(creator=None, n_elems='+', optional=True),
-        urdf=dict(creator=URDF, default=['model'], optional=True)
+    _ATTRIBUTES_MODES = dict(
+        name=['state', 'model']
     )
 
-    def __init__(self):
+    _CHILDREN_CREATORS = dict(
+        scale=dict(creator=Scale, optional=True, mode='state'),
+        link=dict(creator=Link, n_elems='+', optional=True, mode='model'),
+        joint=dict(
+            creator=Joint, n_elems='+', default=['model'], optional=True),
+        include=dict(
+            creator=Include, n_elems='+', optional=True, mode='model'),
+        pose=dict(creator=Pose, optional=True, mode='model'),
+        self_collide=dict(creator=SelfCollide, optional=True, mode='model'),
+        static=dict(
+            creator=Static, optional=True, mode='model'),
+        allow_auto_disable=dict(
+            creator=AllowAutoDisable, optional=True, mode='model'),
+        plugin=dict(creator=Plugin, n_elems='+', optional=True, mode='model'),
+        model=dict(
+            creator=None, n_elems='+', default=['model'], optional=True),
+        urdf=dict(
+            creator=URDF, default=['model'], optional=True, mode='model')
+    )
+
+    _MODES = ['state', 'model']
+
+    def __init__(self, mode='model'):
         super(Model, self).__init__()
-        self.reset()
+        if mode == 'state':
+            self._CHILDREN_CREATORS['joint']['default'] = ['state']
+            self._CHILDREN_CREATORS['model']['default'] = ['state']
+        else:
+            self._CHILDREN_CREATORS['joint']['default'] = ['model']
+            self._CHILDREN_CREATORS['model']['default'] = ['model']
+        self.reset(mode=mode)
 
     @property
     def name(self):
@@ -57,9 +77,19 @@ class Model(XMLBase):
 
     @name.setter
     def name(self, value):
-        assert isinstance(value, str), 'Name must be a string'
+        assert self._is_string(value), 'Name must be a string'
         assert len(value) > 0, 'Name cannot be empty'
         self.attributes['name'] = value
+
+    @property
+    def scale(self):
+        return self._get_child_element('scale')
+
+    @scale.setter
+    def scale(self, value):
+        if self._mode != 'state':
+            self._mode = 'state'
+        self._add_child_element('scale', value)
 
     @property
     def static(self):
@@ -67,6 +97,8 @@ class Model(XMLBase):
 
     @static.setter
     def static(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('static', value)
 
     @property
@@ -75,6 +107,8 @@ class Model(XMLBase):
 
     @allow_auto_disable.setter
     def allow_auto_disable(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('allow_auto_disable', value)
 
     @property
@@ -83,6 +117,8 @@ class Model(XMLBase):
 
     @self_collide.setter
     def self_collide(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('self_collide', value)
 
     @property
@@ -91,6 +127,8 @@ class Model(XMLBase):
 
     @pose.setter
     def pose(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('pose', value)
 
     @property
@@ -99,6 +137,8 @@ class Model(XMLBase):
 
     @urdf.setter
     def urdf(self, value):
+        if self._mode != 'model':
+            self._mode = 'model'
         self._add_child_element('urdf', value)
 
     @property
@@ -122,6 +162,8 @@ class Model(XMLBase):
         return self._get_child_element('plugin')
 
     def add_link(self, name, link=None):
+        if self._mode != 'model':
+            self._mode = 'model'
         if self.links is not None:
             for elem in self.links:
                 if elem.name == name:
@@ -213,6 +255,8 @@ class Model(XMLBase):
         return None
 
     def add_include(self, name, include=None):
+        if self._mode != 'model':
+            self._mode = 'model'
         if include is not None:
             self._add_child_element('include', include)
         else:
@@ -246,3 +290,13 @@ class Model(XMLBase):
             if link.inertial.mass.value == 0:
                 return True
         return False
+
+    def reset(self, mode=None, with_optional_elements=False):
+        if mode is not None:
+            if mode == 'state':
+                self._CHILDREN_CREATORS['joint']['default'] = ['state']
+                self._CHILDREN_CREATORS['model']['default'] = ['state']
+            else:
+                self._CHILDREN_CREATORS['joint']['default'] = ['model']
+                self._CHILDREN_CREATORS['model']['default'] = ['model']
+        XMLBase.reset(self, mode, with_optional_elements)

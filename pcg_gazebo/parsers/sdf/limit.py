@@ -33,7 +33,7 @@ class Limit(XMLBase):
         upper=dict(creator=Upper, default=[1e16], mode='axis'),
         effort=dict(creator=Effort, default=[-1], optional=True, mode='axis'),
         velocity=dict(
-            creator=Velocity, default=[-1], optional=True, mode='axis'),
+            creator=Velocity, default=[-1.0], optional=True, mode='axis'),
         stiffness=dict(
             creator=Stiffness, default=[1e8], optional=True, mode='axis'),
         dissipation=dict(

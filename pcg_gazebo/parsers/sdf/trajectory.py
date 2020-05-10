@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
-from ...utils import is_string
 from .waypoint import Waypoint
 
 
@@ -22,12 +21,13 @@ class Trajectory(XMLBase):
     _TYPE = 'sdf'
 
     _ATTRIBUTES = dict(
-        id=0,
-        type='__default__'
+        id='0',
+        type='__default__',
+        tension='0'
     )
 
     _CHILDREN_CREATORS = dict(
-        waypoint=dict(creator=Waypoint, n_elems='+')
+        waypoint=dict(creator=Waypoint, n_elems='+', optional=True)
     )
 
     def __init__(self):
@@ -36,13 +36,13 @@ class Trajectory(XMLBase):
 
     @property
     def id(self):
-        return self.attributes['id']
+        return int(self.attributes['id'])
 
     @id.setter
     def id(self, value):
-        assert isinstance(value, int), \
+        assert self._is_integer(value), \
             'Input ID must be an integer, provided={}'.format(value)
-        self.attributes['id'] = value
+        self.attributes['id'] = str(value)
 
     @property
     def type(self):
@@ -50,12 +50,30 @@ class Trajectory(XMLBase):
 
     @type.setter
     def type(self, value):
-        assert is_string(value), \
+        assert self._is_string(value), \
             'Type input must be a string or unicode,' \
             ' provided={}, type={}'.format(
                 value, type(value))
-        self.attributes['type'] = value
+        self.attributes['type'] = str(value)
+
+    @property
+    def tension(self):
+        return float(self.attributes['tension'])
+
+    @tension.setter
+    def tension(self, value):
+        assert self._is_scalar(value), \
+            'Tension must be a scalar, provided={}'.format(
+                value)
+        self.attributes['tension'] = str(value)
 
     @property
     def waypoints(self):
-        return self._get_child_element('waypoints')
+        return self._get_child_element('waypoint')
+
+    def add_waypoint(self, name=None, waypoint=None):
+        if waypoint is not None:
+            self._add_child_element('waypoint', waypoint)
+        else:
+            waypoint = Waypoint()
+            self._add_child_element('waypoint', waypoint)

@@ -25,6 +25,9 @@ from .pose import Pose
 from .name import Name
 from .view_controller import ViewController
 from .projection_type import ProjectionType
+from .frame import Frame
+from .plugin import Plugin
+from .track_visual import TrackVisual
 
 
 class Camera(XMLBase):
@@ -46,7 +49,10 @@ class Camera(XMLBase):
         view_controller=dict(
             creator=ViewController, optional=True, mode='gui'),
         projection_type=dict(
-            creator=ProjectionType, optional=True, mode='gui')
+            creator=ProjectionType, optional=True, mode='gui'),
+        frame=dict(creator=Frame, optional=True, mode='gui'),
+        plugin=dict(creator=Plugin, optional=True, mode='gui'),
+        track_visual=dict(creator=TrackVisual, optional=True, mode='gui')
     )
 
     _ATTRIBUTES = dict(
@@ -76,7 +82,7 @@ class Camera(XMLBase):
     @noise.setter
     def noise(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('noise', value)
 
     @property
@@ -86,7 +92,7 @@ class Camera(XMLBase):
     @horizontal_fov.setter
     def horizontal_fov(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('horizontal_fov', value)
 
     @property
@@ -96,7 +102,7 @@ class Camera(XMLBase):
     @image.setter
     def image(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('image', value)
 
     @property
@@ -106,7 +112,7 @@ class Camera(XMLBase):
     @clip.setter
     def clip(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('clip', value)
 
     @property
@@ -116,7 +122,7 @@ class Camera(XMLBase):
     @save.setter
     def save(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('save', value)
 
     @property
@@ -126,7 +132,7 @@ class Camera(XMLBase):
     @depth_camera.setter
     def depth_camera(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('depth_camera', value)
 
     @property
@@ -136,7 +142,7 @@ class Camera(XMLBase):
     @distortion.setter
     def distortion(self, value):
         if self._mode != 'sensor':
-            self.reset(mode='sensor')
+            self._mode = 'sensor'
         self._add_child_element('distortion', value)
 
     @property
@@ -146,7 +152,7 @@ class Camera(XMLBase):
     @pose.setter
     def pose(self, value):
         if self._mode != 'gui':
-            self.reset(mode='gui')
+            self._mode = 'gui'
         self._add_child_element('pose', value)
 
     @property
@@ -156,7 +162,7 @@ class Camera(XMLBase):
     @view_controller.setter
     def view_controller(self, value):
         if self._mode != 'gui':
-            self.reset(mode='gui')
+            self._mode = 'gui'
         self._add_child_element('view_controller', value)
 
     @property
@@ -166,5 +172,55 @@ class Camera(XMLBase):
     @projection_type.setter
     def projection_type(self, value):
         if self._mode != 'gui':
-            self.reset(mode='gui')
+            self._mode = 'gui'
         self._add_child_element('projection_type', value)
+
+    @property
+    def track_visual(self):
+        return self._get_child_element('track_visual')
+
+    @track_visual.setter
+    def track_visual(self, value):
+        self._add_child_element('track_visual', value)
+
+    @property
+    def frames(self):
+        return self._get_child_element('frame')
+
+    @property
+    def plugins(self):
+        return self._get_child_element('plugin')
+
+    def add_frame(self, name=None, frame=None):
+        if self._mode != 'gui':
+            self._mode = 'gui'
+        if self.frames is not None:
+            for elem in self.frames:
+                if elem.name == name:
+                    print(
+                        'Frame element with name {}'
+                        ' already exists'.format(name))
+                    return
+        if frame is not None:
+            self._add_child_element('frame', frame)
+        else:
+            frame = Frame()
+            self._add_child_element('frame', frame)
+        self._children['frame'][-1].name = name
+
+    def add_plugin(self, name=None, plugin=None):
+        if self._mode != 'gui':
+            self._mode = 'gui'
+        if self.plugins is not None:
+            for elem in self.plugins:
+                if elem.name == name:
+                    print(
+                        'Plugin element with name {}'
+                        ' already exists'.format(name))
+                    return
+        if plugin is not None:
+            self._add_child_element('plugin', plugin)
+        else:
+            plugin = Plugin()
+            self._add_child_element('plugin', plugin)
+        self._children['plugin'][-1].name = name

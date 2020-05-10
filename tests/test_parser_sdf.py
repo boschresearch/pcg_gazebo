@@ -15,14 +15,55 @@
 # limitations under the License.
 import unittest
 import random
+import os
 from pcg_gazebo.utils import generate_random_string
 from pcg_gazebo.parsers import parse_sdf
 from pcg_gazebo.parsers.sdf import create_sdf_element
 from pcg_gazebo.parsers.types import XMLScalar, XMLVector, XMLString, \
     XMLInteger, XMLBoolean
 
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class TestParseSDF(unittest.TestCase):
+    def test_parse_gazebo_models(self):
+        gazebo_models_dir = \
+            os.path.join(CUR_DIR, 'gazebo_models')
+        for item in os.listdir(gazebo_models_dir):
+            sdf = parse_sdf(
+                os.path.join(gazebo_models_dir, item, 'model.sdf'))
+            self.assertIsNotNone(sdf)
+            if '_actor_' in item:
+                self.assertIsNotNone(sdf.actors)
+            else:
+                self.assertIsNotNone(sdf.models)
+
+    def test_parse_actor_walking(self):
+        sdf = parse_sdf(os.path.join(
+            CUR_DIR,
+            'gazebo_models',
+            'test_actor_walking',
+            'model.sdf'))
+        self.assertIsNotNone(sdf)
+        self.assertIsNotNone(sdf.actors)
+        self.assertEqual(len(sdf.actors), 1)
+
+        self.assertEqual(len(sdf.actors[0].animations), 1)
+        self.assertEqual(len(sdf.actors[0].script.trajectories), 1)
+
+    def test_parse_actor_relative_paths(self):
+        sdf = parse_sdf(os.path.join(
+            CUR_DIR,
+            'gazebo_models',
+            'test_actor_relative_paths',
+            'model.sdf'))
+        self.assertIsNotNone(sdf)
+        self.assertIsNotNone(sdf.actors)
+        self.assertEqual(len(sdf.actors), 1)
+
+        self.assertEqual(len(sdf.actors[0].animations), 8)
+        self.assertEqual(len(sdf.actors[0].script.trajectories), 13)
+
     def test_parse_string_sdf_strings(self):
         def generate_string_test_obj(name, value=None):
             if value is None:
@@ -42,7 +83,8 @@ class TestParseSDF(unittest.TestCase):
         # Exclude special cases
         exclude = ['empty', 'format', 'friction_model', 'collision',
                    'measure_direction', 'localization', 'view_controller',
-                   'projection_type']
+                   'projection_type', 'surface_model',
+                   'world_frame_orientation']
 
         for tag in string_test_cases:
             if tag in exclude:
@@ -227,6 +269,23 @@ class TestParseSDF(unittest.TestCase):
         sdf = parse_sdf(sdf_str)
         self.assertIsNotNone(sdf)
         self.assertEqual(parse_sdf(sdf_str), expected_sdf)
+
+    def test_parse_world_files(self):
+        world_dir = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'worlds'
+        )
+        for item in os.listdir(world_dir):
+            world_file = os.path.join(world_dir, item)
+            if not os.path.isfile(world_file) or \
+                    not world_file.endswith('.world'):
+                continue
+            sdf = parse_sdf(world_file)
+            self.assertIsNotNone(sdf)
+            self.assertEqual(sdf.xml_element_name, 'sdf')
+            self.assertIsNotNone(
+                sdf.world,
+                'No world element was parsed from file {}'.format(world_file))
 
 
 if __name__ == '__main__':

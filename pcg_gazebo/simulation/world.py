@@ -68,6 +68,13 @@ class World(Entity):
         self._physics = None
         self._model_groups = dict()
         self._plugins = dict()
+        self._spherical_coordinates = None
+        self._wind = None
+        self._gui = None
+        self._scene = None
+        self._states = list()
+        self._atmosphere = None
+        self._magnetic_field = None
         self.reset_physics(engine)
 
     def __str__(self):
@@ -99,6 +106,26 @@ class World(Entity):
     @pose.setter
     def pose(self, value):
         pass
+
+    @property
+    def spherical_coordinates(self):
+        return self._spherical_coordinates
+
+    @property
+    def wind(self):
+        return self._wind
+
+    @property
+    def gui(self):
+        return self._gui
+
+    @property
+    def scene(self):
+        return self._scene
+
+    @property
+    def magnetic_field(self):
+        return self._magnetic_field
 
     @property
     def engine(self):
@@ -483,6 +510,26 @@ class World(Entity):
         for tag in self._plugins:
             world.add_plugin(tag, self._plugins[tag].to_sdf())
 
+        if self._wind is not None:
+            world.wind = self._wind
+
+        if self._gui is not None:
+            world.gui = self._gui
+
+        if self._scene is not None:
+            world.scene = self._scene
+
+        if self._atmosphere is not None:
+            world.atmosphere = self._atmosphere
+
+        if self._magnetic_field is not None:
+            world.magnetic_field = self._magnetic_field
+
+        if len(self._states) > 0:
+            for state in self._states:
+                world.add_state(
+                    name=state.world_name, state=state)
+
         if with_default_ground_plane:
             ground_plane = create_sdf_element('include')
             ground_plane.uri = 'model://ground_plane'
@@ -589,6 +636,28 @@ class World(Entity):
 
         if sdf_tree.gravity is not None:
             world.gravity = sdf_tree.gravity.value
+
+        if sdf_tree.spherical_coordinates is not None:
+            world._spherical_coordinates = \
+                sdf_tree.spherical_coordinates
+
+        if sdf_tree.wind is not None:
+            world._wind = sdf_tree.wind
+
+        if sdf_tree.gui is not None:
+            world._gui = sdf_tree.gui
+
+        if sdf_tree.scene is not None:
+            world._scene = sdf_tree.scene
+
+        if sdf_tree.states is not None:
+            world._states = sdf_tree.states
+
+        if sdf_tree.atmosphere is not None:
+            world._atmosphere = sdf_tree.atmosphere
+
+        if sdf_tree.magnetic_field is not None:
+            world._magnetic_field = sdf_tree.magnetic_field
 
         world.physics = Physics.from_sdf(sdf_tree.physics)
         world.name = sdf_tree.name
