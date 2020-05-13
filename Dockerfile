@@ -11,6 +11,7 @@ RUN apt-get update && \
     blender \
     pandoc -y
 
+RUN python3 -m pip install pip --upgrade
 RUN pip3 install flake8 autopep8
     
 COPY . /tmp/pcg_gazebo
