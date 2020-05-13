@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..types import XMLBase
-from .type import Type
 from .temperature import Temperature
 from .pressure import Pressure
 from .temperature_gradient import TemperatureGradient
@@ -23,8 +22,11 @@ class Atmosphere(XMLBase):
     _NAME = 'atmosphere'
     _TYPE = 'sdf'
 
+    _ATTRIBUTES = dict(
+        type='adiabatic'
+    )
+
     _CHILDREN_CREATORS = dict(
-        type=dict(creator=Type, default=['adiabatic']),
         temperature=dict(creator=Temperature, default=[288.15], optional=True),
         pressure=dict(creator=Pressure, default=[101325.0], optional=True),
         temperature_gradient=dict(
@@ -37,11 +39,13 @@ class Atmosphere(XMLBase):
 
     @property
     def type(self):
-        return self._get_child_element('type')
+        return self._attributes['type']
 
     @type.setter
     def type(self, value):
-        self._add_child_element('type', value)
+        assert self._is_string(value), 'Type must be a string'
+        assert value in ['adiabatic'], 'Atmosphere type must be adiabatic'
+        self._attributes['type'] = str(value)
 
     @property
     def temperature(self):
