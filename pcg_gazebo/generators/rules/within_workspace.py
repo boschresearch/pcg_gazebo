@@ -62,7 +62,7 @@ class WithinWorkspace(Rule):
                 assert is_boolean(value[tag]), \
                     'DOF element <{}> must be a boolean, ' \
                     'received={}, type={}'.format(
-                        value[tag], type(value[tag]))
+                        tag, value[tag], type(value[tag]))
                 self._dofs[tag] = value[tag]
 
     @property

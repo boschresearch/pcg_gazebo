@@ -1257,7 +1257,7 @@ class World(Entity):
                     x_limits, y_limits))
             return None
 
-        PCG_ROOT_LOGGER.info('Area of free space polygon='.format(
+        PCG_ROOT_LOGGER.info('Area of free space polygon={}'.format(
             free_space_polygon.area))
 
         if model_footprint.area >= free_space_polygon.area:

@@ -53,8 +53,9 @@ class Axis(XMLBase):
                     ' interval [0, 1]', raise_exception=True,
                     exception_type=AssertionError)
         if sum(value) != 1:
-            self.log_error('Axis should be an unit vector, vector={}'.format(
-                value, sum(value)))
+            self.log_error(
+                'Axis should be an unit vector, vector={}, sum={}'.format(
+                    value, sum(value)))
             return
         self.attributes['xyz'] = ' '.join(['{}'] * len(value))
         self.attributes['xyz'] = self.attributes['xyz'].format(*value)

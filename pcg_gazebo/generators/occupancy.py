@@ -39,7 +39,7 @@ def _get_model_limits(model, mesh_type='collision'):
         meshes = [model]
     else:
         msg = 'Input is neither of SimulationModel' \
-            ' or Trimesh type, provided={}'.format()
+            ' or Trimesh type, provided={}'.format(type(model))
         PCG_ROOT_LOGGER.error(msg)
         raise ValueError(msg)
 

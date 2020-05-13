@@ -194,7 +194,7 @@ class AssetsManager(_CollectionManager):
         from .model_group_generator import ModelGroupGenerator
         if self.has_element(tag) and not overwrite:
             PCG_ROOT_LOGGER.warning(
-                'Asset with tag <{}> already exists, tags='.format(
+                'Asset with tag <{}> already exists, tags={}'.format(
                     tag, self.tags))
             return False
         assert isinstance(description, SimulationModel) or \

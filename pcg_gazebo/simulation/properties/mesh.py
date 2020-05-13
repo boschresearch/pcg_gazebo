@@ -182,8 +182,8 @@ class Mesh(object):
     @staticmethod
     def _multiline2points(lines):
         points = None
-        for l in lines.geoms:
-            line_points = np.array([[x, y] for x, y in zip(*l.xy)])
+        for line in lines.geoms:
+            line_points = np.array([[x, y] for x, y in zip(*line.xy)])
             if points is None:
                 points = line_points
             else:
@@ -581,8 +581,8 @@ class Mesh(object):
                     vertices[trimesh_line.points]), fp_offset[0], fp_offset[1])
 
                 has_similar_line = False
-                for l in lines:
-                    if l.almost_equals(line, decimal=3):
+                for cur_line in lines:
+                    if cur_line.almost_equals(line, decimal=3):
                         has_similar_line = True
                         break
                 if not has_similar_line:
