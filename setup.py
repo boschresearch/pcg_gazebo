@@ -131,8 +131,8 @@ setup(
     keywords='gazebo ros simulation robotics sdf urdf robot',
     packages=[
         'pcg_gazebo',
+        'pcg_gazebo.collections',
         'pcg_gazebo.generators',
-        'pcg_gazebo.generators.components',
         'pcg_gazebo.generators.constraints',
         'pcg_gazebo.generators.engines',
         'pcg_gazebo.generators.item_pickers',
@@ -145,6 +145,7 @@ setup(
         'pcg_gazebo.parsers.types',
         'pcg_gazebo.parsers.urdf',
         'pcg_gazebo.simulation',
+        'pcg_gazebo.simulation.components',
         'pcg_gazebo.simulation.physics',
         'pcg_gazebo.simulation.properties',
         'pcg_gazebo.simulation.sensors',
