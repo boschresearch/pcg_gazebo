@@ -12,7 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from .constraints import create_constraint, Constraint
+from ..generators.constraints import create_constraint, Constraint
 from ._collection_manager import _CollectionManager
 from ..log import PCG_ROOT_LOGGER
 from ..utils import load_yaml
