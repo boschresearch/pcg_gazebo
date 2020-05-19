@@ -1397,7 +1397,7 @@ class SimulationModel(Entity):
     def from_gazebo_model(name):
         from . import get_gazebo_model_sdf, is_gazebo_model
         if name == 'ground_plane' and not is_gazebo_model('ground_plane'):
-            from ..generators.components import GroundPlane
+            from ..simulation.components import GroundPlane
             return GroundPlane()
         else:
             PCG_ROOT_LOGGER.info(

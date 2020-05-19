@@ -17,6 +17,7 @@ entities that form a simulation in Gazebo.
 """
 from . import properties
 from . import physics
+from . import components
 from .actor import Actor
 from .box import Box
 from .cylinder import Cylinder
@@ -346,6 +347,7 @@ def get_gazebo_model_sdf(model_name, sdf_file='model.sdf'):
 __all__ = [
     'properties',
     'physics',
+    'components',
     'Actor',
     'Box',
     'Cylinder',

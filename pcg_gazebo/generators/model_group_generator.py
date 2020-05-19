@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ._generator import _Generator
-from ..simulation import ModelGroup
 
 
 class ModelGroupGenerator(_Generator):
@@ -21,6 +20,7 @@ class ModelGroupGenerator(_Generator):
         super(ModelGroupGenerator, self).__init__(name=name, **kwargs)
 
     def init(self, name=None):
+        from ..simulation import ModelGroup
         if name is None:
             name = self._name
         if self.assets.has_element(name) and \

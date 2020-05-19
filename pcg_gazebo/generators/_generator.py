@@ -13,10 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..log import PCG_ROOT_LOGGER
-from ..simulation import is_gazebo_model, SimulationModel, \
-    Light, ModelGroup
-from .assets_manager import AssetsManager
-from .engine_manager import EngineManager
 from ..random import init_random_state
 from ..utils import generate_random_string, is_string, \
     load_yaml, is_integer
@@ -24,6 +20,7 @@ from ..utils import generate_random_string, is_string, \
 
 class _Generator(object):
     def __init__(self, name='default', **kwargs):
+        from ..collections import AssetsManager, EngineManager
         self._assets = AssetsManager.get_instance()
         self._engines = EngineManager()
         self._simulation_entity = None
@@ -78,6 +75,8 @@ class _Generator(object):
         return self._engines.constraints_manager
 
     def _add_asset_to_simulation_entity(self, obj):
+        from ..simulation import SimulationModel, ModelGroup, \
+            Light
         if isinstance(obj, SimulationModel):
             PCG_ROOT_LOGGER.info(
                 'Adding model {} to world'.format(
@@ -176,6 +175,7 @@ class _Generator(object):
         * `model_name` (*type:* `str`): ID name of the Gazebo model
         * `pose` (*type:* `list`): 6D pose vector
         """
+        from ..simulation import SimulationModel
         if not self.is_asset(model_name):
             self.add_gazebo_model_as_asset(model_name)
         model = SimulationModel.from_gazebo_model(model_name)
@@ -213,7 +213,7 @@ class _Generator(object):
 
         `True` if Gazebo model could be included in the assets list.
         """
-        from ..simulation import get_gazebo_model_sdf
+        from ..simulation import get_gazebo_model_sdf, SimulationModel
         sdf = get_gazebo_model_sdf(gazebo_model_name)
 
         if hasattr(sdf, 'lights') and sdf.lights is not None:
@@ -286,7 +286,7 @@ class _Generator(object):
 
         `True` if the lights could be parsed and added to the world.
         """
-        from ..simulation import get_gazebo_model_sdf
+        from ..simulation import get_gazebo_model_sdf, Light
         sdf = get_gazebo_model_sdf(model_name)
         if sdf is None:
             PCG_ROOT_LOGGER.error(
@@ -381,6 +381,7 @@ class _Generator(object):
         self.from_dict(config)
 
     def from_dict(self, config):
+        from ..simulation import is_gazebo_model
         assert isinstance(config, dict), \
             'Input configuration must be provided as a dictionary'
 

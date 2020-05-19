@@ -14,7 +14,7 @@
 # limitations under the License.
 import numpy as np
 from ._picker import _Picker
-from ..assets_manager import AssetsManager
+from ...collections import AssetsManager
 
 
 class SizePicker(_Picker):
