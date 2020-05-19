@@ -14,16 +14,16 @@
 # limitations under the License.
 from __future__ import print_function
 from copy import deepcopy
-from ..mesh import extrude
-from ..shapes import rectangle, random_rectangle, \
-    random_points_to_triangulation, triangulate_points, \
-    random_rectangles, random_orthogonal_lines
-from ...log import PCG_ROOT_LOGGER
-from ...simulation import SimulationModel
-from ...visualization import plot_shapely_geometry
 from shapely.geometry import Polygon, MultiPolygon, LineString, \
     MultiLineString
 from shapely.ops import unary_union
+from ..model import SimulationModel
+from ...generators.shapes import rectangle, random_rectangle, \
+    random_points_to_triangulation, triangulate_points, \
+    random_rectangles, random_orthogonal_lines
+from ...generators.mesh import extrude
+from ...visualization import plot_shapely_geometry
+from ...log import PCG_ROOT_LOGGER
 
 
 class Walls(SimulationModel):
