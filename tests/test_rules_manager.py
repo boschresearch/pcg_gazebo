@@ -16,7 +16,7 @@
 import unittest
 import random
 from pcg_gazebo.generators.rules import create_rule, get_rule_parameters
-from pcg_gazebo.generators import ConstraintsManager, RulesManager
+from pcg_gazebo.collections import ConstraintsManager, RulesManager
 from pcg_gazebo.utils import generate_random_string
 import numpy as np
 

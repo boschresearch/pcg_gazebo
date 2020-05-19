@@ -17,7 +17,7 @@ import unittest
 import numpy as np
 import os
 from pcg_gazebo.simulation import add_custom_gazebo_resource_path
-from pcg_gazebo.generators import EngineManager
+from pcg_gazebo.collections import EngineManager
 from pcg_gazebo.generators.engines import FixedPoseEngine, RandomPoseEngine
 from pcg_gazebo.generators.constraints import TangentConstraint, \
     WorkspaceConstraint
