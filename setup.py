@@ -131,7 +131,7 @@ setup(
     keywords='gazebo ros simulation robotics sdf urdf robot',
     packages=[
         'pcg_gazebo',
-        'pcg_gazebo.collections',
+        'pcg_gazebo.collection_managers',
         'pcg_gazebo.generators',
         'pcg_gazebo.generators.constraints',
         'pcg_gazebo.generators.engines',

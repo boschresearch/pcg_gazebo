@@ -20,7 +20,7 @@ from ..utils import generate_random_string, is_string, \
 
 class _Generator(object):
     def __init__(self, name='default', **kwargs):
-        from ..collections import AssetsManager, EngineManager
+        from ..collection_managers import AssetsManager, EngineManager
         self._assets = AssetsManager.get_instance()
         self._engines = EngineManager()
         self._simulation_entity = None

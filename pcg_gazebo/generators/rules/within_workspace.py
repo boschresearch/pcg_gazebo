@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from .rule import Rule
-from ...collections import ConstraintsManager
+from ...collection_managers import ConstraintsManager
 from ...utils import is_string, is_boolean
 from ...simulation.properties import Pose
 

@@ -16,7 +16,7 @@
 from .version import __version__
 
 from . import log
-from . import collections
+from . import collection_managers
 from . import generators
 from . import simulation
 from . import parsers
@@ -28,7 +28,7 @@ from .path import Path
 
 __all__ = [
     __version__,
-    'collections',
+    'collection_managers',
     'log',
     'generators',
     'simulation',
