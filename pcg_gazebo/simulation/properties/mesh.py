@@ -52,6 +52,12 @@ class Mesh(object):
             self.load_mesh()
             self.compute_bounds()
 
+    def __eq__(self, other):
+        return self._uri == other._uri and self.scale == other.scale
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     @staticmethod
     def create_sphere(radius=1):
         assert radius > 0, 'Sphere radius must be greater than zero'
@@ -318,7 +324,18 @@ class Mesh(object):
             sliced_meshes.append(upper_mesh)
         return sliced_meshes
 
-    def get_meshes(self):
+    def get_meshes(self, scale=None):
+        if scale is not None:
+            assert isinstance(
+                scale, collections.Iterable), 'Input is not an array'
+            scale = list(scale)
+            assert len(scale) == 3, \
+                'Input scale array must have 3 elements,' \
+                ' provided={}'.format(scale)
+            for elem in scale:
+                assert elem > 0, 'Scale vector' \
+                    ' components must be greater than zero'
+
         self.load_mesh()
         meshes = list()
         if self._mesh is not None:
@@ -329,11 +346,12 @@ class Mesh(object):
             else:
                 raise ValueError('Mesh object is not a valid trimesh object')
 
-        if self._scale != [1, 1, 1]:
+        mesh_scale = scale if scale is not None else self._scale
+        if mesh_scale != [1, 1, 1]:
             # Apply scaling to the meshes
             scale_matrix = np.eye(4)
             for i in range(3):
-                scale_matrix[i, i] = self._scale[i]
+                scale_matrix[i, i] = mesh_scale[i]
 
             for i in range(len(meshes)):
                 new_mesh = meshes[i].copy()
@@ -341,9 +359,9 @@ class Mesh(object):
                 meshes[i] = new_mesh
         return meshes
 
-    def apply_transform(self, position, rot):
+    def apply_transform(self, position, rot, scale=None):
         self.load_mesh()
-        meshes = self.get_meshes()
+        meshes = self.get_meshes(scale)
 
         if len(meshes) == 0:
             PCG_ROOT_LOGGER.warning('No meshes found')

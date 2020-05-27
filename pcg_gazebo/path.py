@@ -59,6 +59,18 @@ class Path(object):
                 'URI {} resolved={}'.format(
                     uri, self.absolute_uri))
 
+    def __eq__(self, other):
+        if not isinstance(other, Path):
+            return False
+        if self._absolute_uri is None:
+            return False
+        if other._absolute_uri is None:
+            return False
+        return self._absolute_uri == other._absolute_uri
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     @property
     def is_valid(self):
         """ `bool`: `True` if the absolute URI exists."""
