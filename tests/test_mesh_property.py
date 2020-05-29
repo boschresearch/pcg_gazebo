@@ -32,7 +32,7 @@ MONKEY_OFFSET = 1
 class TestSimulationObjectProperties(unittest.TestCase):
     def test_cube_mesh_stl(self):
         # Try and load the wrong format
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AssertionError):
             mesh = Mesh(filename=CUBE_FILENAME_PREFIX + '.abc', load_mesh=True)
 
         mesh = Mesh(filename=CUBE_FILENAME_PREFIX + '.stl', load_mesh=True)
@@ -62,7 +62,7 @@ class TestSimulationObjectProperties(unittest.TestCase):
 
     def test_monkey_mesh_stl(self):
         # Try and load the wrong format
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AssertionError):
             mesh = Mesh(
                 filename=MONKEY_FILENAME_PREFIX +
                 '.abc',
@@ -123,7 +123,7 @@ class TestSimulationObjectProperties(unittest.TestCase):
     def test_cube_mesh_collada(self):
         if sys.version_info[0] == 2:
             return
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AssertionError):
             mesh = Mesh(filename=CUBE_FILENAME_PREFIX + '.abc', load_mesh=True)
 
         mesh = Mesh(filename=CUBE_FILENAME_PREFIX + '.dae', load_mesh=True)

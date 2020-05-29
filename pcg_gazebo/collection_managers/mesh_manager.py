@@ -12,11 +12,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 from ._collection_manager import _CollectionManager
 from ..simulation.properties import Mesh
 from ..path import Path
 from ..log import PCG_ROOT_LOGGER
-from ..utils import generate_random_string
+from ..utils import is_array
+import trimesh
 
 
 class MeshManager(_CollectionManager):
@@ -30,81 +32,129 @@ class MeshManager(_CollectionManager):
         return MeshManager._INSTANCE
 
     def get_unique_tag(self, length=5):
-        label = generate_random_string(length)
+        i = 0
+        label = 'mesh_{}'.format(i)
         while self.has_element(label):
-            label = generate_random_string(length)
+            i += 1
+            label = 'mesh_{}'.format(i)
         return label
 
-    def add(self, tag, **kwargs):
+    def add(self, tag=None, **kwargs):
+        if tag is None:
+            tag = self.get_unique_tag()
         if self.has_element(tag):
-            return False
+            return tag
+        self._collection[tag] = dict(filename=None)
         if 'filename' in kwargs:
-            if 'scale' not in kwargs:
-                kwargs['scale'] = [1, 1, 1]
-            self._collection[tag] = Mesh(
-                **kwargs)
+            assert os.path.isfile(kwargs['filename']), \
+                'Invalid mesh filename, value={}'.format(kwargs['filename'])
+            cur_tag = self.find_mesh_by_filename(kwargs['filename'])
+            if cur_tag is not None:
+                return cur_tag
+            self._collection[tag]['filename'] = Path(kwargs['filename'])
+            self._collection[tag]['mesh'] = trimesh.load_mesh(
+                kwargs['filename'])
+            if isinstance(self._collection[tag]['mesh'], trimesh.Scene):
+                meshes = list(self._collection[tag]['mesh'].dump())
+                PCG_ROOT_LOGGER.info('# meshes={}, filename={}'.format(
+                    len(meshes), self._collection[tag]['filename']))
+                if len(meshes) == 1:
+                    self._collection[tag]['mesh'] = meshes[0]
         elif 'mesh' in kwargs:
-            if 'scale' not in kwargs:
-                kwargs['scale'] = [1, 1, 1]
-            self._collection[tag] = Mesh.from_mesh(
-                **kwargs)
+            self._collection[tag]['mesh'] = kwargs['mesh']
+            if isinstance(self._collection[tag]['mesh'], trimesh.Scene):
+                meshes = list(self._collection[tag]['mesh'].dump())
+                PCG_ROOT_LOGGER.info('# meshes={}'.format(
+                    len(meshes)))
+                if len(meshes) == 1:
+                    self._collection[tag]['mesh'] = meshes[0]
         elif 'type' in kwargs:
-            if not hasattr(Mesh, 'create_{}'.format(kwargs['type'])):
-                PCG_ROOT_LOGGER.error(
-                    'Cannot create mesh of type {}'.format(kwargs['type']))
-                return False
-
             if kwargs['type'] == 'box' and 'size' in kwargs:
-                self._collection[tag] = Mesh.create_box(size=kwargs['size'])
+                assert is_array(kwargs['size']), \
+                    'Size is not an array'
+                vec = list(kwargs['size'])
+                assert len(vec) == 3, 'Input size array must have 3 elements'
+                for elem in vec:
+                    assert elem > 0, \
+                        'Size vector components must be greater than zero'
+
+                self._collection[tag]['mesh'] = \
+                    trimesh.creation.box(extents=kwargs['size'])
+                PCG_ROOT_LOGGER.info('Box mesh created, size={}'.format(
+                    kwargs['size']))
             elif kwargs['type'] == 'cylinder' and \
                     'radius' in kwargs and \
                     'height' in kwargs:
-                self._collection[tag] = Mesh.create_cylinder(
-                    radius=kwargs['radius'],
-                    height=kwargs['height']
-                )
+                assert kwargs['radius'] > 0, \
+                    'Cylinder radius must be greater than zero'
+                assert kwargs['height'] > 0, \
+                    'Cylinder height must be greater than zero'
+                self._collection[tag]['mesh'] = \
+                    trimesh.creation.cylinder(
+                        radius=kwargs['radius'],
+                        height=kwargs['height'])
+                PCG_ROOT_LOGGER.info(
+                    'Cylinder mesh created, radius [m]={},'
+                    ' height [m]={}'.format(
+                        kwargs['radius'], kwargs['height']))
             elif kwargs['type'] == 'capsule' and \
                     'radius' in kwargs and \
                     'height' in kwargs:
-                self._collection[tag] = Mesh.create_capsule(
+                self._collection[tag]['mesh'] = Mesh.create_capsule(
                     radius=kwargs['radius'],
                     height=kwargs['height']
                 )
+                assert kwargs['radius'] > 0, \
+                    'Capsule radius must be greater than zero'
+                assert kwargs['height'] > 0, \
+                    'Capsule height must be greater than zero'
+                self._collection[tag]['mesh'] = \
+                    trimesh.creation.capsule(
+                        radius=kwargs['radius'],
+                        height=kwargs['height'])
+                PCG_ROOT_LOGGER.info(
+                    'Capsule mesh created, radius [m]={},'
+                    ' height [m]={}'.format(
+                        kwargs['radius'], kwargs['height']))
             elif kwargs['type'] == 'sphere' and \
                     'radius' in kwargs:
-                self._collection[tag] = Mesh.create_sphere(
-                    radius=kwargs['radius'])
+                assert kwargs['radius'] > 0, \
+                    'Sphere radius must be greater than zero'
+                self._collection[tag]['mesh'] = \
+                    trimesh.creation.icosphere(radius=kwargs['radius'])
+                PCG_ROOT_LOGGER.info(
+                    'Sphere mesh created, radius [m]={}'.format(
+                        kwargs['radius']))
             else:
-                return False
+                del self._collection[tag]
+                return None
         else:
-            return False
-        return True
+            del self._collection[tag]
+            return None
+        return tag
 
     def get(self, **kwargs):
         if 'filename' in kwargs:
             mesh_filename = Path(kwargs['filename'])
-            if 'scale' in kwargs:
-                scale = kwargs['scale']
-            else:
-                scale = [1, 1, 1]
 
             for tag in self._collection:
-                if self._collection[tag]._uri == mesh_filename and \
-                        self._collection[tag]._scale == scale:
-                    return self._collection[tag]
+                if self._collection[tag]['filename']._uri == mesh_filename:
+                    return self._collection[tag]['mesh']
         elif 'tag' in kwargs:
             if not self.has_element(kwargs['tag']):
+                PCG_ROOT_LOGGER.error(
+                    'No element with tag <{}> was found'.format(
+                        kwargs['tag']))
                 return None
-            return self._collection[kwargs['tag']]
+            return self._collection[kwargs['tag']]['mesh']
         return None
 
-    def get_tag(self, filename, scale=[1, 1, 1]):
+    def find_mesh_by_filename(self, filename):
         mesh_filename = Path(filename)
-        print('filename: {}'.format(mesh_filename._absolute_uri))
         if mesh_filename is None:
             return None
         for tag in self._collection:
-            if self._collection[tag]._uri == mesh_filename and \
-                    self._collection[tag]._scale == scale:
-                return tag
+            if self._collection[tag]['filename'] is not None:
+                if self._collection[tag]['filename'] == mesh_filename:
+                    return tag
         return None
