@@ -52,6 +52,7 @@ class Mesh(object):
 
         self._mesh_manager = MeshManager.get_instance()
         self._mesh_tag = None
+        self._mesh = None
 
         self.scale = scale
 
@@ -139,7 +140,9 @@ class Mesh(object):
 
     @property
     def mesh(self):
-        return self._mesh_manager.get(tag=self._mesh_tag)
+        if self._mesh is None:
+            self._mesh = self._mesh_manager.get(tag=self._mesh_tag)
+        return self._mesh
 
     @property
     def bounds(self):
