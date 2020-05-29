@@ -40,7 +40,7 @@ jobs:
         python -c "import pcg_gazebo"
     - name: Test with pytest
       run: |
-        pytest
+        pytest tests/ -v
     - name: Prepare package for deployment
       if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags') && matrix.python-version == 3.6
       run: |

@@ -31,4 +31,4 @@ script:
 # Test importing the package
 - set -e; python -c "import pcg_gazebo"; set +e;
 # Install test dependencies and run tests
-- pytest -x tests
+- pytest -v tests
