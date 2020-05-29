@@ -883,7 +883,7 @@ class TestWorldGenerator(unittest.TestCase):
 
         self.assertTrue(generator.run_engines())
         self.assertGreaterEqual(len(generator.world.models), 1)
-    
+
     def test_example_full_crates_ode(self):
         gen_config_file = os.path.join(EXAMPLES_DIR, 'full_crates_ode.yml')
 
@@ -892,9 +892,10 @@ class TestWorldGenerator(unittest.TestCase):
 
         self.assertTrue(generator.run_engines())
         self.assertGreaterEqual(len(generator.world.models), 1)
-    
+
     def test_example_random_workspaces_ode(self):
-        gen_config_file = os.path.join(EXAMPLES_DIR, 'random_workspaces_ode.yml')
+        gen_config_file = os.path.join(
+            EXAMPLES_DIR, 'random_workspaces_ode.yml')
 
         generator = WorldGenerator()
         generator.from_yaml(gen_config_file)
