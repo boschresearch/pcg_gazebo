@@ -41,6 +41,10 @@ be handled by `pip` as
 sudo apt install libspatialindex-dev pybind11-dev libgeos-dev
 ```
 
+Give some issues with the package `rtree` on `pip`, it would also be
+recommended to install it from `apt`. Please install `python-rtree`
+if you are using Python 2.x or `python3-rtree` for Python 3.x.
+
 > The default installation does not include `rospy` dependencies that
 > are not available as a `pip` package. They have to be installed 
 > separately for certain submodules to work, such as `pcg_gazebo.task_manager`.
