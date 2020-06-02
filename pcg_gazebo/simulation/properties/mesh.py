@@ -142,6 +142,9 @@ class Mesh(object):
     def mesh(self):
         if self._mesh is None:
             self._mesh = self._mesh_manager.get(tag=self._mesh_tag)
+            assert self._mesh is not None, \
+                'Mesh could not be retrieved for tag {}'.format(
+                    self._mesh_tag)
         return self._mesh
 
     @property
