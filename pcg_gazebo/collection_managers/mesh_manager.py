@@ -14,7 +14,6 @@
 # limitations under the License.
 import os
 from ._collection_manager import _CollectionManager
-from ..simulation.properties import Mesh
 from ..path import Path
 from ..log import PCG_ROOT_LOGGER
 from ..utils import is_array
@@ -69,65 +68,43 @@ class MeshManager(_CollectionManager):
                 if len(meshes) == 1:
                     self._collection[tag]['mesh'] = meshes[0]
         elif 'type' in kwargs:
-            if kwargs['type'] == 'box' and 'size' in kwargs:
-                assert is_array(kwargs['size']), \
-                    'Size is not an array'
-                vec = list(kwargs['size'])
-                assert len(vec) == 3, 'Input size array must have 3 elements'
-                for elem in vec:
-                    assert elem > 0, \
-                        'Size vector components must be greater than zero'
-
-                self._collection[tag]['mesh'] = \
-                    trimesh.creation.box(extents=kwargs['size'])
-                PCG_ROOT_LOGGER.info('Box mesh created, size={}'.format(
-                    kwargs['size']))
-            elif kwargs['type'] == 'cylinder' and \
-                    'radius' in kwargs and \
-                    'height' in kwargs:
-                assert kwargs['radius'] > 0, \
-                    'Cylinder radius must be greater than zero'
-                assert kwargs['height'] > 0, \
-                    'Cylinder height must be greater than zero'
-                self._collection[tag]['mesh'] = \
-                    trimesh.creation.cylinder(
-                        radius=kwargs['radius'],
-                        height=kwargs['height'])
-                PCG_ROOT_LOGGER.info(
-                    'Cylinder mesh created, radius [m]={},'
-                    ' height [m]={}'.format(
-                        kwargs['radius'], kwargs['height']))
-            elif kwargs['type'] == 'capsule' and \
-                    'radius' in kwargs and \
-                    'height' in kwargs:
-                self._collection[tag]['mesh'] = Mesh.create_capsule(
-                    radius=kwargs['radius'],
-                    height=kwargs['height']
-                )
-                assert kwargs['radius'] > 0, \
-                    'Capsule radius must be greater than zero'
-                assert kwargs['height'] > 0, \
-                    'Capsule height must be greater than zero'
-                self._collection[tag]['mesh'] = \
-                    trimesh.creation.capsule(
-                        radius=kwargs['radius'],
-                        height=kwargs['height'])
-                PCG_ROOT_LOGGER.info(
-                    'Capsule mesh created, radius [m]={},'
-                    ' height [m]={}'.format(
-                        kwargs['radius'], kwargs['height']))
-            elif kwargs['type'] == 'sphere' and \
-                    'radius' in kwargs:
-                assert kwargs['radius'] > 0, \
-                    'Sphere radius must be greater than zero'
-                self._collection[tag]['mesh'] = \
-                    trimesh.creation.icosphere(radius=kwargs['radius'])
-                PCG_ROOT_LOGGER.info(
-                    'Sphere mesh created, radius [m]={}'.format(
-                        kwargs['radius']))
-            else:
+            mesh_tag = self.find_by_parameters(**kwargs)
+            if mesh_tag is not None:
+                del self._collection[tag]
+                tag = mesh_tag
+                return tag
+            if kwargs['type'] not in ['box', 'cylinder', 'capsule', 'sphere']:
                 del self._collection[tag]
                 return None
+            else:
+                if kwargs['type'] == 'box' and 'size' in kwargs:
+                    assert is_array(kwargs['size']), \
+                        'Size is not an array'
+                    vec = list(kwargs['size'])
+                    assert len(vec) == 3, \
+                        'Input size array must have 3 elements'
+                    for elem in vec:
+                        assert elem > 0, \
+                            'Size vector components must be greater than zero'
+                elif kwargs['type'] == 'cylinder' and \
+                        'radius' in kwargs and \
+                        'height' in kwargs:
+                    assert kwargs['radius'] > 0, \
+                        'Cylinder radius must be greater than zero'
+                    assert kwargs['height'] > 0, \
+                        'Cylinder height must be greater than zero'
+                elif kwargs['type'] == 'capsule' and \
+                        'radius' in kwargs and \
+                        'height' in kwargs:
+                    assert kwargs['radius'] > 0, \
+                        'Capsule radius must be greater than zero'
+                    assert kwargs['height'] > 0, \
+                        'Capsule height must be greater than zero'
+                elif kwargs['type'] == 'sphere' and \
+                        'radius' in kwargs:
+                    assert kwargs['radius'] > 0, \
+                        'Sphere radius must be greater than zero'
+                self._collection[tag].update(kwargs)
         else:
             del self._collection[tag]
             return None
@@ -146,7 +123,23 @@ class MeshManager(_CollectionManager):
                     'No element with tag <{}> was found'.format(
                         kwargs['tag']))
                 return None
-            return self._collection[kwargs['tag']]['mesh']
+            if 'type' in self._collection[kwargs['tag']]:
+                if self._collection[kwargs['tag']]['type'] == 'box':
+                    return trimesh.creation.box(
+                        extents=self._collection[kwargs['tag']]['size'])
+                elif self._collection[kwargs['tag']]['type'] == 'cylinder':
+                    return trimesh.creation.cylinder(
+                        radius=self._collection[kwargs['tag']]['radius'],
+                        height=self._collection[kwargs['tag']]['height'])
+                elif self._collection[kwargs['tag']]['type'] == 'capsule':
+                    return trimesh.creation.capsule(
+                        radius=self._collection[kwargs['tag']]['radius'],
+                        height=self._collection[kwargs['tag']]['height'])
+                elif self._collection[kwargs['tag']]['type'] == 'sphere':
+                    return trimesh.creation.icosphere(
+                        radius=self._collection[kwargs['tag']]['radius'])
+            else:
+                return self._collection[kwargs['tag']]['mesh']
         return None
 
     def find_mesh_by_filename(self, filename):
@@ -157,4 +150,19 @@ class MeshManager(_CollectionManager):
             if self._collection[tag]['filename'] is not None:
                 if self._collection[tag]['filename'] == mesh_filename:
                     return tag
+        return None
+
+    def find_by_parameters(self, **kwargs):
+        for tag in self._collection:
+            found_mesh = False
+            for param_tag in kwargs:
+                if param_tag not in self._collection[tag]:
+                    found_mesh = False
+                    continue
+                if self._collection[tag][param_tag] != kwargs[param_tag]:
+                    found_mesh = False
+                    continue
+                found_mesh = True
+            if found_mesh:
+                return tag
         return None
