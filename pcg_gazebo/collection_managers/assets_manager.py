@@ -278,7 +278,6 @@ class AssetsManager(_CollectionManager):
                 PCG_ROOT_LOGGER.info('Added model factory <{}>'.format(tag))
             elif type in ['model_generator', 'light']:
                 if type == 'model_generator':
-                    print(description)
                     self._collection[tag] = ModelGroupGenerator(
                         **description)
                     PCG_ROOT_LOGGER.info(
