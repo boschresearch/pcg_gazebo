@@ -12,13 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from ...parsers.sdf import create_sdf_element
 import collections
 import itertools
 import numpy as np
 from .mesh import Mesh
 from .footprint import Footprint
 from ...log import PCG_ROOT_LOGGER
+from ...utils import is_string
+from ...parsers.sdf import create_sdf_element
 
 
 class Geometry(object):
@@ -299,7 +300,7 @@ class Geometry(object):
         self._geo_type = 'plane'
 
     def set_mesh(self, mesh, scale=[1, 1, 1], load_mesh=True):
-        if isinstance(mesh, str):
+        if is_string(mesh):
             self._mesh = Mesh(mesh, load_mesh)
         else:
             self._mesh = Mesh.from_mesh(mesh, scale)
