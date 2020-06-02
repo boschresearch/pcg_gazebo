@@ -844,9 +844,9 @@ def plot_occupancy_grid(
     if output_folder is not None and os.path.isdir(output_folder):
         if '.pgm' in output_filename:
             filename = os.path.join(output_folder, output_filename)
-            filename_svg = os.path.join(
+            filename_png = os.path.join(
                 output_folder, output_filename.replace(
-                    '.pgm', '.svg'))
+                    '.pgm', '.png'))
             has_ground_plane = True
             if occupancy_output is not None:
                 has_ground_plane = occupancy_output['ground_plane'] is not None
@@ -856,7 +856,7 @@ def plot_occupancy_grid(
             else:
                 color = free_color
             plt.savefig(
-                filename_svg,
+                filename_png,
                 dpi=dpi,
                 bbox_inches='tight',
                 facecolor=color,
