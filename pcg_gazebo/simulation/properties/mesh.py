@@ -25,6 +25,7 @@ from shapely.ops import unary_union, triangulate, polygonize
 from ...log import PCG_ROOT_LOGGER
 from ...parsers.sdf import create_sdf_element
 from ...path import Path
+from ...utils import is_string
 
 # Disabling trimesh's logging messages
 logger = logging.getLogger('trimesh')
@@ -37,7 +38,7 @@ class Mesh(object):
         self._uri = None
         self._filename = None
         if filename is not None:
-            assert isinstance(filename, str), 'Input filename is not a string'
+            assert is_string(filename), 'Input filename is not a string'
             PCG_ROOT_LOGGER.info('Mesh created from file={}'.format(filename))
             self._uri = Path(filename)
             self._filename = self._uri.absolute_uri
@@ -134,7 +135,7 @@ class Mesh(object):
 
     @filename.setter
     def filename(self, value):
-        assert isinstance(value, str), 'Input filename is not a string'
+        assert is_string(value), 'Input filename is not a string'
         self._uri = Path(value)
         self._filename = self._uri.absolute_uri
 
