@@ -47,7 +47,7 @@ class MeshManager(_CollectionManager):
         if 'filename' in kwargs:
             assert os.path.isfile(kwargs['filename']), \
                 'Invalid mesh filename, value={}'.format(kwargs['filename'])
-            cur_tag = self.find_mesh_by_filename(kwargs['filename'])
+            cur_tag = self.find_by_filename(kwargs['filename'])
             if cur_tag is not None:
                 return cur_tag
             self._collection[tag]['filename'] = Path(kwargs['filename'])
@@ -142,7 +142,7 @@ class MeshManager(_CollectionManager):
                 return self._collection[kwargs['tag']]['mesh']
         return None
 
-    def find_mesh_by_filename(self, filename):
+    def find_by_filename(self, filename):
         mesh_filename = Path(filename)
         if mesh_filename is None:
             return None
