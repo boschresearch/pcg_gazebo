@@ -13,10 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import numpy as np
 from ._collection_manager import _CollectionManager
 from ..path import Path
 from ..log import PCG_ROOT_LOGGER
-from ..utils import is_array
+from ..utils import is_array, is_scalar
 import trimesh
 
 
@@ -39,10 +40,12 @@ class MeshManager(_CollectionManager):
         return label
 
     def add(self, tag=None, **kwargs):
+        print('b tag=', tag)
         if tag is None:
             tag = self.get_unique_tag()
+        print('a tag=', tag)
         if self.has_element(tag):
-            return tag
+            return None
         self._collection[tag] = dict(filename=None)
         if 'filename' in kwargs:
             assert os.path.isfile(kwargs['filename']), \
@@ -70,11 +73,12 @@ class MeshManager(_CollectionManager):
         elif 'type' in kwargs:
             mesh_tag = self.find_by_parameters(**kwargs)
             if mesh_tag is not None:
-                del self._collection[tag]
+                print(
+                    'find_by_parameters=', mesh_tag, kwargs,
+                    self._collection[mesh_tag])
                 tag = mesh_tag
                 return tag
             if kwargs['type'] not in ['box', 'cylinder', 'capsule', 'sphere']:
-                del self._collection[tag]
                 return None
             else:
                 if kwargs['type'] == 'box' and 'size' in kwargs:
@@ -84,24 +88,36 @@ class MeshManager(_CollectionManager):
                     assert len(vec) == 3, \
                         'Input size array must have 3 elements'
                     for elem in vec:
+                        assert is_scalar(elem), \
+                            'Vector element must be a scalar'
                         assert elem > 0, \
                             'Size vector components must be greater than zero'
                 elif kwargs['type'] == 'cylinder' and \
                         'radius' in kwargs and \
                         'height' in kwargs:
+                    assert is_scalar(kwargs['radius']), \
+                        'Radius must be a scalar'
                     assert kwargs['radius'] > 0, \
                         'Cylinder radius must be greater than zero'
+                    assert is_scalar(kwargs['height']), \
+                        'Height must be a scalar'
                     assert kwargs['height'] > 0, \
                         'Cylinder height must be greater than zero'
                 elif kwargs['type'] == 'capsule' and \
                         'radius' in kwargs and \
                         'height' in kwargs:
+                    assert is_scalar(kwargs['radius']), \
+                        'Radius must be a scalar'
                     assert kwargs['radius'] > 0, \
                         'Capsule radius must be greater than zero'
+                    assert is_scalar(kwargs['height']), \
+                        'Height must be a scalar'
                     assert kwargs['height'] > 0, \
                         'Capsule height must be greater than zero'
                 elif kwargs['type'] == 'sphere' and \
                         'radius' in kwargs:
+                    assert is_scalar(kwargs['radius']), \
+                        'Radius must be a scalar'
                     assert kwargs['radius'] > 0, \
                         'Sphere radius must be greater than zero'
                 self._collection[tag].update(kwargs)
@@ -153,15 +169,33 @@ class MeshManager(_CollectionManager):
         return None
 
     def find_by_parameters(self, **kwargs):
+        if 'type' not in kwargs:
+            return None
         for tag in self._collection:
             found_mesh = False
             for param_tag in kwargs:
                 if param_tag not in self._collection[tag]:
                     found_mesh = False
-                    continue
-                if self._collection[tag][param_tag] != kwargs[param_tag]:
+                    break
+                if (is_array(self._collection[tag][param_tag]) and
+                    not is_array(kwargs[param_tag])) or \
+                        (not is_array(self._collection[tag][param_tag]) and
+                         is_array(kwargs[param_tag])):
                     found_mesh = False
-                    continue
+                    break
+                if is_array(self._collection[tag][param_tag]) and \
+                        is_array(kwargs[param_tag]):
+                    if len(self._collection[tag][param_tag]) != \
+                            len(kwargs[param_tag]):
+                        found_mesh = False
+                        break
+                    if np.sum(np.array(self._collection[tag][param_tag]) -
+                              np.array(kwargs[param_tag])) != 0:
+                        found_mesh = False
+                        break
+                elif self._collection[tag][param_tag] != kwargs[param_tag]:
+                    found_mesh = False
+                    break
                 found_mesh = True
             if found_mesh:
                 return tag
