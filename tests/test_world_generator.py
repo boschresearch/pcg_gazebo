@@ -460,7 +460,7 @@ class TestWorldGenerator(unittest.TestCase):
                     max_area=0.9,
                     no_collision=True,
                     max_num=dict(
-                        box=1
+                        box=5
                     ),
                     policies=[
                         dict(
@@ -587,7 +587,7 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertTrue(generator.run_engines())
 
         # Test if all models where generated
-        self.assertEqual(generator.world.n_models, 15)
+        self.assertEqual(generator.world.n_models, 17)
         self.assertEqual(len(generator.world.model_groups), 3)
         self.assertIn('default', generator.world.model_groups)
         self.assertIn('box_generated', generator.world.model_groups)
