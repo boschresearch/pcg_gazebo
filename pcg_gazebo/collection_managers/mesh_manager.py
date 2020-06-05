@@ -40,10 +40,8 @@ class MeshManager(_CollectionManager):
         return label
 
     def add(self, tag=None, **kwargs):
-        print('b tag=', tag)
         if tag is None:
             tag = self.get_unique_tag()
-        print('a tag=', tag)
         if self.has_element(tag):
             return None
         self._collection[tag] = dict(filename=None)
@@ -156,6 +154,59 @@ class MeshManager(_CollectionManager):
                         radius=self._collection[kwargs['tag']]['radius'])
             else:
                 return self._collection[kwargs['tag']]['mesh']
+        elif 'type' in kwargs:
+            if kwargs['type'] == 'box':
+                assert 'size' in kwargs, \
+                    'Box size not provided'
+                assert is_array(kwargs['size']), \
+                        'Size is not an array'
+                vec = list(kwargs['size'])
+                assert len(vec) == 3, \
+                    'Input size array must have 3 elements'
+                for elem in vec:
+                    assert is_scalar(elem), \
+                        'Vector element must be a scalar'
+                    assert elem > 0, \
+                        'Size vector components must be greater than zero'
+                return trimesh.creation.box(
+                    extents=kwargs['size'])
+            elif kwargs['type'] == 'cylinder':
+                assert 'radius' in kwargs and 'height' in kwargs, \
+                    'Radius and height not provided'
+                assert is_scalar(kwargs['radius']), \
+                    'Radius must be a scalar'
+                assert kwargs['radius'] > 0, \
+                    'Cylinder radius must be greater than zero'
+                assert is_scalar(kwargs['height']), \
+                    'Height must be a scalar'
+                assert kwargs['height'] > 0, \
+                    'Cylinder height must be greater than zero'
+                return trimesh.creation.cylinder(
+                    radius=kwargs['radius'],
+                    height=kwargs['height'])
+            elif kwargs['type'] == 'capsule':
+                assert 'radius' in kwargs and 'height' in kwargs, \
+                    'Radius and height not provided'
+                assert is_scalar(kwargs['radius']), \
+                    'Radius must be a scalar'
+                assert kwargs['radius'] > 0, \
+                    'Capsule radius must be greater than zero'
+                assert is_scalar(kwargs['height']), \
+                    'Height must be a scalar'
+                assert kwargs['height'] > 0, \
+                    'Capsule height must be greater than zero'
+                return trimesh.creation.capsule(
+                    radius=kwargs['radius'],
+                    height=kwargs['height'])
+            elif kwargs['type'] == 'sphere':
+                assert 'radius' in kwargs, 'No radius provided'
+                assert is_scalar(kwargs['radius']), \
+                        'Radius must be a scalar'
+                assert kwargs['radius'] > 0, \
+                    'Sphere radius must be greater than zero'
+                return trimesh.creation.icosphere(
+                    radius=kwargs['radius'])
+
         return None
 
     def find_by_filename(self, filename):

@@ -54,6 +54,7 @@ class Mesh(object):
         self._mesh_manager = MeshManager.get_instance()
         self._mesh_tag = None
         self._mesh = None
+        self._mesh_parameters = None
 
         self.scale = scale
 
@@ -69,8 +70,9 @@ class Mesh(object):
     def create_sphere(radius=1):
         assert radius > 0, 'Sphere radius must be greater than zero'
         mesh = Mesh()
-        mesh._mesh_tag = mesh._mesh_manager.add(type='sphere', radius=radius)
-        assert mesh._mesh_tag is not None, 'Mesh tag is None'
+        mesh._mesh_tag = None
+        mesh._mesh_properties = dict(type='sphere', radius=radius)
+        assert mesh.mesh is not None, 'Sphere mesh could not be generated'
         PCG_ROOT_LOGGER.info(
             'Sphere mesh created, radius [m]={}'.format(radius))
         return mesh
@@ -80,9 +82,10 @@ class Mesh(object):
         assert radius > 0, 'Cylinder radius must be greater than zero'
         assert height > 0, 'Cylinder height must be greater than zero'
         mesh = Mesh()
-        mesh._mesh_tag = mesh._mesh_manager.add(
+        mesh._mesh_tag = None
+        mesh._mesh_properties = dict(
             type='cylinder', radius=radius, height=height)
-        assert mesh._mesh_tag is not None, 'Mesh tag is None'
+        assert mesh.mesh is not None, 'Cylinder mesh could not be generated'
         PCG_ROOT_LOGGER.info(
             'Cylinder mesh created, radius [m]={}, height [m]={}'.format(
                 radius, height))
@@ -93,9 +96,10 @@ class Mesh(object):
         assert radius > 0, 'Capsule radius must be greater than zero'
         assert height > 0, 'Capsule height must be greater than zero'
         mesh = Mesh()
-        mesh._mesh_tag = mesh._mesh_manager.add(
-            type='capsule', radius=radius, height=height)
-        assert mesh._mesh_tag is not None, 'Mesh tag is None'
+        mesh._mesh_tag = None
+        mesh._mesh_properties = \
+            dict(type='capsule', radius=radius, height=height)
+        assert mesh.mesh is not None, 'Capsule mesh could not be generated'
         PCG_ROOT_LOGGER.info(
             'Capsule mesh created, radius [m]={}, height [m]={}'.format(
                 radius, height))
@@ -110,8 +114,9 @@ class Mesh(object):
             assert elem > 0, 'Size vector components must be greater than zero'
 
         mesh = Mesh()
-        mesh._mesh_tag = mesh._mesh_manager.add(type='box', size=size)
-        assert mesh._mesh_tag is not None, 'Mesh tag is None'
+        mesh._mesh_tag = None
+        mesh._mesh_properties = dict(type='box', size=size)
+        assert mesh.mesh is not None, 'Box mesh could not be generated'
         PCG_ROOT_LOGGER.info('Box mesh created, size={}'.format(size))
         return mesh
 
@@ -125,6 +130,10 @@ class Mesh(object):
         output._scale = scale
         PCG_ROOT_LOGGER.info('Mesh created from trimesh.Trimesh object')
         return output
+
+    @property
+    def tag(self):
+        return self._mesh_tag
 
     @property
     def filename(self):
@@ -142,10 +151,15 @@ class Mesh(object):
     @property
     def mesh(self):
         if self._mesh is None:
-            self._mesh = self._mesh_manager.get(tag=self._mesh_tag)
-            assert self._mesh is not None, \
-                'Mesh could not be retrieved for tag {}'.format(
-                    self._mesh_tag)
+            if self._mesh_tag is not None:
+                self._mesh = self._mesh_manager.get(tag=self._mesh_tag)
+                assert self._mesh is not None, \
+                    'Mesh could not be retrieved for tag {}'.format(
+                        self._mesh_tag)
+            elif self._mesh_properties is not None:
+                self._mesh = self._mesh_manager.get(**self._mesh_properties)
+
+        assert self._mesh is not None, 'Mesh is None'
         return self._mesh
 
     @property
