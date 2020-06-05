@@ -25,6 +25,7 @@ from shapely.ops import unary_union, triangulate, polygonize
 from ...log import PCG_ROOT_LOGGER
 from ...parsers.sdf import create_sdf_element
 from ...path import Path
+from ...utils import is_string
 
 # Disabling trimesh's logging messages
 logger = logging.getLogger('trimesh')
@@ -33,30 +34,45 @@ logger.disabled = True
 
 class Mesh(object):
     def __init__(self, filename=None, load_mesh=False, scale=[1, 1, 1]):
+        from ...collection_managers import MeshManager
         self._uri = None
         self._filename = None
         if filename is not None:
-            assert isinstance(filename, str), 'Input filename is not a string'
+            assert is_string(filename), 'Input filename is not a string'
             PCG_ROOT_LOGGER.info('Mesh created from file={}'.format(filename))
             self._uri = Path(filename)
             self._filename = self._uri.absolute_uri
-        self._mesh = None
+            assert self._filename is not None, \
+                'Filename could not be resolved from {}'.format(filename)
+            assert os.path.isfile(self._filename), \
+                'Invalid mesh filename, value={}'.format(self._filename)
         self._bounds = None
         self._center = None
         self._scale = None
         self._footprint_states = list()
 
+        self._mesh_manager = MeshManager.get_instance()
+        self._mesh_tag = None
+        self._mesh = None
+        self._mesh_parameters = None
+
         self.scale = scale
 
-        if load_mesh:
-            self.load_mesh()
-            self.compute_bounds()
+        self.load_mesh()
+
+    def __eq__(self, other):
+        return self._uri == other._uri and self.scale == other.scale
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     @staticmethod
     def create_sphere(radius=1):
         assert radius > 0, 'Sphere radius must be greater than zero'
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.icosphere(radius=radius)
+        mesh._mesh_tag = None
+        mesh._mesh_properties = dict(type='sphere', radius=radius)
+        assert mesh.mesh is not None, 'Sphere mesh could not be generated'
         PCG_ROOT_LOGGER.info(
             'Sphere mesh created, radius [m]={}'.format(radius))
         return mesh
@@ -66,7 +82,10 @@ class Mesh(object):
         assert radius > 0, 'Cylinder radius must be greater than zero'
         assert height > 0, 'Cylinder height must be greater than zero'
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.cylinder(radius=radius, height=height)
+        mesh._mesh_tag = None
+        mesh._mesh_properties = dict(
+            type='cylinder', radius=radius, height=height)
+        assert mesh.mesh is not None, 'Cylinder mesh could not be generated'
         PCG_ROOT_LOGGER.info(
             'Cylinder mesh created, radius [m]={}, height [m]={}'.format(
                 radius, height))
@@ -77,7 +96,10 @@ class Mesh(object):
         assert radius > 0, 'Capsule radius must be greater than zero'
         assert height > 0, 'Capsule height must be greater than zero'
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.capsule(radius=radius, height=height)
+        mesh._mesh_tag = None
+        mesh._mesh_properties = \
+            dict(type='capsule', radius=radius, height=height)
+        assert mesh.mesh is not None, 'Capsule mesh could not be generated'
         PCG_ROOT_LOGGER.info(
             'Capsule mesh created, radius [m]={}, height [m]={}'.format(
                 radius, height))
@@ -92,7 +114,9 @@ class Mesh(object):
             assert elem > 0, 'Size vector components must be greater than zero'
 
         mesh = Mesh()
-        mesh._mesh = trimesh.creation.box(extents=size)
+        mesh._mesh_tag = None
+        mesh._mesh_properties = dict(type='box', size=size)
+        assert mesh.mesh is not None, 'Box mesh could not be generated'
         PCG_ROOT_LOGGER.info('Box mesh created, size={}'.format(size))
         return mesh
 
@@ -101,10 +125,15 @@ class Mesh(object):
         assert isinstance(
             mesh, trimesh.Trimesh), 'Invalid mesh structure input'
         output = Mesh()
-        output._mesh = mesh
+        output._mesh_tag = output._mesh_manager.add(mesh=mesh)
+        assert output._mesh_tag is not None, 'Mesh tag is None'
         output._scale = scale
         PCG_ROOT_LOGGER.info('Mesh created from trimesh.Trimesh object')
         return output
+
+    @property
+    def tag(self):
+        return self._mesh_tag
 
     @property
     def filename(self):
@@ -115,15 +144,23 @@ class Mesh(object):
 
     @filename.setter
     def filename(self, value):
-        assert isinstance(value, str), 'Input filename is not a string'
+        assert is_string(value), 'Input filename is not a string'
         self._uri = Path(value)
         self._filename = self._uri.absolute_uri
 
     @property
     def mesh(self):
-        if self.load_mesh():
-            return self._mesh
-        return None
+        if self._mesh is None:
+            if self._mesh_tag is not None:
+                self._mesh = self._mesh_manager.get(tag=self._mesh_tag)
+                assert self._mesh is not None, \
+                    'Mesh could not be retrieved for tag {}'.format(
+                        self._mesh_tag)
+            elif self._mesh_properties is not None:
+                self._mesh = self._mesh_manager.get(**self._mesh_properties)
+
+        assert self._mesh is not None, 'Mesh is None'
+        return self._mesh
 
     @property
     def bounds(self):
@@ -132,7 +169,9 @@ class Mesh(object):
 
     @property
     def center(self):
-        if self._mesh is None or self._bounds is None or self._center is None:
+        if self.mesh is None \
+                or self._bounds is None \
+                or self._center is None:
             self.compute_bounds()
         return self._center
 
@@ -154,7 +193,6 @@ class Mesh(object):
 
     @property
     def n_vertices(self):
-        self.load_mesh()
         n_vertices = 0
         for mesh in self.get_meshes():
             n_vertices += mesh.vertices.shape[0]
@@ -318,22 +356,34 @@ class Mesh(object):
             sliced_meshes.append(upper_mesh)
         return sliced_meshes
 
-    def get_meshes(self):
-        self.load_mesh()
+    def get_meshes(self, scale=None):
+        if scale is not None:
+            assert isinstance(
+                scale, collections.Iterable), 'Input is not an array'
+            scale = list(scale)
+            assert len(scale) == 3, \
+                'Input scale array must have 3 elements,' \
+                ' provided={}'.format(scale)
+            for elem in scale:
+                assert elem > 0, 'Scale vector' \
+                    ' components must be greater than zero'
+
+        entity = self.mesh
         meshes = list()
-        if self._mesh is not None:
-            if isinstance(self._mesh, trimesh.Scene):
-                meshes = self._mesh.dump()
-            elif isinstance(self._mesh, trimesh.Trimesh):
-                meshes = [self._mesh]
+        if entity is not None:
+            if isinstance(entity, trimesh.Scene):
+                meshes = entity.dump()
+            elif isinstance(entity, trimesh.Trimesh):
+                meshes = [entity]
             else:
                 raise ValueError('Mesh object is not a valid trimesh object')
 
-        if self._scale != [1, 1, 1]:
+        mesh_scale = scale if scale is not None else self._scale
+        if mesh_scale != [1, 1, 1]:
             # Apply scaling to the meshes
             scale_matrix = np.eye(4)
             for i in range(3):
-                scale_matrix[i, i] = self._scale[i]
+                scale_matrix[i, i] = mesh_scale[i]
 
             for i in range(len(meshes)):
                 new_mesh = meshes[i].copy()
@@ -341,9 +391,8 @@ class Mesh(object):
                 meshes[i] = new_mesh
         return meshes
 
-    def apply_transform(self, position, rot):
-        self.load_mesh()
-        meshes = self.get_meshes()
+    def apply_transform(self, position, rot, scale=None):
+        meshes = self.get_meshes(scale)
 
         if len(meshes) == 0:
             PCG_ROOT_LOGGER.warning('No meshes found')
@@ -360,31 +409,11 @@ class Mesh(object):
         return transformed_meshes
 
     def load_mesh(self):
-        if self._mesh is None:
-            if self._filename is None:
-                msg = 'Mesh filename is required to load the mesh'
-                PCG_ROOT_LOGGER.error(msg)
-                raise ValueError(msg)
-
-            if not os.path.isfile(self._filename):
-                msg = 'Input mesh filename is invalid, filename={}'.format(
-                    self._filename)
-                PCG_ROOT_LOGGER.error(msg)
-                raise ValueError(msg)
-
-            entity = trimesh.load_mesh(self._filename)
-
-            if isinstance(entity, trimesh.Scene):
-                meshes = list(entity.dump())
-                PCG_ROOT_LOGGER.info('# meshes={}, filename={}'.format(
-                    len(meshes), self._filename))
-                if len(meshes) == 1:
-                    self._mesh = meshes[0]
-                else:
-                    self._mesh = entity
-            else:
-                self._mesh = entity
-
+        if self._filename is None:
+            return False
+        if self._mesh_tag is None:
+            self._mesh_tag = self._mesh_manager.add(
+                filename=self._filename)
             PCG_ROOT_LOGGER.info(
                 'Mesh successfully loaded from file, '
                 'filename={}, # vertices={}'.format(
@@ -394,9 +423,7 @@ class Mesh(object):
             return True
 
     def get_samples(self, count=1000):
-        self.load_mesh()
-
-        if self._mesh is None:
+        if self.mesh is None:
             return None
 
         try:
@@ -414,12 +441,6 @@ class Mesh(object):
         return pnts
 
     def compute_bounds(self):
-        if not self.load_mesh():
-            PCG_ROOT_LOGGER.error(
-                'Cannot compute mesh bounds, filename={}'.format(
-                    self.filename))
-            return False
-
         self._bounds = dict(
             lower_x=None,
             upper_x=None,
@@ -427,9 +448,9 @@ class Mesh(object):
             upper_y=None,
             lower_z=None,
             upper_z=None)
-
-        if self._mesh is not None:
-            bounds = self._mesh.bounds
+        mesh = self.mesh
+        if mesh is not None:
+            bounds = mesh.bounds
             self._bounds['lower_x'] = bounds[0, 0]
             self._bounds['upper_x'] = bounds[1, 0]
 
@@ -730,7 +751,7 @@ class Mesh(object):
     def show(self):
         if not self.load_mesh():
             return False
-        self._mesh.show()
+        self.mesh.show()
         return True
 
     def show_section(self, origin=None, plane_normal=[0, 0, 1], show_3d=True):
@@ -741,7 +762,7 @@ class Mesh(object):
         if origin is not None:
             assert len(origin) == 3, 'Origin vector must have three components'
         else:
-            origin = self._mesh.centroid
+            origin = self.mesh.centroid
 
         assert len(plane_normal) == 3, 'Plane normal vector' \
             ' must have three components'
@@ -803,8 +824,8 @@ class Mesh(object):
         ax.add_patch(patch)
 
         if show:
-            x_lim = np.abs(self._mesh.bounds[:, 0]).max() + 0.5
-            y_lim = np.abs(self._mesh.bounds[:, 1]).max() + 0.5
+            x_lim = np.abs(self.mesh.bounds[:, 0]).max() + 0.5
+            y_lim = np.abs(self.mesh.bounds[:, 1]).max() + 0.5
 
             ax.axis('equal')
             ax.set_xlim(-x_lim, x_lim)
@@ -816,6 +837,7 @@ class Mesh(object):
     def to_sdf(self, uri_type=None, mesh_filename=None, model_folder=None,
                copy_resources=False):
         if self._filename is None:
+            print('filename is none')
             from ...utils import generate_random_string, PCG_RESOURCES_ROOT_DIR
             PCG_ROOT_LOGGER.info('Exporting mesh to file')
             if mesh_filename:
@@ -849,6 +871,8 @@ class Mesh(object):
             self._uri = Path(os.path.join(folder, filename + '.stl'))
             self._filename = self._uri.absolute_uri
             PCG_ROOT_LOGGER.info('Mesh stored at {}'.format(self._filename))
+            print(folder)
+            print('Mesh stored at {}'.format(self._filename))
         elif model_folder is not None and copy_resources:
             PCG_ROOT_LOGGER.info(
                 'Copying mesh resource <{}> to model folder <{}>'.format(
@@ -903,9 +927,8 @@ class Mesh(object):
         return mesh
 
     def export_mesh(self, filename=None, folder=None, format='stl'):
-        if not self.load_mesh():
-            PCG_ROOT_LOGGER.error('Cannot show section')
-            return None
+        print('mesh_tag=', self._mesh_tag)
+        assert self.mesh is not None, 'No mesh to export'
         export_formats = ['stl', 'dae', 'obj', 'json']
         if format not in export_formats:
             PCG_ROOT_LOGGER.error(
@@ -919,9 +942,10 @@ class Mesh(object):
 
         mesh_filename = os.path.join(folder, filename + '.' + format)
         trimesh.exchange.export.export_mesh(
-            self._mesh,
+            self.mesh,
             mesh_filename,
             file_type=format if format != 'stl' else 'stl_ascii')
+        print('mesh exported=', mesh_filename)
         return mesh_filename
 
     def plane_fit(self):

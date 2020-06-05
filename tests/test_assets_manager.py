@@ -15,7 +15,7 @@
 # limitations under the License.
 import unittest
 import os
-from pcg_gazebo.generators import AssetsManager
+from pcg_gazebo.collection_managers import AssetsManager
 from pcg_gazebo.generators.creators import config2models
 from pcg_gazebo.utils import generate_random_string
 from pcg_gazebo.simulation import ModelGroup, SimulationModel

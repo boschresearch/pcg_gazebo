@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ..utils import load_yaml
-from .engines import create_engine, Engine
 from ._collection_manager import _CollectionManager
 from .constraints_manager import ConstraintsManager
 from .assets_manager import AssetsManager
-from .collision_checker import CollisionChecker
+from ..generators.engines import create_engine, Engine
+from ..generators import CollisionChecker
 from ..log import PCG_ROOT_LOGGER
 from ..utils import generate_random_string
 

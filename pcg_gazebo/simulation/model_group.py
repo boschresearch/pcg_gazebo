@@ -301,7 +301,7 @@ class ModelGroup(Entity):
             return self.add_model(name, model)
         except ValueError:
             if model_name == 'sun' and not is_gazebo_model('sun'):
-                from ..generators.components import Sun
+                from ..simulation.components import Sun
                 self.add_light('sun', Sun())
             else:
                 sdf = get_gazebo_model_sdf(model_name)

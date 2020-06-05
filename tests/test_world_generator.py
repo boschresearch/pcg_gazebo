@@ -160,6 +160,14 @@ TEST_MODEL_GROUP_GENERATOR = dict(
     )
 )
 
+EXAMPLES_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    '..',
+    'examples',
+    'world_generator',
+    'worlds'
+)
+
 
 class TestWorldGenerator(unittest.TestCase):
     def test_multiple_engines(self):
@@ -452,7 +460,7 @@ class TestWorldGenerator(unittest.TestCase):
                     max_area=0.9,
                     no_collision=True,
                     max_num=dict(
-                        box=3
+                        box=5
                     ),
                     policies=[
                         dict(
@@ -579,7 +587,7 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertTrue(generator.run_engines())
 
         # Test if all models where generated
-        self.assertEqual(generator.world.n_models, 15)
+        self.assertEqual(generator.world.n_models, 17)
         self.assertEqual(len(generator.world.model_groups), 3)
         self.assertIn('default', generator.world.model_groups)
         self.assertIn('box_generated', generator.world.model_groups)
@@ -849,27 +857,51 @@ class TestWorldGenerator(unittest.TestCase):
 
         self.assertIn(name, generator.world.models)
 
-    def test_examples(self):
-        examples_dir = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            '..',
-            'examples',
-            'world_generator',
-            'worlds'
-        )
+    def test_example_bouncing_balls(self):
+        gen_config_file = os.path.join(EXAMPLES_DIR, 'bouncing_balls_ode.yml')
 
-        for filename in os.listdir(examples_dir):
-            if not filename.endswith('.yml'):
-                continue
-            if filename == 'full_crates_ode.yml':
-                continue
-            gen_config_file = os.path.join(examples_dir, filename)
+        generator = WorldGenerator()
+        generator.from_yaml(gen_config_file)
 
-            generator = WorldGenerator()
-            generator.from_yaml(gen_config_file)
+        self.assertTrue(generator.run_engines())
+        self.assertGreaterEqual(len(generator.world.models), 1)
 
-            self.assertTrue(generator.run_engines())
-            self.assertGreaterEqual(len(generator.world.models), 1, filename)
+    def test_example_empty_world_bullet(self):
+        gen_config_file = os.path.join(EXAMPLES_DIR, 'empty_world_bullet.yml')
+
+        generator = WorldGenerator()
+        generator.from_yaml(gen_config_file)
+
+        self.assertTrue(generator.run_engines())
+        self.assertGreaterEqual(len(generator.world.models), 1)
+
+    def test_example_empty_world_ode(self):
+        gen_config_file = os.path.join(EXAMPLES_DIR, 'empty_world_ode.yml')
+
+        generator = WorldGenerator()
+        generator.from_yaml(gen_config_file)
+
+        self.assertTrue(generator.run_engines())
+        self.assertGreaterEqual(len(generator.world.models), 1)
+
+    def test_example_full_crates_ode(self):
+        gen_config_file = os.path.join(EXAMPLES_DIR, 'full_crates_ode.yml')
+
+        generator = WorldGenerator()
+        generator.from_yaml(gen_config_file)
+
+        self.assertTrue(generator.run_engines())
+        self.assertGreaterEqual(len(generator.world.models), 1)
+
+    def test_example_random_workspaces_ode(self):
+        gen_config_file = os.path.join(
+            EXAMPLES_DIR, 'random_workspaces_ode.yml')
+
+        generator = WorldGenerator()
+        generator.from_yaml(gen_config_file)
+
+        self.assertTrue(generator.run_engines())
+        self.assertGreaterEqual(len(generator.world.models), 1)
 
 
 if __name__ == '__main__':

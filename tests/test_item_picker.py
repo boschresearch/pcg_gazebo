@@ -17,7 +17,7 @@ import sys
 import unittest
 from pcg_gazebo import random
 from pcg_gazebo.utils import generate_random_string
-from pcg_gazebo.generators import AssetsManager
+from pcg_gazebo.collection_managers import AssetsManager
 from pcg_gazebo.generators.creators import box
 from pcg_gazebo.generators.item_pickers import create_picker
 

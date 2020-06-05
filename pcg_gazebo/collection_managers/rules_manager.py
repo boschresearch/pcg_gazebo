@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from ._collection_manager import _CollectionManager
-from .rules import create_rule, Rule
+from ..generators.rules import create_rule, Rule
 from ..utils import load_yaml, generate_random_string
 from ..log import PCG_ROOT_LOGGER
 

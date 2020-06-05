@@ -16,7 +16,6 @@
 import numpy as np
 import collections
 import itertools
-from .components import HingedDoor
 from ..log import PCG_ROOT_LOGGER
 from ..utils import is_string
 from ..simulation import SimulationModel
@@ -867,6 +866,7 @@ def hinged_door(door_mesh_filename=None, width=0.6,
                 name='door', frame_mesh_filename=None,
                 with_frame=True, frame_width=0.05,
                 frame_height=0.05, frame_depth=0.05):
+    from ..simulation.components import HingedDoor
     door = HingedDoor(
         door_mesh_filename=door_mesh_filename,
         width=width,

@@ -21,7 +21,6 @@ from ..utils import load_yaml, is_string, process_jinja_template
 from ..task_manager import GazeboProxy, is_gazebo_running
 from ..parsers import parse_sdf, parse_xacro
 from ..parsers.sdf import create_sdf_element, is_sdf_element
-from ..simulation import World
 from ..simulation.physics import ODE, Simbody, Bullet
 
 
@@ -80,6 +79,7 @@ class WorldGenerator(_Generator):
         return self._simulation_entity
 
     def init(self, name=None):
+        from ..simulation import World
         if name is None:
             name = self._name
         self._simulation_entity = World(name=name)
@@ -362,6 +362,7 @@ class WorldGenerator(_Generator):
         * `gravity` (*type:* `list`, *default:* `[0, 0, -9.8]`): Gravitational
         acceleration vector
         """
+        from ..simulation import World
         self._simulation_entity = World(
             name=name, engine=engine, gravity=gravity)
 
@@ -470,6 +471,7 @@ class WorldGenerator(_Generator):
         return fig
 
     def init_from_sdf(self, sdf_input):
+        from ..simulation import World
         if is_sdf_element(sdf_input):
             sdf = sdf_input
         elif is_string(sdf_input) and os.path.isfile(sdf_input):
@@ -486,6 +488,7 @@ class WorldGenerator(_Generator):
         self._simulation_entity = World.from_sdf(sdf)
 
     def init_from_jinja(self, jinja_filename, params=dict()):
+        from ..simulation import World
         output_xml = process_jinja_template(jinja_filename, parameters=params)
         sdf = parse_sdf(output_xml)
 

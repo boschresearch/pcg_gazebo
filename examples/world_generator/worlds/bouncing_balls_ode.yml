@@ -30,7 +30,7 @@ engines:
   models:
   - ball
   max_num:
-    ball: 40
+    ball: 20
   model_picker: random
   no_collision: true
   policies:

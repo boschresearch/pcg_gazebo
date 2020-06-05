@@ -14,8 +14,10 @@
 # limitations under the License.
 from ...log import PCG_ROOT_LOGGER
 from ...utils import is_string
-from ...simulation import SimulationModel, Link
-from ...simulation.properties import Collision, Visual
+from ..model import SimulationModel
+from ..link import Link
+from ..properties import Visual, \
+    Collision
 import numpy as np
 
 

@@ -30,4 +30,4 @@ RUN pip3 install -e .[all]
 
 RUN python3 -c "import pcg_gazebo"
 
-RUN pytest -x /tmp/pcg_gazebo/tests
+RUN pytest -v -x /tmp/pcg_gazebo/tests

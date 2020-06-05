@@ -16,8 +16,7 @@ import collections
 from ...simulation import SimulationModel, ModelGroup
 from ...simulation.properties import Pose
 from ...log import PCG_ROOT_LOGGER
-from ..assets_manager import AssetsManager
-from ..constraints_manager import ConstraintsManager
+from ...collection_managers import AssetsManager, ConstraintsManager
 from ..item_pickers import create_picker
 from ..collision_checker import SingletonCollisionChecker, \
     CollisionChecker

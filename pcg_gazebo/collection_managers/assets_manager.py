@@ -13,12 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-from .components import Sun, GroundPlane
+from ._collection_manager import _CollectionManager
+from ..log import PCG_ROOT_LOGGER
 from ..utils import load_yaml
 from ..simulation import SimulationModel, ModelGroup, Light, \
     add_custom_gazebo_resource_path
-from ._collection_manager import _CollectionManager
-from ..log import PCG_ROOT_LOGGER
+from ..simulation.components import Sun, GroundPlane
 
 
 class AssetsManager(_CollectionManager):
@@ -127,7 +127,7 @@ class AssetsManager(_CollectionManager):
 
         * `tag` (*type:* `str`): Tag of the asset.
         """
-        from .model_group_generator import ModelGroupGenerator
+        from ..generators.model_group_generator import ModelGroupGenerator
         if tag in self._collection:
             return isinstance(self._collection[tag], ModelGroupGenerator)
         return False
@@ -191,7 +191,7 @@ class AssetsManager(_CollectionManager):
         `True`, if asset could be added to the collection.
         """
         from ..parsers import parse_sdf, parse_urdf, urdf2sdf
-        from .model_group_generator import ModelGroupGenerator
+        from ..generators.model_group_generator import ModelGroupGenerator
         if self.has_element(tag) and not overwrite:
             PCG_ROOT_LOGGER.warning(
                 'Asset with tag <{}> already exists, tags={}'.format(
@@ -279,7 +279,7 @@ class AssetsManager(_CollectionManager):
             elif type in ['model_generator', 'light']:
                 if type == 'model_generator':
                     self._collection[tag] = ModelGroupGenerator(
-                        name=tag, **description)
+                        **description)
                     PCG_ROOT_LOGGER.info(
                         'Added model group generator <{}>'.format(tag))
                 else:
@@ -308,7 +308,7 @@ class AssetsManager(_CollectionManager):
         """
         model = None
         if self.is_factory_input(tag):
-            from .creators import config2models
+            from ..generators.creators import config2models
             model = SimulationModel.from_sdf(
                 config2models(self._collection[tag])[0])
             model.name = tag
