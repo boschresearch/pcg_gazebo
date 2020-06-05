@@ -19,7 +19,7 @@ import subprocess
 import os
 
 
-class TestURDFLintScrit(unittest.TestCase):
+class TestURDFLintScript(unittest.TestCase):
     def test_run_linter_on_test_files(self):
         test_folder = os.path.join(
             os.path.dirname(os.path.abspath(__file__)),
