@@ -440,11 +440,11 @@ class TestWorldGenerator(unittest.TestCase):
                     engine_name='fixed_pose',
                     models=['box_factory'],
                     poses=[[0, 0, 0, 0, 0, 0]]),
-                dict(
-                    tag='add_box_floor',
-                    engine_name='fixed_pose',
-                    models=['box_floor'],
-                    poses=[[1, 1, 1, 0, 0, 0]]),
+                # dict(
+                #     tag='add_box_floor',
+                #     engine_name='fixed_pose',
+                #     models=['box_floor'],
+                #     poses=[[1, 1, 1, 0, 0, 0]]),
                 dict(
                     tag='add_model_group_generator',
                     engine_name='fixed_pose',
