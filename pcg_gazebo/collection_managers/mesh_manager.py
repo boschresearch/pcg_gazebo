@@ -159,7 +159,7 @@ class MeshManager(_CollectionManager):
                 assert 'size' in kwargs, \
                     'Box size not provided'
                 assert is_array(kwargs['size']), \
-                        'Size is not an array'
+                    'Size is not an array'
                 vec = list(kwargs['size'])
                 assert len(vec) == 3, \
                     'Input size array must have 3 elements'
@@ -201,7 +201,7 @@ class MeshManager(_CollectionManager):
             elif kwargs['type'] == 'sphere':
                 assert 'radius' in kwargs, 'No radius provided'
                 assert is_scalar(kwargs['radius']), \
-                        'Radius must be a scalar'
+                    'Radius must be a scalar'
                 assert kwargs['radius'] > 0, \
                     'Sphere radius must be greater than zero'
                 return trimesh.creation.icosphere(
