@@ -50,9 +50,9 @@ engines:
   - cuboid
   - cylinder
   max_num:
-    cylinder: 5
-    cuboid: 5
-    ball: 5
+    cylinder: 4
+    cuboid: 4
+    ball: 4
   model_picker: random
   no_collision: true
   policies:

@@ -43,7 +43,7 @@ engines:
   models:
   - ball
   max_num:
-    ball: 15
+    ball: 8
   model_picker: random
   no_collision: true
   policies:
@@ -66,7 +66,7 @@ engines:
   models:
   - cuboid
   max_num:
-    cuboid: 15
+    cuboid: 8
   model_picker: random
   no_collision: true
   policies:
@@ -96,7 +96,7 @@ engines:
   models:
   - cylinder
   max_num:
-    cylinder: 15
+    cylinder: 8
   model_picker: random
   no_collision: true
   policies:
