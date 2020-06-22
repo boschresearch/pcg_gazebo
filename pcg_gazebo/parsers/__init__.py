@@ -132,7 +132,6 @@ def parse_xml(input_xml, type='sdf'):
                 output += line
     else:
         output = input_xml
-
     return parse_xml_str(output, type)
 
 
