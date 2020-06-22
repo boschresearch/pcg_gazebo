@@ -16,6 +16,7 @@ import collections
 import itertools
 import numpy as np
 from .mesh import Mesh
+from .heightmap import Heightmap
 from .footprint import Footprint
 from ...log import PCG_ROOT_LOGGER
 from ...utils import is_string
@@ -23,7 +24,8 @@ from ...parsers.sdf import create_sdf_element
 
 
 class Geometry(object):
-    _GEO_TYPES = ['box', 'cylinder', 'sphere', 'plane', 'mesh']
+    _GEO_TYPES = [
+        'box', 'cylinder', 'sphere', 'plane', 'mesh', 'heightmap']
 
     def __init__(self, geo_type=None, **kwargs):
         self._sdf = None
@@ -36,6 +38,8 @@ class Geometry(object):
                 'Invalid geometry type, options={}'.format(self._GEO_TYPES)
             if geo_type == 'mesh':
                 self.set_mesh(**kwargs)
+            elif geo_type == 'heightmap':
+                self.set_heightmap(**kwargs)
             else:
                 self._sdf = create_sdf_element(geo_type)
                 if len(kwargs):
@@ -307,6 +311,9 @@ class Geometry(object):
         # self._sdf = self._mesh.to_sdf()
         self._mesh.scale = scale
         self._geo_type = 'mesh'
+
+    def set_heightmap(self, **kwargs):
+        self._mesh = Heightmap(**kwargs)
 
     def to_sdf(
             self,
