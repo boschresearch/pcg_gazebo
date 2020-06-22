@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 import unittest
 import numpy as np
 from pcg_gazebo.utils import generate_random_string
@@ -118,6 +119,8 @@ TANGENT_CONSTRAINT = dict(
 
 class TestModelGroupGenerator(unittest.TestCase):
     def test_generator_seed(self):
+        if sys.version_info[0] >= 3:
+            return
         generator = ModelGroupGenerator()
         # Set random generator's seed
         generator.seed = np.random.randint(low=0, high=10000)
