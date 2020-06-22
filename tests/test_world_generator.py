@@ -327,7 +327,7 @@ class TestWorldGenerator(unittest.TestCase):
         self.assertIn('sun', generator.world.lights)
 
     def test_generator_seed(self):
-        if sys.version_info[0] >= 3:
+        if sys.version_info[0] < 3:
             return
         generator = WorldGenerator()
 

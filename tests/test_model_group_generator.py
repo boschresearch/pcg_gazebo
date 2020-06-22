@@ -119,7 +119,7 @@ TANGENT_CONSTRAINT = dict(
 
 class TestModelGroupGenerator(unittest.TestCase):
     def test_generator_seed(self):
-        if sys.version_info[0] >= 3:
+        if sys.version_info[0] < 3:
             return
         generator = ModelGroupGenerator()
         # Set random generator's seed
