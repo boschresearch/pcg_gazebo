@@ -28,6 +28,7 @@ from .noise import Noise
 from .plugin import Plugin
 from .pose import Pose
 from .script import Script
+from .texture import Texture
 from .trajectory import Trajectory
 from .waypoint import Waypoint
 
@@ -48,6 +49,7 @@ __all__ = [
     'Plugin',
     'Pose',
     'Script',
+    'Texture',
     'Trajectory',
     'Waypoint'
 ]
