@@ -55,7 +55,6 @@ class Friction(XMLBase):
         else:
             self._default = 1.0
             self._value = None
-
         self.reset(mode=mode)
 
     @property
@@ -65,7 +64,7 @@ class Friction(XMLBase):
     @ode.setter
     def ode(self, value):
         if self._mode != 'surface':
-            self.reset(mode='surface')
+            self._mode = 'surface'
         self._add_child_element('ode', value)
 
     @property
@@ -75,7 +74,7 @@ class Friction(XMLBase):
     @bullet.setter
     def bullet(self, value):
         if self._mode != 'surface':
-            self.reset(mode='surface')
+            self._mode = 'surface'
         self._add_child_element('bullet', value)
 
     @property
@@ -85,7 +84,7 @@ class Friction(XMLBase):
     @torsional.setter
     def torsional(self, value):
         if self._mode != 'surface':
-            self.reset(mode='surface')
+            self._mode = 'surface'
         self._add_child_element('torsional', value)
 
     def reset(self, mode=None, with_optional_elements=False):
@@ -109,7 +108,7 @@ class Friction(XMLBase):
 
     def _set_value(self, value):
         if self._mode != 'scalar':
-            self.reset(mode='scalar')
+            self._mode = 'scalar'
         assert not isinstance(value, bool), 'Input value cannot be a boolean'
         assert self._is_scalar(value), \
             '[{}] Input value must be either a float or an integer for {},' \
