@@ -5,3 +5,5 @@ branches:
     prefix: bugfix/
   - label: documentation
     prefix: docs/
+  - label: maintenance
+    prefix: maint/

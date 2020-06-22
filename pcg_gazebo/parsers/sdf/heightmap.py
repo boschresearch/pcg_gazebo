@@ -26,20 +26,25 @@ class Heightmap(XMLBase):
     _NAME = 'heightmap'
     _TYPE = 'sdf'
 
+    _MODES = ['visual', 'collision']
+
     _CHILDREN_CREATORS = dict(
         uri=dict(creator=URI, default=['__default__']),
         size=dict(creator=Size, default=[[1, 1, 1]]),
         pos=dict(creator=Pos, default=[[0, 0, 0]]),
-        texture=dict(creator=Texture, nargs='+'),
-        blend=dict(creator=Blend, nargs='+'),
+        texture=dict(creator=Texture, nargs='+', mode='visual'),
+        blend=dict(creator=Blend, nargs='+', mode='visual'),
         use_terrain_paging=dict(
-            creator=UseTerrainPaging, default=[False], optional=True),
-        sampling=dict(creator=Sampling, default=[2], optional=True)
+            creator=UseTerrainPaging, default=[False],
+            optional=True, mode='visual'),
+        sampling=dict(
+            creator=Sampling, default=[2],
+            optional=True, mode='visual')
     )
 
-    def __init__(self):
+    def __init__(self, mode='collision'):
         super(Heightmap, self).__init__()
-        self.reset()
+        self.reset(mode=mode)
 
     @property
     def uri(self):
@@ -71,6 +76,8 @@ class Heightmap(XMLBase):
 
     @use_terrain_paging.setter
     def use_terrain_paging(self, value):
+        if self._mode != 'visual':
+            self._mode = 'visual'
         self._add_child_element('use_terrain_paging', value)
 
     @property
@@ -79,6 +86,8 @@ class Heightmap(XMLBase):
 
     @sampling.setter
     def sampling(self, value):
+        if self._mode != 'visual':
+            self._mode = 'visual'
         self._add_child_element('sampling', value)
 
     @property
@@ -86,6 +95,8 @@ class Heightmap(XMLBase):
         return self._get_child_element('texture')
 
     def add_texture(self, name=None, texture=None):
+        if self._mode != 'visual':
+            self._mode = 'visual'
         self._add_child_element('texture', texture)
 
     @property
@@ -93,4 +104,6 @@ class Heightmap(XMLBase):
         return self._get_child_element('blend')
 
     def add_blend(self, name=None, blend=None):
+        if self._mode != 'visual':
+            self._mode = 'visual'
         self._add_child_element('blend', blend)

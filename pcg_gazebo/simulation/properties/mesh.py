@@ -927,7 +927,6 @@ class Mesh(object):
         return mesh
 
     def export_mesh(self, filename=None, folder=None, format='stl'):
-        print('mesh_tag=', self._mesh_tag)
         assert self.mesh is not None, 'No mesh to export'
         export_formats = ['stl', 'dae', 'obj', 'json']
         if format not in export_formats:
@@ -945,7 +944,6 @@ class Mesh(object):
             self.mesh,
             mesh_filename,
             file_type=format if format != 'stl' else 'stl_ascii')
-        print('mesh exported=', mesh_filename)
         return mesh_filename
 
     def plane_fit(self):

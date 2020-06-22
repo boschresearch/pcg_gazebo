@@ -345,7 +345,8 @@ class Collision(object):
                 if self.sdf.surface is None:
                     self.sdf.surface = create_sdf_element('surface')
                 if self.sdf.surface.friction is None:
-                    self.sdf.surface.friction = create_sdf_element('friction')
+                    self.sdf.surface.friction = create_sdf_element(
+                        'friction', 'surface')
                 if self.sdf.surface.friction.ode is None:
                     ode = create_sdf_element('ode', 'collision')
                     self.sdf.surface.friction.ode = ode
@@ -442,7 +443,8 @@ class Collision(object):
                 if self.sdf.surface is None:
                     self.sdf.surface = create_sdf_element('surface')
                 if self.sdf.surface.friction is None:
-                    self.sdf.surface.friction = create_sdf_element('friction')
+                    self.sdf.surface.friction = create_sdf_element(
+                        'friction', 'surface')
                 if self.sdf.surface.friction.bullet is None:
                     bullet = create_sdf_element('bullet', 'collision')
                     self.sdf.surface.friction.bullet = bullet

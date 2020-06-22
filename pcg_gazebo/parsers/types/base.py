@@ -262,22 +262,57 @@ class XMLBase(object):
                 tag, self._NAME)
 
         if self.has_value():
+            print(self.xml_element_name, self._value)
             if issubclass(value.__class__, XMLBase):
-                assert value.has_value()
+                assert value.has_value(), \
+                    '[{}] Not an element with a type value'.format(
+                        value.xml_element_name)
                 setattr(self.children[tag], 'value', value.value)
             else:
-                assert hasattr(self.children[tag], 'value')
+                assert hasattr(self.children[tag], 'value'), \
+                    '[{}] Not an element with a type value'.format(
+                        value.xml_element_name)
                 setattr(self.children[tag], 'value', value)
         else:
-            creator = self._get_child_element_creator(tag)
-            assert creator is not None, 'No creator for {} was found'.format(
-                tag)
-            if 'default' in self._CHILDREN_CREATORS[tag]:
-                obj = creator(*self._CHILDREN_CREATORS[tag]['default'])
-            else:
-                obj = creator()
+            def _add_element(_obj):
+                has_mult = False
+                if not self._has_custom_elements:
+                    assert tag in self._CHILDREN_CREATORS, \
+                        '{} element is not a child element from {}'.format(
+                            tag, self._NAME)
+                    if 'n_elems' in self._CHILDREN_CREATORS[tag]:
+                        if self._CHILDREN_CREATORS[tag]['n_elems'] == '+':
+                            has_mult = True
+                else:
+                    if tag in self._CHILDREN_CREATORS:
+                        if 'n_elems' in self._CHILDREN_CREATORS[tag]:
+                            if self._CHILDREN_CREATORS[tag]['n_elems'] == '+':
+                                has_mult = True
+                    else:
+                        has_mult = True
+
+                if has_mult:
+                    if _obj._NAME not in self.children:
+                        self.children[_obj._NAME] = list()
+                    self.children[_obj._NAME].append(_obj)
+                else:
+                    self.children[_obj._NAME] = _obj
+
+                if self.is_child_and_attribute(_obj._NAME):
+                    self.attributes[_obj._NAME] = _obj.value
+
+            def _create_element(_tag):
+                creator = self._get_child_element_creator(tag)
+                assert creator is not None, \
+                    'No creator for {} was found'.format(
+                        tag)
+                if 'default' in self._CHILDREN_CREATORS[_tag]:
+                    return creator(*self._CHILDREN_CREATORS[_tag]['default'])
+                else:
+                    return creator()
 
             if issubclass(value.__class__, XMLBase):
+                obj = _create_element(tag)
                 if self._get_child_element_name(tag) != 'empty':
                     if value.has_value():
                         if len(value.attributes):
@@ -315,7 +350,9 @@ class XMLBase(object):
                                 continue
                         # Copy element
                         obj = deepcopy(value)
+                    _add_element(obj)
             else:
+                obj = _create_element(tag)
                 if isinstance(value, dict):
                     # The empty entity takes to arguments
                     if self._get_child_element_name(tag) != 'empty':
@@ -376,58 +413,41 @@ class XMLBase(object):
                                         obj._add_child_element(elem, item)
                                 else:
                                     obj._add_child_element(elem, value[elem])
+                    _add_element(obj)
                 elif isinstance(value, collections.Iterable) and \
-                        not obj.has_value():
+                        not is_string(value) and \
+                        not _create_element(tag).has_value():
                     for subelem in value:
-                        if isinstance(subelem, collections.Iterable):
+                        obj = _create_element(tag)
+                        if isinstance(subelem, collections.Iterable) and \
+                                is_string(subelem):
+                            has_mult = False
+                            if elem in obj._CHILDREN_CREATORS:
+                                if 'n_elems' in \
+                                        obj._CHILDREN_CREATORS[elem]:
+                                    if obj._CHILDREN_CREATORS[elem][
+                                            'n_elems'] == '+':
+                                        has_mult = True
+                            assert has_mult, '[{}] No multiple' \
+                                ' elements for {}'.format(
+                                    obj.xml_element_name, elem)
                             for elem in subelem:
-                                has_mult = False
-                                if elem in obj._CHILDREN_CREATORS:
-                                    if 'n_elems' in \
-                                            obj._CHILDREN_CREATORS[elem]:
-                                        if obj._CHILDREN_CREATORS[elem][
-                                                'n_elems'] == '+':
-                                            has_mult = True
-                                assert has_mult, 'No multiple' \
-                                    ' elements for {}'.format(
-                                        elem)
-                                obj._add_child_element(elem, subelem[elem])
-                elif obj.has_value():
+                                obj._add_child_element(
+                                    elem, subelem[elem])
+                        _add_element(obj)
+                elif _create_element(tag).has_value():
+                    obj = _create_element(tag)
                     if not obj._has_type_mode():
                         assert len(obj._CHILDREN_CREATORS) == 0, \
-                            'No value parameter found for <{}>, value={},' \
-                            ' value type={}'.format(
-                                tag, value, type(value))
+                            '[{}] No value parameter found for <{}>' \
+                            ', value={}, value type={}'.format(
+                                obj.xml_element_name, tag, value,
+                                type(value))
                     if obj._NAME != 'empty':
                         setattr(obj, 'value', value)
+                    _add_element(obj)
                 else:
                     return
-
-            has_mult = False
-            if not self._has_custom_elements:
-                assert tag in self._CHILDREN_CREATORS, \
-                    '{} element is not a child element from {}'.format(
-                        tag, self._NAME)
-                if 'n_elems' in self._CHILDREN_CREATORS[tag]:
-                    if self._CHILDREN_CREATORS[tag]['n_elems'] == '+':
-                        has_mult = True
-            else:
-                if tag in self._CHILDREN_CREATORS:
-                    if 'n_elems' in self._CHILDREN_CREATORS[tag]:
-                        if self._CHILDREN_CREATORS[tag]['n_elems'] == '+':
-                            has_mult = True
-                else:
-                    has_mult = True
-
-            if has_mult:
-                if obj._NAME not in self.children:
-                    self.children[obj._NAME] = list()
-                self.children[obj._NAME].append(obj)
-            else:
-                self.children[obj._NAME] = obj
-
-            if self.is_child_and_attribute(obj._NAME):
-                self.attributes[obj._NAME] = obj.value
 
             modes = self._get_child_element_mode(obj._NAME)
             if modes is not None:
