@@ -19,6 +19,7 @@ from ...path import Path
 from ...utils import is_array, is_scalar, is_string, \
     is_integer, is_boolean
 from ...log import PCG_ROOT_LOGGER
+from ...parsers.sdf import create_sdf_element
 
 
 class Heightmap(object):
@@ -58,7 +59,8 @@ class Heightmap(object):
         self._textures = list()
         self._blends = list()
 
-        self.image_uri = uri
+        if uri is not None:
+            self.load_image(uri)
 
     @property
     def size(self):
@@ -78,6 +80,21 @@ class Heightmap(object):
         self._size = value
 
     @property
+    def position(self):
+        return self._pos
+
+    @position.setter
+    def position(self, value):
+        assert is_array(value), \
+            'Input position vector is not an array'
+        assert len(value) == 3, \
+            'Input position vector must have 3 elements'
+        for elem in value:
+            assert is_scalar(elem), \
+                'Element in position vector is not a scalar'
+        self._pos = value
+
+    @property
     def image_uri(self):
         if self._image_uri is not None:
             return self._image_uri.absolute_uri
@@ -85,7 +102,8 @@ class Heightmap(object):
 
     @image_uri.setter
     def image_uri(self, value):
-        assert is_string(value), 'Input URI must be a string'
+        assert is_string(value), \
+            'Input URI must be a string, provided={}'.format(value)
         self._image_uri = Path(value)
         assert self._image_uri.absolute_uri is not None, \
             'Image URI is invalid, path={}'.format(value)
@@ -131,12 +149,14 @@ class Heightmap(object):
             assert is_scalar(kwargs['fade_dist']), \
                 'Fade distance must be a scalar'
             self._blends.append(
-                min_height=kwargs['min_height'],
-                fade_dist=kwargs['fade_dist'])
+                dict(
+                    min_height=kwargs['min_height'],
+                    fade_dist=kwargs['fade_dist']))
         elif 'sdf' in kwargs:
             self._blends.append(
-                min_height=kwargs['sdf'].min_height.value,
-                fade_dist=kwargs['sdf'].fade_dist.value)
+                dict(
+                    min_height=kwargs['sdf'].min_height.value,
+                    fade_dist=kwargs['sdf'].fade_dist.value))
         else:
             raise ValueError(
                 'Invalid inputs to set a blend property set')
@@ -159,7 +179,59 @@ class Heightmap(object):
 
     @staticmethod
     def from_sdf(sdf):
-        pass
+        assert sdf.xml_element_name == 'heightmap', \
+            'Input SDF must be a heightmap'
+        use_terrain_paging = False
+        if sdf.use_terrain_paging is not None:
+            use_terrain_paging = sdf.use_terrain_paging.value
+        sampling = 2
+        if sdf.sampling is not None:
+            sampling = sdf.sampling.value
+        position = [0, 0, 0]
+        if sdf.pos is not None:
+            position = sdf.pos.value
+        size = [1, 1, 1]
+        if sdf.size is not None:
+            size = sdf.size.value
+        heightmap = Heightmap(
+            uri=sdf.uri.value,
+            size=size,
+            pos=position,
+            use_terrain_paging=use_terrain_paging,
+            sampling=sampling)
+        if sdf.textures is not None:
+            for texture in sdf.textures:
+                heightmap.add_texture(texture=Texture.from_sdf(texture))
+        if sdf.blends is not None:
+            for blend in sdf.blends:
+                heightmap.add_blend(
+                    min_height=blend.min_height.value,
+                    fade_dist=blend.fade_dist.value)
 
-    def to_sdf(self):
-        pass
+        return heightmap
+
+    def to_sdf(self, mode='visual'):
+        sdf = create_sdf_element('heightmap')
+        if self._image_uri.model_uri is not None:
+            sdf.uri = self._image_uri.model_uri
+        elif self._image_uri.file_uri is not None:
+            sdf.uri = self._image_uri.file_uri
+        sdf.size = self._size
+        sdf.pos = self._pos
+        sdf.use_terrain_paging = self.use_terrain_paging
+        sdf.sampling = self.sampling
+
+        if mode == 'visual':
+            if len(self._textures) > 0 or len(self._blends) > 0:
+                assert len(self._textures) == len(self._blends) + 1, \
+                    'Number of textures must be equal to' \
+                    ' the number of blends plus one'
+                for blend in self._blends:
+                    obj = create_sdf_element('blend')
+                    obj.min_height = blend['min_height']
+                    obj.fade_dist = blend['fade_dist']
+                    sdf.add_blend(blend=obj)
+
+                for texture in self._textures:
+                    sdf.add_texture(texture=texture.to_sdf())
+        return sdf
