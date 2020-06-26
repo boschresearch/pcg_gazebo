@@ -262,7 +262,6 @@ class XMLBase(object):
                 tag, self._NAME)
 
         if self.has_value():
-            print(self.xml_element_name, self._value)
             if issubclass(value.__class__, XMLBase):
                 assert value.has_value(), \
                     '[{}] Not an element with a type value'.format(
@@ -290,7 +289,6 @@ class XMLBase(object):
                                 has_mult = True
                     else:
                         has_mult = True
-
                 if has_mult:
                     if _obj._NAME not in self.children:
                         self.children[_obj._NAME] = list()
@@ -375,7 +373,6 @@ class XMLBase(object):
                                     ' input={}'.format(
                                         elem, tag, value[elem]))
                                 continue
-
                     for elem in value:
                         if elem == 'attributes':
                             for att in value[elem]:
@@ -418,23 +415,13 @@ class XMLBase(object):
                         not is_string(value) and \
                         not _create_element(tag).has_value():
                     for subelem in value:
-                        obj = _create_element(tag)
                         if isinstance(subelem, collections.Iterable) and \
-                                is_string(subelem):
-                            has_mult = False
-                            if elem in obj._CHILDREN_CREATORS:
-                                if 'n_elems' in \
-                                        obj._CHILDREN_CREATORS[elem]:
-                                    if obj._CHILDREN_CREATORS[elem][
-                                            'n_elems'] == '+':
-                                        has_mult = True
-                            assert has_mult, '[{}] No multiple' \
-                                ' elements for {}'.format(
-                                    obj.xml_element_name, elem)
+                                not is_string(subelem):
+                            obj = _create_element(tag)
                             for elem in subelem:
                                 obj._add_child_element(
                                     elem, subelem[elem])
-                        _add_element(obj)
+                            _add_element(obj)
                 elif _create_element(tag).has_value():
                     obj = _create_element(tag)
                     if not obj._has_type_mode():
