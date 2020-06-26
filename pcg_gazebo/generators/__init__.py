@@ -20,10 +20,12 @@ from .world_generator import WorldGenerator
 from .collision_checker import SingletonCollisionChecker, \
     CollisionChecker  # noqa: F401
 from .model_group_generator import ModelGroupGenerator  # noqa: F401
+from .heightmap_generator import HeightmapGenerator
 
 __all__ = [
     'WorldGenerator',
     'SingletonCollisionChecker',
     'CollisionChecker'
-    'ModelGroupGenerator'
+    'ModelGroupGenerator',
+    'HeightmapGenerator'
 ]
