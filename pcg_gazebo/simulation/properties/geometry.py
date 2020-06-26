@@ -27,12 +27,13 @@ class Geometry(object):
     _GEO_TYPES = [
         'box', 'cylinder', 'sphere', 'plane', 'mesh', 'heightmap']
 
-    def __init__(self, geo_type=None, **kwargs):
+    def __init__(self, geo_type=None, link_element='visual', **kwargs):
         self._sdf = None
-        self._mesh = None
+        self._geometry_entity = None
         self._mesh_pkg_name = None
         self._mesh_resource = None
         self._geo_type = geo_type
+        self._link_element = link_element
         if geo_type is not None:
             assert geo_type in self._GEO_TYPES, \
                 'Invalid geometry type, options={}'.format(self._GEO_TYPES)
@@ -47,17 +48,17 @@ class Geometry(object):
                         self.set_param(tag, kwargs[tag])
 
                 if geo_type == 'box':
-                    self._mesh = Mesh.create_box(
+                    self._geometry_entity = Mesh.create_box(
                         size=self.get_param('size'))
                 elif geo_type == 'cylinder':
-                    self._mesh = Mesh.create_cylinder(
+                    self._geometry_entity = Mesh.create_cylinder(
                         radius=self.get_param('radius'),
                         height=self.get_param('length'))
                 elif geo_type == 'sphere':
-                    self._mesh = Mesh.create_sphere(
+                    self._geometry_entity = Mesh.create_sphere(
                         radius=self.get_param('radius'))
                 elif geo_type == 'plane':
-                    self._mesh = Mesh.create_box(
+                    self._geometry_entity = Mesh.create_box(
                         size=self.get_param('size') + [0.001])
 
     def __str__(self):
@@ -66,6 +67,16 @@ class Geometry(object):
     @property
     def is_mesh(self):
         return self._geo_type == 'mesh'
+
+    @property
+    def link_element(self):
+        return self._link_element
+
+    @link_element.setter
+    def link_element(self, value):
+        assert value in ['visual', 'collision'], \
+            'Input link element name must be visual or collsion'
+        self._link_element = value
 
     def get_samples(self):
         pnts = None
@@ -116,13 +127,14 @@ class Geometry(object):
                 else:
                     pnts = np.vstack((pnts, pnt))
         elif self.get_type() == 'mesh':
-            pnts = self._mesh.get_samples(1000)
+            pnts = self._geometry_entity.get_samples(1000)
 
         return pnts
 
     def get_mesh(self, position=None, quat=None):
         from ...transformations import quaternion_matrix
-        assert self._mesh is not None, 'No mesh found for this geometry'
+        assert self._geometry_entity is not None, \
+            'No mesh found for this geometry'
 
         if position is None:
             position = np.array([0, 0, 0])
@@ -130,7 +142,7 @@ class Geometry(object):
         if quat is None:
             quat = np.array([0, 0, 0, 1])
 
-        transformed_mesh = self._mesh.apply_transform(
+        transformed_mesh = self._geometry_entity.apply_transform(
             position, quaternion_matrix(quat))
 
         return transformed_mesh
@@ -145,7 +157,7 @@ class Geometry(object):
             quat = np.array([0, 0, 0, 1])
 
         footprint = None
-        fp_poly = self._mesh.get_footprint_polygon(
+        fp_poly = self._geometry_entity.get_footprint_polygon(
             z_limits=z_limits,
             use_global_frame=True,
             transform=quaternion_matrix(quat),
@@ -162,29 +174,29 @@ class Geometry(object):
     def get_type(self):
         if self._sdf is not None:
             return self._sdf._NAME
-        elif self._mesh is not None:
+        elif self._geometry_entity is not None:
             return 'mesh'
         else:
             return None
 
     def get_param(self, param_name):
-        if self._sdf is None and self._mesh is None:
+        if self._sdf is None and self._geometry_entity is None:
             return None
         if not hasattr(self._sdf, param_name):
             return None
         if self._sdf is not None:
             return getattr(self._sdf, param_name).value
-        elif self._mesh is not None:
+        elif self._geometry_entity is not None:
             return getattr(self._mesh, param_name)
 
     def set_param(self, param_name, value):
-        if self._sdf is None and self._mesh is None:
+        if self._sdf is None and self._geometry_entity is None:
             return False
         if not hasattr(self._sdf, param_name):
             return False
         if self._sdf is not None:
             setattr(self._sdf, param_name, value)
-        elif self._mesh is not None:
+        elif self._geometry_entity is not None:
             setattr(self._mesh, param_name, value)
         return True
 
@@ -231,11 +243,11 @@ class Geometry(object):
                     lower_z=0,
                     upper_z=0
                 )
-        elif self._mesh is not None:
-            if self._mesh.mesh is None:
-                self._mesh.load_mesh()
-                self._mesh.compute_bounds()
-            bounds = self._mesh.bounds
+        elif self._geometry_entity is not None:
+            if self._geometry_entity.mesh is None:
+                self._geometry_entity.load_mesh()
+                self._geometry_entity.compute_bounds()
+            bounds = self._geometry_entity.bounds
         else:
             return None
 
@@ -244,8 +256,8 @@ class Geometry(object):
     def get_center(self):
         if self._sdf is not None:
             return [0, 0, 0]
-        elif self._mesh is not None:
-            return self._mesh.center
+        elif self._geometry_entity is not None:
+            return self._geometry_entity.center
         else:
             return None
 
@@ -258,7 +270,7 @@ class Geometry(object):
             assert elem > 0, 'Size element must be greater than zero'
         self._sdf = create_sdf_element('box')
         self.set_param('size', size)
-        self._mesh = Mesh.create_box(
+        self._geometry_entity = Mesh.create_box(
             size=size)
         self._geo_type = 'box'
 
@@ -268,7 +280,7 @@ class Geometry(object):
         self._sdf = create_sdf_element('cylinder')
         self.set_param('radius', radius)
         self.set_param('length', length)
-        self._mesh = Mesh.create_cylinder(
+        self._geometry_entity = Mesh.create_cylinder(
             radius=radius,
             height=length)
         self._geo_type = 'cylinder'
@@ -277,7 +289,7 @@ class Geometry(object):
         assert radius > 0, 'Radius must be greater than zero'
         self._sdf = create_sdf_element('sphere')
         self.set_param('radius', radius)
-        self._mesh = Mesh.create_sphere(
+        self._geometry_entity = Mesh.create_sphere(
             radius=radius)
         self._geo_type = 'sphere'
 
@@ -299,21 +311,25 @@ class Geometry(object):
         self._sdf = create_sdf_element('plane')
         self.set_param('size', size)
         self.set_param('normal', normal)
-        self._mesh = Mesh.create_box(
+        self._geometry_entity = Mesh.create_box(
             size=size + [0.001])
         self._geo_type = 'plane'
 
     def set_mesh(self, mesh, scale=[1, 1, 1], load_mesh=True):
         if is_string(mesh):
-            self._mesh = Mesh(mesh, load_mesh)
+            self._geometry_entity = Mesh(mesh, load_mesh)
         else:
-            self._mesh = Mesh.from_mesh(mesh, scale)
-        # self._sdf = self._mesh.to_sdf()
-        self._mesh.scale = scale
+            self._geometry_entity = Mesh.from_mesh(mesh, scale)
+        # self._sdf = self._geometry_entity.to_sdf()
+        self._geometry_entity.scale = scale
         self._geo_type = 'mesh'
 
     def set_heightmap(self, **kwargs):
-        self._mesh = Heightmap(**kwargs)
+        if 'sdf' in kwargs:
+            self._geometry_entity = Heightmap.from_sdf(kwargs['sdf'])
+        else:
+            self._geometry_entity = Heightmap(**kwargs)
+        self._geo_type = 'heightmap'
 
     def to_sdf(
             self,
@@ -323,14 +339,18 @@ class Geometry(object):
         PCG_ROOT_LOGGER.info('Convert geometry to SDF')
         sdf = create_sdf_element('geometry')
 
-        if self._sdf is not None or self._geo_type == 'mesh':
+        if self._geo_type in ['mesh', 'heightmap']:
             if self._geo_type == 'mesh':
-                if self._mesh.filename is not None:
+                if self._geometry_entity.filename is not None:
                     mesh_filename = None
-                self._sdf = self._mesh.to_sdf(
+                self._sdf = self._geometry_entity.to_sdf(
                     mesh_filename=mesh_filename,
                     model_folder=model_folder,
                     copy_resources=copy_resources)
+            elif self._geo_type == 'heightmap':
+                self._sdf = self._geometry_entity.to_sdf()
+            setattr(sdf, self._sdf.xml_element_name, self._sdf)
+        elif self._sdf is not None:
             setattr(sdf, self._sdf.xml_element_name, self._sdf)
         else:
             sdf = None
@@ -357,4 +377,6 @@ class Geometry(object):
                 mesh=sdf.mesh.uri.value,
                 scale=sdf.mesh.scale.value,
                 load_mesh=False)
+        elif sdf.heightmap is not None:
+            geo.set_heightmap(sdf=sdf.heightmap)
         return geo
