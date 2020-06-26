@@ -43,7 +43,8 @@ requirements_required = set([
     'python-fcl',
     'jsonschema',
     'scikit-image',
-    'rospkg'
+    'rospkg',
+    'noise'
 ])
 
 # From trimesh: Python 3.4 support has been dropped from
