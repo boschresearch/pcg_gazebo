@@ -29,11 +29,26 @@ class Heightmap(XMLBase):
     _MODES = ['visual', 'collision']
 
     _CHILDREN_CREATORS = dict(
-        uri=dict(creator=URI, default=['__default__']),
-        size=dict(creator=Size, default=[[1, 1, 1]]),
-        pos=dict(creator=Pos, default=[[0, 0, 0]]),
-        texture=dict(creator=Texture, nargs='+', mode='visual'),
-        blend=dict(creator=Blend, nargs='+', mode='visual'),
+        uri=dict(
+            creator=URI,
+            default=['__default__'],
+            mode=['collision', 'visual']),
+        size=dict(
+            creator=Size,
+            default=[[1, 1, 1]],
+            mode=['collision', 'visual'],
+            optional=True),
+        pos=dict(
+            creator=Pos,
+            default=[[0, 0, 0]],
+            optional=True,
+            mode=['collision', 'visual']),
+        texture=dict(
+            creator=Texture,
+            n_elems='+',
+            mode='visual',
+            optional=True),
+        blend=dict(creator=Blend, n_elems='+', mode='visual', optional=True),
         use_terrain_paging=dict(
             creator=UseTerrainPaging, default=[False],
             optional=True, mode='visual'),
