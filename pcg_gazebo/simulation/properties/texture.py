@@ -21,7 +21,8 @@ from ...log import PCG_ROOT_LOGGER
 
 class Texture(object):
     def __init__(self, diffuse_image_uri=None, normal_image_uri=None, size=1):
-        assert is_scalar(size), 'Size must be a scalar'
+        assert is_scalar(size), \
+            'Size must be a scalar, provided={}'.format(size)
         assert size > 0, 'Size must be greater than zero'
         self._size = size
         self._diffuse_image_uri = None
@@ -115,7 +116,7 @@ class Texture(object):
     @staticmethod
     def from_sdf(sdf):
         return Texture(
-            size=sdf.size.value,
+            size=sdf.size.value[0],
             diffuse_image_uri=sdf.diffuse.value,
             normal_image_uri=sdf.normal.value)
 
@@ -127,8 +128,17 @@ class Texture(object):
             'No image URI for normal image found'
         sdf = create_sdf_element('texture')
         sdf.size = self._size
-        if self._uri.model_uri is not None:
+        if self._diffuse_image_uri.model_uri is not None:
             sdf.diffuse = self._diffuse_image_uri.model_uri
-        elif self._uri.file_uri is not None:
-            sdf.normal = self._diffuse_image_uri.file_uri
+        elif self._diffuse_image_uri.file_uri is not None:
+            sdf.diffuse = self._diffuse_image_uri.file_uri
+        else:
+            raise ValueError('Diffuse image URI is invalid')
+
+        if self._normal_image_uri.model_uri is not None:
+            sdf.normal = self._normal_image_uri.model_uri
+        elif self._normal_image_uri.file_uri is not None:
+            sdf.normal = self._normal_image_uri.file_uri
+        else:
+            raise ValueError('Normal image URI is invalid')
         return sdf
