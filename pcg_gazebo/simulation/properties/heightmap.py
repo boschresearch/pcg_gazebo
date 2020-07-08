@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import numpy as np
 from skimage.io import imread, imsave
 from .texture import Texture
 from ...path import Path
@@ -25,7 +26,7 @@ from ...parsers.sdf import create_sdf_element
 class Heightmap(object):
     def __init__(self, uri=None, size=[1, 1, 1], pos=[0, 0, 0],
                  use_terrain_paging=False, sampling=2, textures=None,
-                 blends=None):
+                 blends=None, image=None):
         assert is_array(size), \
             'Input size vector is not an array'
         assert len(size) == 3, \
@@ -61,6 +62,12 @@ class Heightmap(object):
 
         if uri is not None:
             self.load_image(uri)
+        elif image is not None:
+            assert isinstance(image, np.ndarray), \
+                'Input image must be a numpy array'
+            assert len(image.shape) == 2, \
+                'Input image must be a 2D array'
+            self._image = image
 
     @property
     def size(self):
@@ -107,6 +114,18 @@ class Heightmap(object):
         self._image_uri = Path(value)
         assert self._image_uri.absolute_uri is not None, \
             'Image URI is invalid, path={}'.format(value)
+
+    @property
+    def image(self):
+        return self._image
+
+    @image.setter
+    def image(self, value):
+        assert isinstance(value, np.ndarray), \
+            'Input image must be a numpy array'
+        assert len(value.shape) == 2, \
+            'Input image must be a 2D array'
+        self._image = value
 
     @property
     def sampling(self):
@@ -161,6 +180,10 @@ class Heightmap(object):
             raise ValueError(
                 'Invalid inputs to set a blend property set')
 
+    def reset(self):
+        self._textures = list()
+        self._blends = list()
+
     def export(self, filename, folder=None, format='png'):
         assert is_string(filename), \
             'Image filename input must be a string'
@@ -173,7 +196,9 @@ class Heightmap(object):
                 'Export folder does not exist, provided={}'.format(folder))
             return False
 
-        imsave(self._image, os.path.join(folder, filename))
+        imsave(
+            os.path.join(folder, filename),
+            self._image, check_contrast=False)
         self.image_uri = os.path.join(folder, filename)
         return True
 
@@ -210,8 +235,73 @@ class Heightmap(object):
 
         return heightmap
 
-    def to_sdf(self, mode='visual'):
+    def to_sdf(self, mode='visual', sdf_version='1.6',
+               filename=None, model_folder=None,
+               copy_resources=False):
+        from ...utils import PCG_RESOURCES_ROOT_DIR
         sdf = create_sdf_element('heightmap')
+        if model_folder:
+            PCG_ROOT_LOGGER.info('Model folder: {}'.format(model_folder))
+
+        if model_folder is None or not os.path.isdir(model_folder):
+            PCG_ROOT_LOGGER.warning(
+                'Input resources folder to store heightmaps'
+                ' does not exist, using the default {}, '
+                'dir={}'.format(PCG_RESOURCES_ROOT_DIR, model_folder))
+            folder = os.path.join(
+                PCG_RESOURCES_ROOT_DIR, 'materials', 'textures')
+        else:
+            folder = os.path.join(
+                model_folder, 'materials', 'textures')
+
+        if not os.path.isdir(folder):
+            os.makedirs(folder)
+            PCG_ROOT_LOGGER.info(
+                'Folder for heightmaps created: {}'.format(folder))
+
+        if copy_resources and self._image_uri is not None:
+            PCG_ROOT_LOGGER.info(
+                'Copying heightmap image resource <{}> '
+                'to model folder <{}>'.format(
+                    self._image_uri.absolute_uri, folder))
+            from shutil import copyfile
+            if not os.path.isdir(folder):
+                PCG_ROOT_LOGGER.warning(
+                    'Input resources folder to store heightmaps'
+                    ' does not exist, heightmaps will not be copied'
+                    'dir={}'.format(folder))
+            else:
+                if not folder.endswith('materials/textures'):
+                    folder = os.path.join(folder, 'materials', 'textures')
+                    if not os.path.isdir(folder):
+                        os.makedirs(folder)
+
+                if self._image_uri.absolute_uri.startswith(
+                        os.path.abspath(model_folder)):
+                    PCG_ROOT_LOGGER.info(
+                        'Image already exists in destination '
+                        'folder: {}'.format(model_folder))
+                else:
+                    if filename is None:
+                        image_filename = os.path.basename(
+                            self._image_uri.absolute_uri)
+                        if not image_filename.endswith('.png'):
+                            image_filename += '.png'
+                    old_filename = self._image_uri.absolute_uri
+                    copyfile(
+                        old_filename,
+                        os.path.join(folder, image_filename))
+                    self._image_uri = Path(
+                        os.path.join(folder, image_filename))
+                    PCG_ROOT_LOGGER.info(
+                        'Heightmap image file was copied from {} to {}'.format(
+                            old_filename, self._image_uri.absolute_uri))
+        elif self._image_uri is None and self._image is not None:
+            self.export(
+                filename='heightmap',
+                folder=folder,
+                format='png')
+
         if self._image_uri.model_uri is not None:
             sdf.uri = self._image_uri.model_uri
         elif self._image_uri.file_uri is not None:
@@ -233,5 +323,9 @@ class Heightmap(object):
                     sdf.add_blend(blend=obj)
 
                 for texture in self._textures:
-                    sdf.add_texture(texture=texture.to_sdf())
+                    sdf.add_texture(texture=texture.to_sdf(
+                        sdf_version=sdf_version,
+                        model_folder=model_folder,
+                        copy_resources=copy_resources
+                    ))
         return sdf

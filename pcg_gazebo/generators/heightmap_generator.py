@@ -15,20 +15,21 @@
 import os
 from noise import pnoise2, snoise2
 import numpy as np
-from skimage.io import imread
+from skimage.io import imread, imsave
 from skimage.color import rgb2gray
 from skimage import transform
 import matplotlib.pyplot as plt
+from .biomes import Biome
 from ..simulation.properties import Heightmap
 from ..utils import is_array, is_string
 from ..log import PCG_ROOT_LOGGER
-# from ..path import Path
 from .. import random
 
 
 class HeightmapGenerator(object):
     def __init__(self, image_size=[100, 100], texture_size=1,
-                 map_size=[10, 10, 1], position=[0, 0, 0]):
+                 map_size=[10, 10, 1], position=[0, 0, 0],
+                 name='heightmap', sampling=2, use_terrain_paging=False):
         assert is_array(image_size), \
             'Image size input must be a vector'
         assert image_size[0] > 0 and image_size[1] > 0, \
@@ -44,6 +45,9 @@ class HeightmapGenerator(object):
         assert len(position) == 3, \
             'Position vector must have 3 components'
         assert texture_size > 0, 'Size must be greater than zero'
+        assert is_string(name), 'Heightmap name is invalid, ' \
+            'value={}'.format(name)
+        assert len(name) > 0, 'Name cannot me an empty string'
         self._layers = list()
         self._masks = list()
         self._image_size = image_size
@@ -51,7 +55,24 @@ class HeightmapGenerator(object):
         self._map_size = map_size
         self._position = position
         self._textures = list()
-        self._heightmap = Heightmap(pos=position, size=map_size)
+        self._name = name
+        self._biome = None
+        self._moisture_zone = 0
+        self._heightmap = Heightmap(
+            pos=position,
+            size=map_size,
+            use_terrain_paging=use_terrain_paging,
+            sampling=sampling)
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        assert is_string(value), 'Heightmap name is invalid, ' \
+            'value={}'.format(value)
+        self._name = value
 
     @property
     def heightmap_image(self):
@@ -59,6 +80,15 @@ class HeightmapGenerator(object):
         for layer in self._layers:
             image += layer
         return np.multiply(image, self.mask)
+
+    @property
+    def heightmap(self):
+        self._heightmap.image = self.heightmap_image
+        self._heightmap.position = self._position
+        self._heightmap.size = self._map_size
+        if self.biome is not None:
+            self.biome.set_biome_to_heightmap(self._heightmap)
+        return self._heightmap
 
     @property
     def mask(self):
@@ -90,6 +120,19 @@ class HeightmapGenerator(object):
     @position.setter
     def position(self, value):
         self._heightmap.position = value
+
+    @property
+    def biome(self):
+        return self._biome
+
+    @biome.setter
+    def biome(self, value):
+        if isinstance(value, Biome):
+            self._biome = value
+        elif hasattr(value, 'xml_element_name'):
+            self._biome = Biome.from_sdf(value)
+        else:
+            raise ValueError('Invalid biome input')
 
     def _resize(self, image):
         return transform.resize(
@@ -156,7 +199,7 @@ class HeightmapGenerator(object):
                     i / (freq * octaves), j / (freq * octaves), octaves)
 
         image = (image - image.min()) * 256 / (image.max() - image.min())
-        return image.astype(int)
+        return image.astype(np.uint8)
 
     def get_simplex_noise(self, freq=1.0, octaves=1):
         image = self._perlin_noise(freq, octaves, 'simplex')
@@ -171,7 +214,7 @@ class HeightmapGenerator(object):
         image = (max_value - min_value) * image + min_value
         image *= 256.0
         image[np.nonzero(image > 256)[0]] = 256
-        return image.astype(int)
+        return image.astype(np.uint8)
 
     def reset(self):
         self._layers = list()
@@ -179,6 +222,7 @@ class HeightmapGenerator(object):
     def save_image(self, filename, image=None):
         assert is_string(filename), \
             'Input filename must be a string'
+        imsave()
 
     def show(self, image=None):
         if image is None:
@@ -199,15 +243,27 @@ class HeightmapGenerator(object):
 
     def show_mask(self, index=None):
         if index is None:
-            self.show(self.mask.astype(int) * 256)
+            self.show(self.mask.astype(np.uint8) * 256)
         else:
             if len(self._masks) == 0:
                 PCG_ROOT_LOGGER.warning('No mask layers found')
                 return False
             assert index < len(self._masks), \
                 'Mask index is out of range'
-            self.show(self._masks[index].astype(int) * 256)
+            self.show(self._masks[index].astype(np.uint8) * 256)
         return True
+
+    def as_model(self):
+        from ..simulation import SimulationModel
+        model = SimulationModel(name=self._name)
+        model.add_link(name='link')
+        model.links['link'].add_empty_visual(name='visual')
+        model.links['link'].visuals[0].geometry.set_heightmap(
+            heightmap=self.heightmap)
+        model.links['link'].add_empty_collision(name='collision')
+        model.links['link'].collisions[0].geometry.set_heightmap(
+            heightmap=self.heightmap)
+        return model
 
     @staticmethod
     def from_sdf(sdf):
@@ -215,6 +271,7 @@ class HeightmapGenerator(object):
             'Input SDF element must be of type heightmap'
         hg = HeightmapGenerator()
         hg._heightmap = Heightmap.from_sdf(sdf)
+        hg._biome = Biome.from_sdf(sdf)
         hg._image_size = hg._heightmap._image.shape
         hg.add_layer_from_file(hg._heightmap.image_uri)
         return hg

@@ -44,7 +44,8 @@ requirements_required = set([
     'jsonschema',
     'scikit-image',
     'rospkg',
-    'noise'
+    'noise',
+    'tabulate'
 ])
 
 # From trimesh: Python 3.4 support has been dropped from
@@ -134,6 +135,7 @@ setup(
         'pcg_gazebo',
         'pcg_gazebo.collection_managers',
         'pcg_gazebo.generators',
+        'pcg_gazebo.generators.biomes',
         'pcg_gazebo.generators.constraints',
         'pcg_gazebo.generators.engines',
         'pcg_gazebo.generators.item_pickers',

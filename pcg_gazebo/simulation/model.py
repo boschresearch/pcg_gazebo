@@ -146,12 +146,24 @@ class SimulationModel(Entity):
         return list(self._links.keys())
 
     @property
+    def n_links(self):
+        return len(self._links)
+
+    @property
     def joints(self):
         return self._joints
 
     @property
+    def n_joints(self):
+        return len(self._joints)
+
+    @property
     def models(self):
         return self._models
+
+    @property
+    def n_models(self):
+        return len(self._models)
 
     @property
     def model_names(self):

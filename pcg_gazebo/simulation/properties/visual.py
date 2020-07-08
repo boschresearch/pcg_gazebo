@@ -209,13 +209,13 @@ class Visual(object):
         visual = create_sdf_element('visual')
         visual.name = self.name
         if len(resource_prefix) == 0:
-            mesh_filename = self.name
+            filename = self.name
         else:
-            mesh_filename = '{}_{}'.format(
+            filename = '{}_{}'.format(
                 resource_prefix,
                 self.name)
         visual.geometry = self._geometry.to_sdf(
-            mesh_filename=mesh_filename,
+            filename=filename,
             model_folder=model_folder,
             copy_resources=copy_resources)
         if self.using_property('material'):

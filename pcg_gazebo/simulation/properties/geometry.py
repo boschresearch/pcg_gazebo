@@ -72,6 +72,10 @@ class Geometry(object):
     def link_element(self):
         return self._link_element
 
+    @property
+    def geo_type(self):
+        return self._geo_type
+
     @link_element.setter
     def link_element(self, value):
         assert value in ['visual', 'collision'], \
@@ -327,13 +331,18 @@ class Geometry(object):
     def set_heightmap(self, **kwargs):
         if 'sdf' in kwargs:
             self._geometry_entity = Heightmap.from_sdf(kwargs['sdf'])
+        elif 'heightmap' in kwargs:
+            assert isinstance(kwargs['heightmap'], Heightmap), \
+                'heightmap input must be of type ' \
+                'simulation.properties.Heightmap'
+            self._geometry_entity = kwargs['heightmap']
         else:
             self._geometry_entity = Heightmap(**kwargs)
         self._geo_type = 'heightmap'
 
     def to_sdf(
             self,
-            mesh_filename=None,
+            filename=None,
             model_folder=None,
             copy_resources=False):
         PCG_ROOT_LOGGER.info('Convert geometry to SDF')
@@ -342,13 +351,16 @@ class Geometry(object):
         if self._geo_type in ['mesh', 'heightmap']:
             if self._geo_type == 'mesh':
                 if self._geometry_entity.filename is not None:
-                    mesh_filename = None
+                    filename = None
                 self._sdf = self._geometry_entity.to_sdf(
-                    mesh_filename=mesh_filename,
+                    filename=filename,
                     model_folder=model_folder,
                     copy_resources=copy_resources)
             elif self._geo_type == 'heightmap':
-                self._sdf = self._geometry_entity.to_sdf()
+                self._sdf = self._geometry_entity.to_sdf(
+                    filename=filename,
+                    model_folder=model_folder,
+                    copy_resources=copy_resources)
             setattr(sdf, self._sdf.xml_element_name, self._sdf)
         elif self._sdf is not None:
             setattr(sdf, self._sdf.xml_element_name, self._sdf)
