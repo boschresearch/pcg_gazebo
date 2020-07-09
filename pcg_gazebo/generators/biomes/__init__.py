@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - The Procedural Generation for Gazebo authors
+# Copyright (c) 2020 - The Procedural Generation for Gazebo authors
 # For information on the respective copyright owner see the NOTICE file
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,20 +12,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""The tools in this modules allow the generation of models and worlds using
-policy rules for object placement and constraints.
-"""
 
-from .world_generator import WorldGenerator
-from .collision_checker import SingletonCollisionChecker, \
-    CollisionChecker  # noqa: F401
-from .model_group_generator import ModelGroupGenerator  # noqa: F401
-from .heightmap_generator import HeightmapGenerator
+from .biome import Biome
+from .whittaker_biome import WhittakerBiome
 
 __all__ = [
-    'WorldGenerator',
-    'SingletonCollisionChecker',
-    'CollisionChecker'
-    'ModelGroupGenerator',
-    'HeightmapGenerator',
+    'Biome',
+    'WhittakerBiome'
 ]
