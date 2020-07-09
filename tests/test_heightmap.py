@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
+import sys
 import unittest
 import shutil
 import numpy as np
@@ -242,6 +243,8 @@ class TestHeightmap(unittest.TestCase):
         shutil.rmtree(os.path.join(output_dir, model_name))
 
     def test_store_perlin_noise_map(self):
+        if sys.version_info[0] < 3:
+            return
         hg = HeightmapGenerator(image_size=[5, 5])
         hg.add_perlin_noise_layer()
         ref_image = hg.heightmap_image
@@ -266,6 +269,8 @@ class TestHeightmap(unittest.TestCase):
         os.remove(image_path.absolute_uri)
 
     def test_store_simplex_noise_map(self):
+        if sys.version_info[0] < 3:
+            return
         hg = HeightmapGenerator(image_size=[5, 5])
         hg.add_simplex_noise_layer()
         ref_image = hg.heightmap_image
@@ -290,6 +295,8 @@ class TestHeightmap(unittest.TestCase):
         os.remove(image_path.absolute_uri)
 
     def test_store_random_noise_map(self):
+        if sys.version_info[0] < 3:
+            return
         hg = HeightmapGenerator(image_size=[5, 5])
         hg.add_random_layer()
         ref_image = hg.heightmap_image
