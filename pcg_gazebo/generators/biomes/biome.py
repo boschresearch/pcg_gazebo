@@ -56,7 +56,7 @@ class Biome(object):
             self._fade_dist[i] = 5
             self._min_heights[i] = i * 10
 
-    def print(self):
+    def print(self):        # noqa: E999
         headers = ['Moisture zone #{}'.format(i)
                    for i in range(self._n_moisture_zones)]
         table = list()
