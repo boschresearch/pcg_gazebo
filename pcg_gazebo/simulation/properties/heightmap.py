@@ -14,11 +14,15 @@
 # limitations under the License.
 import os
 import numpy as np
+import trimesh
+from shapely.ops import triangulate
+from shapely.geometry import MultiPoint
 from skimage.io import imread, imsave
 from .texture import Texture
+from .mesh import Mesh
 from ...path import Path
 from ...utils import is_array, is_scalar, is_string, \
-    is_integer, is_boolean
+    is_integer, is_boolean, PCG_RESOURCES_ROOT_DIR
 from ...log import PCG_ROOT_LOGGER
 from ...parsers.sdf import create_sdf_element
 
@@ -59,6 +63,7 @@ class Heightmap(object):
         self._sampling = sampling
         self._textures = list()
         self._blends = list()
+        self._mesh = None
 
         if uri is not None:
             self.load_image(uri)
@@ -84,7 +89,14 @@ class Heightmap(object):
                 'Element in size vector is not a scalar'
             assert elem > 0, \
                 'Size vector element must be greater than 0'
+        self._mesh = None
         self._size = value
+
+    @property
+    def mesh(self):
+        if self._mesh is None:
+            self._mesh = self.as_mesh()
+        return self._mesh
 
     @property
     def position(self):
@@ -125,6 +137,7 @@ class Heightmap(object):
             'Input image must be a numpy array'
         assert len(value.shape) == 2, \
             'Input image must be a 2D array'
+        self._mesh = None
         self._image = value
 
     @property
@@ -202,6 +215,51 @@ class Heightmap(object):
         self.image_uri = os.path.join(folder, filename)
         return True
 
+    def as_mesh(self):
+        if self._image is None:
+            PCG_RESOURCES_ROOT_DIR.error(
+                'No image found for description of heightmap')
+            return None
+
+        vertices = np.zeros((np.size(self._image), 3))
+
+        index_x, index_y = np.meshgrid(
+            np.linspace(0, self._image.shape[0] - 1, self._image.shape[0]),
+            np.linspace(0, self._image.shape[1] - 1, self._image.shape[1])
+        )
+
+        vertices[:, 0] = np.reshape(index_x, -1)
+        vertices[:, 1] = np.reshape(index_y, -1)
+        faces = list()
+
+        polygons = triangulate(
+            MultiPoint(
+                [(xi, yi) for xi, yi in
+                 zip(index_x.flatten(), index_y.flatten())]))
+
+        for i in range(len(polygons)):
+            triangle = list()
+            for j in range(3):
+                point = polygons[i].boundary.coords[j]
+                index = np.nonzero(
+                    np.logical_and(vertices[:, 0] == point[0],
+                                   vertices[:, 1] == point[1]))[0]
+                triangle.append(index[0])
+            faces.append(triangle)
+
+        faces = np.array(faces)
+
+        vertices[:, 0] = vertices[:, 0] / vertices[:, 0].max() * \
+            self._size[0] - self._size[0] / 2 + self._pos[0]
+        vertices[:, 1] = vertices[:, 1] / vertices[:, 1].max() * \
+            self._size[1] - self._size[1] / 2 + self._pos[1]
+        vertices[:, 2] = self._size[2] * \
+            np.reshape(self._image / 255.0, -1) + \
+            self._pos[2]
+
+        return Mesh.from_mesh(trimesh.Trimesh(
+            vertices=vertices, faces=faces), scale=[1, 1, 1])
+
     @staticmethod
     def from_sdf(sdf):
         assert sdf.xml_element_name == 'heightmap', \
@@ -234,6 +292,13 @@ class Heightmap(object):
                     fade_dist=blend.fade_dist.value)
 
         return heightmap
+
+    def show(self):
+        if self.mesh is not None:
+            self.mesh.show()
+        else:
+            PCG_ROOT_LOGGER.error(
+                'No mesh was generated from the current heightmap')
 
     def to_sdf(self, mode='visual', sdf_version='1.6',
                filename=None, model_folder=None,
@@ -285,8 +350,11 @@ class Heightmap(object):
                     if filename is None:
                         image_filename = os.path.basename(
                             self._image_uri.absolute_uri)
-                        if not image_filename.endswith('.png'):
-                            image_filename += '.png'
+                    else:
+                        image_filename = filename
+
+                    if not image_filename.endswith('.png'):
+                        image_filename += '.png'
                     old_filename = self._image_uri.absolute_uri
                     copyfile(
                         old_filename,

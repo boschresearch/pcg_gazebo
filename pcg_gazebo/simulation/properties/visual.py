@@ -38,7 +38,7 @@ class Visual(object):
         )
 
         self._material = Material()
-        self._geometry = Geometry()
+        self._geometry = Geometry(link_element='visual')
         self._mesh = None
         self._pose = Pose()
 

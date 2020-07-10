@@ -27,7 +27,7 @@ from .. import random
 
 
 class HeightmapGenerator(object):
-    def __init__(self, image_size=[100, 100], texture_size=1,
+    def __init__(self, image_size=[2**6 + 1, 2**6 + 1], texture_size=1,
                  map_size=[10, 10, 1], position=[0, 0, 0],
                  name='heightmap', sampling=2, use_terrain_paging=False):
         assert is_array(image_size), \
@@ -58,6 +58,8 @@ class HeightmapGenerator(object):
         self._name = name
         self._biome = None
         self._moisture_zone = 0
+        self._use_terrain_paging = use_terrain_paging
+        self._sampling = sampling
         self._heightmap = Heightmap(
             pos=position,
             size=map_size,
@@ -136,7 +138,7 @@ class HeightmapGenerator(object):
 
     def _resize(self, image):
         return transform.resize(
-            image, output_shape=self._image_size)
+            image, output_shape=self._image_size) * 255
 
     def _open_file(self, filename):
         assert is_string(filename), \
@@ -157,6 +159,14 @@ class HeightmapGenerator(object):
     def add_mask_from_file(self, filename):
         image = self._open_file(filename)
         self._masks.append(image)
+
+    def add_custom_mask(self, mask):
+        assert isinstance(mask, np.ndarray), \
+            'Input image must be a numpy array'
+        assert len(mask.shape) == 2, \
+            'Input image must be a 2D array'
+        self._masks.append(transform.resize(
+            mask, output_shape=self._image_size))
 
     def add_custom_layer(self, custom_image):
         assert isinstance(custom_image, np.ndarray), \
@@ -218,6 +228,11 @@ class HeightmapGenerator(object):
 
     def reset(self):
         self._layers = list()
+        self._heightmap = Heightmap(
+            pos=self._position,
+            size=self._map_size,
+            use_terrain_paging=self._use_terrain_paging,
+            sampling=self._sampling)
 
     def save_image(self, filename, image=None):
         assert is_string(filename), \

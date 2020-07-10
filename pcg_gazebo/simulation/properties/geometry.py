@@ -132,6 +132,8 @@ class Geometry(object):
                     pnts = np.vstack((pnts, pnt))
         elif self.get_type() == 'mesh':
             pnts = self._geometry_entity.get_samples(1000)
+        elif self.get_type() == 'heightmap':
+            pnts = self._geometry_entity.mesh.get_samples(1000)
 
         return pnts
 
@@ -146,8 +148,13 @@ class Geometry(object):
         if quat is None:
             quat = np.array([0, 0, 0, 1])
 
-        transformed_mesh = self._geometry_entity.apply_transform(
-            position, quaternion_matrix(quat))
+        if self.get_type() == 'heightmap':
+            transformed_mesh = \
+                self._geometry_entity.mesh.apply_transform(
+                    position, quaternion_matrix(quat))
+        else:
+            transformed_mesh = self._geometry_entity.apply_transform(
+                position, quaternion_matrix(quat))
 
         return transformed_mesh
 
@@ -161,12 +168,20 @@ class Geometry(object):
             quat = np.array([0, 0, 0, 1])
 
         footprint = None
-        fp_poly = self._geometry_entity.get_footprint_polygon(
-            z_limits=z_limits,
-            use_global_frame=True,
-            transform=quaternion_matrix(quat),
-            offset=position,
-            use_bounding_box=use_bounding_box)
+        if self.get_type() == 'heightmap':
+            fp_poly = self._geometry_entity.mesh.get_footprint_polygon(
+                z_limits=z_limits,
+                use_global_frame=True,
+                transform=quaternion_matrix(quat),
+                offset=position,
+                use_bounding_box=use_bounding_box)
+        else:
+            fp_poly = self._geometry_entity.get_footprint_polygon(
+                z_limits=z_limits,
+                use_global_frame=True,
+                transform=quaternion_matrix(quat),
+                offset=position,
+                use_bounding_box=use_bounding_box)
 
         if fp_poly is None:
             return None
@@ -248,10 +263,15 @@ class Geometry(object):
                     upper_z=0
                 )
         elif self._geometry_entity is not None:
-            if self._geometry_entity.mesh is None:
+            if self._geometry_entity.mesh is None and \
+                    self._geo_type == 'mesh':
                 self._geometry_entity.load_mesh()
                 self._geometry_entity.compute_bounds()
-            bounds = self._geometry_entity.bounds
+                bounds = self._geometry_entity.bounds
+            elif self._geometry_entity.mesh is None and \
+                    self._geo_type == 'heightmap':
+                self._geometry_entity.mesh.compute_bounds()
+                bounds = self._geometry_entity.mesh.bounds
         else:
             return None
 
@@ -261,7 +281,10 @@ class Geometry(object):
         if self._sdf is not None:
             return [0, 0, 0]
         elif self._geometry_entity is not None:
-            return self._geometry_entity.center
+            if self._geo_type == 'heightmap':
+                return self._geometry_entity.mesh.center
+            else:
+                return self._geometry_entity.center
         else:
             return None
 
@@ -324,7 +347,6 @@ class Geometry(object):
             self._geometry_entity = Mesh(mesh, load_mesh)
         else:
             self._geometry_entity = Mesh.from_mesh(mesh, scale)
-        # self._sdf = self._geometry_entity.to_sdf()
         self._geometry_entity.scale = scale
         self._geo_type = 'mesh'
 
@@ -358,6 +380,7 @@ class Geometry(object):
                     copy_resources=copy_resources)
             elif self._geo_type == 'heightmap':
                 self._sdf = self._geometry_entity.to_sdf(
+                    mode=self._link_element,
                     filename=filename,
                     model_folder=model_folder,
                     copy_resources=copy_resources)

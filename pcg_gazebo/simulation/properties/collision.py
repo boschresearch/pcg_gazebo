@@ -61,7 +61,7 @@ class Collision(object):
             bounce=False,
             contact=False
         )
-        self._geometry = Geometry()
+        self._geometry = Geometry(link_element='collision')
         self._pose = Pose()
 
         # Setting the input parameters
