@@ -42,6 +42,13 @@ PCG_TEMPLATE_FOLDER = os.path.join(
     'templates')
 
 
+def set_resources_root_dir(folder):
+    if not os.path.isdir(folder):
+        os.makedirs(folder)
+    global PCG_RESOURCES_ROOT_DIR
+    PCG_RESOURCES_ROOT_DIR = folder
+
+
 class _PCGYAMLLoader(yaml.SafeLoader, object):
     # MIT License
     #
