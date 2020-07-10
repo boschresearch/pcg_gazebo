@@ -19,6 +19,10 @@ import json
 import unittest
 import subprocess
 import matplotlib.pyplot as plt
+from pcg_gazebo.utils import set_resources_root_dir
+
+
+set_resources_root_dir(os.path.join('/tmp', '.pcg'))
 
 
 def load_notebook(file_obj):
@@ -228,7 +232,10 @@ class TestExamples(unittest.TestCase):
 
         notebooks = [
             'gen_fixed_pose_engine.ipynb',
-            'gen_workspaces.ipynb'
+            'gen_workspaces.ipynb',
+            'gen_generate_heightmaps.ipynb',
+            'gen_add_texture_to_heightmap.ipynb',
+            # 'gen_grid_map.ipynb'
         ]
 
         for item in os.listdir(EXAMPLES_DIR):
