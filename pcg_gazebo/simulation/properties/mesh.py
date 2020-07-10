@@ -749,10 +749,9 @@ class Mesh(object):
         return footprint
 
     def show(self):
-        if not self.load_mesh():
-            return False
-        self.mesh.show()
-        return True
+        self.load_mesh()
+        scene = trimesh.Scene([self.mesh])
+        scene.show()
 
     def show_section(self, origin=None, plane_normal=[0, 0, 1], show_3d=True):
         if not self.load_mesh():
