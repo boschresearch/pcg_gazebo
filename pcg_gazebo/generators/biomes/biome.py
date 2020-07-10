@@ -270,16 +270,6 @@ class Biome(object):
             'min. height'
         assert elevation_zone > 0, \
             'Elevation zone index must be greater than zero'
-        if elevation_zone + 1 in self._min_heights:
-            assert height < self._min_heights[
-                elevation_zone + 1], \
-                'Min. height for elevation zone #{} (input: {}) must' \
-                ' be lower than min. height for elevation zone #{} ' \
-                '(value: {})'.format(
-                    elevation_zone,
-                    height,
-                    elevation_zone + 1,
-                    self._min_heights[elevation_zone + 1])
         self._min_heights[elevation_zone] = height
 
     def reset_min_height(self):
