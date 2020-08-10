@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from __future__ import print_function
 import os
 import numpy as np
 from skimage.io import imread, imsave
@@ -26,7 +27,8 @@ from .. import random
 try:
     from noise import pnoise2, snoise2
     HAS_NOISE_SUPPORT = True
-except:
+except Exception as ex:
+    print(ex)
     HAS_NOISE_SUPPORT = False
 
 
