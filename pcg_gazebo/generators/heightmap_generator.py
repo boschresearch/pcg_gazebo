@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import os
-from noise import pnoise2, snoise2
 import numpy as np
 from skimage.io import imread, imsave
 from skimage.color import rgb2gray
@@ -24,6 +23,11 @@ from ..simulation.properties import Heightmap
 from ..utils import is_array, is_string
 from ..log import PCG_ROOT_LOGGER
 from .. import random
+try:
+    from noise import pnoise2, snoise2
+    HAS_NOISE_SUPPORT = True
+except:
+    HAS_NOISE_SUPPORT = False
 
 
 class HeightmapGenerator(object):
@@ -192,6 +196,7 @@ class HeightmapGenerator(object):
         self._layers.append(image)
 
     def _perlin_noise(self, freq=1.0, octaves=1, noise_fcn='perlin'):
+        assert HAS_NOISE_SUPPORT, 'No noise generation support'
         assert freq > 0, 'Frequency must be greater than 0'
         assert octaves > 0, 'Octaves must be greater than 0'
         image = np.zeros(self._image_size)
