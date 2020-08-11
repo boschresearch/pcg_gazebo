@@ -18,7 +18,6 @@ import numpy as np
 from skimage.io import imread, imsave
 from skimage.color import rgb2gray
 from skimage import transform
-import matplotlib.pyplot as plt
 from .biomes import Biome
 from ..simulation.properties import Heightmap
 from ..utils import is_array, is_string
@@ -247,6 +246,7 @@ class HeightmapGenerator(object):
         imsave()
 
     def show(self, image=None):
+        import matplotlib.pyplot as plt
         if image is None:
             image = self.heightmap_image
         fig = plt.figure()
