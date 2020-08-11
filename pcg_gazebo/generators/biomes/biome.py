@@ -16,12 +16,10 @@ import os
 import numpy as np
 from tabulate import tabulate
 from skimage.io import imread, imsave
-import matplotlib.pyplot as plt
 from ...log import PCG_ROOT_LOGGER
 from ...utils import is_string, is_array, is_integer, \
     PCG_RESOURCES_ROOT_DIR
 from ...path import Path
-# from ...parsers.sdf import create_sdf_element
 from ...simulation.properties import Heightmap
 
 
@@ -327,6 +325,7 @@ class Biome(object):
             return None
 
     def show(self):
+        import matplotlib.pyplot as plt
         fig, axs = plt.subplots(
             self._n_elevation_zones, self._n_moisture_zones,
             sharex=True, sharey=True, squeeze=True, figsize=(20, 15))
