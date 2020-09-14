@@ -54,7 +54,7 @@ if you are using Python 2.x or `python3-rtree` for Python 3.x.
 First install some non-Python dependencies
 
 ```
-sudo apt install libspatialindex-dev pybind11-dev libgeos-dev
+sudo apt install libspatialindex-dev pybind11-dev libgeos-dev libfcl-dev liboctomap-dev
 ```
 
 Then clone the repository and install it using `pip`
