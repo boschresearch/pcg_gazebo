@@ -1,13 +1,18 @@
 FROM ubuntu:18.04
 MAINTAINER Musa Morena Marcusso Manhaes <musa.marcusso@de.bosch.com>
 
+# Use the "noninteractive" debconf frontend
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update && \
     apt-get install \
     python3-pip \
     libspatialindex-dev \
     libgeos-dev \
     wget \
+    libfcl-dev \
     pybind11-dev \
+    liboctomap-dev \
     blender \
     pandoc -y
 
