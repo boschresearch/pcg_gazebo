@@ -58,6 +58,7 @@ if (sys.version_info.major, sys.version_info.minor) <= (3, 4):
     # add working version locked requirements
     requirements_required.add('lxml==4.3.5')
     requirements_required.add('shapely==1.6.4')
+    requirements_required.add('pyrsistent==0.16.1')
 
 if (sys.version_info.major, sys.version_info.minor) >= (3, 4):
     # remove version-free requirements
