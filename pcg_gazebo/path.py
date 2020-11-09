@@ -267,7 +267,7 @@ class Path(object):
     def _resolve_gazebo_model(self):
         from .simulation import get_gazebo_model_names, \
             get_gazebo_model_path, load_gazebo_models
-
+        PCG_ROOT_LOGGER.info('Load paths of Gazebo models...')
         load_gazebo_models()
         for name in get_gazebo_model_names():
             gazebo_path = get_gazebo_model_path(name)
