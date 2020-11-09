@@ -367,7 +367,8 @@ class Geometry(object):
             filename=None,
             model_folder=None,
             copy_resources=False):
-        PCG_ROOT_LOGGER.info('Convert geometry to SDF')
+        PCG_ROOT_LOGGER.info('Convert geometry to SDF, type: {}'.format(
+            self._geo_type))
         sdf = create_sdf_element('geometry')
 
         if self._geo_type in ['mesh', 'heightmap']:
@@ -389,6 +390,8 @@ class Geometry(object):
             setattr(sdf, self._sdf.xml_element_name, self._sdf)
         else:
             sdf = None
+        PCG_ROOT_LOGGER.info('SDF generated, type: {}'.format(
+            self._geo_type))
         return sdf
 
     @staticmethod
