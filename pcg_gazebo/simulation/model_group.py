@@ -786,7 +786,8 @@ class ModelGroup(Entity):
             nested=True):
         import os
         import getpass
-        from . import is_gazebo_model, get_gazebo_model_path
+        from . import is_gazebo_model, get_gazebo_model_path, \
+            load_gazebo_models
         from ..parsers.sdf_config import create_sdf_config_element
 
         PCG_ROOT_LOGGER.info(
@@ -869,6 +870,39 @@ class ModelGroup(Entity):
                 'models or lights, not both')
             return None
 
+        full_model_dir = os.path.join(output_dir, model_name)
+
+        if not os.path.isdir(full_model_dir):
+            os.makedirs(full_model_dir)
+            PCG_ROOT_LOGGER.info(
+                'Model directory created: {}'.format(full_model_dir))
+
+        manifest_filename = 'model.config'
+        model_sdf_filename = 'model.sdf'
+
+        # Create model manifest file
+        manifest = create_sdf_config_element('model')
+        manifest.name = model_metaname
+        manifest.version = sdf_version
+        manifest.description = description
+        # Add SDF file
+        manifest.add_sdf()
+        manifest.sdfs[0].version = sdf_version
+        manifest.sdfs[0].value = model_sdf_filename
+        # Add author
+        manifest.add_author()
+        manifest.authors[0].name = author
+        manifest.authors[0].email = email
+        # Export manifest file
+        manifest.export_xml(os.path.join(full_model_dir, manifest_filename))
+
+        with open(
+            os.path.join(full_model_dir, model_sdf_filename),
+                'w+') as sdf_file:
+            sdf_file.write('')
+
+        load_gazebo_models(reset=True)
+
         if self.n_lights > 0:
             # Convert model group to SDF element with
             # nested light elements
@@ -921,38 +955,13 @@ class ModelGroup(Entity):
                 sdf = self.to_sdf(type='sdf', use_include=True)
                 assert sdf is not None, 'Could not convert model group to SDF'
 
-        full_model_dir = os.path.join(output_dir, model_name)
-
-        if not os.path.isdir(full_model_dir):
-            os.makedirs(full_model_dir)
-            PCG_ROOT_LOGGER.info(
-                'Model directory created: {}'.format(full_model_dir))
-
-        manifest_filename = 'model.config'
-        model_sdf_filename = 'model.sdf'
-
         assert sdf is not None, 'Could not convert model group to SDF'
+
         sdf.export_xml(
             os.path.join(
                 full_model_dir,
                 model_sdf_filename),
             sdf_version)
-
-        # Create model manifest file
-        manifest = create_sdf_config_element('model')
-        manifest.name = model_metaname
-        manifest.version = sdf_version
-        manifest.description = description
-        # Add SDF file
-        manifest.add_sdf()
-        manifest.sdfs[0].version = sdf_version
-        manifest.sdfs[0].value = model_sdf_filename
-        # Add author
-        manifest.add_author()
-        manifest.authors[0].name = author
-        manifest.authors[0].email = email
-        # Export manifest file
-        manifest.export_xml(os.path.join(full_model_dir, manifest_filename))
 
         return full_model_dir
 
