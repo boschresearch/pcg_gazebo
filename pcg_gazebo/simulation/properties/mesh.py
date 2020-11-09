@@ -56,6 +56,8 @@ class Mesh(object):
         self._mesh = None
         self._mesh_parameters = None
 
+        self._sdf = None
+
         self.scale = scale
 
         self.load_mesh()
@@ -861,6 +863,8 @@ class Mesh(object):
 
             if not os.path.isdir(folder):
                 os.makedirs(folder)
+                PCG_ROOT_LOGGER.info('Mesh folder created: {}'.format(
+                    folder))
 
             # Store the mesh as STL per default
             self.export_mesh(filename, folder, format='stl')
@@ -868,7 +872,7 @@ class Mesh(object):
             # Update the URI to the mesh file
             self._uri = Path(os.path.join(folder, filename + '.stl'))
             self._filename = self._uri.absolute_uri
-            PCG_ROOT_LOGGER.info('Mesh stored at {}'.format(self._filename))
+            PCG_ROOT_LOGGER.info('Mesh stored at: {}'.format(self._filename))
         elif model_folder is not None and copy_resources:
             PCG_ROOT_LOGGER.info(
                 'Copying mesh resource <{}> to model folder <{}>'.format(
@@ -901,12 +905,13 @@ class Mesh(object):
 
         mesh = create_sdf_element('mesh')
 
-        PCG_ROOT_LOGGER.info(self._uri.model_uri)
-
         if uri_type is None:
+            PCG_ROOT_LOGGER.info('Mesh URI type is none, search for URI...')
             if self._uri.model_uri is not None:
+                PCG_ROOT_LOGGER.info('Using model URI')
                 mesh.uri = self._uri.model_uri
             elif self._uri.file_uri is not None:
+                PCG_ROOT_LOGGER.info('Using file URI')
                 mesh.uri = self._uri.file_uri
         else:
             if uri_type == 'file':
@@ -919,6 +924,8 @@ class Mesh(object):
                 msg = 'Invalid type of URI for SDF export'
                 PCG_ROOT_LOGGER.error(msg)
                 raise ValueError(msg)
+
+        PCG_ROOT_LOGGER.info('Mesh URI: {}'.format(mesh.uri))
         mesh.scale = self._scale
         return mesh
 
@@ -936,10 +943,12 @@ class Mesh(object):
             return None
 
         filename = os.path.join(folder, filename + '.' + format)
+        PCG_ROOT_LOGGER.info('Exporting mesh: {}'.format(filename))
         trimesh.exchange.export.export_mesh(
             self.mesh,
             filename,
             file_type=format if format != 'stl' else 'stl_ascii')
+        PCG_ROOT_LOGGER.info('Mesh stored at: {}'.format(filename))
         return filename
 
     def plane_fit(self):
