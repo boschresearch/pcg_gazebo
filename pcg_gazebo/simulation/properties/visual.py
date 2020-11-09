@@ -120,6 +120,10 @@ class Visual(object):
     def geometry(self):
         return self._geometry
 
+    @property
+    def is_mesh(self):
+        return self._geometry.is_mesh
+
     def get_bounds(self):
         bounds = self._geometry.get_bounds()
         if bounds is not None:
