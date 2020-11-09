@@ -31,7 +31,7 @@ requirements_required = set([
     'yasha',
     'xmltodict',
     'Jinja2<2.11',
-    'shapely',
+    'shapely==1.7.0',
     'bokeh',
     'matplotlib',
     'descartes',
