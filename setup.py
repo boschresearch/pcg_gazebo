@@ -31,7 +31,7 @@ requirements_required = set([
     'yasha',
     'xmltodict',
     'Jinja2<2.11',
-    'shapely==1.7.0',
+    'shapely<=1.7.0',
     'bokeh',
     'matplotlib',
     'descartes',
@@ -54,7 +54,7 @@ requirements_required = set([
 if (sys.version_info.major, sys.version_info.minor) <= (3, 4):
     # remove version-free requirements
     requirements_required.remove('lxml')
-    requirements_required.remove('shapely==1.7.0')
+    requirements_required.remove('shapely<=1.7.0')
     # add working version locked requirements
     requirements_required.add('lxml==4.3.5')
     requirements_required.add('shapely==1.6.4')
