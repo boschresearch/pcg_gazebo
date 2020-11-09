@@ -71,8 +71,7 @@ requirements_examples = requirements_required.union(['jupyterlab'])
 
 requirements_test = requirements_required.union(set([
     'nbconvert', 
-    'pytest', 
-    'pytest-console-scripts']))
+    'pytest']))
 
 requirements_docs = requirements_required.union(set([
     'nbconvert', 
