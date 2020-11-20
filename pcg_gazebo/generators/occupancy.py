@@ -220,7 +220,6 @@ def get_occupied_area(
     plane_normal = [0, 0, 1]
     occupied_areas = list()
     meshes = model.get_meshes(mesh_type)
-
     for mesh in meshes:
         if model_z_limits[0] in z_levels:
             z_levels = np.delete(
@@ -239,6 +238,7 @@ def get_occupied_area(
             plane_origin=[0, 0, 0],
             plane_normal=plane_normal,
             heights=z_levels)
+
         sections = [s for s in sections if s is not None]
         polys = list()
         section_boundaries = list()
@@ -246,12 +246,12 @@ def get_occupied_area(
             lines = list()
             for poly in section.entities:
                 line = LineString(
-                    section.vertices[poly.points])
+                    [tuple(section.vertices[i]) for i in poly.points])
                 lines.append(line)
+
             boundaries = linemerge(lines)
             section_boundaries.append(boundaries)
             p = boundaries.envelope.difference(boundaries.buffer(1e-3))
-
             if isinstance(p, MultiPolygon):
                 for geo in p.geoms:
                     if _is_interior_polygon(mesh, geo, z):
@@ -260,7 +260,6 @@ def get_occupied_area(
                 polys.append(p)
 
         occupied_areas = occupied_areas + polys
-
         if len(section_boundaries):
             for item in section_boundaries:
                 occupied_areas.append(item.buffer(1e-3))
