@@ -76,6 +76,7 @@ def add_custom_gazebo_resource_path(dir_path):
                 dir_path))
     else:
         CUSTOM_GAZEBO_RESOURCE_PATHS.append(dir_path)
+    load_gazebo_models(reset=True)
     return True
 
 
@@ -123,7 +124,7 @@ def get_gazebo_model_folders(dir_path):
     return models_paths
 
 
-def load_gazebo_models():
+def load_gazebo_models(reset=False):
     """Search for Gazebo models in the local `.gazebo/models` folder
     and in the ROS paths.
 
@@ -145,66 +146,68 @@ def load_gazebo_models():
         ROS2_AVAILABLE = False
 
     global GAZEBO_MODELS
-    GAZEBO_MODELS = dict()
 
-    ros_pkgs = list()
-    if ROS1_AVAILABLE:
-        ros_pkgs = ros_pkgs + list(rospkg.RosPack().list())
-    if ROS2_AVAILABLE:
-        ros_pkgs = ros_pkgs + list(
-            ament_index_python.get_packages_with_prefixes().keys())
-    # Load all models from catkin packages
-    for ros_pkg in ros_pkgs:
-        ros_path = None
+    if len(GAZEBO_MODELS) == 0 or reset:
+        GAZEBO_MODELS = dict()
 
+        ros_pkgs = list()
         if ROS1_AVAILABLE:
-            try:
-                ros_path = rospkg.RosPack().get_path(ros_pkg)
-            except rospkg.ResourceNotFound:
-                pass
-        if ROS2_AVAILABLE and ros_path is None:
-            try:
-                ros_path = \
-                    ament_index_python.get_package_share_directory(
-                        ros_pkg)
-            except ament_index_python.PackageNotFoundError:
-                pass
+            ros_pkgs = ros_pkgs + list(rospkg.RosPack().list())
+        if ROS2_AVAILABLE:
+            ros_pkgs = ros_pkgs + list(
+                ament_index_python.get_packages_with_prefixes().keys())
+        # Load all models from catkin packages
+        for ros_pkg in ros_pkgs:
+            ros_path = None
 
-        if ros_path:
-            for folder in os.listdir(ros_path):
-                if not os.path.isdir(os.path.join(ros_path, folder)):
-                    continue
-                models = get_gazebo_model_folders(
-                    os.path.join(ros_path, folder))
-                for tag in models:
-                    models[tag]['ros_pkg'] = ros_pkg
-                GAZEBO_MODELS.update(models)
+            if ROS1_AVAILABLE:
+                try:
+                    ros_path = rospkg.RosPack().get_path(ros_pkg)
+                except rospkg.ResourceNotFound:
+                    pass
+            if ROS2_AVAILABLE and ros_path is None:
+                try:
+                    ros_path = \
+                        ament_index_python.get_package_share_directory(
+                            ros_pkg)
+                except ament_index_python.PackageNotFoundError:
+                    pass
 
-    # Load all models from ~/.gazebo/models
-    home_folder = os.path.expanduser('~')
-    gazebo_folder = os.path.join(home_folder, '.gazebo', 'models')
-    if os.path.isdir(gazebo_folder):
-        GAZEBO_MODELS.update(get_gazebo_model_folders(gazebo_folder))
+            if ros_path:
+                for folder in os.listdir(ros_path):
+                    if not os.path.isdir(os.path.join(ros_path, folder)):
+                        continue
+                    models = get_gazebo_model_folders(
+                        os.path.join(ros_path, folder))
+                    for tag in models:
+                        models[tag]['ros_pkg'] = ros_pkg
+                    GAZEBO_MODELS.update(models)
 
-    gazebo_folder = None
-    for folder in os.listdir('/usr/share'):
-        if 'gazebo-' in folder:
-            gazebo_folder = os.path.join('/usr', 'share', folder, 'models')
-            break
-
-    if gazebo_folder is not None:
+        # Load all models from ~/.gazebo/models
+        home_folder = os.path.expanduser('~')
+        gazebo_folder = os.path.join(home_folder, '.gazebo', 'models')
         if os.path.isdir(gazebo_folder):
             GAZEBO_MODELS.update(get_gazebo_model_folders(gazebo_folder))
 
-    # Parse the GAZEBO_MODEL_PATH, if available
-    if 'GAZEBO_MODEL_PATH' in os.environ:
-        for folder in os.environ['GAZEBO_MODEL_PATH'].split(':'):
-            if os.path.isdir(folder):
-                GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
+        gazebo_folder = None
+        for folder in os.listdir('/usr/share'):
+            if 'gazebo-' in folder:
+                gazebo_folder = os.path.join('/usr', 'share', folder, 'models')
+                break
 
-    if len(CUSTOM_GAZEBO_RESOURCE_PATHS) > 0:
-        for folder in CUSTOM_GAZEBO_RESOURCE_PATHS:
-            GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
+        if gazebo_folder is not None:
+            if os.path.isdir(gazebo_folder):
+                GAZEBO_MODELS.update(get_gazebo_model_folders(gazebo_folder))
+
+        # Parse the GAZEBO_MODEL_PATH, if available
+        if 'GAZEBO_MODEL_PATH' in os.environ:
+            for folder in os.environ['GAZEBO_MODEL_PATH'].split(':'):
+                if os.path.isdir(folder):
+                    GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
+
+        if len(CUSTOM_GAZEBO_RESOURCE_PATHS) > 0:
+            for folder in CUSTOM_GAZEBO_RESOURCE_PATHS:
+                GAZEBO_MODELS.update(get_gazebo_model_folders(folder))
 
     return GAZEBO_MODELS
 
@@ -301,6 +304,8 @@ def get_gazebo_model_path(model_name):
     if model_name not in GAZEBO_MODELS:
         # Try reloading the models
         load_gazebo_models()
+        print(model_name)
+        print(GAZEBO_MODELS.keys())
         if model_name not in GAZEBO_MODELS:
             PCG_ROOT_LOGGER.error(
                 'Model {} could not be found'.format(model_name))

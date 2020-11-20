@@ -36,6 +36,7 @@ import numpy as np
 import trimesh
 from shapely.geometry import Polygon, MultiPolygon, \
     LineString, MultiLineString, Point, MultiPoint
+from shapely import wkt
 from multiprocessing.pool import ThreadPool
 
 
@@ -866,6 +867,21 @@ def plot_occupancy_grid(
                 output_folder,
                 output_filename,
                 plt.get_current_fig_manager().canvas)
+
+            ground_plane_poly = None
+            if occupancy_output is not None:
+                if occupancy_output['ground_plane'] is not None:
+                    ground_plane_poly = occupancy_output['ground_plane']
+
+            if ground_plane_poly is None:
+                ground_plane_poly = Polygon(
+                    [[-10, -10], [10, -10], [10, 10], [-10, 10], [-10, -10]])
+
+            with open(os.path.join(
+                output_folder, output_filename.replace(
+                    '.pgm', '.wkt')), 'w+') as polygon_info_file:
+                polygon_info_file.write(
+                    wkt.dumps(ground_plane_poly, trim=True))
 
         PCG_ROOT_LOGGER.info('Storing occupancy map at {}'.format(filename))
 

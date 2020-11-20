@@ -1742,7 +1742,8 @@ class SimulationModel(Entity):
             copy_resources=False):
         import os
         import getpass
-        from . import is_gazebo_model, get_gazebo_model_path
+        from . import is_gazebo_model, get_gazebo_model_path, \
+            load_gazebo_models
         from ..parsers.sdf_config import create_sdf_config_element
         PCG_ROOT_LOGGER.info(
             'Converting model <{}> into a static Gazebo model'.format(
@@ -1848,6 +1849,8 @@ class SimulationModel(Entity):
             os.path.join(full_model_dir, model_sdf_filename),
                 'w+') as sdf_file:
             sdf_file.write('')
+
+        load_gazebo_models(reset=True)
 
         sdf = self.to_sdf(
             'sdf',

@@ -36,9 +36,12 @@ class XMLCustom(XMLBase):
     def _get_elem_as_xml(self, xml_elem, value):
         if isinstance(value, dict):
             for tag in value:
-                child = Element(tag)
-                self._get_elem_as_xml(child, value[tag])
-                xml_elem.append(child)
+                if tag.startswith('@'):
+                    xml_elem.set(tag.replace('@', ''), value[tag])
+                else:
+                    child = Element(tag)
+                    self._get_elem_as_xml(child, value[tag])
+                    xml_elem.append(child)
         elif isinstance(value, bool) or isinstance(value, int):
             xml_elem.text = '{}'.format(int(value))
         elif isinstance(value, float) or isinstance(value, str):

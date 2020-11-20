@@ -142,6 +142,10 @@ class Collision(object):
     def max_contacts(self):
         return self._sdf_collision.max_contacts.value
 
+    @property
+    def is_mesh(self):
+        return self._geometry.is_mesh
+
     @max_contacts.setter
     def max_contacts(self, max_contacts):
         self._sdf_collision.max_contacts = max_contacts

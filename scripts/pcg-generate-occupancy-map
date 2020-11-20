@@ -21,6 +21,9 @@ from pcg_gazebo.parsers import parse_sdf, parse_xacro
 from pcg_gazebo.visualization import plot_occupancy_grid
 from pcg_gazebo.simulation import World
 from pcg_gazebo.utils import is_string
+from pcg_gazebo.log import set_logging_level
+
+set_logging_level('DEBUG')
 
 
 if __name__ == '__main__':

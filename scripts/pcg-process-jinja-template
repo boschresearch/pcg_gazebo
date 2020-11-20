@@ -18,6 +18,9 @@ import yaml
 from pcg_gazebo.parsers import parse_sdf, parse_urdf, parse_sdf_config, \
     convert_from_string, expand_nested_models
 from pcg_gazebo.utils import load_yaml, process_jinja_template
+from pcg_gazebo.log import set_logging_level
+
+set_logging_level('DEBUG')
 
 
 if __name__ == '__main__':
@@ -117,10 +120,13 @@ if __name__ == '__main__':
     else:
         with open(args.output_filename, 'w+') as output_file:
             output_file.write(output_xml)
+        print('File exported to: {}'.format(args.output_filename))
+        exit(0)
 
     if output is not None:
         if args.output_filename is not None:
             output.export_xml(args.output_filename)
+            print('File exported to: {}'.format(args.output_filename))
         else:
             print(output)
     else:
