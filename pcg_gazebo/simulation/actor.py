@@ -33,6 +33,12 @@ class Actor(Entity):
         self._skin = None
         self._script = None
         self._animations = list()
+        # If true, this model can be found in the ROS_PATH or in
+        # $HOME/.gazebo/models and can have its SDF file loaded from there
+        self._is_gazebo_model = False
+        # Name of the source model, in case the model's name and its
+        # source do not match
+        self._source_model_name = None
         if animations is not None:
             assert is_array(animations), 'Animations input must be a list'
             for item in animations:
@@ -66,7 +72,25 @@ class Actor(Entity):
         return self._animations
 
     def copy(self):
-        return Actor.from_sdf(self.to_sdf())
+        actor = Actor.from_sdf(self.to_sdf())
+        actor._is_gazebo_model = self._is_gazebo_model
+        return actor
+
+    @property
+    def is_gazebo_model(self):
+        return self._is_gazebo_model
+
+    @is_gazebo_model.setter
+    def is_gazebo_model(self, flag):
+        assert isinstance(flag, bool), 'Flag must be a boolean'
+        self._is_gazebo_model = flag
+
+    @property
+    def source_model_name(self):
+        if self._source_model_name is None:
+            return self.name
+        else:
+            return self._source_model_name
 
     def set_script(self, **kwargs):
         if 'script' in kwargs:
@@ -162,3 +186,29 @@ class Actor(Entity):
             animations=sdf.animations,
             script=sdf.script)
         return actor
+
+    @staticmethod
+    def from_gazebo_model(name):
+        PCG_ROOT_LOGGER.info(
+            'Importing a Gazebo actor, name={}'.format(name))
+        # Update list of Gazebo models
+        sdf = get_gazebo_model_sdf(name)
+
+        if sdf is None:
+            msg = 'Gazebo model {} not found in the ROS paths'.format(name)
+            PCG_ROOT_LOGGER.error(msg)
+            raise ValueError(msg)
+        if sdf.models is None:
+            msg = 'No models found in Gazebo model {}'.format(name)
+            PCG_ROOT_LOGGER.warning(msg)
+            raise ValueError(msg)
+        if len(sdf.models) != 1:
+            msg = 'Imported SDF file should have one model only'
+            PCG_ROOT_LOGGER.error(msg)
+            raise ValueError(msg)
+
+        model = Actor.from_sdf(sdf.models[0])
+        model.is_gazebo_model = True
+        model._source_model_name = name
+        model.name = name
+        return model
