@@ -189,6 +189,7 @@ class Actor(Entity):
 
     @staticmethod
     def from_gazebo_model(name):
+        from . import get_gazebo_model_sdf
         PCG_ROOT_LOGGER.info(
             'Importing a Gazebo actor, name={}'.format(name))
         # Update list of Gazebo models
