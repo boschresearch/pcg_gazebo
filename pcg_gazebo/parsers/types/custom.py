@@ -36,7 +36,13 @@ class XMLCustom(XMLBase):
     def _get_elem_as_xml(self, xml_elem, value):
         if isinstance(value, dict):
             for tag in value:
-                if tag.startswith('@'):
+                if isinstance(value[tag], dict) and \
+                        'attributes' in value[tag] and \
+                        'value' in value[tag]:
+                    child = Element(tag, attrib=value[tag]['attributes'])
+                    self._get_elem_as_xml(child, value[tag]['value'])
+                    xml_elem.append(child)
+                elif tag.startswith('@'):
                     xml_elem.set(tag.replace('@', ''), value[tag])
                 else:
                     child = Element(tag)
@@ -49,6 +55,7 @@ class XMLCustom(XMLBase):
         elif isinstance(value, list):
             output_str = ' '.join(['{}'] * len(value))
             xml_elem.text = output_str.format(*value)
+
         return xml_elem
 
     def reset(self, mode=None, with_optional_elements=False):
@@ -88,6 +95,17 @@ class XMLCustom(XMLBase):
 
     def replace_parameter_value(self, old_value, new_value):
         self._replace_value_in_dict(self._value, old_value, new_value)
+
+    def from_dict(self, sdf_data, ignore_tags=list()):
+        # For custom XML blocks that contain attributes but
+        # are not standard SDF/URDF elements
+        if 'attributes' in sdf_data and 'value' in sdf_data:
+            for tag in sdf_data['attributes']:
+                self._attributes[tag] = str(sdf_data['attributes'][tag])
+            # Set value
+            setattr(self, 'value', sdf_data['value'])
+        else:
+            super().from_dict(sdf_data, ignore_tags)
 
     @staticmethod
     def _replace_value_in_dict(data, old_value, new_value):
