@@ -908,28 +908,29 @@ def store_fig_as_pgm(output_folder, output_filename, canvas):
     y_lims = ax.get_ylim()
 
     # Retrieve the figure's size
-    ncols, nrows = canvas.get_width_height()
+    im_str, (width, height) = canvas.print_to_buffer()
 
     # Read the RGB values from the plot image
     im = np.fromstring(
-        canvas.tostring_rgb(),
+        im_str,
         dtype=np.uint8).reshape(
-        nrows,
-        ncols,
-        3)
+        height,
+        width,
+        4)[:]
+    im = np.dot(im, [0.299, 0.587, 0.114, 0.0])
 
     with open(os.path.join(output_folder, output_filename), 'wb') as pgm_file:
         # Write magic number
         pgm_file.write('P2\n'.encode())
         # Write the size of the image (width and height)
-        pgm_file.write(('{} {}\n'.format(ncols, nrows)).encode())
+        pgm_file.write(('{} {}\n'.format(int(width), int(height))).encode())
         # Write the maximum gray value
-        pgm_file.write(('{}\n'.format(im.max())).encode())
+        pgm_file.write(('{}\n'.format(int(im.max()))).encode())
 
         # Write the pixels
-        for i in range(nrows):
-            for j in range(ncols):
-                pgm_file.write(('{} '.format(im[i, j].max())).encode())
+        for i in range(height):
+            for j in range(width):
+                pgm_file.write(('{} '.format(int(im[i, j].max())).encode()))
             pgm_file.write('\n'.encode())
 
     # Write the map's information on the yaml file

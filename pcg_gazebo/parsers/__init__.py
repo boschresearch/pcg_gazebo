@@ -150,7 +150,7 @@ def parse_xml_str(xml_str, type='sdf'):
     `collections.OrderedDict`: Dictionary where the XML tags are the keys.
     """
     import xmltodict
-    parsed_xml = xmltodict.parse(xml_str)
+    parsed_xml = xmltodict.parse(xml_str, encoding='utf-8')
     return parse_xml_dict(parsed_xml, type)
 
 
