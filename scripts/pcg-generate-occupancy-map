@@ -140,6 +140,10 @@ if __name__ == '__main__':
         '--use-visual',
         action='store_true',
         help='Use visual meshes instead of collision')
+    parser.add_argument(
+        '--show',
+        action='store_true',
+        help='Show the map before exit')
 
     args = parser.parse_args()
 
@@ -295,7 +299,8 @@ if __name__ == '__main__':
         axis_x_limits=x_limits,
         axis_y_limits=y_limits,
         mesh_type='visual' if args.use_visual else 'collision',
-        ground_plane_models=gp_models)
+        ground_plane_models=gp_models,
+        show=args.show)
 
     logging.info('Output map filename: {}'.format(
         os.path.join(args.output_dir, output_filename)))
