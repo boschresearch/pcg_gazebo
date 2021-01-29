@@ -188,8 +188,11 @@ def plot_shapely_geometry(
                 label=legend)
             ax.add_patch(patch)
         elif isinstance(polygon, MultiPolygon):
-            colors = cm.get_cmap(
-                'viridis')(np.linspace(0, 1, len(polygon.geoms)))
+            if color is None:
+                colors = cm.get_cmap(
+                    'viridis')(np.linspace(0, 1, len(polygon.geoms)))
+            else:
+                colors = [color for _ in range(len(polygon.geoms))]
             for geo, color in zip(polygon.geoms, colors):
                 fig, ax = plot_shapely_geometry(
                     fig=fig,
@@ -540,7 +543,8 @@ def plot_occupancy_grid(
         axis_y_limits=None,
         exclude_contains=None,
         mesh_type='collision',
-        ground_plane_models=None):
+        ground_plane_models=None,
+        show=False):
 
     if not MATPLOTLIB_AVAILABLE:
         PCG_ROOT_LOGGER.error('Matplotlib is not available')
@@ -642,9 +646,12 @@ def plot_occupancy_grid(
     min_axis_y = None
     max_axis_y = None
 
+    ground_plane_poly = None
+
     if occupancy_output is not None:
         if with_ground_plane:
             if occupancy_output['ground_plane'] is not None:
+                ground_plane_poly = occupancy_output['ground_plane']
                 ax.patch.set_facecolor(unavailable_color)
                 PCG_ROOT_LOGGER.info(
                     'Adding ground plane models as '
@@ -713,7 +720,10 @@ def plot_occupancy_grid(
                         PCG_ROOT_LOGGER.warning(
                             'Model footprint <{}> is empty'.format(tag))
                         continue
-
+                    if ground_plane_poly is not None:
+                        ground_plane_poly = ground_plane_poly.difference(
+                            occupancy_output['static'][tag].buffer(
+                                0.005)).buffer(-0.005)
                     patch = descartes.PolygonPatch(
                         occupancy_output['static'][tag],
                         facecolor=occupied_color,
@@ -768,6 +778,10 @@ def plot_occupancy_grid(
                         'Model footprint <{}> is empty'.format(tag))
                     continue
 
+                if ground_plane_poly is not None:
+                    ground_plane_poly = ground_plane_poly.difference(
+                        occupancy_output['non_static'][tag].buffer(
+                            0.005)).buffer(-0.005)
                 patch = descartes.PolygonPatch(
                     occupancy_output['non_static'][tag],
                     facecolor=occupied_color,
@@ -868,21 +882,23 @@ def plot_occupancy_grid(
                 output_filename,
                 plt.get_current_fig_manager().canvas)
 
-            ground_plane_poly = None
-            if occupancy_output is not None:
-                if occupancy_output['ground_plane'] is not None:
-                    ground_plane_poly = occupancy_output['ground_plane']
-
             if ground_plane_poly is None:
                 ground_plane_poly = Polygon(
                     [[-10, -10], [10, -10], [10, 10], [-10, 10], [-10, -10]])
 
+            if show and ground_plane_poly is not None:
+                fig, ax = plot_shapely_geometry(ground_plane_poly)
+                ax.set_xlabel('X [m]')
+                ax.set_ylabel('Y [m]')
+                ax.set_title('Free space plot')
             with open(os.path.join(
                 output_folder, output_filename.replace(
                     '.pgm', '.wkt')), 'w+') as polygon_info_file:
                 polygon_info_file.write(
                     wkt.dumps(ground_plane_poly, trim=True))
 
+        if show:
+            plt.show()
         PCG_ROOT_LOGGER.info('Storing occupancy map at {}'.format(filename))
 
     return fig
