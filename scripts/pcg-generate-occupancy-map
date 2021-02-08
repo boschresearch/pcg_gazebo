@@ -16,20 +16,28 @@
 import os
 import argparse
 import logging
+import yaml
 import numpy as np
 from pcg_gazebo.parsers import parse_sdf, parse_xacro
 from pcg_gazebo.visualization import plot_occupancy_grid
 from pcg_gazebo.simulation import World
-from pcg_gazebo.utils import is_string
+from pcg_gazebo.utils import is_string, load_yaml
 from pcg_gazebo.log import set_logging_level
 
-set_logging_level('DEBUG')
+set_logging_level('INFO')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         'Generate occupancy grid map from a SDF world'
         ' file or the current scenario in Gazebo')
+    parser.add_argument(
+        '--map-config',
+        '-m',
+        type=str,
+        help='Enter all map configuration parameters as a YAML file,'
+             ' no other parameters are necessary unless a parameter '
+             'in the file needs to be overwritten')
     parser.add_argument(
         '--world-file',
         '-w',
@@ -147,6 +155,10 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    config = None
+    if args.map_config:
+        config = load_yaml(args.map_config)
+
     # Configure logger
     logging.basicConfig(
         level=logging.DEBUG,
@@ -194,20 +206,26 @@ if __name__ == '__main__':
         assert y_limits[0] < y_limits[1], 'Y limits are invalid'
         logging.info('Map Y limits: {}'.format(y_limits))
 
+    world_file = None
+    if config is not None and 'world_file' in config:
+        world_file = config['world_file']
     if args.world_file is not None:
-        assert os.path.isfile(args.world_file), \
+        world_file = args.world_file
+
+    if world_file is not None:
+        assert os.path.isfile(world_file), \
             'World file is invalid, filename={}'.format(
-                args.world_file)
+                world_file)
         logging.info(
             'Reading the world description from SDF file, '
-            'filename={}'.format(args.world_file))
+            'filename={}'.format(world_file))
 
-        if args.world_file.endswith('.xacro'):
+        if world_file.endswith('.xacro'):
             logging.info('Parsing xacro file')
-            sdf = parse_xacro(args.world_file, output_type='sdf')
+            sdf = parse_xacro(world_file, output_type='sdf')
         else:
             logging.info('Parsing SDF file')
-            sdf = parse_sdf(args.world_file)
+            sdf = parse_sdf(world_file)
 
         world = World.from_sdf(sdf)
 
@@ -216,9 +234,11 @@ if __name__ == '__main__':
 
         if args.output_filename is None:
             output_filename = os.path.basename(
-                args.world_file).split('.')[0] + '.pgm'
+                world_file).split('.')[0] + '.pgm'
         else:
             output_filename = args.output_filename
+            if 'output_filename' in config:
+                output_filename = config['output_filename']
     elif args.input_topic is not None:
         try:
             import rospy
@@ -247,6 +267,8 @@ if __name__ == '__main__':
             output_filename = '{}.pgm'.format(world.name)
         else:
             output_filename = args.output_filename
+            if 'output_filename' in config:
+                output_filename = config['output_filename']
     elif args.xml is not None:
         logging.info('Parsing XML to SDF world')
         assert is_string(args.xml), 'Input XML is not a string'
@@ -282,8 +304,13 @@ if __name__ == '__main__':
     logging.info('Excluded models from the grid map computation')
 
     logging.info('Plotting occupancy grid map')
-    plot_occupancy_grid(
-        world.models,
+
+    output_dir = args.output_dir
+    if 'output_dir' in config:
+        output_dir = config['output_dir']
+    output_dir = os.path.abspath(output_dir)
+
+    parameters = dict(
         z_levels=z_levels,
         with_ground_plane=not args.without_ground_plane,
         static_models_only=args.static_models_only,
@@ -293,16 +320,26 @@ if __name__ == '__main__':
         occupied_color=[args.occupied_color for _ in range(3)],
         free_color=[args.free_color for _ in range(3)],
         unavailable_color=[args.unavailable_color for _ in range(3)],
-        output_folder=args.output_dir,
+        output_folder=output_dir,
         output_filename=output_filename,
         exclude_contains=exclude_contains,
         axis_x_limits=x_limits,
         axis_y_limits=y_limits,
         mesh_type='visual' if args.use_visual else 'collision',
         ground_plane_models=gp_models,
-        show=args.show)
+        show=args.show
+    )
+
+    if config is not None:
+        for tag in parameters:
+            if tag in config:
+                parameters[tag] = config[tag]
+
+    plot_occupancy_grid(
+        world.models,
+        **parameters)
 
     logging.info('Output map filename: {}'.format(
-        os.path.join(args.output_dir, output_filename)))
+        os.path.join(output_dir, output_filename)))
     logging.info('Map stored at: {}'.format(
-        os.path.join(args.output_dir, output_filename)))
+        os.path.join(output_dir, output_filename)))

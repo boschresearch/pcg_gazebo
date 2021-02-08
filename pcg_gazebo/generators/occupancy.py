@@ -71,65 +71,67 @@ def is_interior_polygon(meshes, current_geo, z=None):
     ray_directions = list()
     ray_origins = list()
 
-    point = get_random_point_from_shape(current_geo)
+    for _ in range(3):
+        point = get_random_point_from_shape(current_geo)
 
-    ray_directions = [
-        [0, 0, 1],
-        [0, 0, -1]
-    ]
-    ray_origins = \
-        [
-            [point[0], point[1], z]
-            for _ in range(len(ray_directions))
+        ray_directions = [
+            [0, 0, 1],
+            [0, 0, -1]
         ]
+        ray_origins = \
+            [
+                [point[0], point[1], z]
+                for _ in range(len(ray_directions))
+            ]
 
-    n_crossings = 0
-    for current_mesh in meshes:
-        locations = current_mesh.ray.intersects_location(
-            ray_origins=ray_origins,
-            ray_directions=ray_directions)
-        n_crossings += len(locations[1])
-    if n_crossings == 0:
-        return False
+        n_crossings = 0
+        for current_mesh in meshes:
+            locations = current_mesh.ray.intersects_location(
+                ray_origins=ray_origins,
+                ray_directions=ray_directions)
+            n_crossings += len(locations[1])
+        if n_crossings == 0:
+            return False
 
-    ray_directions = list()
-    ray_origins = list()
+        ray_directions = list()
+        ray_origins = list()
 
-    n_theta = 360
-    for theta in np.linspace(0, 2 * np.pi, n_theta):
-        ray_directions.append(
-            [np.cos(theta), np.sin(theta), 0])
-        ray_origins.append(
-            [point[0], point[1], z]
-        )
+        n_theta = 360
+        for theta in np.linspace(0, 2 * np.pi, n_theta):
+            ray_directions.append(
+                [np.cos(theta), np.sin(theta), 0])
+            ray_origins.append(
+                [point[0], point[1], z]
+            )
 
-    rays = None
-    for current_mesh in meshes:
-        locations = current_mesh.ray.intersects_location(
-            ray_origins=ray_origins,
-            ray_directions=ray_directions)
+        rays = None
+        for current_mesh in meshes:
+            locations = current_mesh.ray.intersects_location(
+                ray_origins=ray_origins,
+                ray_directions=ray_directions)
 
+            if rays is None:
+                rays = locations[1]
+            else:
+                rays = np.hstack((rays, locations[1]))
         if rays is None:
-            rays = locations[1]
+            continue
+        unique, counts = np.unique(
+            rays, return_counts=True)
+
+        if unique.size != len(ray_directions):
+            continue
         else:
-            rays = np.hstack((rays, locations[1]))
-    if rays is None:
-        return False
-    unique, counts = np.unique(
-        rays, return_counts=True)
+            return True
 
-    if unique.size != len(ray_directions):
-        return False
+        n_odds = 0
+        for c in counts:
+            if c % 2 != 0:
+                n_odds += 1
+        if n_odds == len(counts):
+            return True
 
-    n_odd = 0
-    for c in counts:
-        if c % 2 != 0:
-            n_odd += 1
-
-    if n_odd > 0.8 * len(counts):
-        return True
-    else:
-        return False
+    return False
 
 
 def get_occupied_area(
@@ -272,6 +274,13 @@ def get_occupied_area(
     boundaries = unary_union(section_boundaries)
     p = boundaries.envelope.difference(boundaries.buffer(1e-3))
 
+    from ..visualization import plot_shapely_geometry
+    import matplotlib.pyplot as plt
+
+    # fig, ax = plot_shapely_geometry(boundaries)
+    # fig, ax = plot_shapely_geometry(p)
+    # plt.show()
+
     if isinstance(p, MultiPolygon):
         for geo in p.geoms:
             for z in z_levels:
@@ -301,6 +310,11 @@ def get_occupied_area(
             list(polygonize(dilated_footprint.boundary)))
         occupied_areas = occupied_areas.union(full_footprint)
         occupied_areas = occupied_areas.buffer(-max(step_x, step_y))
+        from ..visualization import plot_shapely_geometry
+        import matplotlib.pyplot as plt
+
+        # fig, ax = plot_shapely_geometry(occupied_areas)
+        # plt.show()
     if occupied_areas.is_empty:
         PCG_ROOT_LOGGER.warning(
             'Footprint for model {} could not be '
@@ -428,7 +442,7 @@ def generate_occupancy_grid(
                     z_levels,
                     tag,
                     mesh_type,
-                    False
+                    True
                 ]
             )
 

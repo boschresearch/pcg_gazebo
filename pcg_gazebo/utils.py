@@ -138,8 +138,11 @@ def yaml_find_ros_package(loader, node):
 
     assert os.path.isfile(filename), 'Invalid filename={}'.format(filename)
 
-    with open(filename, 'r') as f:
-        return yaml.load(f, _PCGYAMLLoader)
+    if filename.endswith('.yml') or filename.endswith('.yaml'):
+        with open(filename, 'r') as f:
+            return yaml.load(f, _PCGYAMLLoader)
+    else:
+        return filename
 
 
 def yaml_resolve_path(loader, node):
