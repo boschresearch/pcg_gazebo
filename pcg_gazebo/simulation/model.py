@@ -1379,7 +1379,10 @@ class SimulationModel(Entity):
         if sdf.includes:
             for include_sdf in sdf.includes:
                 model_name = include_sdf.uri.value.replace('model://', '')
-                instance_name = include_sdf.name.value
+                if include_sdf.name is not None:
+                    instance_name = include_sdf.name.value
+                else:
+                    instance_name = model_name
                 model.add_model(
                     instance_name,
                     SimulationModel.from_gazebo_model(model_name))

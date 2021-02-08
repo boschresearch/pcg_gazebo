@@ -65,6 +65,75 @@ def _get_model_limits(model, mesh_type='collision'):
     return x_limits, y_limits, z_limits
 
 
+def is_interior_polygon(meshes, current_geo, z=None):
+    if not isinstance(current_geo, (Polygon, MultiPolygon)):
+        return False
+    ray_directions = list()
+    ray_origins = list()
+
+    for _ in range(3):
+        point = get_random_point_from_shape(current_geo)
+
+        ray_directions = [
+            [0, 0, 1],
+            [0, 0, -1]
+        ]
+        ray_origins = \
+            [
+                [point[0], point[1], z]
+                for _ in range(len(ray_directions))
+            ]
+
+        n_crossings = 0
+        for current_mesh in meshes:
+            locations = current_mesh.ray.intersects_location(
+                ray_origins=ray_origins,
+                ray_directions=ray_directions)
+            n_crossings += len(locations[1])
+        if n_crossings == 0:
+            return False
+
+        ray_directions = list()
+        ray_origins = list()
+
+        n_theta = 360
+        for theta in np.linspace(0, 2 * np.pi, n_theta):
+            ray_directions.append(
+                [np.cos(theta), np.sin(theta), 0])
+            ray_origins.append(
+                [point[0], point[1], z]
+            )
+
+        rays = None
+        for current_mesh in meshes:
+            locations = current_mesh.ray.intersects_location(
+                ray_origins=ray_origins,
+                ray_directions=ray_directions)
+
+            if rays is None:
+                rays = locations[1]
+            else:
+                rays = np.hstack((rays, locations[1]))
+        if rays is None:
+            continue
+        unique, counts = np.unique(
+            rays, return_counts=True)
+
+        if unique.size != len(ray_directions):
+            continue
+        else:
+            return True
+
+        n_odds = 0
+        for c in counts:
+            if c % 2 != 0:
+                n_odds += 1
+        if n_odds == len(counts):
+            return True
+
+    return False
+
+
 def get_occupied_area(
         model,
         z_levels=None,
@@ -164,105 +233,60 @@ def get_occupied_area(
         'height range, model={}, # levels before={}, # levels'
         ' after={}'.format(model_name, n_levels, z_levels.size))
 
-    def _is_interior_polygon(current_mesh, current_geo, z=None):
-        if not isinstance(current_geo, (Polygon, MultiPolygon)):
-            return False
-        inside_mesh = False
-        ray_directions = list()
-        ray_origins = list()
-
-        point = get_random_point_from_shape(current_geo)
-
-        ray_directions = [
-            [0, 0, 1],
-            [0, 0, -1]
-        ]
-        ray_origins = \
-            [
-                [point[0], point[1], z]
-                for _ in range(len(ray_directions))
-            ]
-
-        locations = current_mesh.ray.intersects_location(
-            ray_origins=ray_origins,
-            ray_directions=ray_directions)
-
-        if len(locations[1]) == 0:
-            return False
-
-        ray_directions = list()
-        ray_origins = list()
-
-        n_theta = 360
-        for theta in np.linspace(0, 2 * np.pi, n_theta):
-            ray_directions.append(
-                [np.cos(theta), np.sin(theta), 0])
-            ray_origins.append(
-                [point[0], point[1], z]
-            )
-
-        locations = current_mesh.ray.intersects_location(
-            ray_origins=ray_origins,
-            ray_directions=ray_directions)
-
-        unique, counts = np.unique(
-            locations[1], return_counts=True)
-
-        if unique.size != len(ray_directions):
-            return False
-
-        for c in counts:
-            if c % 2 != 0:
-                inside_mesh = True
-                break
-        return inside_mesh
-
     plane_normal = [0, 0, 1]
     occupied_areas = list()
     meshes = model.get_meshes(mesh_type)
+    polys = list()
+    section_boundaries = list()
+
+    if model_z_limits[0] in z_levels:
+        z_levels = np.delete(
+            z_levels,
+            np.where(z_levels == model_z_limits[0]))
+    if model_z_limits[1] in z_levels:
+        z_levels = np.delete(
+            z_levels,
+            np.where(z_levels == model_z_limits[0]))
+    if z_levels.size == 0:
+        z_levels = np.array(
+            [(model_z_limits[1] - model_z_limits[0]) / 2 +
+                model_z_limits[0]])
+
     for mesh in meshes:
-        if model_z_limits[0] in z_levels:
-            z_levels = np.delete(
-                z_levels,
-                np.where(z_levels == model_z_limits[0]))
-        if model_z_limits[1] in z_levels:
-            z_levels = np.delete(
-                z_levels,
-                np.where(z_levels == model_z_limits[0]))
-        if z_levels.size == 0:
-            z_levels = np.array(
-                [(model_z_limits[1] - model_z_limits[0]) / 2 +
-                    model_z_limits[0]])
+        for z in z_levels:
+            sections = mesh.section_multiplane(
+                plane_origin=[0, 0, 0],
+                plane_normal=plane_normal,
+                heights=[z])
 
-        sections = mesh.section_multiplane(
-            plane_origin=[0, 0, 0],
-            plane_normal=plane_normal,
-            heights=z_levels)
+            sections = [s for s in sections if s is not None]
 
-        sections = [s for s in sections if s is not None]
-        polys = list()
-        section_boundaries = list()
-        for section, z in zip(sections, z_levels):
-            lines = list()
-            for poly in section.entities:
-                line = LineString(
-                    [tuple(section.vertices[i]) for i in poly.points])
-                lines.append(line)
+            for section in sections:
+                lines = list()
+                for poly in section.entities:
+                    line = LineString(
+                        [tuple(section.vertices[i]) for i in poly.points])
+                    lines.append(line)
 
-            boundaries = linemerge(lines)
-            section_boundaries.append(boundaries)
-            p = boundaries.envelope.difference(boundaries.buffer(1e-3))
-            if isinstance(p, MultiPolygon):
-                for geo in p.geoms:
-                    if _is_interior_polygon(mesh, geo, z):
-                        polys.append(geo.buffer(1e-3))
-            elif isinstance(p, Polygon):
-                polys.append(p)
+                boundaries = linemerge(lines)
+                section_boundaries.append(boundaries)
 
-        occupied_areas = occupied_areas + polys
-        if len(section_boundaries):
-            for item in section_boundaries:
-                occupied_areas.append(item.buffer(1e-3))
+    boundaries = unary_union(section_boundaries)
+    p = boundaries.envelope.difference(boundaries.buffer(1e-3))
+
+    if isinstance(p, MultiPolygon):
+        for geo in p.geoms:
+            for z in z_levels:
+                if is_interior_polygon(meshes, geo, z):
+                    polys.append(geo.buffer(1e-3))
+                    break
+    elif isinstance(p, Polygon):
+        polys.append(p)
+
+    occupied_areas = occupied_areas + polys
+    if len(section_boundaries):
+        for item in section_boundaries:
+            occupied_areas.append(item.buffer(1e-3))
 
     if len(occupied_areas) > 1:
         occupied_areas = unary_union(
@@ -406,7 +430,7 @@ def generate_occupancy_grid(
                     z_levels,
                     tag,
                     mesh_type,
-                    False
+                    True
                 ]
             )
 
