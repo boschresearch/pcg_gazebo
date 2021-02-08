@@ -274,13 +274,6 @@ def get_occupied_area(
     boundaries = unary_union(section_boundaries)
     p = boundaries.envelope.difference(boundaries.buffer(1e-3))
 
-    from ..visualization import plot_shapely_geometry
-    import matplotlib.pyplot as plt
-
-    # fig, ax = plot_shapely_geometry(boundaries)
-    # fig, ax = plot_shapely_geometry(p)
-    # plt.show()
-
     if isinstance(p, MultiPolygon):
         for geo in p.geoms:
             for z in z_levels:
@@ -310,11 +303,6 @@ def get_occupied_area(
             list(polygonize(dilated_footprint.boundary)))
         occupied_areas = occupied_areas.union(full_footprint)
         occupied_areas = occupied_areas.buffer(-max(step_x, step_y))
-        from ..visualization import plot_shapely_geometry
-        import matplotlib.pyplot as plt
-
-        # fig, ax = plot_shapely_geometry(occupied_areas)
-        # plt.show()
     if occupied_areas.is_empty:
         PCG_ROOT_LOGGER.warning(
             'Footprint for model {} could not be '
