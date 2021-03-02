@@ -1087,7 +1087,15 @@ def merge_links(parent, child):
         merged_link.name, new_link.name))
 
     def compute_new_pose(ml, obj, nl):
-        pose = Pose.from_sdf(ml.pose) - Pose.from_sdf(nl.pose)
+        if ml.pose is None:
+            ml_pose = parse_sdf('<pose>0 0 0 0 0 0</pose>')
+        else:
+            ml_pose = ml.pose
+        if nl.pose is None:
+            nl_pose = parse_sdf('<pose>0 0 0 0 0 0</pose>')
+        else:
+            nl_pose = nl.pose
+        pose = Pose.from_sdf(ml_pose) - Pose.from_sdf(nl_pose)
 
         if obj.pose is not None:
             pose = pose + Pose.from_sdf(obj.pose)
