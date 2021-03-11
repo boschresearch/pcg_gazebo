@@ -304,8 +304,6 @@ def get_gazebo_model_path(model_name):
     if model_name not in GAZEBO_MODELS:
         # Try reloading the models
         load_gazebo_models()
-        print(model_name)
-        print(GAZEBO_MODELS.keys())
         if model_name not in GAZEBO_MODELS:
             PCG_ROOT_LOGGER.error(
                 'Model {} could not be found'.format(model_name))
