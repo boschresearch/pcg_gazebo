@@ -306,7 +306,7 @@ if __name__ == '__main__':
     logging.info('Plotting occupancy grid map')
 
     output_dir = args.output_dir
-    if 'output_dir' in config:
+    if config is not None and 'output_dir' in config:
         output_dir = config['output_dir']
     output_dir = os.path.abspath(output_dir)
 
