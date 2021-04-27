@@ -57,7 +57,17 @@ class Plugin(XMLCustom):
         assert is_string(tag), 'Input tag' \
             ' must be string or unicode, received={}, type={}'.format(
                 tag, type(tag))
-        self._value[tag] = value
+
+        # has multiple elements with the same tag
+        if tag in self._value:
+            if isinstance(self._value[tag], list):
+                self._value[tag].append(value)
+            else:
+                tmp = self._value[tag]
+                self._value[tag] = list([tmp, value])
+
+        else:
+            self._value[tag] = value
 
     def from_dict(self, sdf_data, ignore_tags=list()):
         XMLCustom.from_dict(self, sdf_data)

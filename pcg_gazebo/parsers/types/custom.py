@@ -42,6 +42,36 @@ class XMLCustom(XMLBase):
                     child = Element(tag, attrib=value[tag]['attributes'])
                     self._get_elem_as_xml(child, value[tag]['value'])
                     xml_elem.append(child)
+
+                elif isinstance(value[tag], list):
+                    # check if the list contains repeated elements
+                    n_elem = 0
+                    for item in value[tag]:
+                        if isinstance(item, dict) and \
+                            'attributes' in item and \
+                            'value' in item:
+                            n_elem += 1
+
+                    # either all items are elements or none are 
+                    has_mult = n_elem == len(value[tag])
+                    is_valid = not (n_elem > 0 and not has_mult)
+
+                    assert is_valid, \
+                        "XML data has invalid repeated element for tag {}".format(tag)  
+
+                    if has_mult:
+                        # repeated elements
+                        for item in value[tag]:
+                            child = Element(tag, attrib=item['attributes'])
+                            self._get_elem_as_xml(child, item['value'])
+                            xml_elem.append(child)
+                    else:
+                        # single element containing a list
+                        child = Element(tag)
+                        output_str = ' '.join(['{}'] * len(value[tag]))
+                        child.text = output_str.format(*value[tag])
+                        xml_elem.append(child)
+
                 elif tag.startswith('@'):
                     xml_elem.set(tag.replace('@', ''), value[tag])
                 else:
