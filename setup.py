@@ -30,7 +30,7 @@ requirements_required = set([
     'psutil',
     'yasha',
     'xmltodict',
-    'Jinja2<2.11',
+    'Jinja2',
     'shapely<=1.7.0',
     'bokeh',
     'matplotlib',
