@@ -33,9 +33,9 @@ class BoundingBox(object):
         return self._max
 
     def set_bbox(self, min_corner=[0, 0, 0], max_corner=[0, 0, 0]):
-        assert isinstance(min_corner, collections.Iterable), \
+        assert isinstance(min_corner, collections.abc.Iterable), \
             'Min. corner point must be iterable'
-        assert isinstance(max_corner, collections.Iterable), \
+        assert isinstance(max_corner, collections.abc.Iterable), \
             'Max. corner point must be iterable'
         min_corner = list(min_corner)
         max_corner = list(max_corner)

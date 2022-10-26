@@ -289,7 +289,7 @@ class Geometry(object):
             return None
 
     def set_box(self, size):
-        assert isinstance(size, collections.Iterable), \
+        assert isinstance(size, collections.abc.Iterable), \
             'Invalid input array'
         size = list(size)
         assert len(size) == 3, 'Input size vector must have 3 elements'
@@ -321,14 +321,14 @@ class Geometry(object):
         self._geo_type = 'sphere'
 
     def set_plane(self, size, normal):
-        assert isinstance(size, collections.Iterable), \
+        assert isinstance(size, collections.abc.Iterable), \
             'Invalid size array'
         size = list(size)
         assert len(size) == 2, 'Input size vector must have 2 elements'
         for elem in size:
             assert elem > 0, 'Size element must be greater than zero'
 
-        assert isinstance(normal, collections.Iterable), \
+        assert isinstance(normal, collections.abc.Iterable), \
             'Invalid normal array'
         normal = list(normal)
         assert len(normal) == 3, 'Input normal vector must have 3 elements'

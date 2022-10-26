@@ -62,7 +62,7 @@ class Inertial(object):
         if isinstance(vec, Pose):
             self._pose = vec
         else:
-            assert isinstance(vec, collections.Iterable), \
+            assert isinstance(vec, collections.abc.Iterable), \
                 'Input pose vector must be iterable'
             assert len(vec) == 6 or len(vec) == 7, \
                 'Pose must be given as position and Euler angles (x, y, z, ' \

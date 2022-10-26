@@ -39,7 +39,7 @@ class Color(XMLBase):
 
     @rgba.setter
     def rgba(self, value):
-        assert isinstance(value, collections.Iterable), \
+        assert isinstance(value, collections.abc.Iterable), \
             'Input must be iterable'
         assert len(value) == 4, 'Color vector must have 4 components'
         for elem in value:

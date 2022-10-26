@@ -74,7 +74,7 @@ def sweep():
 
 def box(size):
     import collections
-    assert isinstance(size, collections.Iterable), 'Size is not an array'
+    assert isinstance(size, collections.abc.Iterable), 'Size is not an array'
     vec = list(size)
     assert len(vec) == 3, 'Input size array must have 3 elements'
     for elem in vec:

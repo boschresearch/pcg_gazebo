@@ -49,7 +49,7 @@ def _parse_factory_input_as_vector(var):
             var))
         return np.array([var])
 
-    if isinstance(var, collections.Iterable) and not is_string(var):
+    if isinstance(var, collections.abc.Iterable) and not is_string(var):
         PCG_ROOT_LOGGER.info('Variable provided as vector={}'.format(
             var))
         return np.array(var)
@@ -70,7 +70,7 @@ def _parse_factory_input_as_vector(var):
             PCG_ROOT_LOGGER.info('Variable provided as scalar={}'.format(
                 var))
             return np.array([vars])
-        elif not isinstance(vars, collections.Iterable):
+        elif not isinstance(vars, collections.abc.Iterable):
             if callable(vars):
                 vars = vars()
             else:

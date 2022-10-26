@@ -437,7 +437,7 @@ def is_array(obj):
     """
     import collections
     return isinstance(
-        obj, collections.Iterable) and not isinstance(
+        obj, collections.abc.Iterable) and not isinstance(
         obj, str)
 
 

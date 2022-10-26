@@ -247,7 +247,7 @@ class Link(Entity):
                 link.get_visual_by_name('visual').set_xkcd_color()
             elif is_string(color):
                 link.get_visual_by_name('visual').set_xkcd_color(color)
-            elif isinstance(color, collections.Iterable) and \
+            elif isinstance(color, collections.abc.Iterable) and \
                     len(list(color)) == 3:
                 link.get_visual_by_name('visual').set_color(*color)
 

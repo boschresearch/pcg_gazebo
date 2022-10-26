@@ -30,7 +30,7 @@ class Footprint(object):
         self._polygons.append(polygon)
 
     def add_circle(self, center, radius):
-        assert isinstance(center, collections.Iterable), \
+        assert isinstance(center, collections.abc.Iterable), \
             'Center must be a list or an array'
         center = list(center)
         assert len(center) == 2, \
@@ -67,7 +67,7 @@ class Footprint(object):
         return footprint
 
     def set_offset(self, offset):
-        assert isinstance(offset, collections.Iterable), \
+        assert isinstance(offset, collections.abc.Iterable), \
             'Offset must be a list or an array'
         offset = list(offset)
         assert len(offset) == 2, \

@@ -267,14 +267,14 @@ class GazeboProxy(object):
         assert model_name in self.get_model_names(), \
             'Model {} does not exist'.format(model_name)
 
-        assert isinstance(pos, collections.Iterable)
+        assert isinstance(pos, collections.abc.Iterable)
         assert len(list(pos)) == 3, 'Position vector must have three ' \
             'components, (x, y, z)'
         for elem in pos:
             assert isinstance(elem, float) or isinstance(elem, int), \
                 '{} is not a valid number'.format(elem)
 
-        assert isinstance(rot, collections.Iterable), \
+        assert isinstance(rot, collections.abc.Iterable), \
             'Rotation vector must be iterable'
         assert len(list(rot)) == 3 or len(list(rot)) == 4
         for elem in rot:

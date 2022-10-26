@@ -26,7 +26,7 @@ class Direction(XMLBase):
             self._is_scalar(default), \
             'Direction must be either an array or a scalar'
 
-        if isinstance(default, collections.Iterable):
+        if isinstance(default, collections.abc.Iterable):
             default = list(default)
             assert len(default) == 3, \
                 'Direction must have 3 components'
@@ -38,7 +38,7 @@ class Direction(XMLBase):
         self._value = default
 
     def _set_value(self, value):
-        if isinstance(value, collections.Iterable):
+        if isinstance(value, collections.abc.Iterable):
             assert len(value) == 3, \
                 'Direction must have 3 components'
             assert self._is_numeric_vector(value), \
@@ -48,7 +48,7 @@ class Direction(XMLBase):
             self._value = float(value)
 
     def get_formatted_value_as_str(self):
-        if isinstance(self._value, collections.Iterable):
+        if isinstance(self._value, collections.abc.Iterable):
             output_str = ' '.join(['{}'] * len(self._value))
             return output_str.format(*[format(x, 'n') for x in self._value])
         else:

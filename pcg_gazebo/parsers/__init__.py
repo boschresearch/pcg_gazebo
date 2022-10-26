@@ -671,7 +671,7 @@ def urdf2sdf(urdf):
                     for tag in gazebo.children:
                         if isinstance(
                                 gazebo.children[tag],
-                                collections.Iterable):
+                                collections.abc.Iterable):
                             for elem in gazebo.children[tag]:
                                 if elem._TYPE != 'sdf':
                                     continue
@@ -686,7 +686,8 @@ def urdf2sdf(urdf):
     if hasattr(urdf, 'gazebo'):
         if urdf.gazebo is not None:
             for tag in urdf.gazebo.children:
-                if isinstance(urdf.gazebo.children[tag], collections.Iterable):
+                if isinstance(
+                        urdf.gazebo.children[tag], collections.abc.Iterable):
                     for elem in urdf.gazebo.children[tag]:
                         if elem._TYPE != 'sdf':
                             continue

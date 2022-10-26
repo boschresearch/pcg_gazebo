@@ -36,7 +36,7 @@ class FDir1(XMLVector):
 
     def _set_value(self, value):
         assert isinstance(
-            value, collections.Iterable), 'Input must be iterable'
+            value, collections.abc.Iterable), 'Input must be iterable'
         assert len(list(value)) == self._size, 'Wrong size'
         for item in value:
             assert isinstance(item, float) or isinstance(item, int), \

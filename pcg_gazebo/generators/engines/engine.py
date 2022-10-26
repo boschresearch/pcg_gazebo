@@ -235,7 +235,7 @@ class Engine(object):
         """
         assert model in self._models, \
             'Model {} is not an asset for this engine'.format(model)
-        assert isinstance(pose, collections.Iterable), \
+        assert isinstance(pose, collections.abc.Iterable), \
             'Pose must be an array or a vector'
         pose = list(pose)
         assert len(pose) == 6 or len(pose) == 7, \

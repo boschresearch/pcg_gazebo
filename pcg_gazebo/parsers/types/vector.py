@@ -36,7 +36,7 @@ class XMLVector(XMLBase):
     def _set_value(self, value):
         if self._size == 1 and self._is_scalar(value):
             value = [value]
-        assert isinstance(value, collections.Iterable), \
+        assert isinstance(value, collections.abc.Iterable), \
             'Input must be iterable, element={}, received={}, type={}'.format(
                 self._NAME, value, type(value))
         assert len(list(value)) == self._size, \

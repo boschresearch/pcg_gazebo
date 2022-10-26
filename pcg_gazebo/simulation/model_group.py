@@ -363,7 +363,7 @@ class ModelGroup(Entity):
             pose_offset = Pose()
 
         if z_limits is not None:
-            if not isinstance(z_limits, collections.Iterable):
+            if not isinstance(z_limits, collections.abc.Iterable):
                 msg = 'Z limits input has to be a list, provided={}'.format(
                     z_limits)
                 PCG_ROOT_LOGGER.error(msg)

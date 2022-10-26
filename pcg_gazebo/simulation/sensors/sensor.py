@@ -67,7 +67,7 @@ class Sensor(object):
         if isinstance(vec, Pose):
             self._pose = vec
         else:
-            assert isinstance(vec, collections.Iterable), \
+            assert isinstance(vec, collections.abc.Iterable), \
                 'Input vector must be iterable'
             assert len(vec) == 6 or len(vec) == 7, \
                 'Input vector must have either 6 or 7 elements'

@@ -390,7 +390,7 @@ class WorkspaceConstraint(Constraint):
 
         * `point` (*type:* `list` or `numpy.ndarray`): 2D point
         """
-        assert isinstance(point, collections.Iterable), \
+        assert isinstance(point, collections.abc.Iterable), \
             'Invalid list of points'
         point = list(point)
         geo = self.get_geometry()
@@ -399,7 +399,7 @@ class WorkspaceConstraint(Constraint):
         return geo.contains(pnt)
 
     def contains_points(self, points):
-        assert isinstance(points, collections.Iterable), \
+        assert isinstance(points, collections.abc.Iterable), \
             'Invalid list of points'
         points = MultiPoint(points)
         geo = self.get_geometry()
@@ -412,7 +412,7 @@ class WorkspaceConstraint(Constraint):
 
         * `polygons` (*type:* list of `shapely.Polygon`): List of polygons
         """
-        assert isinstance(polygons, collections.Iterable), \
+        assert isinstance(polygons, collections.abc.Iterable), \
             'Invalid list of polygons'
         merged_poly = None
         geo = self.get_geometry()

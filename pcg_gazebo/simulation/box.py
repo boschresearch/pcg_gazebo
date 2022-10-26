@@ -36,7 +36,7 @@ class Box(Link):
         self._collisions = [Collision()]
         self._visuals = [Visual()]
 
-        assert isinstance(size, collections.Iterable), \
+        assert isinstance(size, collections.abc.Iterable), \
             'Input size vector must be a list'
         assert len(size) == 3, 'Size vector must be have 3 elements'
 

@@ -109,7 +109,8 @@ class Mesh(object):
 
     @staticmethod
     def create_box(size=[1, 1, 1]):
-        assert isinstance(size, collections.Iterable), 'Size is not an array'
+        assert isinstance(
+            size, collections.abc.Iterable), 'Size is not an array'
         vec = list(size)
         assert len(vec) == 3, 'Input size array must have 3 elements'
         for elem in vec:
@@ -183,7 +184,8 @@ class Mesh(object):
 
     @scale.setter
     def scale(self, vec):
-        assert isinstance(vec, collections.Iterable), 'Input is not an array'
+        assert isinstance(
+            vec, collections.abc.Iterable), 'Input is not an array'
         vec = list(vec)
         assert len(vec) == 3, \
             'Input scale array must have 3 elements,' \
@@ -361,7 +363,7 @@ class Mesh(object):
     def get_meshes(self, scale=None):
         if scale is not None:
             assert isinstance(
-                scale, collections.Iterable), 'Input is not an array'
+                scale, collections.abc.Iterable), 'Input is not an array'
             scale = list(scale)
             assert len(scale) == 3, \
                 'Input scale array must have 3 elements,' \

@@ -411,11 +411,11 @@ class XMLBase(object):
                                 else:
                                     obj._add_child_element(elem, value[elem])
                     _add_element(obj)
-                elif isinstance(value, collections.Iterable) and \
+                elif isinstance(value, collections.abc.Iterable) and \
                         not is_string(value) and \
                         not _create_element(tag).has_value():
                     for subelem in value:
-                        if isinstance(subelem, collections.Iterable) and \
+                        if isinstance(subelem, collections.abc.Iterable) and \
                                 not is_string(subelem):
                             obj = _create_element(tag)
                             for elem in subelem:

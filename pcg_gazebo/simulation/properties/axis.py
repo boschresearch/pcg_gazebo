@@ -91,7 +91,7 @@ class Axis(object):
         return self._use_parent_model_frame
 
     def set_axis(self, vec):
-        assert isinstance(vec, collections.Iterable), \
+        assert isinstance(vec, collections.abc.Iterable), \
             'Input vector must be a list or an array'
         vec = list(vec)
         assert len(vec) == 3, 'Input axis vector must have three elements'

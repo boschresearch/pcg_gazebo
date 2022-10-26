@@ -28,7 +28,7 @@ from ...utils import is_scalar
 class Pose(object):
     def __init__(self, pos=None, rot=None):
         if pos is not None:
-            assert isinstance(pos, collections.Iterable), \
+            assert isinstance(pos, collections.abc.Iterable), \
                 'Input vector must be iterable'
             assert len(list(pos)) == 3, \
                 'Position vector must have 3 elements'
@@ -38,7 +38,7 @@ class Pose(object):
         self._quat = np.array([0, 0, 0, 1])
 
         if rot is not None:
-            assert isinstance(rot, collections.Iterable), \
+            assert isinstance(rot, collections.abc.Iterable), \
                 'Input rot vector must be iterable'
             if len(list(rot)) == 3:
                 rpy = list(rot)
@@ -112,7 +112,7 @@ class Pose(object):
 
     @position.setter
     def position(self, value):
-        assert isinstance(value, collections.Iterable), \
+        assert isinstance(value, collections.abc.Iterable), \
             'Input vector must be iterable'
         assert len(list(value)) == 3, \
             'Position vector must have 3 elements'
@@ -154,7 +154,7 @@ class Pose(object):
 
     @rpy.setter
     def rpy(self, value):
-        assert isinstance(value, collections.Iterable), \
+        assert isinstance(value, collections.abc.Iterable), \
             'Input vector must be iterable'
         assert len(list(value)) == 3, \
             'Input vector must have 3 elements'
@@ -178,7 +178,7 @@ class Pose(object):
 
     @quat.setter
     def quat(self, q):
-        assert isinstance(q, collections.Iterable), \
+        assert isinstance(q, collections.abc.Iterable), \
             'Input vector must be iterable'
         assert len(list(q)) == 4, \
             'Input vector must have 4 elements'

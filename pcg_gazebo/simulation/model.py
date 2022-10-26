@@ -287,7 +287,8 @@ class SimulationModel(Entity):
             visual_parameters=dict(),
             collision_parameters=dict()):
         assert is_string(link_name), 'Link name must be a string'
-        assert isinstance(size, collections.Iterable), 'Size must be an array'
+        assert isinstance(
+            size, collections.abc.Iterable), 'Size must be an array'
         assert len(list(size)) == 3, 'Input size must have 3 elements'
         assert isinstance(
             visual_parameters, dict), 'Visual geometry' \
@@ -380,7 +381,7 @@ class SimulationModel(Entity):
                             link.get_visual_by_name(
                                 'visual').material.diffuse.value,
                             link_name))
-                elif isinstance(color, collections.Iterable) and \
+                elif isinstance(color, collections.abc.Iterable) and \
                         len(list(color)) == 4:
                     link.get_visual_by_name('visual').set_color(*color)
                     PCG_ROOT_LOGGER.info(
@@ -507,7 +508,7 @@ class SimulationModel(Entity):
                     link.get_visual_by_name('visual').set_xkcd_color()
                 elif is_string(color):
                     link.get_visual_by_name('visual').set_xkcd_color(color)
-                elif isinstance(color, collections.Iterable) and \
+                elif isinstance(color, collections.abc.Iterable) and \
                         len(list(color)) == 4:
                     link.get_visual_by_name('visual').set_color(*color)
         else:
@@ -630,7 +631,7 @@ class SimulationModel(Entity):
                     link.get_visual_by_name('visual').set_xkcd_color()
                 elif is_string(color):
                     link.get_visual_by_name('visual').set_xkcd_color(color)
-                elif isinstance(color, collections.Iterable) and \
+                elif isinstance(color, collections.abc.Iterable) and \
                         len(list(color)) == 4:
                     link.get_visual_by_name('visual').set_color(*color)
         else:
@@ -1521,7 +1522,7 @@ class SimulationModel(Entity):
             pose_offset = Pose()
 
         if z_limits is not None:
-            if not isinstance(z_limits, collections.Iterable):
+            if not isinstance(z_limits, collections.abc.Iterable):
                 msg = 'Z limits input has to be a list, provided={}'.format(
                     z_limits)
                 PCG_ROOT_LOGGER.error(msg)

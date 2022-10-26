@@ -24,7 +24,7 @@ class Gravity(XMLBase):
         super(Gravity, self).__init__()
         assert self._is_boolean(default) or self._is_numeric_vector(default)
 
-        if isinstance(default, collections.Iterable):
+        if isinstance(default, collections.abc.Iterable):
             default = list(default)
             assert len(default) == 3
             assert self._is_numeric_vector(default)
@@ -39,7 +39,7 @@ class Gravity(XMLBase):
                 'Boolean value must be a boolean, 0 or 1'
             self._value = bool(value)
         else:
-            if isinstance(value, collections.Iterable):
+            if isinstance(value, collections.abc.Iterable):
                 assert len(list(value)) == 3
                 for elem in value:
                     assert isinstance(elem, float) or isinstance(elem, int)
