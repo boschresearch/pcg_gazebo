@@ -406,7 +406,8 @@ class WorkspaceConstraint(Constraint):
         return geo.contains(points)
 
     def contains_polygons(self, polygons):
-        """Return True if polygons in the `polygons` list are part of the workspace.
+        """Return True if polygons in the `polygons` list are part of the
+        workspace.
 
         > *Input arguments*
 

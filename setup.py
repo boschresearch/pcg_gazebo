@@ -65,27 +65,27 @@ if (sys.version_info.major, sys.version_info.minor) >= (3, 4):
     requirements_required.remove('numpy')
     # add working version locked requirements
     requirements_required.add('numpy>=1.18.1')
-    
+
 
 requirements_examples = requirements_required.union(['jupyterlab'])
 
 requirements_test = requirements_required.union(set([
-    'nbconvert', 
+    'nbconvert',
     'pytest']))
 
 requirements_docs = requirements_required.union(set([
-    'nbconvert', 
-    'pydoc-markdown', 
-    'pypandoc', 
+    'nbconvert',
+    'pydoc-markdown',
+    'pypandoc',
     'mkdocs-material']))
 
 requirements_all = requirements_required.union(set([
-    'jupyterlab', 
-    'nbconvert', 
-    'pytest', 
-    'pytest-console-scripts', 
-    'pydoc-markdown', 
-    'pypandoc', 
+    'jupyterlab',
+    'nbconvert',
+    'pytest',
+    'pytest-console-scripts',
+    'pydoc-markdown',
+    'pypandoc',
     'mkdocs-material',
     'mkdocs-awesome-pages-plugin']))
 
@@ -107,7 +107,7 @@ elif '--list-easy' in sys.argv:
 README = ''
 try:
     import pypandoc
-    README = pypandoc.convert('README.md', 'rst')    
+    README = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
     with open('README.md') as f:
         README = f.read()
@@ -115,7 +115,8 @@ except (IOError, ImportError):
 setup(
     name='pcg_gazebo',
     version=__version__,
-    description='A Python package for rapid-prototyping and scripting of simulations for Gazebo',
+    description='A Python package for rapid-prototyping and \
+        scripting of simulations for Gazebo',
     long_description=README,
     long_description_content_type='text/x-rst',
     author='Musa Morena Marcusso Manhaes',

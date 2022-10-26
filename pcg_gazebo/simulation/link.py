@@ -910,8 +910,8 @@ class Link(Entity):
             self._plugins[plugin.name] = plugin
 
     def to_markers(self):
-        """Generate `visualization_msgs/Marker` instances from the visual and/or
-        collision entities.
+        """Generate `visualization_msgs/Marker` instances from the visual
+        and/or collision entities.
 
         > *Returns*
 

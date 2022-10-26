@@ -25,8 +25,8 @@ from ..simulation.physics import ODE, Simbody, Bullet
 
 
 class WorldGenerator(_Generator):
-    """Generation of full Gazebo worlds, including physics engine configuration,
-    modes and lights.
+    """Generation of full Gazebo worlds, including physics engine
+    configuration, modes and lights.
 
     > *Input arguments*
 

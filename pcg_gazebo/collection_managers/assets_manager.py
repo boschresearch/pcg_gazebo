@@ -349,10 +349,10 @@ class AssetsManager(_CollectionManager):
             return True
 
     def from_dict(self, config):
-        """Read assets from an input `dict`. The dictionary should have a list of
-        asset descriptions under the tag `assets` and, if necessary, a list of
-        strings referring to models that must be flagged as ground plane under
-        the tag `ground_plane`.
+        """Read assets from an input `dict`. The dictionary should have a list
+        of asset descriptions under the tag `assets` and, if necessary, a list
+        of strings referring to models that must be flagged as ground plane
+        under the tag `ground_plane`.
 
         > *Input arguments*
 
