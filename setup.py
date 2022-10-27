@@ -126,10 +126,11 @@ setup(
     license='Apache-2.0',
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8'
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10'
     ],
     url='https://github.com/boschresearch/pcg_gazebo',
     keywords='gazebo ros simulation robotics sdf urdf robot',
