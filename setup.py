@@ -36,7 +36,7 @@ requirements_required = set([
     'matplotlib',
     'descartes',
     'PyYAML',
-    'trimesh[easy]>=3.6.4',
+    'trimesh[easy]>=3.16.4',
     'networkx',
     'pycollada==0.6',
     'triangle',
