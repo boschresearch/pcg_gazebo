@@ -42,11 +42,11 @@ class ODE(XMLBase):
     _CHILDREN_CREATORS = dict(
         solver=dict(creator=Solver, default=['ode'], mode='physics'),
         constraints=dict(creator=Constraints, default=['ode'], mode='physics'),
-        mu=dict(creator=Mu, default=[1], mode='collision'),
-        mu2=dict(creator=Mu2, default=[1], mode='collision'),
-        fdir1=dict(creator=FDir1, default=[[0, 0, 0]], mode='collision'),
-        slip1=dict(creator=Slip1, default=[0], mode='collision'),
-        slip2=dict(creator=Slip2, default=[0], mode='collision'),
+        mu=dict(creator=Mu, default=[1], mode='collision', optional=True),
+        mu2=dict(creator=Mu2, default=[1], mode='collision', optional=True),
+        fdir1=dict(creator=FDir1, default=[[0, 0, 0]], mode='collision', optional=True),
+        slip1=dict(creator=Slip1, default=[0], mode='collision', optional=True),
+        slip2=dict(creator=Slip2, default=[0], mode='collision', optional=True),
         soft_cfm=dict(
             creator=SoftCFM, default=[0], mode='contact', optional=True),
         soft_erp=dict(
