@@ -8,21 +8,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - python-version: "3.6"
-            os: "ubuntu-20.04"
-          - python-version: "3.7"
-            os: "ubuntu-20.04"
-          - python-version: "3.7"
-            os: "ubuntu-22.04"
           - python-version: "3.8"
-            os: "ubuntu-20.04"
-          - python-version: "3.8"
-            os: "ubuntu-22.04"
           - python-version: "3.9"
-            os: "ubuntu-22.04"
           - python-version: "3.10"
-            os: "ubuntu-22.04"
-    runs-on: ${{ matrix.os }}
+          - python-version: "3.11"
+          - python-version: "3.12"
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v1
